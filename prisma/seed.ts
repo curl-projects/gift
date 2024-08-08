@@ -8,7 +8,9 @@ async function main(){
           email: 'alice@prisma.io',
           name: 'Alice',
         },
-      })   
+      })
+      
+    console.log({ alice })
 }
 
 main()
