@@ -6,6 +6,11 @@ import {
   ScrollRestoration,
 } from "@remix-run/react";
 import "./tailwind.css";
+import styles from "~/styles/index.css?url";
+
+export const links = () => {
+  return [{ rel: "stylesheet", href: styles }];
+};
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
