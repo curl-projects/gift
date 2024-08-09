@@ -1,5 +1,3 @@
-/* ConceptShapeUtil.module.css */
-
 .container {
     pointer-events: none;
     height: fit-content;
@@ -41,9 +39,9 @@
     color: transparent;
   }
   
-  .shapeCircle {
+  .circle {
     border-radius: 100%;
-    background-color: black;
+    background-color: rgb(126,196,207);
     height: 14px;
     width: 14px;
     flex-shrink: 0;
@@ -51,7 +49,7 @@
   
   .editorContent {
     font-weight: 550;
-    color: black;
+    color: rgb(126,196,207);
     letter-spacing: -0.00em;
     line-height: 21px;
     font-size: 14px;

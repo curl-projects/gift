@@ -14,11 +14,9 @@ export async function loader({ params }) {
 export default function WorldModel(){
     return(
         <div className='canvasDiv'>
-            {/* <ClientOnly> */}
-                {/* {() => { */}
-                    <WorldCanvas />
-                    {/* }} */}
-            {/* </ClientOnly> */}
+            <ClientOnly>
+                {() => <WorldCanvas />}
+            </ClientOnly>
         </div>
     )
 }

@@ -23,7 +23,6 @@ body {
     }
 }
 
-
 p.is-editor-empty:first-child::before {
     content: attr(data-placeholder);
     float: left;
@@ -32,7 +31,8 @@ p.is-editor-empty:first-child::before {
     opacity: 0.5 !important;
     color: rgba(0, 0, 0, 0.3) !important;
     white-space: nowrap;
-    /* overflow: hidden; */
-    /* text-overflow: ellipsis; */
-    /* max-width: 100%; */
   }
+
+.ProseMirror{
+    white-space: nowrap !important;
+}

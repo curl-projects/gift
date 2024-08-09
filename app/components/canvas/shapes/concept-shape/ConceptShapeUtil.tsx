@@ -3,21 +3,17 @@ import {
 	Geometry2d,
 	Rectangle2d,
 	TLBaseShape,
-	useValue,
 	HTMLContainer,
 	stopEventPropagation,
-	TLOnTranslateStartHandler,
-	TLOnTranslateEndHandler,
 } from '@tldraw/editor'
 import { T, createShapeId } from 'tldraw';
 import { useCallback, useState, useEffect, useRef, useLayoutEffect } from 'react'
 import { EditorContent, useEditor } from '@tiptap/react';
-import { Document } from '@tiptap/extension-document';
 import { Paragraph } from '@tiptap/extension-paragraph';
 import { Text } from '@tiptap/extension-text';
 import { Node } from "@tiptap/core";
 import Placeholder from '@tiptap/extension-placeholder'
-import styles from './ConceptShapeUtil.module.css'; // Import the CSS module
+import styles from './ConceptShapeUtil.module.css';
 
 const conceptShapeProps = {
 	w: T.number,
@@ -26,7 +22,7 @@ const conceptShapeProps = {
 	plainText: T.any,
 	activated: T.boolean,
 	description: T.any,
-	// temporary: T.boolean,
+	temporary: T.boolean,
 	// colors: T.array,
 }
 
@@ -38,7 +34,7 @@ type ConceptShape = TLBaseShape<
 		text: any,
 		plainText: any,
 		activated: boolean,
-		// temporary: boolean,
+		temporary: boolean,
 		// colors: any,
 		description: any,
 	}
@@ -62,12 +58,12 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
 
 	getDefaultProps(): ConceptShape['props'] {
 		return { 
-			w: 100,
+			w: 200,
 			h: 20,
 			text: "",
 			plainText: "",
 			activated: false,
-			// temporary: false,
+			temporary: false,
 			// colors: [conceptColors[Math.floor(Math.random() * conceptColors.length)]],
 			description: "No description",
 		}
@@ -83,14 +79,17 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
 	}
 
 	component(shape: ConceptShape) {
+		const bounds = this.editor.getShapeGeometry(shape).bounds
+		const isSelected = shape.id === this.editor.getOnlySelectedShapeId();
 		const shapeRef = useRef<HTMLDivElement>(null);
-		const buffer = 4
+		const horizontalBuffer = 6
+		const verticalBuffer = 2
 
 		const editor = useEditor({
 			extensions: [
 			  OneLiner,
-			  Paragraph,
 			  Text,
+              Paragraph,
 			  Placeholder.configure({
 				placeholder: "Unknown Concept"
 			  })
@@ -101,32 +100,35 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
 			onUpdate: ({ editor }) => {
 				stopEventPropagation;
 
-				this.editor.updateShape<ConceptShape>({
+				shapeRef.current && this.editor.updateShape<ConceptShape>({
 					id: shape.id,
 					type: 'concept',
 					props: {
 						text: editor.getJSON(),
 						plainText: editor.getText(),
-						w: shapeRef.current?.clientWidth ? (shapeRef.current?.clientWidth+buffer) : 100,
-						h: shapeRef.current?.clientHeight ? (shapeRef.current?.clientHeight+buffer) : 20,
+						w: shapeRef.current?.clientWidth+horizontalBuffer,
+						h: shapeRef.current?.clientHeight+verticalBuffer,
 					}
 				})
 			},
+
+			onSelectionUpdate: ({ editor }) => {
+			}
 		  });
 
 
-		useLayoutEffect(()=>{
-			if(editor && this.editor){
+		useEffect(()=>{
+			if(editor && this.editor && shapeRef.current){
 				this.editor.updateShape<ConceptShape>({
 					id: shape.id,
 					type: 'concept',
 					props: {
-						w: shapeRef.current?.clientWidth ? (shapeRef.current?.clientWidth+buffer) : 100,
-						h: shapeRef.current?.clientHeight ? (shapeRef.current?.clientHeight+buffer) : 20,
+						w: shapeRef.current?.clientWidth+horizontalBuffer,
+                        h: shapeRef.current?.clientHeight+verticalBuffer,
 					}
 				})
 			}
-		  }, [this.editor, editor])
+		  }, [this.editor, editor, shapeRef.current])
 
 	
 		const [isHovered, setIsHovered] = useState(false)
@@ -134,7 +136,7 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
 		return (
 			<HTMLContainer 
 				id={shape.id}
-				className={styles.container} // Apply the CSS module class
+				className={styles.container}
 				onMouseEnter={() => setIsHovered(true)}
 				onMouseLeave={() => setIsHovered(false)}
 				>
@@ -145,12 +147,16 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
 						{shape.props.description}
 					</div>
 				)}
+
 				<div className={styles.shapeContent} ref={shapeRef}>
-					<div className={styles.shapeCircle} />
+					<div className={styles.circle} />
 					<EditorContent 
 						editor={editor}
 						onKeyDown={stopEventPropagation}
 						className={styles.editorContent}
+                        style={{
+                            border: '2px solid black'
+                        }}
 					/>
 				</div>
 			</HTMLContainer>
@@ -162,11 +168,4 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
 		return <rect width={shape.props.w} height={shape.props.h} />
 
 	}
-
-	override onTranslateStart: TLOnTranslateStartHandler<ConceptShape> = (shape) => {
-	}
-
-	override onTranslateEnd: TLOnTranslateEndHandler<ConceptShape> = (shape) => {
-		}
-
 }

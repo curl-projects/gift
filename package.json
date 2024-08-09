@@ -29,12 +29,15 @@
     "@tiptap/pm": "^2.5.9",
     "@tiptap/react": "^2.5.9",
     "@tiptap/starter-kit": "^2.5.9",
+    "@tldraw/tldraw": "^2.4.4",
     "isbot": "^4.1.0",
+    "lodash": "^4.17.21",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^5.2.1",
     "remix-utils": "^7.6.0",
-    "tldraw": "^2.4.4"
+    "tldraw": "^2.4.4",
+    "webcola": "^3.4.0"
   },
   "devDependencies": {
     "@remix-run/dev": "^2.11.1",
