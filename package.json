@@ -11,7 +11,7 @@
     "typecheck": "tsc"
   },
   "prisma": {
-    "seed": "ts-node prisma/seed.ts"
+    "seed": "node prisma/seed.js"
   },
   "dependencies": {
     "@babylonjs/core": "^7.19.1",
@@ -30,6 +30,7 @@
     "@tiptap/react": "^2.5.9",
     "@tiptap/starter-kit": "^2.5.9",
     "@tldraw/tldraw": "^2.4.4",
+    "framer-motion": "^11.3.24",
     "isbot": "^4.1.0",
     "lodash": "^4.17.21",
     "react": "^18.2.0",

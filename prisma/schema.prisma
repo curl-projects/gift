@@ -9,24 +9,39 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "cockroachdb"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id       String    @id @default(uuid())
-  email    String    @unique
+  uniqueName String @id
+  email    String?    @unique
   name     String?
+  
   concepts Concept[]
 }
 
 model Concept {
   id          String    @id @default(uuid())
-  name        String
+  title        String
   description String?
-  user        User      @relation(fields: [userId], references: [id])
+  user        User      @relation(fields: [userId], references: [uniqueName])
   userId      String
   excerpts    Excerpt[]
+
+  linkedStart ConceptLink[] @relation("linkedStart")
+  linkedEnd ConceptLink[] @relation("linkedEnd")
+}
+
+model ConceptLink {
+  linkedStart   Concept @relation("linkedStart", fields: [linkedStartId], references: [id])
+  linkedStartId String
+  linkedEnd     Concept @relation("linkedEnd", fields: [linkedEndId], references: [id])
+  linkedEndId   String
+
+  strength Float @default(1)
+
+  @@id([linkedStartId, linkedEndId])
 }
 
 model Excerpt {

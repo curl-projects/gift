@@ -4,6 +4,7 @@ import { BaseCollection } from './BaseCollection';
 
 interface CollectionContextValue {
   get: (id: string) => BaseCollection | undefined;
+  upsert: (id: string, shape: TLShape) => void;
 }
 
 type Collection = (new (editor: Editor) => BaseCollection)
@@ -18,10 +19,6 @@ const CollectionContext = createContext<CollectionContextValue | undefined>(unde
 
 const CollectionProvider: React.FC<CollectionProviderProps> = ({ editor, collections: collectionClasses, children }) => {
   const [collections, setCollections] = useState<Map<string, BaseCollection> | null>(null);
-
-  useEffect(()=>{
-    console.log("COLLECTIONS:", collections)
-  }, [collections])
 
   // Handle shape property changes
   const handleShapeChange = (prev: TLShape, next: TLShape) => {
@@ -43,7 +40,6 @@ const CollectionProvider: React.FC<CollectionProviderProps> = ({ editor, collect
 
   useEffect(() => {
     if (editor) {
-      console.log("INITIALIZING COLLECTIONS!", collectionClasses)
       const initializedCollections = new Map<string, BaseCollection>();
       for (const ColClass of collectionClasses) {
         const instance = new ColClass(editor);
@@ -75,10 +71,32 @@ const CollectionProvider: React.FC<CollectionProviderProps> = ({ editor, collect
     }
   }, [editor, collections]);
 
+  const startSimulation = (id: string) => {
+    const collection = collections?.get(id);
+    if (collection && collection instanceof GraphLayoutCollection) {
+      collection.startSimulation();
+    }
+  };
 
+  const stopSimulation = (id: string) => {
+    const collection = collections?.get(id);
+    if (collection && collection instanceof GraphLayoutCollection) {
+      collection.stopSimulation();
+    }
+  };
+
+  const upsert = (id: string, shape: TLShape) => {
+    const collection = collections?.get(id);
+    if (collection && collection instanceof GraphLayoutCollection) {
+      collection.upsert(shape);
+    }
+  };
 
   const value = useMemo(() => ({
     get: (id: string) => collections?.get(id),
+    startSimulation,
+    stopSimulation,
+    upsert,
   }), [collections]);
 
   return (

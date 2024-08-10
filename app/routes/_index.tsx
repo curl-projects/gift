@@ -11,7 +11,7 @@ export const meta: MetaFunction = () => {
 
 export let loader = async () => {
   // Redirect to the new route
-  return redirect("/world-models/andre");
+  return redirect("/world-models/andre-vacha");
 };
 
 export default function Index() {

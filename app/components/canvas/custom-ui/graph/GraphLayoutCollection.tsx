@@ -46,6 +46,23 @@ export class GraphLayoutCollection extends BaseCollection {
     simLoop();
   }
 
+  startSimulation() {
+    if (this.animFrame === -1) {
+      const simLoop = () => {
+        this.step();
+        this.animFrame = requestAnimationFrame(simLoop);
+      };
+      simLoop();
+    }
+  }
+
+  stopSimulation() {
+    if (this.animFrame !== -1) {
+      cancelAnimationFrame(this.animFrame);
+      this.animFrame = -1;
+    }
+  }
+
   override onAdd(shapes: TLShape[]) {
     for (const shape of shapes) {
       if (shape.type !== "arrow") {
@@ -125,9 +142,6 @@ export class GraphLayoutCollection extends BaseCollection {
   };
 
   addArrow = (arrow: TLArrowShape) => {
-
-    console.log("ARROW:", arrow)
-    console.log("ARROW BINDINGs:", this.editor.getBindingsFromShape(arrow, 'arrow'))
   
       const sourceBinding = this.editor.getBindingsFromShape(arrow, 'arrow')?.find(binding => (binding.props as TLArrowBindingProps).terminal === 'start');
       const targetBinding = this.editor.getBindingsFromShape(arrow, 'arrow')?.find(binding => (binding.props as TLArrowBindingProps).terminal === 'end');
@@ -135,8 +149,6 @@ export class GraphLayoutCollection extends BaseCollection {
       const source = sourceBinding ? this.editor.getShape(sourceBinding.toId) : undefined;
       const target = targetBinding ? this.editor.getShape(targetBinding.toId) : undefined;
     
-    console.log("SOURCE:", source)
-    console.log("TARGET:", target)
     if (source && target) {
       const link: ColaIdLink = {
         source: source.id,
@@ -159,6 +171,13 @@ export class GraphLayoutCollection extends BaseCollection {
       color: (shape.props as any).color
     };
     this.colaNodes.set(shape.id, node);
+  }
+
+  upsert(shape: TLShape) {
+    if (!this.colaNodes.has(shape.id)) {
+      this.addGeo(shape);
+      this.refreshGraph();
+    }
   }
 
   refreshGraph() {

@@ -21,6 +21,13 @@ export const GraphUi = () => {
 		}
 	}
 
+	const handleUpsert = () => {
+		if (collection) {
+			editor.getSelectedShapes().forEach(shape => collection.upsert(shape));
+			editor.selectNone();
+		}
+	};
+
 	const handleShortcut = () => {
 		if (!collection) return;
 		const empty = collection.getShapes().size === 0;
@@ -38,6 +45,18 @@ export const GraphUi = () => {
 
 	const handleHelp = () => {
 		alert("Use the 'Add' and 'Remove' buttons to add/remove selected shapes, or hit 'G' to add/remove all shapes. \n\nUse the highlight button (🔦) to visualize shapes in the simulation. \n\nBLUE shapes are constrained horizontally, RED shapes are constrained vertically. This is just to demo basic constraints, I plan to demo more interesting constraints in the future. \n\nFor more details, check the project's README.");
+	}
+
+    const handleStartSimulation = () => {
+		if (collection) {
+			collection.startSimulation();
+		}
+	}
+
+	const handleStopSimulation = () => {
+		if (collection) {
+			collection.stopSimulation();
+		}
 	}
 
 	useEffect(() => {
@@ -70,6 +89,14 @@ export const GraphUi = () => {
 				</button>
 				<button
 					type="button"
+					title="Upsert Selected"
+					className={styles.customButton}
+					onClick={handleUpsert}
+				>
+					Upsert
+				</button>
+				<button
+					type="button"
 					title="Highlight Collection"
 					className={styles.customButton}
 					onClick={handleHighlight}
@@ -83,6 +110,22 @@ export const GraphUi = () => {
 					onClick={handleHelp}
 				>
 					⁉️
+				</button>
+                <button
+					type="button"
+					title="Start Simulation"
+					className={styles.customButton}
+					onClick={handleStartSimulation}
+				>
+					Start
+				</button>
+				<button
+					type="button"
+					title="Stop Simulation"
+					className={styles.customButton}
+					onClick={handleStopSimulation}
+				>
+					Stop
 				</button>
 			</div>
 		</div>

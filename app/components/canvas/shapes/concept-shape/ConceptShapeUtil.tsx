@@ -6,7 +6,9 @@ import {
 	HTMLContainer,
 	stopEventPropagation,
 } from '@tldraw/editor'
+
 import { T, createShapeId } from 'tldraw';
+import { useLoaderData } from '@remix-run/react';
 import { useCallback, useState, useEffect, useRef, useLayoutEffect } from 'react'
 import { EditorContent, useEditor } from '@tiptap/react';
 import { Paragraph } from '@tiptap/extension-paragraph';
@@ -14,6 +16,8 @@ import { Text } from '@tiptap/extension-text';
 import { Node } from "@tiptap/core";
 import Placeholder from '@tiptap/extension-placeholder'
 import styles from './ConceptShapeUtil.module.css';
+import { motion, useAnimate } from 'framer-motion';
+import { generateExcerpts, tearDownExcerpts } from "~/components/canvas/helpers/arrow-funcs"
 
 const conceptShapeProps = {
 	w: T.number,
@@ -24,6 +28,8 @@ const conceptShapeProps = {
 	description: T.any,
 	temporary: T.boolean,
 	// colors: T.array,
+    excerpts: T.any,
+    databaseId: T.string,
 }
 
 type ConceptShape = TLBaseShape<
@@ -37,6 +43,8 @@ type ConceptShape = TLBaseShape<
 		temporary: boolean,
 		// colors: any,
 		description: any,
+        excerpts: any,
+        databaseId: string,
 	}
 >
 
@@ -66,8 +74,8 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
 			temporary: false,
 			// colors: [conceptColors[Math.floor(Math.random() * conceptColors.length)]],
 			description: "No description",
+            excerpts: []
 		}
-	
 	}
 
 	getGeometry(shape: ConceptShape): Geometry2d {
@@ -79,8 +87,39 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
 	}
 
 	component(shape: ConceptShape) {
+        const [scope, animate] = useAnimate();
 		const bounds = this.editor.getShapeGeometry(shape).bounds
-		const isSelected = shape.id === this.editor.getOnlySelectedShapeId();
+		const isOnlySelected = shape.id === this.editor.getOnlySelectedShapeId();
+        const data = useLoaderData();
+
+        useEffect(()=>{
+            if(isOnlySelected){
+                this.editor.zoomToBounds(this.editor.getShapePageBounds(shape), {
+                    animation: {
+                        duration: 400
+                    },
+                    targetZoom: 1,
+                })
+            
+                // trigger ripple animation
+                animate(".conceptCircle", { scale: 0.9 }, { duration: 0.2, ease: 'easeInOut' })
+                .then(() => {
+                    return animate(".conceptCircle", { scale: 1.1}, { duration: 0.2, ease: 'easeInOut'})
+                })
+                .then(() => {
+                    animate(".conceptCircle", { scale: 1}, { duration: 0.2, ease: 'easeInOut'})
+                    animate(`.ripple`, { scale: [0, 8], opacity: [1, 0], x: "-50%", y: "-50%" }, { duration: 1.5, ease: "easeOut", delay: 0 });  
+                })
+
+                
+                data.user.concepts ? generateExcerpts(this.editor, data.user.concepts.find(concept => shape.props.databaseId === concept.id)) : console.warn("No concepts found", data)
+            }
+            else{
+                // tear down excerpts
+                data.user.concepts ? tearDownExcerpts(this.editor, data.user.concepts.find(concept => shape.props.databaseId === concept.id)) : console.warn("No concepts found")
+            }
+        }, [isOnlySelected])
+
 		const shapeRef = useRef<HTMLDivElement>(null);
 		const horizontalBuffer = 6
 		const verticalBuffer = 2
@@ -133,12 +172,37 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
 	
 		const [isHovered, setIsHovered] = useState(false)
 
+        const outerRingVariants = {
+            hidden: {
+                scale: 0
+            },
+            visible: (delay = 0) => ({
+                scale: 1,
+                transition: { duration: 0.5, ease: "easeOut", delay }
+            })
+        }
+
+        const ringVariants = {
+            hidden: { scale: 0, x: "-50%", y: "-50%" },
+            visible: (delay = 0) => ({
+                scale: 1,
+                x: "-50%", 
+                y: "-50%",
+                transition: { duration: 0.5, ease: "easeOut", delay }
+            })
+        };
+
+        const randomDelay = Math.random() * 0.5;
+
 		return (
 			<HTMLContainer 
 				id={shape.id}
 				className={styles.container}
 				onMouseEnter={() => setIsHovered(true)}
 				onMouseLeave={() => setIsHovered(false)}
+                onPointerDown={()=>{
+                    console.log('')
+                }}
 				>
 					
 				{
@@ -149,14 +213,55 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
 				)}
 
 				<div className={styles.shapeContent} ref={shapeRef}>
-					<div className={styles.circle} />
+                <div className={styles.circleContainer} ref={scope}>
+                <motion.div
+                        className={`${styles.outerRing} conceptCircle`}
+                        initial="hidden"
+                        animate="visible"
+                        custom={randomDelay + 1.0} // Delay for outer ring
+                        variants={ringVariants}
+                    />
+                    <motion.div
+                        className={`${styles.innerRing} conceptCircle`}
+                        initial="hidden"
+                        animate="visible"
+                        custom={randomDelay + 0.75} // Delay for inner ring
+                        variants={ringVariants}
+                    />
+                    <motion.div
+                        className={`${styles.glow} conceptCircle`}
+                        initial="hidden"
+                        animate="visible"
+                        custom={randomDelay + 0.5} // Delay for glow
+                        variants={ringVariants}
+                    />
+                    <motion.div
+                        className={`${styles.innerGlow} conceptCircle`}
+                        initial="hidden"
+                        animate="visible"
+                        custom={randomDelay + 0.25} // Delay for inner glow
+                        variants={ringVariants}
+                    />
+                    <motion.div
+                        className={`${styles.circle} conceptCircle`}
+                        initial="hidden"
+                        animate="visible"
+                        custom={randomDelay} // No delay for circle
+                        variants={ringVariants}
+                    />
+
+
+                    <motion.div
+                    initial="hidden"
+                    className={`${styles.ripple} ripple`}
+                    variants={ringVariants}
+                    transition={{ delay: 0 }}
+                />
+				</div>
 					<EditorContent 
 						editor={editor}
 						onKeyDown={stopEventPropagation}
 						className={styles.editorContent}
-                        style={{
-                            border: '2px solid black'
-                        }}
 					/>
 				</div>
 			</HTMLContainer>
