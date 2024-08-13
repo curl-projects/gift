@@ -126,7 +126,7 @@ export class ThreadShapeUtil extends ShapeUtil<TLThreadShape> {
 			start: { x: 0, y: 0 },
 			end: { x: 2, y: 0 },
 			threadheadStart: 'none',
-			threadheadEnd: 'thread',
+			threadheadEnd: 'none',
 			text: '',
 			labelPosition: 0.5,
 			font: 'draw',
@@ -613,10 +613,8 @@ export class ThreadShapeUtil extends ShapeUtil<TLThreadShape> {
 		const info = getThreadInfo(this.editor, shape)
 		if (!info?.isValid) return null
 
-		// const labelPosition = getThreadLabelPosition(this.editor, shape)
 		const isSelected = shape.id === this.editor.getOnlySelectedShapeId()
 		const isEditing = this.editor.getEditingShapeId() === shape.id
-		// const showThreadLabel = isEditing || shape.props.text
 
 		return (
 			<>
@@ -626,26 +624,6 @@ export class ThreadShapeUtil extends ShapeUtil<TLThreadShape> {
 						shouldDisplayHandles={shouldDisplayHandles && onlySelectedShape?.id === shape.id}
 					/>
 				</SVGContainer>
-				{/* {showThreadLabel && (
-					<TextLabel
-						id={shape.id}
-						classNamePrefix="tl-thread"
-						type="thread"
-						font={shape.props.font}
-						fontSize={getThreadLabelFontSize(shape)}
-						lineHeight={TEXT_PROPS.lineHeight}
-						align="middle"
-						verticalAlign="middle"
-						text={shape.props.text}
-						threadColor={theme[shape.props.threadColor].solid}
-						textWidth={labelPosition.box.w}
-						isSelected={isSelected}
-						padding={0}
-						style={{
-							transform: `translate(${labelPosition.box.center.x}px, ${labelPosition.box.center.y}px)`,
-						}}
-					/>
-				)} */}
 			</>
 		)
 	}
@@ -878,7 +856,7 @@ const ThreadSvg = track(function ThreadSvg({
 
 	if (!info?.isValid) return null
 
-	const strokeWidth = STROKE_SIZES[shape.props.size] * shape.props.scale
+	const strokeWidth = 2 // Set stroke width to 2
 
 	const as = info.start.threadhead && getThreadheadPathForType(info, 'start', strokeWidth)
 	const ae = info.end.threadhead && getThreadheadPathForType(info, 'end', strokeWidth)
@@ -939,18 +917,10 @@ const ThreadSvg = track(function ThreadSvg({
 		}
 	)
 
-	// const labelPosition = getThreadLabelPosition(editor, shape)
-
-	const maskStartThreadhead = !(info.start.threadhead === 'none' || info.start.threadhead === 'thread')
-	const maskEndThreadhead = !(info.end.threadhead === 'none' || info.end.threadhead === 'thread')
-
-	// NOTE: I know right setting `changeIndex` hacky-as right! But we need this because otherwise safari loses
-	// the mask, see <https://linear.app/tldraw/issue/TLD-1500/changing-thread-color-makes-line-pass-through-text>
 	const maskId = (shape.id + '_clip_' + changeIndex).replace(':', '_')
 
 	return (
 		<>
-			{/* Yep */}
 			<defs>
 				<mask id={maskId}>
 					<rect
@@ -960,35 +930,30 @@ const ThreadSvg = track(function ThreadSvg({
 						height={toDomPrecision(bounds.height + 200)}
 						fill="white"
 					/>
-					{/* {shape.props.text.trim() && (
-						<rect
-							x={labelPosition.box.x}
-							y={labelPosition.box.y}
-							width={labelPosition.box.w}
-							height={labelPosition.box.h}
-							fill="black"
-							rx={4}
-							ry={4}
-						/>
-					)} */}
-					{as && maskStartThreadhead && (
+					{as && (
 						<path d={as} fill={info.start.threadhead === 'thread' ? 'none' : 'black'} stroke="none" />
 					)}
-					{ae && maskEndThreadhead && (
+					{ae && (
 						<path d={ae} fill={info.end.threadhead === 'thread' ? 'none' : 'black'} stroke="none" />
 					)}
 				</mask>
+				<filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+					<feGaussianBlur stdDeviation="3.5" result="coloredBlur"/>
+					<feMerge>
+						<feMergeNode in="coloredBlur"/>
+						<feMergeNode in="SourceGraphic"/>
+					</feMerge>
+				</filter>
 			</defs>
 			<g
 				fill="none"
-				stroke={theme[shape.props.color].solid}
+				stroke="white" // Set stroke color to white
 				strokeWidth={strokeWidth}
 				strokeLinejoin="round"
 				strokeLinecap="round"
 				pointerEvents="none"
 			>
 				{handlePath}
-				{/* firefox will clip if you provide a maskURL even if there is no mask matching that URL in the DOM */}
 				<g mask={`url(#${maskId})`}>
 					<rect
 						x={toDomPrecision(bounds.minX - 100)}
@@ -997,9 +962,9 @@ const ThreadSvg = track(function ThreadSvg({
 						height={toDomPrecision(bounds.height + 200)}
 						opacity={0}
 					/>
-					<path d={path} strokeDasharray={strokeDasharray} strokeDashoffset={strokeDashoffset} />
+					<path d={path} strokeDasharray={strokeDasharray} strokeDashoffset={strokeDashoffset} filter="url(#glow)" />
 				</g>
-				{as && maskStartThreadhead && shape.props.fill !== 'none' && (
+				{as && shape.props.fill !== 'none' && (
 					<ShapeFill
 						theme={theme}
 						d={as}
@@ -1008,7 +973,7 @@ const ThreadSvg = track(function ThreadSvg({
 						scale={shape.props.scale}
 					/>
 				)}
-				{ae && maskEndThreadhead && shape.props.fill !== 'none' && (
+				{ae && shape.props.fill !== 'none' && (
 					<ShapeFill
 						theme={theme}
 						d={ae}

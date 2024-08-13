@@ -100,6 +100,8 @@ export class Pointing extends StateNode {
 			y: originPagePoint.y,
 			props: {
 				scale: this.editor.user.getIsDynamicResizeMode() ? 1 / this.editor.getZoomLevel() : 1,
+				threadheadStart: 'none',
+				threadheadEnd: 'none',
 			},
 		})
 
