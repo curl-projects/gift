@@ -10,13 +10,17 @@ import CustomToolbar from "~/components/canvas/custom-ui/custom-toolbar/CustomTo
 import { CollectionProvider } from "~/components/canvas/custom-ui/collections";
 import { GraphLayoutCollection } from "~/components/canvas/custom-ui/graph/GraphLayoutCollection";
 import { GraphUi } from "~/components/canvas/custom-ui/graph/GraphUi";
-
+import { GraphTrigger } from "~/components/canvas/custom-ui/graph/GraphTrigger";
 // CUSTOM SHAPES
 import { ConceptShapeUtil } from "~/components/canvas/shapes/concept-shape/ConceptShapeUtil"
 import { ConceptShapeTool } from "~/components/canvas/shapes/concept-shape/ConceptShapeTool"
 
 import { ExcerptShapeUtil } from "~/components/canvas/shapes/excerpt-shape/ExcerptShapeUtil"
 import { ExcerptShapeTool } from "~/components/canvas/shapes/excerpt-shape/ExcerptShapeTool"
+
+import { ThreadShapeUtil } from "~/components/canvas/shapes/thread-shape/ThreadShapeUtil"
+import { ThreadShapeTool } from "~/components/canvas/shapes/thread-shape/ThreadShapeTool"
+import { ThreadBindingUtil} from "~/components/canvas/bindings/thread-binding/ThreadBindingUtil"
 
 // HELPERS
 import { createBoundArrow } from './helpers/arrow-funcs';
@@ -31,9 +35,9 @@ export default function WorldCanvas() {
         console.log("EDITOR:", editor)
     }, [editor])
 
-    const shapeUtils = [ConceptShapeUtil, ExcerptShapeUtil]
-    const tools = [ConceptShapeTool, ExcerptShapeTool]
-    const bindingUtils = []
+    const shapeUtils = [ConceptShapeUtil, ExcerptShapeUtil, ThreadShapeUtil]
+    const tools = [ConceptShapeTool, ExcerptShapeTool, ThreadShapeTool]
+    const bindingUtils = [ThreadBindingUtil]
     const collections = [GraphLayoutCollection]
     const components = {
         Toolbar: null,
@@ -183,6 +187,7 @@ export default function WorldCanvas() {
                 <CollectionProvider editor={editor} collections={collections}>
                     <GraphUi />
                     <CustomToolbar />
+                    <GraphTrigger />
                 </CollectionProvider>
             )}
 

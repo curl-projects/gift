@@ -30,9 +30,9 @@ const CustomToolbar = track(() => {
 					<BiSolidEraser />
 				</ToolbarButton>
 				<ToolbarButton 
-					handleClick={() => editor.setCurrentTool('worldModel')} 
-					name='world model (W)'
-					active={editor.getCurrentToolId() === 'worldModel'}>
+					handleClick={() => editor.setCurrentTool('thread')} 
+					name='thread (T)'
+					active={editor.getCurrentToolId() === 'thread'}>
 					<TbGlobe />
 				</ToolbarButton>
 				<ToolbarButton 

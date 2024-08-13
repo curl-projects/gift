@@ -3,12 +3,12 @@ import { Idle } from './toolStates/Idle'
 import { Pointing } from './toolStates/Pointing'
 
 /** @public */
-export class ArrowShapeTool extends StateNode {
-	static override id = 'arrow'
+export class ThreadShapeTool extends StateNode {
+	static override id = 'thread'
 	static override initial = 'idle'
 	static override children(): TLStateNodeConstructor[] {
 		return [Idle, Pointing]
 	}
 
-	override shapeType = 'arrow'
+	override shapeType = 'thread'
 }

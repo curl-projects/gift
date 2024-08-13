@@ -25,6 +25,33 @@ async function main() {
                     },
                   },
                 },
+                {
+                  content: 'Excerpt 1 for Concept 1',
+                  media: {
+                    create: {
+                      type: 'image',
+                      url: 'https://example.com/image1.jpg',
+                    },
+                  },
+                },
+                {
+                  content: 'Excerpt 1 for Concept 1',
+                  media: {
+                    create: {
+                      type: 'image',
+                      url: 'https://example.com/image1.jpg',
+                    },
+                  },
+                },
+                {
+                  content: 'Excerpt 1 for Concept 1',
+                  media: {
+                    create: {
+                      type: 'image',
+                      url: 'https://example.com/image1.jpg',
+                    },
+                  },
+                },
               ],
             },
           },

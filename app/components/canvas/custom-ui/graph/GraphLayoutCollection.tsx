@@ -182,7 +182,7 @@ export class GraphLayoutCollection extends BaseCollection {
 
   refreshGraph() {
     // TODO: remove this hardcoded behaviour
-    this.editor.selectNone()
+    // this.editor.selectNone()
     this.refreshConstraints();
     const nodes = [...this.colaNodes.values()];
     const nodeIdToIndex = new Map(nodes.map((n, i) => [n.id, i]));

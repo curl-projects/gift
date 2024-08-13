@@ -18,6 +18,7 @@ import Placeholder from '@tiptap/extension-placeholder'
 import styles from './ConceptShapeUtil.module.css';
 import { motion, useAnimate } from 'framer-motion';
 import { generateExcerpts, tearDownExcerpts } from "~/components/canvas/helpers/arrow-funcs"
+import { applyProgressiveBlur, removeProgressiveBlur } from '~/components/canvas/helpers/distribution-funcs';
 
 const conceptShapeProps = {
 	w: T.number,
@@ -30,6 +31,7 @@ const conceptShapeProps = {
 	// colors: T.array,
     excerpts: T.any,
     databaseId: T.string,
+    excerptsOpen: T.boolean,
 }
 
 type ConceptShape = TLBaseShape<
@@ -45,6 +47,7 @@ type ConceptShape = TLBaseShape<
 		description: any,
         excerpts: any,
         databaseId: string,
+        excerptsOpen: boolean,
 	}
 >
 
@@ -74,7 +77,8 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
 			temporary: false,
 			// colors: [conceptColors[Math.floor(Math.random() * conceptColors.length)]],
 			description: "No description",
-            excerpts: []
+            excerpts: [],
+            excerptsOpen: false,
 		}
 	}
 
@@ -89,75 +93,46 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
 	component(shape: ConceptShape) {
         const [scope, animate] = useAnimate();
 		const bounds = this.editor.getShapeGeometry(shape).bounds
-		const isOnlySelected = shape.id === this.editor.getOnlySelectedShapeId();
-        const data = useLoaderData();
-
-        useEffect(()=>{
-            if(isOnlySelected){
-                this.editor.zoomToBounds(this.editor.getShapePageBounds(shape), {
-                    animation: {
-                        duration: 400
-                    },
-                    targetZoom: 1,
-                })
-            
-                // trigger ripple animation
-                animate(".conceptCircle", { scale: 0.9 }, { duration: 0.2, ease: 'easeInOut' })
-                .then(() => {
-                    return animate(".conceptCircle", { scale: 1.1}, { duration: 0.2, ease: 'easeInOut'})
-                })
-                .then(() => {
-                    animate(".conceptCircle", { scale: 1}, { duration: 0.2, ease: 'easeInOut'})
-                    animate(`.ripple`, { scale: [0, 8], opacity: [1, 0], x: "-50%", y: "-50%" }, { duration: 1.5, ease: "easeOut", delay: 0 });  
-                })
-
-                
-                data.user.concepts ? generateExcerpts(this.editor, data.user.concepts.find(concept => shape.props.databaseId === concept.id)) : console.warn("No concepts found", data)
-            }
-            else{
-                // tear down excerpts
-                data.user.concepts ? tearDownExcerpts(this.editor, data.user.concepts.find(concept => shape.props.databaseId === concept.id)) : console.warn("No concepts found")
-            }
-        }, [isOnlySelected])
+		const data: any = useLoaderData();
 
 		const shapeRef = useRef<HTMLDivElement>(null);
 		const horizontalBuffer = 6
 		const verticalBuffer = 2
 
-		const editor = useEditor({
-			extensions: [
-			  OneLiner,
-			  Text,
-              Paragraph,
-			  Placeholder.configure({
-				placeholder: "Unknown Concept"
-			  })
-			],
-			content: shape.props.text,
+		// const editor = useEditor({
+		// 	extensions: [
+		// 	  OneLiner,
+		// 	  Text,
+        //       Paragraph,
+		// 	  Placeholder.configure({
+		// 		placeholder: "Unknown Concept"
+		// 	  })
+		// 	],
+		// 	content: shape.props.text,
 		
 
-			onUpdate: ({ editor }) => {
-				stopEventPropagation;
+		// 	onUpdate: ({ editor }) => {
+		// 		stopEventPropagation;
 
-				shapeRef.current && this.editor.updateShape<ConceptShape>({
-					id: shape.id,
-					type: 'concept',
-					props: {
-						text: editor.getJSON(),
-						plainText: editor.getText(),
-						w: shapeRef.current?.clientWidth+horizontalBuffer,
-						h: shapeRef.current?.clientHeight+verticalBuffer,
-					}
-				})
-			},
+		// 		shapeRef.current && this.editor.updateShape<ConceptShape>({
+		// 			id: shape.id,
+		// 			type: 'concept',
+		// 			props: {
+		// 				text: editor.getJSON(),
+		// 				plainText: editor.getText(),
+		// 				w: shapeRef.current?.clientWidth+horizontalBuffer,
+		// 				h: shapeRef.current?.clientHeight+verticalBuffer,
+		// 			}
+		// 		})
+		// 	},
 
-			onSelectionUpdate: ({ editor }) => {
-			}
-		  });
+		// 	onSelectionUpdate: ({ editor }) => {
+		// 	}
+		//   });
 
 
 		useEffect(()=>{
-			if(editor && this.editor && shapeRef.current){
+			if(shapeRef.current){
 				this.editor.updateShape<ConceptShape>({
 					id: shape.id,
 					type: 'concept',
@@ -167,21 +142,12 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
 					}
 				})
 			}
-		  }, [this.editor, editor, shapeRef.current])
+		  }, [shapeRef.current])
 
 	
 		const [isHovered, setIsHovered] = useState(false)
 
-        const outerRingVariants = {
-            hidden: {
-                scale: 0
-            },
-            visible: (delay = 0) => ({
-                scale: 1,
-                transition: { duration: 0.5, ease: "easeOut", delay }
-            })
-        }
-
+        const randomDelay = Math.random() * 0.5;    
         const ringVariants = {
             hidden: { scale: 0, x: "-50%", y: "-50%" },
             visible: (delay = 0) => ({
@@ -192,17 +158,57 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
             })
         };
 
-        const randomDelay = Math.random() * 0.5;
+        
+
+        const selectedShapeIds = this.editor.getSelectedShapeIds()
+        
+        useEffect(()=>{
+            console.log("SELECTED SHAPE IDS:", selectedShapeIds)
+            if([shape.id, ...data.user.concepts.find(concept => shape.props.databaseId === concept.id).excerpts.map(excerpt => createShapeId(excerpt.id))].some(shapeId => selectedShapeIds.includes(shapeId))){
+                this.editor.zoomToBounds(this.editor.getShapePageBounds(shape), {
+                    animation: {
+                        duration: 400
+                    },
+                    targetZoom: 1,
+                });
+    
+                // trigger ripple animation
+                animate(".conceptCircle", { scale: 0.9 }, { duration: 0.2, ease: 'easeInOut' })
+                    .then(() => {
+                        return animate(".conceptCircle", { scale: 1.1}, { duration: 0.2, ease: 'easeInOut'})
+                    })
+                    .then(() => {
+                        animate(".conceptCircle", { scale: 1}, { duration: 0.2, ease: 'easeInOut'})
+                        animate(`.ripple`, { scale: [0, 8], opacity: [1, 0], x: "-50%", y: "-50%" }, { duration: 1.5, ease: "easeOut", delay: 0 });  
+                    })
+    
+                if(data.user.concepts){
+                    console.log("Generating Excerpts")
+                    generateExcerpts(this.editor, data.user.concepts.find(concept => shape.props.databaseId === concept.id))
+                    applyProgressiveBlur(this.editor, shape, data.user.concepts.find(concept => shape.props.databaseId === concept.id).excerpts.map(excerpt => createShapeId(excerpt.id)))
+                }
+                else{
+                    console.warn("No concepts found", data)
+                }
+            }
+            else{
+                if(data.user.concepts){
+                    console.log("Tearing Down Excerpts")
+                    tearDownExcerpts(this.editor, data.user.concepts.find(concept => shape.props.databaseId === concept.id))
+                    removeProgressiveBlur(this.editor, shape, data.user.concepts.find(concept => shape.props.databaseId === concept.id).excerpts.map(excerpt => createShapeId(excerpt.id)));
+                }
+                else{
+                    console.warn("No concepts found", data)
+                }
+            }
+        }, [selectedShapeIds])
 
 		return (
 			<HTMLContainer 
 				id={shape.id}
 				className={styles.container}
-				onMouseEnter={() => setIsHovered(true)}
-				onMouseLeave={() => setIsHovered(false)}
-                onPointerDown={()=>{
-                    console.log('')
-                }}
+				// onMouseEnter={() => setIsHovered(true)}
+				// onMouseLeave={() => setIsHovered(false)}
 				>
 					
 				{
@@ -258,16 +264,16 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
                     transition={{ delay: 0 }}
                 />
 				</div>
-					<EditorContent 
+                    <p className={styles.editorContent}>{shape.props.plainText}</p>
+					{/* <EditorContent 
 						editor={editor}
-						onKeyDown={stopEventPropagation}
+						// onKeyDown={stopEventPropagation}
 						className={styles.editorContent}
-					/>
+					/> */}
 				</div>
 			</HTMLContainer>
 		)
 	}
-
 
 	indicator(shape: ConceptShape) {
 		return <rect width={shape.props.w} height={shape.props.h} />

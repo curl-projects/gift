@@ -81,91 +81,77 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 	}
 
 	component(shape: ExcerptShape) {
-        const [scope, animate] = useAnimate();
-		const bounds = this.editor.getShapeGeometry(shape).bounds
-		const isOnlySelected = shape.id === this.editor.getOnlySelectedShapeId();
+        // useEffect(()=>{
+        //     if(isOnlySelected){
+        //         this.editor.zoomToBounds(this.editor.getShapePageBounds(shape), {
+        //             animation: {
+        //                 duration: 200
+        //             },
+        //             targetZoom: 1,
+        //         })
+        //     }
+		// 	else{
+		// 	}
+        // }, [isOnlySelected])
 
-        useEffect(()=>{
-            if(isOnlySelected){
-                this.editor.zoomToBounds(this.editor.getShapePageBounds(shape), {
-                    animation: {
-                        duration: 200
-                    },
-                    targetZoom: 1,
-                })
-            }
-			else{
-			}
-        }, [isOnlySelected])
+		// const shapeRef = useRef<HTMLDivElement>(null);
+		// const horizontalBuffer = 6
+		// const verticalBuffer = 2
 
-		const shapeRef = useRef<HTMLDivElement>(null);
-		const horizontalBuffer = 6
-		const verticalBuffer = 2
-
-		const editor = useEditor({
-			extensions: [
-			  OneLiner,
-			  Text,
-              Paragraph,
-			  Placeholder.configure({
-				placeholder: "Unknown Excerpt"
-			  })
-			],
-			content: shape.props.text,
+		// const editor = useEditor({
+		// 	extensions: [
+		// 	  OneLiner,
+		// 	  Text,
+        //       Paragraph,
+		// 	  Placeholder.configure({
+		// 		placeholder: "Unknown Excerpt"
+		// 	  })
+		// 	],
+		// 	content: shape.props.text,
 		
 
-			onUpdate: ({ editor }) => {
-				stopEventPropagation;
+		// 	onUpdate: ({ editor }) => {
+		// 		stopEventPropagation;
 
-				shapeRef.current && this.editor.updateShape<ExcerptShape>({
-					id: shape.id,
-					type: 'excerpt',
-					props: {
-						text: editor.getJSON(),
-						plainText: editor.getText(),
-						w: shapeRef.current?.clientWidth+horizontalBuffer,
-						h: shapeRef.current?.clientHeight+verticalBuffer,
-					}
-				})
-			},
+		// 		shapeRef.current && this.editor.updateShape<ExcerptShape>({
+		// 			id: shape.id,
+		// 			type: 'excerpt',
+		// 			props: {
+		// 				text: editor.getJSON(),
+		// 				plainText: editor.getText(),
+		// 				w: shapeRef.current?.clientWidth+horizontalBuffer,
+		// 				h: shapeRef.current?.clientHeight+verticalBuffer,
+		// 			}
+		// 		})
+		// 	},
 
-			onSelectionUpdate: ({ editor }) => {
-			}
-		  });
+		// 	onSelectionUpdate: ({ editor }) => {
+		// 	}
+		//   });
 
 
-		useEffect(()=>{
-			if(editor && this.editor && shapeRef.current){
-				this.editor.updateShape<ExcerptShape>({
-					id: shape.id,
-					type: 'excerpt',
-					props: {
-						w: shapeRef.current?.clientWidth+horizontalBuffer,
-                        h: shapeRef.current?.clientHeight+verticalBuffer,
-					}
-				})
-			}
-		  }, [this.editor, editor, shapeRef.current])
-
-	
-		const [isHovered, setIsHovered] = useState(false)
+		// useEffect(()=>{
+		// 	if(editor && this.editor && shapeRef.current){
+		// 		this.editor.updateShape<ExcerptShape>({
+		// 			id: shape.id,
+		// 			type: 'excerpt',
+		// 			props: {
+		// 				w: shapeRef.current?.clientWidth+horizontalBuffer,
+        //                 h: shapeRef.current?.clientHeight+verticalBuffer,
+		// 			}
+		// 		})
+		// 	}
+		//   }, [this.editor, editor, shapeRef.current])
 
 		return (
 			<HTMLContainer 
 				id={shape.id}
 				className={styles.container}
-				onMouseEnter={() => setIsHovered(true)}
-				onMouseLeave={() => setIsHovered(false)}
-                onPointerDown={()=>{
-                    console.log('')
-                }}
 				>
-				<div className={styles.shapeContent} ref={shapeRef}>
-					<EditorContent 
-						editor={editor}
-						onKeyDown={stopEventPropagation}
-						className={styles.editorContent}
-					/>
+				<div className={styles.shapeContent}>
+					<div className={styles.editorContent}>
+						<p>{shape.props.plainText}</p>
+					</div>
 				</div>
 			</HTMLContainer>
 		)

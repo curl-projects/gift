@@ -9,23 +9,21 @@ import {
 	SVGContainer,
 	ShapeUtil,
 	SvgExportContext,
-	TLArrowBinding,
-	TLArrowShape,
-	TLArrowShapeProps,
+	// TLThreadBinding,
+	// TLThreadShape,
+	// TLThreadShapeProps,
+    TLShape,
 	TLHandle,
-	TLHandleDragInfo,
 	TLResizeInfo,
 	TLShapePartial,
 	TLShapeUtilCanBindOpts,
 	TLShapeUtilCanvasSvgDef,
 	Vec,
 	WeakCache,
-	arrowShapeMigrations,
-	arrowShapeProps,
-	getDefaultColorTheme,
-	getPerfectDashProps,
+	// threadShapeMigrations,
+	// threadShapeProps,
 	lerp,
-	mapObjectMapValues,
+	// mapObjectMapValues,
 	structuredClone,
 	toDomPrecision,
 	track,
@@ -33,34 +31,47 @@ import {
 	useIsEditing,
 	useValue,
 } from '@tldraw/editor'
+import { mapObjectMapValues } from "./threadshared/mapObjectMapValues"
+import { getPerfectDashProps } from './shared/getPerfectDashProps'
+import { TLThreadBinding } from '../../bindings/thread-binding/TLThreadBinding'
+import { TLThreadShape, TLThreadShapeProps, threadShapeMigrations, threadShapeProps } from './threadtypes/TLThreadShape'
 import React from 'react'
-import { updateArrowTerminal } from '../../bindings/arrow/ArrowBindingUtil'
-import { ShapeFill } from '../shared/ShapeFill'
-import { SvgTextLabel } from '../shared/SvgTextLabel'
-import { TextLabel } from '../shared/TextLabel'
-import { STROKE_SIZES, TEXT_PROPS } from '../shared/default-shape-constants'
+import { updateThreadTerminal } from '~/components/canvas/bindings/thread-binding/ThreadBindingUtil'
+import { ShapeFill } from './shared/ShapeFill'
+// import { SvgTextLabel } from '../shared/SvgTextLabel'
+// import { TextLabel } from '../shared/TextLabel'
+import { STROKE_SIZES, TEXT_PROPS } from './shared/default-shape-constants'
 import {
 	getFillDefForCanvas,
 	getFillDefForExport,
 	getFontDefForExport,
-} from '../shared/defaultStyleDefs'
-import { useDefaultColorTheme } from '../shared/useDefaultColorTheme'
-import { getArrowLabelFontSize, getArrowLabelPosition } from './arrowLabel'
-import { getArrowheadPathForType } from './arrowheads'
+} from './shared/defaultStyleDefs'
+import { useDefaultColorTheme } from './shared/useDefaultColorTheme'
+// import { getThreadLabelFontSize, getThreadLabelPosition } from './threadLabel'
+import { getThreadheadPathForType } from './threadheads/threadheads'
 import {
-	getCurvedArrowHandlePath,
-	getSolidCurvedArrowPath,
-	getSolidStraightArrowPath,
-	getStraightArrowHandlePath,
-} from './arrowpaths'
+	getCurvedThreadHandlePath,
+	getSolidCurvedThreadPath,
+	getSolidStraightThreadPath,
+	getStraightThreadHandlePath,
+} from './threadpaths/threadpaths'
+
 import {
-	TLArrowBindings,
-	createOrUpdateArrowBinding,
-	getArrowBindings,
-	getArrowInfo,
-	getArrowTerminalsInArrowSpace,
-	removeArrowBinding,
-} from './shared'
+	TLThreadBindings,
+	createOrUpdateThreadBinding,
+	getThreadBindings,
+	getThreadInfo,
+	getThreadTerminalsInThreadSpace,
+	removeThreadBinding,
+} from './threadshared/threadshared'
+
+
+export interface TLHandleDragInfo<T extends TLShape> {
+	handle: TLHandle
+	isPrecise: boolean
+	initial?: T | undefined
+}
+
 
 let globalRenderIndex = 0
 
@@ -71,51 +82,51 @@ enum ARROW_HANDLES {
 }
 
 /** @public */
-export class ArrowShapeUtil extends ShapeUtil<TLArrowShape> {
-	static override type = 'arrow' as const
-	static override props = arrowShapeProps
-	static override migrations = arrowShapeMigrations
+export class ThreadShapeUtil extends ShapeUtil<TLThreadShape> {
+	static override type = 'thread' as const
+	static override props = threadShapeProps
+	static override migrations = threadShapeMigrations
 
-	override canEdit() {
+	override canEdit= () => {
 		return true
 	}
-	override canBind({ toShapeType }: TLShapeUtilCanBindOpts<TLArrowShape>): boolean {
-		// bindings can go from arrows to shapes, but not from shapes to arrows
-		return toShapeType !== 'arrow'
+	override canBind({ toShapeType }: TLShapeUtilCanBindOpts<TLThreadShape>): boolean {
+		// bindings can go from threads to shapes, but not from shapes to threads
+		return toShapeType !== 'thread'
 	}
-	override canSnap() {
+	override canSnap = () => {
 		return false
 	}
-	override hideResizeHandles() {
+	override hideResizeHandles = () => {
 		return true
 	}
-	override hideRotateHandle() {
+	override hideRotateHandle = () => {
 		return true
 	}
-	override hideSelectionBoundsBg() {
+	override hideSelectionBoundsBg = () => {
 		return true
 	}
-	override hideSelectionBoundsFg() {
+	override hideSelectionBoundsFg = () => {
 		return true
 	}
 
-	override canBeLaidOut(shape: TLArrowShape) {
-		const bindings = getArrowBindings(this.editor, shape)
+	override canBeLaidOut = (shape: TLThreadShape) => {
+		const bindings = getThreadBindings(this.editor, shape)
 		return !bindings.start && !bindings.end
 	}
 
-	override getDefaultProps(): TLArrowShape['props'] {
+	override getDefaultProps = (): TLThreadShape['props'] => {
 		return {
 			dash: 'draw',
 			size: 'm',
 			fill: 'none',
 			color: 'black',
-			labelColor: 'black',
+			threadColor: 'black',
 			bend: 0,
 			start: { x: 0, y: 0 },
 			end: { x: 2, y: 0 },
-			arrowheadStart: 'none',
-			arrowheadEnd: 'arrow',
+			threadheadStart: 'none',
+			threadheadEnd: 'thread',
 			text: '',
 			labelPosition: 0.5,
 			font: 'draw',
@@ -123,8 +134,8 @@ export class ArrowShapeUtil extends ShapeUtil<TLArrowShape> {
 		}
 	}
 
-	getGeometry(shape: TLArrowShape) {
-		const info = getArrowInfo(this.editor, shape)!
+	getGeometry(shape: TLThreadShape) {
+		const info = getThreadInfo(this.editor, shape)!
 
 		const debugGeom: Geometry2d[] = []
 
@@ -142,26 +153,26 @@ export class ArrowShapeUtil extends ShapeUtil<TLArrowShape> {
 				})
 
 		let labelGeom
-		if (shape.props.text.trim()) {
-			const labelPosition = getArrowLabelPosition(this.editor, shape)
-			debugGeom.push(...labelPosition.debugGeom)
-			labelGeom = new Rectangle2d({
-				x: labelPosition.box.x,
-				y: labelPosition.box.y,
-				width: labelPosition.box.w,
-				height: labelPosition.box.h,
-				isFilled: true,
-				isLabel: true,
-			})
-		}
+		// if (shape.props.text.trim()) {
+		// 	const labelPosition = getThreadLabelPosition(this.editor, shape)
+		// 	debugGeom.push(...labelPosition.debugGeom)
+		// 	labelGeom = new Rectangle2d({
+		// 		x: labelPosition.box.x,
+		// 		y: labelPosition.box.y,
+		// 		width: labelPosition.box.w,
+		// 		height: labelPosition.box.h,
+		// 		isFilled: true,
+		// 		isLabel: true,
+		// 	})
+		// }
 
 		return new Group2d({
 			children: [...(labelGeom ? [bodyGeom, labelGeom] : [bodyGeom]), ...debugGeom],
 		})
 	}
 
-	override getHandles(shape: TLArrowShape): TLHandle[] {
-		const info = getArrowInfo(this.editor, shape)!
+	override getHandles(shape: TLThreadShape): TLHandle[] {
+		const info = getThreadInfo(this.editor, shape)!
 
 		return [
 			{
@@ -188,20 +199,20 @@ export class ArrowShapeUtil extends ShapeUtil<TLArrowShape> {
 		].filter(Boolean) as TLHandle[]
 	}
 
-	override getText(shape: TLArrowShape) {
+	getText = (shape: TLThreadShape) => {
 		return shape.props.text
 	}
 
-	override onHandleDrag(
-		shape: TLArrowShape,
-		{ handle, isPrecise }: TLHandleDragInfo<TLArrowShape>
-	) {
+	override onHandleDrag = (
+		shape: TLThreadShape,
+		{ handle, isPrecise }: TLHandleDragInfo<TLThreadShape>
+	) => {
 		const handleId = handle.id as ARROW_HANDLES
-		const bindings = getArrowBindings(this.editor, shape)
+		const bindings = getThreadBindings(this.editor, shape)
 
 		if (handleId === ARROW_HANDLES.MIDDLE) {
-			// Bending the arrow...
-			const { start, end } = getArrowTerminalsInArrowSpace(this.editor, shape, bindings)
+			// Bending the thread...
+			const { start, end } = getThreadTerminalsInThreadSpace(this.editor, shape, bindings)
 
 			const delta = Vec.Sub(end, start)
 			const v = Vec.Per(delta)
@@ -216,9 +227,9 @@ export class ArrowShapeUtil extends ShapeUtil<TLArrowShape> {
 			return { id: shape.id, type: shape.type, props: { bend } }
 		}
 
-		// Start or end, pointing the arrow...
+		// Start or end, pointing the thread...
 
-		const update: TLShapePartial<TLArrowShape> = { id: shape.id, type: 'arrow', props: {} }
+		const update: TLShapePartial<TLThreadShape> = { id: shape.id, type: 'thread', props: {} }
 
 		const currentBinding = bindings[handleId]
 
@@ -228,7 +239,7 @@ export class ArrowShapeUtil extends ShapeUtil<TLArrowShape> {
 		if (this.editor.inputs.ctrlKey) {
 			// todo: maybe double check that this isn't equal to the other handle too?
 			// Skip binding
-			removeArrowBinding(this.editor, shape, handleId)
+			removeThreadBinding(this.editor, shape, handleId)
 
 			update.props![handleId] = {
 				x: handle.x,
@@ -246,14 +257,14 @@ export class ArrowShapeUtil extends ShapeUtil<TLArrowShape> {
 			filter: (targetShape) => {
 				return (
 					!targetShape.isLocked &&
-					this.editor.canBindShapes({ fromShape: shape, toShape: targetShape, binding: 'arrow' })
+					this.editor.canBindShapes({ fromShape: shape, toShape: targetShape, binding: 'thread' })
 				)
 			},
 		})
 
 		if (!target) {
 			// todo: maybe double check that this isn't equal to the other handle too?
-			removeArrowBinding(this.editor, shape, handleId)
+			removeThreadBinding(this.editor, shape, handleId)
 
 			update.props![handleId] = {
 				x: handle.x,
@@ -317,16 +328,16 @@ export class ArrowShapeUtil extends ShapeUtil<TLArrowShape> {
 			isExact: this.editor.inputs.altKey,
 		}
 
-		createOrUpdateArrowBinding(this.editor, shape, target.id, b)
+		createOrUpdateThreadBinding(this.editor, shape, target.id, b)
 
 		this.editor.setHintingShapes([target.id])
 
-		const newBindings = getArrowBindings(this.editor, shape)
+		const newBindings = getThreadBindings(this.editor, shape)
 		if (newBindings.start && newBindings.end && newBindings.start.toId === newBindings.end.toId) {
 			if (
 				Vec.Equals(newBindings.start.props.normalizedAnchor, newBindings.end.props.normalizedAnchor)
 			) {
-				createOrUpdateArrowBinding(this.editor, shape, newBindings.end.toId, {
+				createOrUpdateThreadBinding(this.editor, shape, newBindings.end.toId, {
 					...newBindings.end.props,
 					normalizedAnchor: {
 						x: newBindings.end.props.normalizedAnchor.x + 0.05,
@@ -339,10 +350,10 @@ export class ArrowShapeUtil extends ShapeUtil<TLArrowShape> {
 		return update
 	}
 
-	override onTranslateStart(shape: TLArrowShape) {
-		const bindings = getArrowBindings(this.editor, shape)
+	override onTranslateStart = (shape: TLThreadShape) => {
+		const bindings = getThreadBindings(this.editor, shape)
 
-		const terminalsInArrowSpace = getArrowTerminalsInArrowSpace(this.editor, shape, bindings)
+		const terminalsInThreadSpace = getThreadTerminalsInThreadSpace(this.editor, shape, bindings)
 		const shapePageTransform = this.editor.getShapePageTransform(shape.id)!
 
 		// If at least one bound shape is in the selection, do nothing;
@@ -362,10 +373,10 @@ export class ArrowShapeUtil extends ShapeUtil<TLArrowShape> {
 		}
 
 		// When we start translating shapes, record where their bindings were in page space so we
-		// can maintain them as we translate the arrow
+		// can maintain them as we translate the thread
 		shapeAtTranslationStart.set(shape, {
 			pagePosition: shapePageTransform.applyToPoint(shape),
-			terminalBindings: mapObjectMapValues(terminalsInArrowSpace, (terminalName, point) => {
+			terminalBindings: mapObjectMapValues(terminalsInThreadSpace, (terminalName, point) => {
 				const binding = bindings[terminalName]
 				if (!binding) return null
 				return {
@@ -376,20 +387,20 @@ export class ArrowShapeUtil extends ShapeUtil<TLArrowShape> {
 			}),
 		})
 
-		// update arrow terminal bindings eagerly to make sure the arrows unbind nicely when translating
+		// update thread terminal bindings eagerly to make sure the threads unbind nicely when translating
 		if (bindings.start) {
-			updateArrowTerminal({
+			updateThreadTerminal({
 				editor: this.editor,
-				arrow: shape,
+				thread: shape,
 				terminal: 'start',
 				useHandle: true,
 			})
-			shape = this.editor.getShape(shape.id) as TLArrowShape
+			shape = this.editor.getShape(shape.id) as TLThreadShape
 		}
 		if (bindings.end) {
-			updateArrowTerminal({
+			updateThreadTerminal({
 				editor: this.editor,
-				arrow: shape,
+				thread: shape,
 				terminal: 'end',
 				useHandle: true,
 			})
@@ -408,7 +419,7 @@ export class ArrowShapeUtil extends ShapeUtil<TLArrowShape> {
 		return
 	}
 
-	override onTranslate(initialShape: TLArrowShape, shape: TLArrowShape) {
+	override onTranslate = (initialShape: TLThreadShape, shape: TLThreadShape) => {
 		const atTranslationStart = shapeAtTranslationStart.get(initialShape)
 		if (!atTranslationStart) return
 
@@ -429,7 +440,7 @@ export class ArrowShapeUtil extends ShapeUtil<TLArrowShape> {
 				filter: (targetShape) => {
 					return (
 						!targetShape.isLocked &&
-						this.editor.canBindShapes({ fromShape: shape, toShape: targetShape, binding: 'arrow' })
+						this.editor.canBindShapes({ fromShape: shape, toShape: targetShape, binding: 'thread' })
 					)
 				},
 			})
@@ -441,28 +452,28 @@ export class ArrowShapeUtil extends ShapeUtil<TLArrowShape> {
 					x: (pointInTargetSpace.x - targetBounds.minX) / targetBounds.width,
 					y: (pointInTargetSpace.y - targetBounds.minY) / targetBounds.height,
 				}
-				createOrUpdateArrowBinding(this.editor, shape, newTarget.id, {
+				createOrUpdateThreadBinding(this.editor, shape, newTarget.id, {
 					...terminalBinding.binding.props,
 					normalizedAnchor,
 					isPrecise: true,
 				})
 			} else {
-				removeArrowBinding(this.editor, shape, terminalBinding.binding.props.terminal)
+				removeThreadBinding(this.editor, shape, terminalBinding.binding.props.terminal)
 			}
 		}
 	}
 
-	private readonly _resizeInitialBindings = new WeakCache<TLArrowShape, TLArrowBindings>()
+	private readonly _resizeInitialBindings = new WeakCache<TLThreadShape, TLThreadBindings>()
 
-	override onResize(shape: TLArrowShape, info: TLResizeInfo<TLArrowShape>) {
+	override onResize = (shape: TLThreadShape, info: TLResizeInfo<TLThreadShape>) => {
 		const { scaleX, scaleY } = info
 
 		const bindings = this._resizeInitialBindings.get(shape, () =>
-			getArrowBindings(this.editor, shape)
+			getThreadBindings(this.editor, shape)
 		)
-		const terminals = getArrowTerminalsInArrowSpace(this.editor, shape, bindings)
+		const terminals = getThreadTerminalsInThreadSpace(this.editor, shape, bindings)
 
-		const { start, end } = structuredClone<TLArrowShape['props']>(shape.props)
+		const { start, end } = structuredClone<TLThreadShape['props']>(shape.props)
 		let { bend } = shape.props
 
 		// Rescale start handle if it's not bound to a shape
@@ -535,13 +546,13 @@ export class ArrowShapeUtil extends ShapeUtil<TLArrowShape> {
 		}
 
 		if (bindings.start && startNormalizedAnchor) {
-			createOrUpdateArrowBinding(this.editor, shape, bindings.start.toId, {
+			createOrUpdateThreadBinding(this.editor, shape, bindings.start.toId, {
 				...bindings.start.props,
 				normalizedAnchor: startNormalizedAnchor.toJson(),
 			})
 		}
 		if (bindings.end && endNormalizedAnchor) {
-			createOrUpdateArrowBinding(this.editor, shape, bindings.end.toId, {
+			createOrUpdateThreadBinding(this.editor, shape, bindings.end.toId, {
 				...bindings.end.props,
 				normalizedAnchor: endNormalizedAnchor.toJson(),
 			})
@@ -558,10 +569,10 @@ export class ArrowShapeUtil extends ShapeUtil<TLArrowShape> {
 		return next
 	}
 
-	override onDoubleClickHandle(
-		shape: TLArrowShape,
+	override onDoubleClickHandle = (
+		shape: TLThreadShape,
 		handle: TLHandle
-	): TLShapePartial<TLArrowShape> | void {
+	): TLShapePartial<TLThreadShape> | void => {
 		switch (handle.id) {
 			case ARROW_HANDLES.START: {
 				return {
@@ -569,7 +580,7 @@ export class ArrowShapeUtil extends ShapeUtil<TLArrowShape> {
 					type: shape.type,
 					props: {
 						...shape.props,
-						arrowheadStart: shape.props.arrowheadStart === 'none' ? 'arrow' : 'none',
+						threadheadStart: shape.props.threadheadStart === 'none' ? 'thread' : 'none',
 					},
 				}
 			}
@@ -579,14 +590,14 @@ export class ArrowShapeUtil extends ShapeUtil<TLArrowShape> {
 					type: shape.type,
 					props: {
 						...shape.props,
-						arrowheadEnd: shape.props.arrowheadEnd === 'none' ? 'arrow' : 'none',
+						threadheadEnd: shape.props.threadheadEnd === 'none' ? 'thread' : 'none',
 					},
 				}
 			}
 		}
 	}
 
-	component(shape: TLArrowShape) {
+	component(shape: TLThreadShape) {
 		// eslint-disable-next-line react-hooks/rules-of-hooks
 		const theme = useDefaultColorTheme()
 		const onlySelectedShape = this.editor.getOnlySelectedShape()
@@ -596,37 +607,37 @@ export class ArrowShapeUtil extends ShapeUtil<TLArrowShape> {
 				'select.pointing_handle',
 				'select.dragging_handle',
 				'select.translating',
-				'arrow.dragging'
+				'thread.dragging'
 			) && !this.editor.getInstanceState().isReadonly
 
-		const info = getArrowInfo(this.editor, shape)
+		const info = getThreadInfo(this.editor, shape)
 		if (!info?.isValid) return null
 
-		const labelPosition = getArrowLabelPosition(this.editor, shape)
+		// const labelPosition = getThreadLabelPosition(this.editor, shape)
 		const isSelected = shape.id === this.editor.getOnlySelectedShapeId()
 		const isEditing = this.editor.getEditingShapeId() === shape.id
-		const showArrowLabel = isEditing || shape.props.text
+		// const showThreadLabel = isEditing || shape.props.text
 
 		return (
 			<>
 				<SVGContainer id={shape.id} style={{ minWidth: 50, minHeight: 50 }}>
-					<ArrowSvg
+					<ThreadSvg
 						shape={shape}
 						shouldDisplayHandles={shouldDisplayHandles && onlySelectedShape?.id === shape.id}
 					/>
 				</SVGContainer>
-				{showArrowLabel && (
+				{/* {showThreadLabel && (
 					<TextLabel
 						id={shape.id}
-						classNamePrefix="tl-arrow"
-						type="arrow"
+						classNamePrefix="tl-thread"
+						type="thread"
 						font={shape.props.font}
-						fontSize={getArrowLabelFontSize(shape)}
+						fontSize={getThreadLabelFontSize(shape)}
 						lineHeight={TEXT_PROPS.lineHeight}
 						align="middle"
 						verticalAlign="middle"
 						text={shape.props.text}
-						labelColor={theme[shape.props.labelColor].solid}
+						threadColor={theme[shape.props.threadColor].solid}
 						textWidth={labelPosition.box.w}
 						isSelected={isSelected}
 						padding={0}
@@ -634,19 +645,19 @@ export class ArrowShapeUtil extends ShapeUtil<TLArrowShape> {
 							transform: `translate(${labelPosition.box.center.x}px, ${labelPosition.box.center.y}px)`,
 						}}
 					/>
-				)}
+				)} */}
 			</>
 		)
 	}
 
-	indicator(shape: TLArrowShape) {
+	indicator(shape: TLThreadShape) {
 		// eslint-disable-next-line react-hooks/rules-of-hooks
 		const isEditing = useIsEditing(shape.id)
 
-		const info = getArrowInfo(this.editor, shape)
+		const info = getThreadInfo(this.editor, shape)
 		if (!info) return null
 
-		const { start, end } = getArrowTerminalsInArrowSpace(this.editor, shape, info?.bindings)
+		const { start, end } = getThreadTerminalsInThreadSpace(this.editor, shape, info?.bindings)
 		const geometry = this.editor.getShapeGeometry<Group2d>(shape)
 		const bounds = geometry.bounds
 
@@ -656,14 +667,14 @@ export class ArrowShapeUtil extends ShapeUtil<TLArrowShape> {
 
 		const strokeWidth = STROKE_SIZES[shape.props.size] * shape.props.scale
 
-		const as = info.start.arrowhead && getArrowheadPathForType(info, 'start', strokeWidth)
-		const ae = info.end.arrowhead && getArrowheadPathForType(info, 'end', strokeWidth)
+		const as = info.start.threadhead && getThreadheadPathForType(info, 'start', strokeWidth)
+		const ae = info.end.threadhead && getThreadheadPathForType(info, 'end', strokeWidth)
 
-		const path = info.isStraight ? getSolidStraightArrowPath(info) : getSolidCurvedArrowPath(info)
+		const path = info.isStraight ? getSolidStraightThreadPath(info) : getSolidCurvedThreadPath(info)
 
 		const includeMask =
-			(as && info.start.arrowhead !== 'arrow') ||
-			(ae && info.end.arrowhead !== 'arrow') ||
+			(as && info.start.threadhead !== 'thread') ||
+			(ae && info.end.threadhead !== 'thread') ||
 			!!labelGeometry
 
 		const maskId = (shape.id + '_clip').replace(':', '_')
@@ -707,14 +718,14 @@ export class ArrowShapeUtil extends ShapeUtil<TLArrowShape> {
 							{as && (
 								<path
 									d={as}
-									fill={info.start.arrowhead === 'arrow' ? 'none' : 'black'}
+									fill={info.start.threadhead === 'thread' ? 'none' : 'black'}
 									stroke="none"
 								/>
 							)}
 							{ae && (
 								<path
 									d={ae}
-									fill={info.end.arrowhead === 'arrow' ? 'none' : 'black'}
+									fill={info.end.threadhead === 'thread' ? 'none' : 'black'}
 									stroke="none"
 								/>
 							)}
@@ -752,7 +763,7 @@ export class ArrowShapeUtil extends ShapeUtil<TLArrowShape> {
 		)
 	}
 
-	override onEditEnd(shape: TLArrowShape) {
+	override onEditEnd = (shape: TLThreadShape) => {
 		const {
 			id,
 			type,
@@ -760,7 +771,7 @@ export class ArrowShapeUtil extends ShapeUtil<TLArrowShape> {
 		} = shape
 
 		if (text.trimEnd() !== shape.props.text) {
-			this.editor.updateShapes<TLArrowShape>([
+			this.editor.updateShapes<TLThreadShape>([
 				{
 					id,
 					type,
@@ -772,47 +783,49 @@ export class ArrowShapeUtil extends ShapeUtil<TLArrowShape> {
 		}
 	}
 
-	override toSvg(shape: TLArrowShape, ctx: SvgExportContext) {
-		ctx.addExportDef(getFillDefForExport(shape.props.fill))
-		if (shape.props.text) ctx.addExportDef(getFontDefForExport(shape.props.font))
-		const theme = getDefaultColorTheme(ctx)
-		const scaleFactor = 1 / shape.props.scale
+	// override toSvg(shape: TLThreadShape, ctx: SvgExportContext) {
+	// 	ctx.addExportDef(getFillDefForExport(shape.props.fill))
+	// 	if (shape.props.text) ctx.addExportDef(getFontDefForExport(shape.props.font))
+	// 	const theme = getDefaultColorTheme(ctx)
+	// 	const scaleFactor = 1 / shape.props.scale
 
-		return (
-			<g transform={`scale(${scaleFactor})`}>
-				<ArrowSvg shape={shape} shouldDisplayHandles={false} />
-				<SvgTextLabel
-					fontSize={getArrowLabelFontSize(shape)}
-					font={shape.props.font}
-					align="middle"
-					verticalAlign="middle"
-					text={shape.props.text}
-					labelColor={theme[shape.props.labelColor].solid}
-					bounds={getArrowLabelPosition(this.editor, shape).box}
-					padding={4 * shape.props.scale}
-				/>
-			</g>
-		)
-	}
+	// 	return (
+	// 		<g transform={`scale(${scaleFactor})`}>
+	// 			<ThreadSvg shape={shape} shouldDisplayHandles={false} />
+	// 			<SvgTextLabel
+	// 				fontSize={getThreadLabelFontSize(shape)}
+	// 				font={shape.props.font}
+	// 				align="middle"
+	// 				verticalAlign="middle"
+	// 				text={shape.props.text}
+	// 				threadColor={theme[shape.props.threadColor].solid}
+	// 				bounds={getThreadLabelPosition(this.editor, shape).box}
+	// 				padding={4 * shape.props.scale}
+	// 			/>
+	// 		</g>
+	// 	)
+	// }
 
-	override getCanvasSvgDefs(): TLShapeUtilCanvasSvgDef[] {
-		return [
-			getFillDefForCanvas(),
-			{
-				key: `arrow:dot`,
-				component: ArrowheadDotDef,
-			},
-			{
-				key: `arrow:cross`,
-				component: ArrowheadCrossDef,
-			},
-		]
-	}
+	// override getCanvasSvgDefs(): TLShapeUtilCanvasSvgDef[] {
+	// 	return [
+	// 		getFillDefForCanvas(),
+	// 		{
+	// 			key: `thread:dot`,
+	// 			component: ThreadheadDotDef,
+	// 		},
+	// 		{
+	// 			key: `thread:cross`,
+	// 			component: ThreadheadCrossDef,
+	// 		},
+	// 	]
+	// }
+
+
 	override getInterpolatedProps(
-		startShape: TLArrowShape,
-		endShape: TLArrowShape,
+		startShape: TLThreadShape,
+		endShape: TLThreadShape,
 		progress: number
-	): TLArrowShapeProps {
+	): TLThreadShapeProps {
 		return {
 			...(progress > 0.5 ? endShape.props : startShape.props),
 			scale: lerp(startShape.props.scale, endShape.props.scale, progress),
@@ -830,26 +843,26 @@ export class ArrowShapeUtil extends ShapeUtil<TLArrowShape> {
 	}
 }
 
-export function getArrowLength(editor: Editor, shape: TLArrowShape): number {
-	const info = getArrowInfo(editor, shape)!
+export function getThreadLength(editor: Editor, shape: TLThreadShape): number {
+	const info = getThreadInfo(editor, shape)!
 
 	return info.isStraight
 		? Vec.Dist(info.start.handle, info.end.handle)
 		: Math.abs(info.handleArc.length)
 }
 
-const ArrowSvg = track(function ArrowSvg({
+const ThreadSvg = track(function ThreadSvg({
 	shape,
 	shouldDisplayHandles,
 }: {
-	shape: TLArrowShape
+	shape: TLThreadShape
 	shouldDisplayHandles: boolean
 }) {
 	const editor = useEditor()
 	const theme = useDefaultColorTheme()
-	const info = getArrowInfo(editor, shape)
+	const info = getThreadInfo(editor, shape)
 	const bounds = Box.ZeroFix(editor.getShapeGeometry(shape).bounds)
-	const bindings = getArrowBindings(editor, shape)
+	const bindings = getThreadBindings(editor, shape)
 	const isForceSolid = useValue(
 		'force solid',
 		() => {
@@ -867,17 +880,17 @@ const ArrowSvg = track(function ArrowSvg({
 
 	const strokeWidth = STROKE_SIZES[shape.props.size] * shape.props.scale
 
-	const as = info.start.arrowhead && getArrowheadPathForType(info, 'start', strokeWidth)
-	const ae = info.end.arrowhead && getArrowheadPathForType(info, 'end', strokeWidth)
+	const as = info.start.threadhead && getThreadheadPathForType(info, 'start', strokeWidth)
+	const ae = info.end.threadhead && getThreadheadPathForType(info, 'end', strokeWidth)
 
-	const path = info.isStraight ? getSolidStraightArrowPath(info) : getSolidCurvedArrowPath(info)
+	const path = info.isStraight ? getSolidStraightThreadPath(info) : getSolidCurvedThreadPath(info)
 
 	let handlePath: null | React.JSX.Element = null
 
 	if (shouldDisplayHandles) {
 		const sw = 2 / editor.getZoomLevel()
 		const { strokeDasharray, strokeDashoffset } = getPerfectDashProps(
-			getArrowLength(editor, shape),
+			getThreadLength(editor, shape),
 			sw,
 			{
 				end: 'skip',
@@ -889,8 +902,8 @@ const ArrowSvg = track(function ArrowSvg({
 		handlePath =
 			bindings.start || bindings.end ? (
 				<path
-					className="tl-arrow-hint"
-					d={info.isStraight ? getStraightArrowHandlePath(info) : getCurvedArrowHandlePath(info)}
+					className="tl-thread-hint"
+					d={info.isStraight ? getStraightThreadHandlePath(info) : getCurvedThreadHandlePath(info)}
 					strokeDasharray={strokeDasharray}
 					strokeDashoffset={strokeDashoffset}
 					strokeWidth={sw}
@@ -899,8 +912,8 @@ const ArrowSvg = track(function ArrowSvg({
 							? bindings.start.props.isExact
 								? ''
 								: bindings.start.props.isPrecise
-									? 'url(#arrowhead-cross)'
-									: 'url(#arrowhead-dot)'
+									? 'url(#threadhead-cross)'
+									: 'url(#threadhead-dot)'
 							: ''
 					}
 					markerEnd={
@@ -908,8 +921,8 @@ const ArrowSvg = track(function ArrowSvg({
 							? bindings.end.props.isExact
 								? ''
 								: bindings.end.props.isPrecise
-									? 'url(#arrowhead-cross)'
-									: 'url(#arrowhead-dot)'
+									? 'url(#threadhead-cross)'
+									: 'url(#threadhead-dot)'
 							: ''
 					}
 					opacity={0.16}
@@ -926,13 +939,13 @@ const ArrowSvg = track(function ArrowSvg({
 		}
 	)
 
-	const labelPosition = getArrowLabelPosition(editor, shape)
+	// const labelPosition = getThreadLabelPosition(editor, shape)
 
-	const maskStartArrowhead = !(info.start.arrowhead === 'none' || info.start.arrowhead === 'arrow')
-	const maskEndArrowhead = !(info.end.arrowhead === 'none' || info.end.arrowhead === 'arrow')
+	const maskStartThreadhead = !(info.start.threadhead === 'none' || info.start.threadhead === 'thread')
+	const maskEndThreadhead = !(info.end.threadhead === 'none' || info.end.threadhead === 'thread')
 
 	// NOTE: I know right setting `changeIndex` hacky-as right! But we need this because otherwise safari loses
-	// the mask, see <https://linear.app/tldraw/issue/TLD-1500/changing-arrow-color-makes-line-pass-through-text>
+	// the mask, see <https://linear.app/tldraw/issue/TLD-1500/changing-thread-color-makes-line-pass-through-text>
 	const maskId = (shape.id + '_clip_' + changeIndex).replace(':', '_')
 
 	return (
@@ -947,7 +960,7 @@ const ArrowSvg = track(function ArrowSvg({
 						height={toDomPrecision(bounds.height + 200)}
 						fill="white"
 					/>
-					{shape.props.text.trim() && (
+					{/* {shape.props.text.trim() && (
 						<rect
 							x={labelPosition.box.x}
 							y={labelPosition.box.y}
@@ -957,12 +970,12 @@ const ArrowSvg = track(function ArrowSvg({
 							rx={4}
 							ry={4}
 						/>
+					)} */}
+					{as && maskStartThreadhead && (
+						<path d={as} fill={info.start.threadhead === 'thread' ? 'none' : 'black'} stroke="none" />
 					)}
-					{as && maskStartArrowhead && (
-						<path d={as} fill={info.start.arrowhead === 'arrow' ? 'none' : 'black'} stroke="none" />
-					)}
-					{ae && maskEndArrowhead && (
-						<path d={ae} fill={info.end.arrowhead === 'arrow' ? 'none' : 'black'} stroke="none" />
+					{ae && maskEndThreadhead && (
+						<path d={ae} fill={info.end.threadhead === 'thread' ? 'none' : 'black'} stroke="none" />
 					)}
 				</mask>
 			</defs>
@@ -986,7 +999,7 @@ const ArrowSvg = track(function ArrowSvg({
 					/>
 					<path d={path} strokeDasharray={strokeDasharray} strokeDashoffset={strokeDashoffset} />
 				</g>
-				{as && maskStartArrowhead && shape.props.fill !== 'none' && (
+				{as && maskStartThreadhead && shape.props.fill !== 'none' && (
 					<ShapeFill
 						theme={theme}
 						d={as}
@@ -995,7 +1008,7 @@ const ArrowSvg = track(function ArrowSvg({
 						scale={shape.props.scale}
 					/>
 				)}
-				{ae && maskEndArrowhead && shape.props.fill !== 'none' && (
+				{ae && maskEndThreadhead && shape.props.fill !== 'none' && (
 					<ShapeFill
 						theme={theme}
 						d={ae}
@@ -1012,7 +1025,7 @@ const ArrowSvg = track(function ArrowSvg({
 })
 
 const shapeAtTranslationStart = new WeakMap<
-	TLArrowShape,
+	TLThreadShape,
 	{
 		pagePosition: Vec
 		terminalBindings: Record<
@@ -1020,23 +1033,23 @@ const shapeAtTranslationStart = new WeakMap<
 			{
 				pagePosition: Vec
 				shapePosition: Vec
-				binding: TLArrowBinding
+				binding: TLThreadBinding
 			} | null
 		>
 	}
 >()
 
-function ArrowheadDotDef() {
+function ThreadheadDotDef() {
 	return (
-		<marker id="arrowhead-dot" className="tl-arrow-hint" refX="3.0" refY="3.0" orient="0">
+		<marker id="threadhead-dot" className="tl-thread-hint" refX="3.0" refY="3.0" orient="0">
 			<circle cx="3" cy="3" r="2" strokeDasharray="100%" />
 		</marker>
 	)
 }
 
-function ArrowheadCrossDef() {
+function ThreadheadCrossDef() {
 	return (
-		<marker id="arrowhead-cross" className="tl-arrow-hint" refX="3.0" refY="3.0" orient="auto">
+		<marker id="threadhead-cross" className="tl-thread-hint" refX="3.0" refY="3.0" orient="auto">
 			<line x1="1.5" y1="1.5" x2="4.5" y2="4.5" strokeDasharray="100%" />
 			<line x1="1.5" y1="4.5" x2="4.5" y2="1.5" strokeDasharray="100%" />
 		</marker>
