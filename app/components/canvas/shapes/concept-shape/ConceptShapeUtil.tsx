@@ -17,7 +17,7 @@ import { Node } from "@tiptap/core";
 import Placeholder from '@tiptap/extension-placeholder'
 import styles from './ConceptShapeUtil.module.css';
 import { motion, useAnimate } from 'framer-motion';
-import { generateExcerpts, tearDownExcerpts } from "~/components/canvas/helpers/arrow-funcs"
+import { generateExcerpts, tearDownExcerpts } from "~/components/canvas/helpers/thread-funcs"
 import { applyProgressiveBlur, removeProgressiveBlur } from '~/components/canvas/helpers/distribution-funcs';
 
 const conceptShapeProps = {
@@ -79,6 +79,7 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
 			description: "No description",
             excerpts: [],
             excerptsOpen: false,
+            databaseId: 'no-id'
 		}
 	}
 

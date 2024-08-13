@@ -23,7 +23,7 @@ import { ThreadShapeTool } from "~/components/canvas/shapes/thread-shape/ThreadS
 import { ThreadBindingUtil} from "~/components/canvas/bindings/thread-binding/ThreadBindingUtil"
 
 // HELPERS
-import { createBoundArrow } from './helpers/arrow-funcs';
+import { createBoundThread } from './helpers/thread-funcs';
 
 export default function WorldCanvas() {
     const [editor, setEditor] = useState(null)
@@ -167,15 +167,15 @@ export default function WorldCanvas() {
 
 
 
-                // create arrows
+                // create threads
                 const conceptShapes = editor.getCurrentPageShapes().filter(shape => shape.type === 'concept')
 
                 for(let conceptShape of conceptShapes){
-                    createBoundArrow(editor, centralShapeId, conceptShape.id)
+                    createBoundThread(editor, centralShapeId, conceptShape.id)
                 }
-                // create an arrow linking concept one and two if they exist
+                // create an thread linking concept one and two if they exist
                 if (conceptShapes.length > 1) {
-                    createBoundArrow(editor, conceptShapes[0].id, conceptShapes[1].id)
+                    createBoundThread(editor, conceptShapes[0].id, conceptShapes[1].id)
                 }
                 else {
                     console.warn("Not enough concepts")

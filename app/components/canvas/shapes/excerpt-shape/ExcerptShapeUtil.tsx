@@ -69,6 +69,7 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 			temporary: false,
 			// colors: [conceptColors[Math.floor(Math.random() * conceptColors.length)]],
 			description: "No description",
+			databaseId: "no-id"
 		}
 	}
 

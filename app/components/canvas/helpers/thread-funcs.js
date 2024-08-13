@@ -1,8 +1,8 @@
 import { createShapeId, stopEventPropagation } from "tldraw";
 import { generatePointsAroundCircle } from "./distribution-funcs";
 
-export function createBoundArrow(editor, startShapeId, endShapeId){
-    if(!hasExistingArrow(editor, startShapeId, endShapeId)){
+export function createBoundThread(editor, startShapeId, endShapeId){
+    if(!hasExistingThread(editor, startShapeId, endShapeId)){
         const startShape = editor.getShape(startShapeId)
         const endShape = editor.getShape(endShapeId)
 
@@ -37,15 +37,15 @@ export function createBoundArrow(editor, startShapeId, endShapeId){
 
         calculateAnchor(startShape, endShape)
 
-        const arrowId = createShapeId();
+        const threadId = createShapeId();
         editor.createShape({
-            id: arrowId,
-            type: "arrow"
+            id: threadId,
+            type: "thread"
         }).createBindings([
             {
-                fromId: arrowId,
+                fromId: threadId,
                 toId: startShapeId,
-                type: 'arrow',
+                type: 'thread',
                 props: {
                     terminal: 'start',
                     isExact: startIsExact,
@@ -54,9 +54,9 @@ export function createBoundArrow(editor, startShapeId, endShapeId){
                 }
             },
             {
-                fromId: arrowId,
+                fromId: threadId,
                 toId: endShapeId,
-                type: 'arrow',
+                type: 'thread',
                 props: {
                     terminal: 'end',
                     isExact: endIsExact,
@@ -66,19 +66,19 @@ export function createBoundArrow(editor, startShapeId, endShapeId){
             }
         ])
         
-        return arrowId    
+        return threadId    
     }
 
     return null
     
 }
 
-function hasExistingArrow(editor, startShapeId, endShapeId){
-    const bindings = editor.getBindingsToShape(startShapeId, 'arrow')
+function hasExistingThread(editor, startShapeId, endShapeId){
+    const bindings = editor.getBindingsToShape(startShapeId, 'thread')
     for(let binding of bindings){
-        let arrowBindings = editor.getBindingsFromShape(binding.fromId, 'arrow')
-        for(let arrowBinding of arrowBindings){
-            if(arrowBinding.toId === endShapeId){
+        let threadBindings = editor.getBindingsFromShape(binding.fromId, 'thread')
+        for(let threadBinding of threadBindings){
+            if(threadBinding.toId === endShapeId){
                 return true
             }
         }
@@ -114,7 +114,7 @@ export function generateExcerpts(editor, concept) {
                 });
 
                 // introduces them into the graph
-                // createBoundArrow(editor, createShapeId(concept.id), createShapeId(excerpt.id));
+                // createBoundThread(editor, createShapeId(concept.id), createShapeId(excerpt.id));
             }
         }
 
@@ -128,13 +128,13 @@ export function tearDownExcerpts(editor, concept){
     if(concept.excerpts){
         const excerptIds = concept.excerpts.map(excerpt => createShapeId(excerpt.id))
         
-        const arrowIds = excerptIds.map(excerptId => {
-            const arrowBindings = editor.getBindingsToShape(excerptId, 'arrow')
-            return arrowBindings.map(arrowBinding => arrowBinding.fromId)
+        const threadIds = excerptIds.map(excerptId => {
+            const threadBindings = editor.getBindingsToShape(excerptId, 'thread')
+            return threadBindings.map(threadBinding => threadBinding.fromId)
         }).flat();
 
-        // delete arrows
-        editor.deleteShapes(arrowIds)
+        // delete threads
+        editor.deleteShapes(threadIds)
 
         // delete excerpts
         editor.deleteShapes(excerptIds)    

@@ -1,7 +1,8 @@
 import { Layout } from 'webcola';
 import { BaseCollection } from "~/components/canvas/custom-ui/collections";
-import { Editor, TLArrowShape, TLGeoShape, TLShape, TLShapeId, TLArrowBindingProps } from '@tldraw/tldraw';
-
+import { Editor, TLGeoShape, TLShape, TLShapeId } from '@tldraw/tldraw';
+import { TLThreadBindingProps } from "~/components/canvas/bindings/thread-binding/TLThreadBinding"
+import { TLThreadShape } from "~/components/canvas/shapes/thread-shape/threadtypes/TLThreadShape"
 type ColaNode = {
   id: TLShapeId;
   x: number;
@@ -65,11 +66,11 @@ export class GraphLayoutCollection extends BaseCollection {
 
   override onAdd(shapes: TLShape[]) {
     for (const shape of shapes) {
-      if (shape.type !== "arrow") {
+      if (shape.type !== "thread") {
         this.addGeo(shape);
       }
       else {
-        this.addArrow(shape as TLArrowShape);
+        this.addThread(shape as TLThreadShape);
       }
     }
     this.refreshGraph();
@@ -141,10 +142,10 @@ export class GraphLayoutCollection extends BaseCollection {
     }
   };
 
-  addArrow = (arrow: TLArrowShape) => {
+  addThread = (thread: TLThreadShape) => {
   
-      const sourceBinding = this.editor.getBindingsFromShape(arrow, 'arrow')?.find(binding => (binding.props as TLArrowBindingProps).terminal === 'start');
-      const targetBinding = this.editor.getBindingsFromShape(arrow, 'arrow')?.find(binding => (binding.props as TLArrowBindingProps).terminal === 'end');
+      const sourceBinding = this.editor.getBindingsFromShape(thread, 'thread')?.find(binding => (binding.props as TLThreadBindingProps).terminal === 'start');
+      const targetBinding = this.editor.getBindingsFromShape(thread, 'thread')?.find(binding => (binding.props as TLThreadBindingProps).terminal === 'end');
   
       const source = sourceBinding ? this.editor.getShape(sourceBinding.toId) : undefined;
       const target = targetBinding ? this.editor.getShape(targetBinding.toId) : undefined;
@@ -154,7 +155,7 @@ export class GraphLayoutCollection extends BaseCollection {
         source: source.id,
         target: target.id
       };
-      this.colaLinks.set(arrow.id, link);
+      this.colaLinks.set(thread.id, link);
     }
   }
 

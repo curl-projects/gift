@@ -25,7 +25,7 @@ export function applyProgressiveBlur(editor, centralShape, excludeIds = []){
     // based on their distance from the existing shape, determine their blur 
     function calculateCenter(shape){
         console.log("SHAPE:", shape)
-        if(shape.type === "arrow"){
+        if(shape.type === "thread"){
             const shapeX = shape.x + (shape.props.start.x / 2);
             const shapeY = shape.y + (shape.props.start.y / 2);
             return [shapeX, shapeY]
