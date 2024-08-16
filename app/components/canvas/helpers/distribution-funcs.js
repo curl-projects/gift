@@ -22,7 +22,27 @@ export function applyProgressiveBlur(editor, centralShape, excludeIds = []){
 
     console.log("APPLYING PROGRESSIVE BLUR:", centralShape, excludeIds, shapes)
 
-    const shapesToBlur = shapes.filter(shape => !excludeIds.includes(shape.id) && shape.id !== centralShape.id);
+    const threadIds = [...excludeIds, centralShape.id].map(id => {
+        const threadBindings = editor.getBindingsToShape(id, 'thread')
+        const updatedThreadBindings = threadBindings.filter(binding => {
+            // check if the other end of the thread binding links to the name or an excerpt
+            const thread = editor.getShape(binding.fromId)
+
+            const otherBinding = editor.getBindingsFromShape(thread.id, 'thread').filter(binding => binding.toId !== id)[0]
+
+            console.log("OTHER BINDING:", otherBinding)
+
+            return ["name", "excerpt"].includes(editor.getShape(otherBinding.toId).type)
+        })
+        return updatedThreadBindings.map(threadBinding => threadBinding.fromId)
+    }).flat();
+
+    console.log("THREAD IDS", threadIds)
+
+
+    const shapesToBlur = shapes.filter(shape => !excludeIds.includes(shape.id) && !threadIds.includes(shape.id) && shape.id !== centralShape.id);
+
+
     // based on their distance from the existing shape, determine their blur 
     function calculateCenter(shape){
         if(shape.type === "thread"){
