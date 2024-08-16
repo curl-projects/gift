@@ -82,6 +82,16 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 	}
 
 	component(shape: ExcerptShape) {
+		const shapeRef = useRef();
+
+		useEffect(()=>{
+			if(shapeRef.current){
+				this.editor.updateShape({id: shape.id, type: shape.type, props: {
+					w: shapeRef.current.clientWidth,
+					h: shapeRef.current.clientHeight
+				}})
+			}
+		}, [this.editor, shapeRef])
         // useEffect(()=>{
         //     if(isOnlySelected){
         //         this.editor.zoomToBounds(this.editor.getShapePageBounds(shape), {
@@ -148,11 +158,12 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 			<HTMLContainer 
 				id={shape.id}
 				className={styles.container}
+				
 				>
-				<div className={styles.shapeContent}>
-					<div className={styles.editorContent}>
-						<p>{shape.props.plainText}</p>
-					</div>
+				<div ref={shapeRef} className={styles.excerptBox}>
+					<p className={styles.excerptText}><span className={styles.connectionPoint}/>
+					{shape.props.plainText}
+					</p>
 				</div>
 			</HTMLContainer>
 		)

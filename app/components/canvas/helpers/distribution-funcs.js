@@ -16,15 +16,15 @@ export function generatePointsAroundCircle(centerX, centerY, radius, numPoints, 
 // apply a progressive blur
 export function applyProgressiveBlur(editor, centralShape, excludeIds = []){
     // get all shapes
+    
     const shapes = editor.getCurrentPageShapes();
     // exclude those in excludeIds
+
+    console.log("APPLYING PROGRESSIVE BLUR:", centralShape, excludeIds, shapes)
+
     const shapesToBlur = shapes.filter(shape => !excludeIds.includes(shape.id) && shape.id !== centralShape.id);
-
-    console.log("SHAPES TO BLUR:", shapesToBlur)
-
     // based on their distance from the existing shape, determine their blur 
     function calculateCenter(shape){
-        console.log("SHAPE:", shape)
         if(shape.type === "thread"){
             const shapeX = shape.x + (shape.props.start.x / 2);
             const shapeY = shape.y + (shape.props.start.y / 2);
@@ -45,27 +45,38 @@ export function applyProgressiveBlur(editor, centralShape, excludeIds = []){
         const distance = Math.sqrt(Math.pow(shapeCenter[0] - centralShapeCenter[0], 2) + Math.pow(shapeCenter[1] - centralShapeCenter[1], 2));
 
         const opacity = Math.min(0.3, (distance / maxDistance) * 0.5);
-
+        
         editor.updateShape({
             id: shape.id,
             type: shape.type,
-            opacity: opacity
+            opacity: 0.2
         })
     }
 }
 
 export function removeProgressiveBlur(editor, centralShape, excludeIds = []){
+    console.log("REMOVE BLUR")
     // get all shapes
     const shapes = editor.getCurrentPageShapes();
     // exclude those in excludeIds
-    const shapesToReset = shapes.filter(shape => !excludeIds.includes(shape.id) && shape.id !== centralShape.id);
-
-
-    for(let shape of shapesToReset){
-        editor.updateShape({
-            id: shape.id,
-            type: shape.type,
-            opacity: 1
-        })
+    for(let shape of shapes){
+        if(['concept', 'thread', 'excerpt', 'geo', 'name'].includes(shape.type) ){
+            editor.updateShape({
+                id: shape.id,
+                type: shape.type,
+                opacity: 1
+            })
+        }
     }
+    
+    // const shapesToReset = shapes.filter(shape => !excludeIds.includes(shape.id) && shape.id !== centralShape.id);
+
+
+    // for(let shape of shapesToReset){
+    //     editor.updateShape({
+    //         id: shape.id,
+    //         type: shape.type,
+    //         opacity: 1
+    //     })
+    // }
 }

@@ -9,7 +9,7 @@ import {
 
 import { T, createShapeId } from 'tldraw';
 import { useLoaderData } from '@remix-run/react';
-import { useCallback, useState, useEffect, useRef, useLayoutEffect } from 'react'
+import { useCallback, useState, useEffect, useRef, useLayoutEffect, useMemo } from 'react'
 import { EditorContent, useEditor } from '@tiptap/react';
 import { Paragraph } from '@tiptap/extension-paragraph';
 import { Text } from '@tiptap/extension-text';
@@ -17,7 +17,7 @@ import { Node } from "@tiptap/core";
 import Placeholder from '@tiptap/extension-placeholder'
 import styles from './ConceptShapeUtil.module.css';
 import { motion, useAnimate } from 'framer-motion';
-import { generateExcerpts, tearDownExcerpts } from "~/components/canvas/helpers/thread-funcs"
+import { generateExcerpts, tearDownExcerpts, excerptsExist } from "~/components/canvas/helpers/thread-funcs"
 import { applyProgressiveBlur, removeProgressiveBlur } from '~/components/canvas/helpers/distribution-funcs';
 
 const conceptShapeProps = {
@@ -161,48 +161,69 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
 
         
 
-        const selectedShapeIds = this.editor.getSelectedShapeIds()
-        
-        useEffect(()=>{
-            console.log("SELECTED SHAPE IDS:", selectedShapeIds)
-            if([shape.id, ...data.user.concepts.find(concept => shape.props.databaseId === concept.id).excerpts.map(excerpt => createShapeId(excerpt.id))].some(shapeId => selectedShapeIds.includes(shapeId))){
-                this.editor.zoomToBounds(this.editor.getShapePageBounds(shape), {
-                    animation: {
-                        duration: 400
-                    },
-                    targetZoom: 1,
-                });
-    
-                // trigger ripple animation
-                animate(".conceptCircle", { scale: 0.9 }, { duration: 0.2, ease: 'easeInOut' })
-                    .then(() => {
-                        return animate(".conceptCircle", { scale: 1.1}, { duration: 0.2, ease: 'easeInOut'})
-                    })
-                    .then(() => {
-                        animate(".conceptCircle", { scale: 1}, { duration: 0.2, ease: 'easeInOut'})
-                        animate(`.ripple`, { scale: [0, 8], opacity: [1, 0], x: "-50%", y: "-50%" }, { duration: 1.5, ease: "easeOut", delay: 0 });  
-                    })
-    
-                if(data.user.concepts){
-                    console.log("Generating Excerpts")
-                    generateExcerpts(this.editor, data.user.concepts.find(concept => shape.props.databaseId === concept.id))
-                    applyProgressiveBlur(this.editor, shape, data.user.concepts.find(concept => shape.props.databaseId === concept.id).excerpts.map(excerpt => createShapeId(excerpt.id)))
+        const selectedShapeIds = this.editor.getSelectedShapeIds();
+        const memoizedSelectedShapeIds = useMemo(() => selectedShapeIds, [selectedShapeIds]);
+
+        // useEffect(()=>{
+        //     console.log("SELECTED SHAPE IDS:", memoizedSelectedShapeIds)
+        // }, [memoizedSelectedShapeIds])
+
+        useEffect(() => {
+            
+            // only do anything if the shape itself is selected
+
+            const concept = data.user.concepts.find(concept => shape.props.databaseId === concept.id);
+            const excerptIds = concept.excerpts.map(excerpt => createShapeId(excerpt.id));
+
+            console.log("OUTER MEMOIZED SHAPE IDS:", memoizedSelectedShapeIds)
+            // trigger if the concept or its excerpts are selected
+            if(memoizedSelectedShapeIds.length === 1 && 
+                (memoizedSelectedShapeIds.includes(shape.id) ||
+                 excerptIds.some(id => memoizedSelectedShapeIds.includes(id))
+                )
+            ){
+            
+                console.log("INNER MEMOIZED SHAPE IDS:", memoizedSelectedShapeIds)
+                // if the concept is selected and its excerpts don't exist, create its excerpts
+                if(memoizedSelectedShapeIds.includes(shape.id)){
+                    // Trigger ripple animation
+                    animate(".conceptCircle", { scale: 0.9 }, { duration: 0.2, ease: 'easeInOut' })
+                        .then(() => animate(".conceptCircle", { scale: 1.1 }, { duration: 0.2, ease: 'easeInOut' }))
+                        .then(() => {
+                            animate(".conceptCircle", { scale: 1 }, { duration: 0.2, ease: 'easeInOut' });
+                            animate(`.ripple`, { scale: [0, 8], opacity: [1, 0], x: "-50%", y: "-50%" }, { duration: 1.5, ease: "easeOut", delay: 0 });
+                        });
+
+                    // Create excerpts if they don't exist
+                    if(!excerptsExist(this.editor, concept)){
+                        generateExcerpts(this.editor, concept);
+                        // removeProgressiveBlur(this.editor, shape, excerptIds);
+                        applyProgressiveBlur(this.editor, shape, excerptIds);
+                    }
+                    else{
+                        // do nothing, was clicked again
+                        console.log("Excerpts already exist")
+                    }
+                }
+                else if(excerptIds.some(id => memoizedSelectedShapeIds.includes(id))){
+                    // excerpt was clicked -- right now, do nothing
+
                 }
                 else{
-                    console.warn("No concepts found", data)
+                    console.warn("Something weird was selected", memoizedSelectedShapeIds)
                 }
             }
             else{
-                if(data.user.concepts){
-                    console.log("Tearing Down Excerpts")
-                    tearDownExcerpts(this.editor, data.user.concepts.find(concept => shape.props.databaseId === concept.id))
-                    removeProgressiveBlur(this.editor, shape, data.user.concepts.find(concept => shape.props.databaseId === concept.id).excerpts.map(excerpt => createShapeId(excerpt.id)));
+                tearDownExcerpts(this.editor, concept)
+                if(!memoizedSelectedShapeIds.map(id => this.editor.getShape(id)).some(shape => ['excerpt', 'concept'].includes(shape?.type))){
+                    console.log("No concept or excerpt selected", memoizedSelectedShapeIds.map(id => this.editor.getShape(id)))
+                    removeProgressiveBlur(this.editor, shape, excerptIds);
                 }
                 else{
-                    console.warn("No concepts found", data)
-                }
+                    
+                }            
             }
-        }, [selectedShapeIds])
+        }, [memoizedSelectedShapeIds]);
 
 		return (
 			<HTMLContainer 

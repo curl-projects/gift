@@ -1,8 +1,8 @@
-import { useState, useLayoutEffect, useEffect } from 'react';
+import { useState, useLayoutEffect, useEffect, useMemo } from 'react';
 import { useNavigation, useLoaderData, useRouteError } from '@remix-run/react';
 
 import _ from 'lodash'
-import { Tldraw, createTLStore, defaultShapeUtils, defaultBindingUtils, DefaultSpinner, getSnapshot, loadSnapshot, useEditor, createShapeId } from 'tldraw';
+import { Tldraw, createTLStore, defaultShapeUtils, defaultBindingUtils, DefaultSpinner, getSnapshot, loadSnapshot, useEditor, createShapeId, useValue } from 'tldraw';
 import { ClientOnly } from 'remix-utils/client-only';
 
 // CUSTOM UI
@@ -11,6 +11,7 @@ import { CollectionProvider } from "~/components/canvas/custom-ui/collections";
 import { GraphLayoutCollection } from "~/components/canvas/custom-ui/graph/GraphLayoutCollection";
 import { GraphUi } from "~/components/canvas/custom-ui/graph/GraphUi";
 import { GraphTrigger } from "~/components/canvas/custom-ui/graph/GraphTrigger";
+import { SelectionListener } from "~/components/canvas/custom-ui/listeners/SelectionListener";
 // CUSTOM SHAPES
 import { ConceptShapeUtil } from "~/components/canvas/shapes/concept-shape/ConceptShapeUtil"
 import { ConceptShapeTool } from "~/components/canvas/shapes/concept-shape/ConceptShapeTool"
@@ -59,6 +60,8 @@ export default function WorldCanvas() {
     const PERSISTENCE_KEY = 'canvas-persistence'
     const [store, setStore] = useState(() => createTLStore({ shapeUtils: [...defaultShapeUtils, ...shapeUtils], bindingUtils: [...defaultBindingUtils, ...bindingUtils] }))
     // const [loadingState, setLoadingState] = useState({ status: 'loading' })
+
+   
 
     // useLayoutEffect(() => {
     //     async function loadData() {
@@ -188,6 +191,7 @@ export default function WorldCanvas() {
                     <GraphUi />
                     <CustomToolbar />
                     <GraphTrigger />
+                    <SelectionListener />
                 </CollectionProvider>
             )}
 

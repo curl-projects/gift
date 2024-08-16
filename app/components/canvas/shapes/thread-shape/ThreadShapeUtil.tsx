@@ -31,6 +31,7 @@ import {
 	useIsEditing,
 	useValue,
 } from '@tldraw/editor'
+
 import { mapObjectMapValues } from "./threadshared/mapObjectMapValues"
 import { getPerfectDashProps } from './shared/getPerfectDashProps'
 import { TLThreadBinding } from '../../bindings/thread-binding/TLThreadBinding'
@@ -64,6 +65,9 @@ import {
 	getThreadTerminalsInThreadSpace,
 	removeThreadBinding,
 } from './threadshared/threadshared'
+
+import { motion, useAnimation } from 'framer-motion'
+import { useEffect } from 'react'
 
 
 export interface TLHandleDragInfo<T extends TLShape> {
@@ -863,6 +867,21 @@ const ThreadSvg = track(function ThreadSvg({
 
 	const path = info.isStraight ? getSolidStraightThreadPath(info) : getSolidCurvedThreadPath(info)
 
+	// Calculate the length of the path for the animation
+	const pathLength = info.isStraight ? info.length : Math.abs(info.bodyArc.length)
+
+	// Animation controls
+	const controls = useAnimation()
+
+	// Trigger the animation when needed
+	useEffect(() => {
+		// Example: Trigger the animation when the component mounts
+		controls.start({
+			pathLength: [0, 1],
+			transition: { duration: 1, ease: "easeOut" } // Adjust the duration as needed
+		})
+	}, [controls])
+
 	let handlePath: null | React.JSX.Element = null
 
 	if (shouldDisplayHandles) {
@@ -962,7 +981,14 @@ const ThreadSvg = track(function ThreadSvg({
 						height={toDomPrecision(bounds.height + 200)}
 						opacity={0}
 					/>
-					<path d={path} strokeDasharray={strokeDasharray} strokeDashoffset={strokeDashoffset} filter="url(#glow)" />
+					<motion.path
+						d={path}
+						strokeDasharray={pathLength}
+                        strokeDashoffset={pathLength}
+						filter="url(#glow)"
+						// initial={{ strokeDashoffset: 0, strokeDasharray: "0 1"}}
+						animate={controls} // Use animation controls
+					/>
 				</g>
 				{as && shape.props.fill !== 'none' && (
 					<ShapeFill

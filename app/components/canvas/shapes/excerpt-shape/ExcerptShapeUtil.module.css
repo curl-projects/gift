@@ -3,47 +3,34 @@
     height: fit-content;
     width: fit-content;
     position: relative;
+
   }
   
-  .hoverDescription {
-    position: absolute;
-    bottom: 120%;
-    left: 50%;
-    z-index: 100000000;
-    transform: translateX(-50%);
-    width: 100%;
-    max-width: 300px;
-    display: flex;
-    align-items: center;
-    line-height: 14px;
-    justify-content: center;
-    background-color: #F9F9F8;
-    color: rgba(77, 77, 77, 0.5);
-    border: 1px solid rgba(77, 77, 77, 0.1);
-    border-radius: 12px;
-    padding: 8px;
-    margin-bottom: 4px;
-    box-shadow: 0px 36px 42px -4px rgba(77, 77, 77, 0.15);
-  }
-  
-  .shapeContent {
-    min-height: 100%;
-    min-width: 100%;
-    width: 100%;
-    height: 100%;
-    box-shadow: 0px 36px 42px -4px rgba(77, 77, 77, 0.15);
-    pointer-events: all;
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    color: transparent;
+  .excerptBox{
+    height: fit-content;
+    width: 400px;
+    /* background-color: rgba(22, 53, 81, 0.2);
+    box-shadow: 0px 3px 1.39px 0px rgba(0, 0, 0, 0.25); */
+    /* border-radius: 8px; */
+    /* padding: 16px; */
+    /* display: flex; */
+    /* justify-content: center; */
+    /* align-items: center; */
   }
 
-  .editorContent {
-    font-weight: 550;
-    color: rgb(126,196,207);
-    letter-spacing: -0.00em;
-    line-height: 21px;
+  .excerptText{
     font-size: 14px;
-    white-space: nowrap;
+    font-weight: bold;
+    font-family: "Inter";
+    letter-spacing: -0.04em;
+    color: #EEEEFF;
+  }
+
+  .connectionPoint{
+    border-radius: 100px;
+    background-color: #EEEEFF;
+    width: 10px;
+    height: 10px;
+    display: inline-block;
+    margin-right: 4px;
   }
