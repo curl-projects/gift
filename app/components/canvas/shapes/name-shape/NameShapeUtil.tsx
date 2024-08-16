@@ -11,7 +11,7 @@ import { useCallback, useState, useEffect, useRef, useLayoutEffect } from 'react
 import styles from './NameShapeUtil.module.css';
 import { motion, useAnimate } from 'framer-motion';
 
-const NameShapeProps = {
+const nameShapeProps = {
 	w: T.number,
 	h: T.number,
 	name: T.string
@@ -34,7 +34,7 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
 
 	override canEdit = () => true
 
-	override canResize = () => false
+	override canResize = () => true
 
 
 	getDefaultProps(): ExcerptShape['props'] {
@@ -55,27 +55,80 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
 
 	component(shape: ExcerptShape) {
 		const shapeRef = useRef();
+        const [scope, animate] = useAnimate()
 
+        
 		useEffect(()=>{
-			if(shapeRef.current){
+			if(shapeRef.current && shapeRef.current.clientHeight !== 0 && shapeRef.current.clientWidth !== 0){
+                console.log("SCOPE CURRENT", shapeRef.current, shapeRef.current.clientWidth, shapeRef.current.clientHeight)
 				this.editor.updateShape({id: shape.id, type: shape.type, props: {
 					w: shapeRef.current.clientWidth,
 					h: shapeRef.current.clientHeight
 				}})
 			}
-		}, [this.editor, shapeRef])
+		}, [this.editor, shapeRef.current])
+
+        const randomDelay = 0
+        const ringVariants = {
+            hidden: { scale: 0, x: "-50%", y: "-50%" },
+            visible: (delay = 0) => ({
+                scale: 1,
+                x: "-50%", 
+                y: "-50%",
+                transition: { duration: 0.5, ease: "easeOut", delay }
+            })
+        };
         
         return (
 			<HTMLContainer 
 				id={shape.id}
 				className={styles.container}
-				
 				>
-				<div ref={shapeRef} className={styles.excerptBox}>
-					<p className={styles.excerptText}><span className={styles.connectionPoint}/>
-					{shape.props.plainText}
-					</p>
-				</div>
+                <div className={styles.shapeContent} ref={shapeRef}>
+                    <div className={styles.circleContainer} ref={scope}>
+                        <motion.div
+                            className={`${styles.outerRing} conceptCircle`}
+                            initial="hidden"
+                            animate="visible"
+                            custom={randomDelay + 1.0} // Delay for outer ring
+                            variants={ringVariants}
+                        />
+                        <motion.div
+                            className={`${styles.innerRing} conceptCircle`}
+                            initial="hidden"
+                            animate="visible"
+                            custom={randomDelay + 0.75} // Delay for inner ring
+                            variants={ringVariants}
+                        />
+                        <motion.div
+                            className={`${styles.glow} conceptCircle`}
+                            initial="hidden"
+                            animate="visible"
+                            custom={randomDelay + 0.5} // Delay for glow
+                            variants={ringVariants}
+                        />
+                        <motion.div
+                            className={`${styles.innerGlow} conceptCircle`}
+                            initial="hidden"
+                            animate="visible"
+                            custom={randomDelay + 0.25} // Delay for inner glow
+                            variants={ringVariants}
+                        />
+                        <motion.div
+                            className={`${styles.circle} conceptCircle`}
+                            initial="hidden"
+                            animate="visible"
+                            custom={randomDelay} // No delay for circle
+                            variants={ringVariants}
+                        />
+                        <motion.div
+                        initial="hidden"
+                        className={`${styles.ripple} ripple`}
+                        variants={ringVariants}
+                        transition={{ delay: 0 }}
+                    />
+                    </div>
+                </div>
 			</HTMLContainer>
 		)
 	}

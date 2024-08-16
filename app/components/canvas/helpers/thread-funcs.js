@@ -10,7 +10,7 @@ function calculateAnchor(startShape, endShape) {
     let endIsExact = false;
     let endIsPrecise = false;
 
-    if (startShape.type === 'geo') {
+    if (startShape.type === 'name') {
         startIsPrecise = false;
         startIsExact = false;
     } else if (startShape.type === 'concept') {

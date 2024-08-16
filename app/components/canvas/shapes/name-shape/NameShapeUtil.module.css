@@ -1,0 +1,104 @@
+.container {
+    pointer-events: none;
+    height: fit-content;
+    width: fit-content;
+    position: relative;
+  }
+
+  
+  .shapeContent {
+    min-height: 100%;
+    min-width: 100%;
+    width: 100%;
+    height: 100%;
+    box-shadow: 0px 36px 42px -4px rgba(77, 77, 77, 0.15);
+    pointer-events: all;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    color: transparent;
+  }
+
+  .circleContainer {
+    height: 56px;
+    width: 56px; 
+    position: relative;
+  }
+  
+  .ripple {
+    border: 1px solid rgba(251, 247, 245, 0.2);
+    filter: blur(4px);
+    border-radius: 100%;
+    box-shadow: 0px 0px 10px 0px rgba(251, 247, 245, 0.2);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    height: 56px;
+    width: 56px; 
+  }
+
+  .outerRing {
+    border: 2.6px solid rgba(251, 247, 245, 0.2);
+    border-radius: 100%;
+    height: 56px;
+    width: 56px; 
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    box-shadow: 0px 0px 10px 0px rgba(251, 247, 245, 0.2);
+  }
+
+  .innerRing {
+    border: 1.8px solid rgba(251, 247, 245, 0.2);
+    border-radius: 100%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    height: 38px;
+    width: 38px; 
+    box-shadow: 0px 0px 10px 0px rgba(251, 247, 245, 0.2);
+  }
+
+  .glow {
+    height: 35px;
+    width: 35px;
+    border-radius: 100%;
+    background-color: rgba(251, 247, 245, 0.2);
+    filter: blur(2.73px);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    box-shadow: 0px 0px 10px 0px rgba(251, 247, 245, 0.2);
+  }
+
+  .innerGlow {
+    height: 18px;
+    width: 18px;
+    border-radius: 100%;
+    background-color: rgba(251, 247, 245, 0.6);
+    filter: blur(13.66px);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    box-shadow: 0px 0px 10px 0px rgba(251, 247, 245, 0.2);
+  }
+
+  .circle {
+    border-radius: 100%;
+    background-color: rgba(251, 247, 245, 1);
+    height: 15px;
+    width: 15px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    box-shadow: 0px 0px 10px 0px rgba(251, 247, 245, 0.2);
+  }
+  
+  .editorContent {
+    font-weight: 550;
+    color: #EEEEFF;
+    letter-spacing: -0.00em;
+    line-height: 21px;
+    font-size: 14px;
+    white-space: nowrap;
+  }

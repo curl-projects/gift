@@ -80,7 +80,7 @@ export function removeProgressiveBlur(editor, centralShape, excludeIds = []){
     const shapes = editor.getCurrentPageShapes();
     // exclude those in excludeIds
     for(let shape of shapes){
-        if(['concept', 'thread', 'excerpt', 'geo', 'name'].includes(shape.type) ){
+        if(['concept', 'thread', 'excerpt', 'name'].includes(shape.type) ){
             editor.updateShape({
                 id: shape.id,
                 type: shape.type,

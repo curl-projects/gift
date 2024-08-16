@@ -26,6 +26,7 @@ const excerptShapeProps = {
 	temporary: T.boolean,
 	databaseId: T.string,
 	// colors: T.array,
+	mediaMode: T.boolean,
 }
 
 type ExcerptShape = TLBaseShape<
@@ -39,15 +40,10 @@ type ExcerptShape = TLBaseShape<
 		temporary: boolean,
 		// colors: any,
 		description: any,
-		databaseId: string
+		databaseId: string,
+		mediaMode: boolean,
 	}
 >
-
-const OneLiner = Node.create({
-	name: "oneLiner",
-	topNode: true,
-	content: "block",
-  });
 
 /** @public */
 export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
@@ -69,7 +65,8 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 			temporary: false,
 			// colors: [conceptColors[Math.floor(Math.random() * conceptColors.length)]],
 			description: "No description",
-			databaseId: "no-id"
+			databaseId: "no-id",
+			mediaMode: false,
 		}
 	}
 
@@ -83,6 +80,10 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 
 	component(shape: ExcerptShape) {
 		const shapeRef = useRef();
+		const isOnlySelected = this.editor.getOnlySelectedShapeId() === shape.id;
+		const [scope, animate] = useAnimate(); // Use animation controls
+	
+		console.log("SHAPE VALS:", shape.props.w, shape.props.h)
 
 		useEffect(()=>{
 			if(shapeRef.current){
@@ -91,79 +92,87 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 					h: shapeRef.current.clientHeight
 				}})
 			}
-		}, [this.editor, shapeRef])
-        // useEffect(()=>{
-        //     if(isOnlySelected){
-        //         this.editor.zoomToBounds(this.editor.getShapePageBounds(shape), {
-        //             animation: {
-        //                 duration: 200
-        //             },
-        //             targetZoom: 1,
-        //         })
-        //     }
-		// 	else{
-		// 	}
-        // }, [isOnlySelected])
-
-		// const shapeRef = useRef<HTMLDivElement>(null);
-		// const horizontalBuffer = 6
-		// const verticalBuffer = 2
-
-		// const editor = useEditor({
-		// 	extensions: [
-		// 	  OneLiner,
-		// 	  Text,
-        //       Paragraph,
-		// 	  Placeholder.configure({
-		// 		placeholder: "Unknown Excerpt"
-		// 	  })
-		// 	],
-		// 	content: shape.props.text,
+		}, [this.editor, shapeRef.current, isOnlySelected])
 		
 
-		// 	onUpdate: ({ editor }) => {
-		// 		stopEventPropagation;
+        useEffect(() => {
+			const animateHeight = async () => {
+				if (isOnlySelected && scope.current) {
+					this.editor.updateShape({
+						id: shape.id,
+						type: shape.type,
+						props: {
+							w: shapeRef.current.clientWidth,
+							h: 820
+						}
+					});
 
-		// 		shapeRef.current && this.editor.updateShape<ExcerptShape>({
-		// 			id: shape.id,
-		// 			type: 'excerpt',
-		// 			props: {
-		// 				text: editor.getJSON(),
-		// 				plainText: editor.getText(),
-		// 				w: shapeRef.current?.clientWidth+horizontalBuffer,
-		// 				h: shapeRef.current?.clientHeight+verticalBuffer,
-		// 			}
-		// 		})
-		// 	},
+					this.editor.zoomToBounds(this.editor.getShapePageBounds(shape), {
+						animation: {
+							duration: 300
+						},
+						targetZoom: 3,
+					});
+					
+					await animate(scope.current, {
+						height: "800px",
+						transition: { duration: 0.1, ease: "easeInOut" }
+					});
 
-		// 	onSelectionUpdate: ({ editor }) => {
-		// 	}
-		//   });
+					await this.editor.updateShape({
+						id: shape.id,
+						type: shape.type,
+						props: {
+							w: shapeRef.current.clientWidth,
+							h: shapeRef.current.clientHeight
+						}
+					});
+					
+					// this.editor.zoomToBounds(this.editor.getShapePageBounds(shape), {
+					// 	animation: {
+					// 		duration: 300
+					// 	},
+					// 	targetZoom: 3,
+					// });
+				} else {
+					await animate(scope.current, {
+						height: "0px",
+						transition: { duration: 0.3, ease: "easeInOut" }
+					});
+					this.editor.updateShape({
+						id: shape.id,
+						type: shape.type,
+						props: {
+							w: shapeRef.current.clientWidth,
+							h: shapeRef.current.clientHeight
+						}
+					});
+				}
+			};
+
+			animateHeight();
+		}, [isOnlySelected, scope]);
 
 
-		// useEffect(()=>{
-		// 	if(editor && this.editor && shapeRef.current){
-		// 		this.editor.updateShape<ExcerptShape>({
-		// 			id: shape.id,
-		// 			type: 'excerpt',
-		// 			props: {
-		// 				w: shapeRef.current?.clientWidth+horizontalBuffer,
-        //                 h: shapeRef.current?.clientHeight+verticalBuffer,
-		// 			}
-		// 		})
-		// 	}
-		//   }, [this.editor, editor, shapeRef.current])
 
 		return (
 			<HTMLContainer 
 				id={shape.id}
 				className={styles.container}
-				
 				>
-				<div ref={shapeRef} className={styles.excerptBox}>
+				<div  className={styles.excerptBox} ref={shapeRef}>
 					<p className={styles.excerptText}><span className={styles.connectionPoint}/>
 					{shape.props.plainText}
 					</p>
+					<div
+						ref={scope}
+						className={styles.excerptMediaBox} 
+						style={{
+							height: "0px",
+							border: "2px solid pink",
+						}}
+
+					/>
 				</div>
 			</HTMLContainer>
 		)

@@ -13,6 +13,9 @@ import { GraphUi } from "~/components/canvas/custom-ui/graph/GraphUi";
 import { GraphTrigger } from "~/components/canvas/custom-ui/graph/GraphTrigger";
 import { SelectionListener } from "~/components/canvas/custom-ui/listeners/SelectionListener";
 // CUSTOM SHAPES
+import { NameShapeUtil } from "~/components/canvas/shapes/name-shape/NameShapeUtil"
+import { NameShapeTool } from "~/components/canvas/shapes/name-shape/NameShapeTool"
+
 import { ConceptShapeUtil } from "~/components/canvas/shapes/concept-shape/ConceptShapeUtil"
 import { ConceptShapeTool } from "~/components/canvas/shapes/concept-shape/ConceptShapeTool"
 
@@ -22,6 +25,7 @@ import { ExcerptShapeTool } from "~/components/canvas/shapes/excerpt-shape/Excer
 import { ThreadShapeUtil } from "~/components/canvas/shapes/thread-shape/ThreadShapeUtil"
 import { ThreadShapeTool } from "~/components/canvas/shapes/thread-shape/ThreadShapeTool"
 import { ThreadBindingUtil} from "~/components/canvas/bindings/thread-binding/ThreadBindingUtil"
+
 
 // HELPERS
 import { createBoundThread } from './helpers/thread-funcs';
@@ -36,8 +40,8 @@ export default function WorldCanvas() {
         console.log("EDITOR:", editor)
     }, [editor])
 
-    const shapeUtils = [ConceptShapeUtil, ExcerptShapeUtil, ThreadShapeUtil]
-    const tools = [ConceptShapeTool, ExcerptShapeTool, ThreadShapeTool]
+    const shapeUtils = [ConceptShapeUtil, ExcerptShapeUtil, ThreadShapeUtil, NameShapeUtil]
+    const tools = [ConceptShapeTool, ExcerptShapeTool, ThreadShapeTool, NameShapeTool]
     const bindingUtils = [ThreadBindingUtil]
     const collections = [GraphLayoutCollection]
     const components = {
@@ -153,22 +157,18 @@ export default function WorldCanvas() {
                     console.log("CENTRAL SHAPE ID:", centralShapeId)
                     editor.createShape({
                         id: centralShapeId,
-                        type: 'geo',
+                        type: 'name',
                         x: -100, // Half the width to center it
                         y: -50,  // Half the height to center it
                         props: {
                             w: 200,
                             h: 100,
-                            geo: 'rectangle',
-                            color: "blue",
-                            text: user.name
+                            name: "AV",
                         },
                     });
                 }
 
                 console.log("SHAPE POSITION", editor.getShapePageBounds(editor.getShape(centralShapeId)).center)
-
-
 
                 // create threads
                 const conceptShapes = editor.getCurrentPageShapes().filter(shape => shape.type === 'concept')

@@ -182,10 +182,21 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
                  excerptIds.some(id => memoizedSelectedShapeIds.includes(id))
                 )
             ){
+        
+    
             
                 console.log("INNER MEMOIZED SHAPE IDS:", memoizedSelectedShapeIds)
                 // if the concept is selected and its excerpts don't exist, create its excerpts
                 if(memoizedSelectedShapeIds.includes(shape.id)){
+                    // zoom to the concept
+                    this.editor.zoomToBounds(this.editor.getShapePageBounds(shape), {
+                        animation: {
+                            duration: 400
+                        },
+                        targetZoom: 1,
+                    })
+                    
+
                     // Trigger ripple animation
                     animate(".conceptCircle", { scale: 0.9 }, { duration: 0.2, ease: 'easeInOut' })
                         .then(() => animate(".conceptCircle", { scale: 1.1 }, { duration: 0.2, ease: 'easeInOut' }))
@@ -206,8 +217,7 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
                     }
                 }
                 else if(excerptIds.some(id => memoizedSelectedShapeIds.includes(id))){
-                    // excerpt was clicked -- right now, do nothing
-
+                    // excerpt was clicked, shape handles its own logic
                 }
                 else{
                     console.warn("Something weird was selected", memoizedSelectedShapeIds)
@@ -277,12 +287,10 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
                         custom={randomDelay} // No delay for circle
                         variants={ringVariants}
                     />
-
-
                     <motion.div
                     initial="hidden"
                     className={`${styles.ripple} ripple`}
-                    variants={ringVariants}
+                variants={ringVariants}
                     transition={{ delay: 0 }}
                 />
 				</div>
