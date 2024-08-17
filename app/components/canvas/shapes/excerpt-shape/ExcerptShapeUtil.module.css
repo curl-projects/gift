@@ -3,6 +3,7 @@
     height: fit-content;
     width: fit-content;
     position: relative;
+    cursor: pointer;
 
   }
   
@@ -37,5 +38,5 @@
 
   .excerptMediaBox{
     width: 100%;
-
+    overflow: hidden;
   }

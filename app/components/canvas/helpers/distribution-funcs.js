@@ -1,3 +1,5 @@
+import { createShapeId } from "tldraw";
+
 export function generatePointsAroundCircle(centerX, centerY, radius, numPoints, stochasticFactor) {
     const points = [];
     const angleStep = (2 * Math.PI) / numPoints;
@@ -22,7 +24,7 @@ export function applyProgressiveBlur(editor, centralShape, excludeIds = []){
 
     console.log("APPLYING PROGRESSIVE BLUR:", centralShape, excludeIds, shapes)
 
-    const threadIds = [...excludeIds, centralShape.id].map(id => {
+    const threadIds = [...excludeIds, centralShape.id, createShapeId('name')].map(id => {
         const threadBindings = editor.getBindingsToShape(id, 'thread')
         const updatedThreadBindings = threadBindings.filter(binding => {
             // check if the other end of the thread binding links to the name or an excerpt
@@ -39,8 +41,7 @@ export function applyProgressiveBlur(editor, centralShape, excludeIds = []){
 
     console.log("THREAD IDS", threadIds)
 
-
-    const shapesToBlur = shapes.filter(shape => !excludeIds.includes(shape.id) && !threadIds.includes(shape.id) && shape.id !== centralShape.id);
+    const shapesToBlur = shapes.filter(shape => !excludeIds.includes(shape.id) && !threadIds.includes(shape.id) && shape.id !== centralShape.id && shape.type !== 'name');
 
 
     // based on their distance from the existing shape, determine their blur 
@@ -65,12 +66,12 @@ export function applyProgressiveBlur(editor, centralShape, excludeIds = []){
         const distance = Math.sqrt(Math.pow(shapeCenter[0] - centralShapeCenter[0], 2) + Math.pow(shapeCenter[1] - centralShapeCenter[1], 2));
 
         const opacity = Math.min(0.3, (distance / maxDistance) * 0.5);
+            editor.updateShape({
+                id: shape.id,
+                type: shape.type,
+                opacity: 0.2
+            })
         
-        editor.updateShape({
-            id: shape.id,
-            type: shape.type,
-            opacity: 0.2
-        })
     }
 }
 

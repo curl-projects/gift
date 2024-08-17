@@ -57,5 +57,6 @@ model Media {
   id      String   @id @default(uuid())
   type    String   // e.g., "image", "video", "audio"
   url     String
+  content String? @default("Media content")
   excerpt Excerpt?
 }

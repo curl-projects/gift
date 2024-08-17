@@ -1,4 +1,4 @@
-import { useEditor, useValue } from "tldraw"
+import { createShapeId, useEditor, useValue } from "tldraw"
 import { useEffect } from 'react';
 import { useLoaderData } from "@remix-run/react";
 
@@ -13,7 +13,7 @@ export function SelectionListener(){
         console.log("SELECTED SHAPES:", selectedShapeIds)
         if(selectedShapeIds.length === 0){
             // zoom to the name 
-            const name = editor.getShape('geo')
+            const name = editor.getShape(createShapeId('name'))
 
             console.log("NAME", name)
             if(name){

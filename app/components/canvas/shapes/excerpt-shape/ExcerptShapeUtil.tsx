@@ -15,6 +15,8 @@ import { Node } from "@tiptap/core";
 import Placeholder from '@tiptap/extension-placeholder'
 import styles from './ExcerptShapeUtil.module.css';
 import { motion, useAnimate } from 'framer-motion';
+import { TypeAnimation } from 'react-type-animation';
+import { useLoaderData } from "@remix-run/react"
 
 const excerptShapeProps = {
 	w: T.number,
@@ -27,6 +29,7 @@ const excerptShapeProps = {
 	databaseId: T.string,
 	// colors: T.array,
 	mediaMode: T.boolean,
+	mediaContent: T.string,
 }
 
 type ExcerptShape = TLBaseShape<
@@ -42,6 +45,7 @@ type ExcerptShape = TLBaseShape<
 		description: any,
 		databaseId: string,
 		mediaMode: boolean,
+		mediaContent: string,
 	}
 >
 
@@ -67,6 +71,7 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 			description: "No description",
 			databaseId: "no-id",
 			mediaMode: false,
+			mediaContent: "Example media"
 		}
 	}
 
@@ -80,6 +85,7 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 
 	component(shape: ExcerptShape) {
 		const shapeRef = useRef();
+		const data = useLoaderData();
 		const isOnlySelected = this.editor.getOnlySelectedShapeId() === shape.id;
 		const [scope, animate] = useAnimate(); // Use animation controls
 	
@@ -103,7 +109,7 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 						type: shape.type,
 						props: {
 							w: shapeRef.current.clientWidth,
-							h: 820
+							h: 840
 						}
 					});
 
@@ -161,8 +167,21 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 				className={styles.container}
 				>
 				<div  className={styles.excerptBox} ref={shapeRef}>
-					<p className={styles.excerptText}><span className={styles.connectionPoint}/>
-					{shape.props.plainText}
+					<p className={styles.excerptText}>
+						<motion.span 
+						className={styles.connectionPoint}
+						initial={{ scale: 0 }}
+						animate={{ scale: 1 }}
+						transition={{ delay: 1, duration: 0.2, ease: 'easeInOut' }}
+						/>
+						<TypeAnimation
+						    // className="custom-type-animation-cursor"
+							sequence={[1000, `${shape.props.plainText}`]}
+							speed={{type: "keyStrokeDelayInMs", value: 20}}
+							cursor={false}
+							repeat={0}
+
+						/>
 					</p>
 					<div
 						ref={scope}
@@ -171,8 +190,11 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 							height: "0px",
 							border: "2px solid pink",
 						}}
-
-					/>
+					>
+						<p>{shape.props.mediaContent}</p>
+					</div>
+					
+				
 				</div>
 			</HTMLContainer>
 		)

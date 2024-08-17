@@ -87,35 +87,42 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
                 <div className={styles.shapeContent} ref={shapeRef}>
                     <div className={styles.circleContainer} ref={scope}>
                         <motion.div
-                            className={`${styles.outerRing} conceptCircle`}
+                            className={`${styles.mostOuterRing} nameCircle`}
+                            initial="hidden"
+                            animate="visible"
+                            custom={randomDelay + 1.25} // Delay for outer ring
+                            variants={ringVariants}
+                        />
+                        <motion.div
+                            className={`${styles.outerRing} nameCircle`}
                             initial="hidden"
                             animate="visible"
                             custom={randomDelay + 1.0} // Delay for outer ring
                             variants={ringVariants}
                         />
                         <motion.div
-                            className={`${styles.innerRing} conceptCircle`}
+                            className={`${styles.innerRing} nameCircle`}
                             initial="hidden"
                             animate="visible"
                             custom={randomDelay + 0.75} // Delay for inner ring
                             variants={ringVariants}
                         />
                         <motion.div
-                            className={`${styles.glow} conceptCircle`}
+                            className={`${styles.glow} nameCircle`}
                             initial="hidden"
                             animate="visible"
                             custom={randomDelay + 0.5} // Delay for glow
                             variants={ringVariants}
                         />
                         <motion.div
-                            className={`${styles.innerGlow} conceptCircle`}
+                            className={`${styles.innerGlow} nameCircle`}
                             initial="hidden"
                             animate="visible"
                             custom={randomDelay + 0.25} // Delay for inner glow
                             variants={ringVariants}
                         />
                         <motion.div
-                            className={`${styles.circle} conceptCircle`}
+                            className={`${styles.circle} nameCircle`}
                             initial="hidden"
                             animate="visible"
                             custom={randomDelay} // No delay for circle
