@@ -22,8 +22,6 @@ export function applyProgressiveBlur(editor, centralShape, excludeIds = []){
     const shapes = editor.getCurrentPageShapes();
     // exclude those in excludeIds
 
-    console.log("APPLYING PROGRESSIVE BLUR:", centralShape, excludeIds, shapes)
-
     const threadIds = [...excludeIds, centralShape.id, createShapeId('name')].map(id => {
         const threadBindings = editor.getBindingsToShape(id, 'thread')
         const updatedThreadBindings = threadBindings.filter(binding => {
@@ -32,14 +30,11 @@ export function applyProgressiveBlur(editor, centralShape, excludeIds = []){
 
             const otherBinding = editor.getBindingsFromShape(thread.id, 'thread').filter(binding => binding.toId !== id)[0]
 
-            console.log("OTHER BINDING:", otherBinding)
 
             return ["name", "excerpt"].includes(editor.getShape(otherBinding.toId).type)
         })
         return updatedThreadBindings.map(threadBinding => threadBinding.fromId)
     }).flat();
-
-    console.log("THREAD IDS", threadIds)
 
     const shapesToBlur = shapes.filter(shape => !excludeIds.includes(shape.id) && !threadIds.includes(shape.id) && shape.id !== centralShape.id && shape.type !== 'name');
 
@@ -76,7 +71,6 @@ export function applyProgressiveBlur(editor, centralShape, excludeIds = []){
 }
 
 export function removeProgressiveBlur(editor, centralShape, excludeIds = []){
-    console.log("REMOVE BLUR")
     // get all shapes
     const shapes = editor.getCurrentPageShapes();
     // exclude those in excludeIds

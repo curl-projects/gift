@@ -134,8 +134,9 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
                         variants={ringVariants}
                         transition={{ delay: 0 }}
                     />
-                    </div>
+                    </div>  
                 </div>
+
 			</HTMLContainer>
 		)
 	}

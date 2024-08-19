@@ -29,6 +29,8 @@ import { ThreadBindingUtil} from "~/components/canvas/bindings/thread-binding/Th
 
 // HELPERS
 import { createBoundThread } from './helpers/thread-funcs';
+import { Stars } from './custom-ui/aesthetics/stars/Stars';
+import { Clouds } from './custom-ui/aesthetics/clouds/Clouds';
 
 export default function WorldCanvas() {
     const [editor, setEditor] = useState(null)
@@ -144,7 +146,7 @@ export default function WorldCanvas() {
                         props: {
                             databaseId: concept.id,
                             text: concept.title,
-                            plainText: concept.title
+                            plainText: concept.title,
                         }
                     })
                 }
@@ -176,13 +178,6 @@ export default function WorldCanvas() {
                 for(let conceptShape of conceptShapes){
                     createBoundThread(editor, centralShapeId, conceptShape.id)
                 }
-                // create an thread linking concept one and two if they exist
-                if (conceptShapes.length > 1) {
-                    createBoundThread(editor, conceptShapes[0].id, conceptShapes[1].id)
-                }
-                else {
-                    console.warn("Not enough concepts")
-                }
 
             }}
         >
@@ -192,6 +187,8 @@ export default function WorldCanvas() {
                     <CustomToolbar />
                     <GraphTrigger />
                     <SelectionListener />
+                    <Stars />
+                    <Clouds />
                 </CollectionProvider>
             )}
 

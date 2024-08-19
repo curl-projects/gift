@@ -19,6 +19,8 @@ model User {
   name     String?
   
   concepts Concept[]
+
+  media Media[]
 }
 
 model Concept {
@@ -59,4 +61,9 @@ model Media {
   url     String
   content String? @default("Media content")
   excerpt Excerpt?
+
+  userId  String?  // Add this line to establish the relation
+  user    User?    @relation(fields: [userId], references: [uniqueName])  // Add this line to establish the relation
+
+
 }

@@ -1,0 +1,61 @@
+@keyframes animStar {
+  from {
+    transform: translateY(0px);
+  }
+  to {
+    transform: translateY(-2000px);
+  }
+}
+
+@keyframes transitionStars {
+  0% {
+    transform: translate(var(--stars-translateX-start), var(--stars-translateY-start));
+  }
+  100% {
+    transform: translate(var(--stars-translateX-end), var(--stars-translateY-end));
+  }
+}
+
+.stars, .stars2, .stars3, .offsetStars {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  background: transparent;
+  animation: animStar linear infinite;
+}
+
+.stars {
+  animation-duration: 200s;
+}
+
+.stars2 {
+  width: 2px;
+  height: 2px;
+  animation-duration: 250s;
+}
+
+.stars3 {
+  width: 3px;
+  height: 3px;
+  animation-duration: 300s;
+}
+
+.offsetStars {
+  width: 3px;
+  height: 3px;
+  animation-duration: 300s;
+}
+
+.stars::after, .stars2::after, .stars3::after, .offsetStars::after {
+  content: " ";
+  position: absolute;
+  top: 2800px;
+  background: transparent;
+}
+
+/* New class for transition animation */
+.transition {
+  animation: transitionStars 1s ease-out forwards;
+}

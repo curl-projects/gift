@@ -92,12 +92,13 @@ export class ThreadShapeUtil extends ShapeUtil<TLThreadShape> {
 	static override migrations = threadShapeMigrations
 
 	override canEdit= () => {
-		return true
+		return false
 	}
 	override canBind({ toShapeType }: TLShapeUtilCanBindOpts<TLThreadShape>): boolean {
 		// bindings can go from threads to shapes, but not from shapes to threads
 		return toShapeType !== 'thread'
 	}
+
 	override canSnap = () => {
 		return false
 	}

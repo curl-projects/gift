@@ -24,7 +24,6 @@ export function SelectionListener(){
                     targetZoom: 1,
                 })
         }
-
             }
         else{
             // tear down all excerpts

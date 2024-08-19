@@ -17,35 +17,24 @@ import styles from './ExcerptShapeUtil.module.css';
 import { motion, useAnimate } from 'framer-motion';
 import { TypeAnimation } from 'react-type-animation';
 import { useLoaderData } from "@remix-run/react"
+import ExcerptMediaEditor from './ExcerptMediaEditor';
 
 const excerptShapeProps = {
 	w: T.number,
 	h: T.number,
-	text: T.any,
-	plainText: T.any,
-	activated: T.boolean,
-	description: T.any,
-	temporary: T.boolean,
+	content: T.string,
 	databaseId: T.string,
-	// colors: T.array,
-	mediaMode: T.boolean,
-	mediaContent: T.string,
+	media: T.any,
 }
 
 type ExcerptShape = TLBaseShape<
 	'excerpt',
 	{
-		w: number
-		h: number
-		text: any,
-		plainText: any,
-		activated: boolean,
-		temporary: boolean,
-		// colors: any,
-		description: any,
+		w: number,
+		h: number,
+		content: string,
 		databaseId: string,
-		mediaMode: boolean,
-		mediaContent: string,
+		media: any,
 	}
 >
 
@@ -63,15 +52,9 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 		return { 
 			w: 200,
 			h: 20,
-			text: "",
-			plainText: "",
-			activated: false,
-			temporary: false,
-			// colors: [conceptColors[Math.floor(Math.random() * conceptColors.length)]],
-			description: "No description",
+			content: "",
 			databaseId: "no-id",
-			mediaMode: false,
-			mediaContent: "Example media"
+			media: null,
 		}
 	}
 
@@ -88,8 +71,6 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 		const data = useLoaderData();
 		const isOnlySelected = this.editor.getOnlySelectedShapeId() === shape.id;
 		const [scope, animate] = useAnimate(); // Use animation controls
-	
-		console.log("SHAPE VALS:", shape.props.w, shape.props.h)
 
 		useEffect(()=>{
 			if(shapeRef.current){
@@ -122,10 +103,11 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 					
 					await animate(scope.current, {
 						height: "800px",
+						maxHeight: "800px",
 						transition: { duration: 0.1, ease: "easeInOut" }
 					});
 
-					await this.editor.updateShape({
+					this.editor.updateShape({
 						id: shape.id,
 						type: shape.type,
 						props: {
@@ -166,7 +148,7 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 				id={shape.id}
 				className={styles.container}
 				>
-				<div  className={styles.excerptBox} ref={shapeRef}>
+				<div className={styles.excerptBox} ref={shapeRef}>
 					<p className={styles.excerptText}>
 						<motion.span 
 						className={styles.connectionPoint}
@@ -176,7 +158,7 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 						/>
 						<TypeAnimation
 						    // className="custom-type-animation-cursor"
-							sequence={[1000, `${shape.props.plainText}`]}
+							sequence={[1000, `${shape.props.content}`]}
 							speed={{type: "keyStrokeDelayInMs", value: 20}}
 							cursor={false}
 							repeat={0}
@@ -191,7 +173,9 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 							border: "2px solid pink",
 						}}
 					>
-						<p>{shape.props.mediaContent}</p>
+						<ExcerptMediaEditor 
+							media={shape.props.media}
+						/>
 					</div>
 					
 				

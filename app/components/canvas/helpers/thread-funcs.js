@@ -11,8 +11,9 @@ function calculateAnchor(startShape, endShape) {
     let endIsPrecise = false;
 
     if (startShape.type === 'name') {
-        startIsPrecise = false;
-        startIsExact = false;
+        startIsPrecise = true;
+        startIsExact = true;
+        startAnchor = { x: 0.5, y: 0.5 };
     } else if (startShape.type === 'concept') {
         startIsPrecise = true;
         startIsExact = true;
@@ -28,6 +29,11 @@ function calculateAnchor(startShape, endShape) {
         endIsPrecise = true;
         endIsExact = true;
         endAnchor = { x: 0.01, y: 0.5 };
+    }
+    else if(endShape.type === 'name'){
+        endIsPrecise = true;
+        endIsExact = true;
+        endAnchor = { x: 0.5, y: 0.5 };
     }
 
     return { startAnchor, startIsExact, startIsPrecise, endAnchor, endIsExact, endIsPrecise };
@@ -121,9 +127,9 @@ export function generateExcerpts(editor, concept) {
                     x: x,
                     y: y,
                     props: {
-                        text: excerpt.content,
-                        plainText: excerpt.content,
+                        content: excerpt.content,
                         databaseId: excerpt.id,
+                        media: excerpt.media,
                     }
                 });
 

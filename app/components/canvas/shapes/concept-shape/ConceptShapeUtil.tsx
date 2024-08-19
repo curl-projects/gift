@@ -25,10 +25,7 @@ const conceptShapeProps = {
 	h: T.number,
 	text: T.any,
 	plainText: T.any,
-	activated: T.boolean,
 	description: T.any,
-	temporary: T.boolean,
-	// colors: T.array,
     excerpts: T.any,
     databaseId: T.string,
     excerptsOpen: T.boolean,
@@ -41,9 +38,6 @@ type ConceptShape = TLBaseShape<
 		h: number
 		text: any,
 		plainText: any,
-		activated: boolean,
-		temporary: boolean,
-		// colors: any,
 		description: any,
         excerpts: any,
         databaseId: string,
@@ -73,9 +67,6 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
 			h: 20,
 			text: "",
 			plainText: "",
-			activated: false,
-			temporary: false,
-			// colors: [conceptColors[Math.floor(Math.random() * conceptColors.length)]],
 			description: "No description",
             excerpts: [],
             excerptsOpen: false,
@@ -157,35 +148,23 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
                 y: "-50%",
                 transition: { duration: 0.5, ease: "easeOut", delay }
             })
-        };
-
-        
+        };        
 
         const selectedShapeIds = this.editor.getSelectedShapeIds();
         const memoizedSelectedShapeIds = useMemo(() => selectedShapeIds, [selectedShapeIds]);
 
-        // useEffect(()=>{
-        //     console.log("SELECTED SHAPE IDS:", memoizedSelectedShapeIds)
-        // }, [memoizedSelectedShapeIds])
-
         useEffect(() => {
             
             // only do anything if the shape itself is selected
-
             const concept = data.user.concepts.find(concept => shape.props.databaseId === concept.id);
             const excerptIds = concept.excerpts.map(excerpt => createShapeId(excerpt.id));
 
-            console.log("OUTER MEMOIZED SHAPE IDS:", memoizedSelectedShapeIds)
             // trigger if the concept or its excerpts are selected
             if(memoizedSelectedShapeIds.length === 1 && 
                 (memoizedSelectedShapeIds.includes(shape.id) ||
                  excerptIds.some(id => memoizedSelectedShapeIds.includes(id))
                 )
             ){
-        
-    
-            
-                console.log("INNER MEMOIZED SHAPE IDS:", memoizedSelectedShapeIds)
                 // if the concept is selected and its excerpts don't exist, create its excerpts
                 if(memoizedSelectedShapeIds.includes(shape.id)){
                     // zoom to the concept
@@ -195,7 +174,6 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
                         },
                         targetZoom: 1,
                     })
-                    
 
                     // Trigger ripple animation
                     animate(".conceptCircle", { scale: 0.9 }, { duration: 0.2, ease: 'easeInOut' })

@@ -12,7 +12,11 @@ export async function getWorldContent(uniqueName){
         include: {
             concepts: {
                 include: {
-                    excerpts: true
+                    excerpts: {
+                        include: {
+                            media: true
+                        }
+                    }
                 }
             }
         }

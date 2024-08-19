@@ -1,0 +1,73 @@
+.cloudsOverlay, .cloudsOverlayReverse {
+    filter: contrast(0.3);
+
+}
+
+.cloudsOverlay {
+    position: fixed;
+    left: 0;
+    width: 200vw; /* Double the width to allow seamless looping */
+    height: 100vh;
+    top: 0;
+    background: url(/images/cloud-overlay.png) repeat-x center center / cover; /* Ensure the image repeats horizontally and covers the viewport */
+    -webkit-animation: cloudLoop 80s linear infinite alternate;
+    animation: cloudLoop 80s linear infinite alternate;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.cloudsOverlayReverse { /* New reverse clouds overlay */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 200vw;
+    height: 100vh;
+    background: url(/images/cloud-overlay.png) repeat-x center center / cover;
+    -webkit-animation: cloudLoopReverse 80s linear infinite alternate !important;
+    animation: cloudLoopReverse 80s linear infinite alternate !important;
+    z-index: 1 !important; /* Ensure it is behind the forward-moving clouds */
+    pointer-events: none;
+}
+@-webkit-keyframes cloudLoop {
+    0% {
+        -webkit-transform: translateX(0);
+        transform: translateX(0);
+    }
+    100% {
+        -webkit-transform: translateX(-50%);
+        transform: translateX(-50%);
+    }
+}
+
+@keyframes cloudLoop {
+    0% {
+        -webkit-transform: translateX(0);
+        transform: translateX(0);
+    }
+    100% {
+        -webkit-transform: translateX(-50%);
+        transform: translateX(-50%);
+    }
+}
+
+@-webkit-keyframes cloudLoopReverse { /* New reverse animation */
+    0% {
+        -webkit-transform: translateX(-50%);
+        transform: translateX(-50%);
+    }
+    100% {
+        -webkit-transform: translateX(0);
+        transform: translateX(0);
+    }
+}
+
+@keyframes cloudLoopReverse { /* New reverse animation */
+    0% {
+        -webkit-transform: translateX(-50%);
+        transform: translateX(-50%);
+    }
+    100% {
+        -webkit-transform: translateX(0);
+        transform: translateX(0);
+    }
+    }
