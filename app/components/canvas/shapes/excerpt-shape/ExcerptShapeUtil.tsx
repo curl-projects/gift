@@ -44,12 +44,13 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 	static override props = excerptShapeProps
 
 	override canEdit = () => true
+	override canScroll = () => true;
 
 	override canResize = () => false
 
 
 	getDefaultProps(): ExcerptShape['props'] {
-		return { 
+		return {
 			w: 200,
 			h: 20,
 			content: "",
@@ -153,15 +154,27 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 
 			animateDimensions();
 		}, [isOnlySelected, scope]);
+		
 
 		return (
-			<HTMLContainer 
+			<HTMLContainer
 				id={shape.id}
 				className={styles.container}
+
+				style={{
+					pointerEvents: 'all',
+				}}
 			>
-				<div className={styles.excerptBox} ref={shapeRef}>
+				<div 
+					className={styles.excerptBox}
+
+				
+				
+
+
+					ref={shapeRef}>
 					<p className={styles.excerptText}>
-						<motion.span 
+						<motion.span
 							className={styles.connectionPoint}
 							initial={{ scale: 0 }}
 							animate={{ scale: 1 }}
@@ -169,24 +182,32 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 						/>
 						<TypeAnimation
 							sequence={[1000, `${shape.props.content}`]}
-							speed={{type: "keyStrokeDelayInMs", value: 20}}
+							speed={{ type: "keyStrokeDelayInMs", value: 20 }}
 							cursor={false}
 							repeat={0}
 						/>
 					</p>
 					<div
 						ref={scope}
-						className={styles.excerptMediaBox} 
+						className={styles.excerptMediaBox}
 						style={{
 							height: "0px",
 							border: "2px solid pink",
 						}}
+						onScrollCapture={(e) => {
+							console.log("SCROLL CAPTURE")
+							e.stopPropagation();
+						}}
+						onWheelCapture={(e) => {
+							console.log("WHEEL CAPTURE")
+							e.stopPropagation();
+						}}
 					>
-					{(isOnlySelected && scope.current) &&
-						<ExcerptMediaEditor 
-							media={shape.props.media}
-						/>
-					}
+						{(isOnlySelected && scope.current) &&
+							<ExcerptMediaEditor
+								media={shape.props.media}
+							/>
+						}
 					</div>
 				</div>
 			</HTMLContainer>

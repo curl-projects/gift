@@ -3,13 +3,12 @@
     height: fit-content;
     width: fit-content;
     position: relative;
-    cursor: pointer;
-
   }
   
   .excerptBox{
     height: fit-content;
     width: 400px;
+    /* overflow-y: scroll; */
     /* transition: width 0.3s ease-in-out; */
     /* background-color: rgba(22, 53, 81, 0.2);
     box-shadow: 0px 3px 1.39px 0px rgba(0, 0, 0, 0.25); */
@@ -39,6 +38,7 @@
 
   .excerptMediaBox{
     width: 100%;
-    overflow: hidden;
+    max-height: 100%;
+    overflow-y: scroll;
     background-color: rgba(0, 0, 0, 0.2);
   }
