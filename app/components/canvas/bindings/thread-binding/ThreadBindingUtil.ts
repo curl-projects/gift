@@ -25,6 +25,8 @@ import {
 import { getThreadBindings, getThreadInfo, removeThreadBinding } from '../../shapes/thread-shape/threadshared/threadshared'
 import { TLThreadShape } from '../../shapes/thread-shape/threadtypes/TLThreadShape'
 import { threadBindingProps, threadBindingMigrations, TLThreadBinding, TLThreadBindingProps } from "./TLThreadBinding"
+import { calculateAnchor } from "~/components/canvas/helpers/thread-funcs";
+
 
 export function omitFromStackTrace<Args extends Array<unknown>, Return>(
 	fn: (...args: Args) => Return
@@ -51,6 +53,96 @@ export const assert: (value: unknown, message?: string) => asserts value = omitF
 		}
 	}
 )
+
+
+export function updateThreadBindingProps(editor: Editor, shapeId: TLShapeId) {
+    console.log("UPDATED THREAD BINDING")
+
+    // get any threads attached to the shape
+    const threadBindings = editor.getBindingsToShape(shapeId, 'thread')
+
+    for(let binding of threadBindings){
+        // determine if it's the start or end shape
+        console.log("BINDING", binding)
+        if(binding.props.terminal === 'end'){
+            const endShape = editor.getShape(shapeId)
+
+            const { startAnchor, startIsExact, startIsPrecise, endAnchor, endIsExact, endIsPrecise } = calculateAnchor(null, endShape);
+
+			editor.updateBinding({
+				id: binding.id,
+				type: 'thread',
+				props: {
+					...binding.props,
+					isExact: endIsExact,
+					isPrecise: endIsPrecise,
+					normalizedAnchor: endAnchor,
+				}
+			});
+
+    
+        }
+        else if(binding.props.terminal === 'start'){
+            const { startAnchor, startIsExact, startIsPrecise, endAnchor, endIsExact, endIsPrecise } = calculateAnchor(null, endShape);
+
+			editor.updateBinding({
+				id: binding.id,
+				type: 'thread',
+				props: {
+					...binding.props,
+					isExact: startIsExact,
+					isPrecise: startIsPrecise,
+					normalizedAnchor: startAnchor,
+				}
+			});
+        }
+        else{
+            throw Error('Invalid terminal; Binding:', binding)
+        }
+        
+        // // how do i chec
+        // const threadBinding = editor.getBindin(thread.id)
+        // if(threadBinding){
+        //     console.log("THREAD BINDING:", threadBinding)
+        // }
+    }
+
+    // const bindings = getThreadBindings(editor, editor.getShape(shapeId) as TLThreadShape);
+// 
+    // console.log("BINDINGS:", bindings)
+    // for (const binding of Object.values(bindings)) {
+    //     if (binding) {
+    //         const startShape = editor.getShape(binding.fromId);
+    //         const endShape = editor.getShape(binding.toId);
+
+    //         if (startShape && endShape) {
+    //             const { startAnchor, startIsExact, startIsPrecise, endAnchor, endIsExact, endIsPrecise } = calculateAnchor(startShape, endShape);
+
+    //             editor.updateBinding({
+    //                 id: binding.id,
+    //                 type: 'thread',
+    //                 props: {
+    //                     ...binding.props,
+    //                     isExact: startIsExact,
+    //                     isPrecise: startIsPrecise,
+    //                     normalizedAnchor: startAnchor,
+    //                 }
+    //             });
+
+    //             editor.updateBinding({
+    //                 id: binding.id,
+    //                 type: 'thread',
+    //                 props: {
+    //                     ...binding.props,
+    //                     isExact: endIsExact,
+    //                     isPrecise: endIsPrecise,
+    //                     normalizedAnchor: endAnchor,
+    //                 }
+    //             });
+    //         }
+    //     }
+    // }
+}
 
 
 
@@ -81,16 +173,15 @@ export class ThreadBindingUtil extends BindingUtil<TLThreadBinding> {
 		threadDidUpdate(this.editor, this.editor.getShape(bindingAfter.fromId) as TLThreadShape)
 	}
 
-	// when the thread itself changes
-	override onAfterChangeFromShape({
-		shapeAfter,
-	}: BindingOnShapeChangeOptions<TLThreadBinding>): void {
-		threadDidUpdate(this.editor, shapeAfter as TLThreadShape)
-	}
-
 	// when the shape an thread is bound to changes
 	override onAfterChangeToShape({ binding }: BindingOnShapeChangeOptions<TLThreadBinding>): void {
 		reparentThread(this.editor, binding.fromId)
+		// this.updateThreadBinding(binding);
+	}
+
+	// when the thread itself changes
+	override onAfterChangeFromShape({ shapeAfter }: BindingOnShapeChangeOptions<TLThreadBinding>): void {
+		threadDidUpdate(this.editor, shapeAfter as TLThreadShape)
 	}
 
 	// when the thread is isolated we need to update it's x,y positions
@@ -104,6 +195,37 @@ export class ThreadBindingUtil extends BindingUtil<TLThreadBinding> {
 			thread,
 			terminal: binding.props.terminal,
 		})
+	}
+
+	private updateThreadBinding(binding: TLThreadBinding) {
+		const startShape = this.editor.getShape(binding.fromId);
+		const endShape = this.editor.getShape(binding.toId);
+
+		if (startShape && endShape) {
+			const { startAnchor, startIsExact, startIsPrecise, endAnchor, endIsExact, endIsPrecise } = calculateAnchor(startShape, endShape);
+
+			this.editor.updateBinding({
+				id: binding.id,
+				type: 'thread',
+				props: {
+					...binding.props,
+					isExact: startIsExact,
+					isPrecise: startIsPrecise,
+					normalizedAnchor: startAnchor,
+				}
+			});
+
+			this.editor.updateBinding({
+				id: binding.id,
+				type: 'thread',
+				props: {
+					...binding.props,
+					isExact: endIsExact,
+					isPrecise: endIsPrecise,
+					normalizedAnchor: endAnchor,
+				}
+			});
+		}
 	}
 }
 

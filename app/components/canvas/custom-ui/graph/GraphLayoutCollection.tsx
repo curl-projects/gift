@@ -211,8 +211,9 @@ export class GraphLayoutCollection extends BaseCollection {
       // @ts-ignore
       .links(links)
       .constraints(constraints)
-      // you could use .linkDistance(250) too, which is stable but does not handle size/rotation
-      .linkDistance((edge) => calcEdgeDistance(edge as ColaNodeLink))
+    //   you could use .linkDistance(250) too, which is stable but does not handle size/rotation
+      .linkDistance(250)
+    //   .linkDistance((edge) => calcEdgeDistance(edge as ColaNodeLink))
       .avoidOverlaps(true)
       .handleDisconnected(true)
   }

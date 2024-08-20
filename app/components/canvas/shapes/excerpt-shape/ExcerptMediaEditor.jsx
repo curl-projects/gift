@@ -49,6 +49,11 @@ export default function ExcerptMediaEditor({ content, media }) {
         console.log("FIRST HIGHLIGHT:", firstHighlight)
         if (firstHighlight) {
           firstHighlight.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        //   firstHighlight.classList.add('shimmer'); // Add shimmer class
+        //   setTimeout(() => {
+        //     firstHighlight.classList.remove('shimmer'); // Remove shimmer class after animation
+        //   }, 1000); // Duration of the shimmer animation
         }
       }, 500); // Adjust the delay as needed
   

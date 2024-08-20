@@ -19,6 +19,7 @@ import styles from './ConceptShapeUtil.module.css';
 import { motion, useAnimate } from 'framer-motion';
 import { generateExcerpts, tearDownExcerpts, excerptsExist } from "~/components/canvas/helpers/thread-funcs"
 import { applyProgressiveBlur, removeProgressiveBlur } from '~/components/canvas/helpers/distribution-funcs';
+import { updateThreadBindingProps } from '~/components/canvas/bindings/thread-binding/ThreadBindingUtil';
 
 const conceptShapeProps = {
 	w: T.number,
@@ -122,19 +123,53 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
 		// 	}
 		//   });
 
+        
 
-		useEffect(()=>{
-			if(shapeRef.current){
-				this.editor.updateShape<ConceptShape>({
-					id: shape.id,
-					type: 'concept',
-					props: {
-						w: shapeRef.current?.clientWidth+horizontalBuffer,
-                        h: shapeRef.current?.clientHeight+verticalBuffer,
-					}
-				})
-			}
-		  }, [shapeRef.current])
+		// useEffect(()=>{
+		// 	if(shapeRef.current){
+		// 		this.editor.updateShape<ConceptShape>({
+		// 			id: shape.id,
+		// 			type: 'concept',
+		// 			props: {
+		// 				w: shapeRef.current?.clientWidth+horizontalBuffer,
+        //                 h: shapeRef.current?.clientHeight+verticalBuffer,
+		// 			}
+		// 		})
+		// 	}
+		//   }, [shapeRef.current])
+
+        useEffect(() => {
+            const handleResize = () => {
+              if (shapeRef.current?.clientHeight) {
+                this.editor.updateShape({
+                  type: shape.type,
+                  id: shape.id,
+                  props: {
+                    w: shapeRef.current.clientWidth,
+                    h: shapeRef.current.clientHeight
+                  }
+                });
+
+                // Update thread binding props
+                updateThreadBindingProps(this.editor, shape.id);
+
+
+
+              }
+            };
+        
+            const resizeObserver = new ResizeObserver(handleResize);
+            if (shapeRef.current) {
+              resizeObserver.observe(shapeRef.current);
+            }
+        
+            return () => {
+              if (shapeRef.current) {
+                resizeObserver.unobserve(shapeRef.current);
+              }
+              resizeObserver.disconnect();
+            };
+          }, [shapeRef.current, this.editor, shape]);
 
 	
 		const [isHovered, setIsHovered] = useState(false)

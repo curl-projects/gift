@@ -30,6 +30,7 @@ body {
   line-height: 18px;
   font-size: 13px;
   margin-bottom: 10px;
+  animation: fadeIn 1s ease-in-out; /* Added animation */
 }
 
 .tiptap a {
@@ -56,6 +57,7 @@ body {
   line-height: 38px;
   font-size: 30px;
   margin-bottom: 20px;
+  animation: fadeIn 1s ease-in-out; /* Added animation */
 }
 
 .tiptap hr {
@@ -95,8 +97,52 @@ p.is-editor-empty:first-child::before {
 }
 
 /* TIPTAP HIGHLIGHT */
-.concept-highlight {
-    background: var(--concept-highlight-color);
+@-webkit-keyframes highlight {
+    to {
+      background-position: 0 0;
+    }
+  }
+  
+  @keyframes highlight {
+    to {
+      background-position: 0 0;
+    }
+  }  
+  .concept-highlight {
+
+    -webkit-animation: 1.5s highlight 1.5s 1 normal forwards;
+    animation: 1.5s highlight 0.5s 1 normal forwards;
+    background-color: none;
+    background: linear-gradient(90deg, var(--concept-highlight-color) 50%, rgba(255, 255, 255, 0) 50%);
+    background-size: 200% 100%;
+    background-position: 100% 0;
     border-bottom: 1px solid var(--concept-highlight-color-border);
     margin-bottom: -1px;
-  }  
+    
+  }
+  
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+/* 
+  @keyframes shimmer {
+    0% {
+      background-position: -1000px 0;
+    }
+    100% {
+      background-position: 1000px 0;
+    }
+  }
+  
+  .shimmer {
+    animation: shimmer 1s ease-in-out;
+    background: linear-gradient(to right, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0.1) 100%);
+    background-size: 2000px 100%;
+  } */

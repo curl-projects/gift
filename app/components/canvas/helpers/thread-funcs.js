@@ -1,7 +1,7 @@
 import { createShapeId, stopEventPropagation } from "tldraw";
 import { generatePointsAroundCircle } from "./distribution-funcs";
 
-function calculateAnchor(startShape, endShape) {
+export function calculateAnchor(startShape=null, endShape=null) {
     let startAnchor = { x: 0, y: 0 };
     let startIsExact = false;
     let startIsPrecise = false;
@@ -10,27 +10,29 @@ function calculateAnchor(startShape, endShape) {
     let endIsExact = false;
     let endIsPrecise = false;
 
-    if (startShape.type === 'name') {
+    if (startShape?.type === 'name') {
         startIsPrecise = true;
         startIsExact = true;
         startAnchor = { x: 0.5, y: 0.5 };
-    } else if (startShape.type === 'concept') {
+    } else if (startShape?.type === 'concept') {
         startIsPrecise = true;
         startIsExact = true;
-        startAnchor = { x: 0.16, y: 0.49 };
+        startAnchor = { x: (56/2) / startShape.props.w, y: (56 / 2 ) / startShape.props.h };
     }
 
-    if (endShape.type === 'concept') {
+    if (endShape?.type === 'concept') {
         endIsPrecise = true;
         endIsExact = true;
-        endAnchor = { x: 0.15, y: 0.47 };
+        endAnchor = { x: (56/2) / endShape.props.w, y: (56 / 2 ) / endShape.props.h };
     }
-    else if(endShape.type === 'excerpt'){
+    else if(endShape?.type === 'excerpt'){
         endIsPrecise = true;
         endIsExact = true;
-        endAnchor = { x: 0.01, y: 0.5 };
+        // console.log("DIMS:", endShape.props.w, endShape.props.h)
+        endAnchor = { x: 12 / endShape.props.w, y: 25 / endShape.props.h };
+
     }
-    else if(endShape.type === 'name'){
+    else if(endShape?.type === 'name'){
         endIsPrecise = true;
         endIsExact = true;
         endAnchor = { x: 0.5, y: 0.5 };
