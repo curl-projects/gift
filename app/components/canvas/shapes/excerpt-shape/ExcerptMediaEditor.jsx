@@ -6,32 +6,32 @@ import * as showdown from 'showdown';
 import { Heading } from '@tiptap/extension-heading';
 import { Paragraph } from '@tiptap/extension-paragraph';
 
-const CustomHeading = Heading.extend({
-  renderHTML({ node, HTMLAttributes }) {
-    const tag = `h${node.attrs.level}`;
-    const content = node.textContent;
-    const wrappedContent = Array.from(content).map(char => ['span', {}, char]);
+// const CustomHeading = Heading.extend({
+//   renderHTML({ node, HTMLAttributes }) {
+//     const tag = `h${node.attrs.level}`;
+//     const content = node.textContent;
+//     const wrappedContent = Array.from(content).map(char => ['span', {}, char]);
 
-    return [
-      tag,
-      HTMLAttributes,
-      ...wrappedContent,
-    ];
-  },
-});
+//     return [
+//       tag,
+//       HTMLAttributes,
+//       ...wrappedContent,
+//     ];
+//   },
+// });
 
-const CustomParagraph = Paragraph.extend({
-    renderHTML({ node, HTMLAttributes }) {
-      const content = node.textContent;
-      const wrappedContent = Array.from(content).map(char => ['span', {}, char]);
+// const CustomParagraph = Paragraph.extend({
+//     renderHTML({ node, HTMLAttributes }) {
+//       const content = node.textContent;
+//       const wrappedContent = Array.from(content).map(char => ['span', {}, char]);
   
-      return [
-        'p',
-        HTMLAttributes,
-        ...wrappedContent,
-      ];
-    },
-  });
+//       return [
+//         'p',
+//         HTMLAttributes,
+//         ...wrappedContent,
+//       ];
+//     },
+//   });
 
 export default function ExcerptMediaEditor({ media }) {
   const converter = new showdown.Converter();
@@ -44,10 +44,10 @@ export default function ExcerptMediaEditor({ media }) {
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
-        heading: false,
+        heading: true,
         paragraph: true
       }),
-      CustomHeading,
+    //   CustomHeading,
     //   CustomParagraph,
       Link,
     ],

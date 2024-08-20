@@ -72,24 +72,27 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 		const isOnlySelected = this.editor.getOnlySelectedShapeId() === shape.id;
 		const [scope, animate] = useAnimate(); // Use animation controls
 
-		useEffect(()=>{
-			if(shapeRef.current){
-				this.editor.updateShape({id: shape.id, type: shape.type, props: {
-					w: shapeRef.current.clientWidth,
-					h: shapeRef.current.clientHeight
-				}})
+		useEffect(() => {
+			if (shapeRef.current) {
+				this.editor.updateShape({
+					id: shape.id,
+					type: shape.type,
+					props: {
+						w: shapeRef.current.clientWidth,
+						h: shapeRef.current.clientHeight
+					}
+				});
 			}
-		}, [this.editor, shapeRef.current, isOnlySelected])
-		
+		}, [this.editor, shapeRef.current, isOnlySelected]);
 
-        useEffect(() => {
-			const animateHeight = async () => {
+		useEffect(() => {
+			const animateDimensions = async () => {
 				if (isOnlySelected && scope.current) {
 					this.editor.updateShape({
 						id: shape.id,
 						type: shape.type,
 						props: {
-							w: shapeRef.current.clientWidth,
+							w: 600,
 							h: 840
 						}
 					});
@@ -100,10 +103,18 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 						},
 						targetZoom: 3,
 					});
-					
+
 					await animate(scope.current, {
 						height: "800px",
 						maxHeight: "800px",
+						width: '600px',
+						maxWidth: '600px',
+						transition: { duration: 0.1, ease: "easeInOut" }
+					});
+
+					await animate(shapeRef.current, {
+						width: "600px",
+						maxWidth: "600px",
 						transition: { duration: 0.1, ease: "easeInOut" }
 					});
 
@@ -115,18 +126,20 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 							h: shapeRef.current.clientHeight
 						}
 					});
-					
-					// this.editor.zoomToBounds(this.editor.getShapePageBounds(shape), {
-					// 	animation: {
-					// 		duration: 300
-					// 	},
-					// 	targetZoom: 3,
-					// });
 				} else {
 					await animate(scope.current, {
 						height: "0px",
+						width: '400px',
+						maxWidth: '400px',
 						transition: { duration: 0.3, ease: "easeInOut" }
 					});
+
+					await animate(shapeRef.current, {
+						width: "400px",
+						maxWidth: "400px",
+						transition: { duration: 0.3, ease: "easeInOut" }
+					});
+
 					this.editor.updateShape({
 						id: shape.id,
 						type: shape.type,
@@ -138,31 +151,27 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 				}
 			};
 
-			animateHeight();
+			animateDimensions();
 		}, [isOnlySelected, scope]);
-
-
 
 		return (
 			<HTMLContainer 
 				id={shape.id}
 				className={styles.container}
-				>
+			>
 				<div className={styles.excerptBox} ref={shapeRef}>
 					<p className={styles.excerptText}>
 						<motion.span 
-						className={styles.connectionPoint}
-						initial={{ scale: 0 }}
-						animate={{ scale: 1 }}
-						transition={{ delay: 1, duration: 0.2, ease: 'easeInOut' }}
+							className={styles.connectionPoint}
+							initial={{ scale: 0 }}
+							animate={{ scale: 1 }}
+							transition={{ delay: 1, duration: 0.2, ease: 'easeInOut' }}
 						/>
 						<TypeAnimation
-						    // className="custom-type-animation-cursor"
 							sequence={[1000, `${shape.props.content}`]}
 							speed={{type: "keyStrokeDelayInMs", value: 20}}
 							cursor={false}
 							repeat={0}
-
 						/>
 					</p>
 					<div
@@ -179,8 +188,6 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 						/>
 					}
 					</div>
-					
-				
 				</div>
 			</HTMLContainer>
 		)
