@@ -193,6 +193,7 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 						style={{
 							height: "0px",
 							border: "2px solid pink",
+							padding: isOnlySelected ? "20px" : "0px"
 						}}
 						onScrollCapture={(e) => {
 							console.log("SCROLL CAPTURE")
@@ -205,6 +206,7 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 					>
 						{(isOnlySelected && scope.current) &&
 							<ExcerptMediaEditor
+								content={shape.props.content}
 								media={shape.props.media}
 							/>
 						}
