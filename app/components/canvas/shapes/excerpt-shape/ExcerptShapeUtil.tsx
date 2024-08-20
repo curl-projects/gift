@@ -173,9 +173,11 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 							border: "2px solid pink",
 						}}
 					>
+					{(isOnlySelected && scope.current) &&
 						<ExcerptMediaEditor 
 							media={shape.props.media}
 						/>
+					}
 					</div>
 					
 				
