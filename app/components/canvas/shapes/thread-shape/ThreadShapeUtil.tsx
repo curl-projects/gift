@@ -99,6 +99,9 @@ export class ThreadShapeUtil extends ShapeUtil<TLThreadShape> {
 		return toShapeType !== 'thread'
 	}
 
+
+    override canDrag = () => false
+
 	override canSnap = () => {
 		return false
 	}
@@ -178,6 +181,8 @@ export class ThreadShapeUtil extends ShapeUtil<TLThreadShape> {
 
 	override getHandles(shape: TLThreadShape): TLHandle[] {
 		const info = getThreadInfo(this.editor, shape)!
+
+        return []
 
 		return [
 			{
@@ -606,14 +611,15 @@ export class ThreadShapeUtil extends ShapeUtil<TLThreadShape> {
 		// eslint-disable-next-line react-hooks/rules-of-hooks
 		const theme = useDefaultColorTheme()
 		const onlySelectedShape = this.editor.getOnlySelectedShape()
-		const shouldDisplayHandles =
-			this.editor.isInAny(
-				'select.idle',
-				'select.pointing_handle',
-				'select.dragging_handle',
-				'select.translating',
-				'thread.dragging'
-			) && !this.editor.getInstanceState().isReadonly
+		// const shouldDisplayHandles =
+		// 	this.editor.isInAny(
+		// 		'select.idle',
+		// 		'select.pointing_handle',
+		// 		'select.dragging_handle',
+		// 		'select.translating',
+		// 		'thread.dragging'
+		// 	) && !this.editor.getInstanceState().isReadonly
+        const shouldDisplayHandles = false
 
 		const info = getThreadInfo(this.editor, shape)
 		if (!info?.isValid) return null
@@ -846,6 +852,7 @@ const ThreadSvg = track(function ThreadSvg({
 	const info = getThreadInfo(editor, shape)
 	const bounds = Box.ZeroFix(editor.getShapeGeometry(shape).bounds)
 	const bindings = getThreadBindings(editor, shape)
+
 	const isForceSolid = useValue(
 		'force solid',
 		() => {

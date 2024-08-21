@@ -58,7 +58,6 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
 	static override props = conceptShapeProps
 
 	override canEdit = () => true
-
 	override canResize = () => false
 
 

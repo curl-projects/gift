@@ -119,6 +119,7 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
               resizeObserver.disconnect();
             };
           }, [shapeRef.current, this.editor, shape]);
+		  
  
 		useEffect(() => {
 			const animateDimensions = async () => {
@@ -199,7 +200,6 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 				id={shape.id}
 				className={styles.container}
 				style={{
-					border: '2px solid green',
 					pointerEvents: 'all',
 				}}
 			>
@@ -215,7 +215,8 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 							animate={{ scale: 1 }}
 							transition={{ delay: 1, duration: 0.2, ease: 'easeInOut' }}
 						/>
-						<TypeAnimation
+						<span className='excerptTextContent'>{shape.props.content}</span>
+						{/* <TypeAnimation
 							sequence={[1000, `${shape.props.content}`, () => {
 								this.editor.updateShape({
 									id: shape.id,
@@ -226,10 +227,10 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 									}
 								});
 							}]}
-							speed={{ type: "keyStrokeDelayInMs", value: 20 }}
+							speed={{ type: "keyStrokeDelayInMs", value: 10 }}
 							cursor={false}
 							repeat={0}
-						/>
+						/> */}
 					</p>
 					<div
 						ref={scope}

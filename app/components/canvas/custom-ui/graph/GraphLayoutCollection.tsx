@@ -3,6 +3,10 @@ import { BaseCollection } from "~/components/canvas/custom-ui/collections";
 import { Editor, TLGeoShape, TLShape, TLShapeId } from '@tldraw/tldraw';
 import { TLThreadBindingProps } from "~/components/canvas/bindings/thread-binding/TLThreadBinding"
 import { TLThreadShape } from "~/components/canvas/shapes/thread-shape/threadtypes/TLThreadShape"
+
+const LINK_DISTANCE = 100;
+
+
 type ColaNode = {
   id: TLShapeId;
   x: number;
@@ -36,24 +40,19 @@ export class GraphLayoutCollection extends BaseCollection {
   colaNodes: Map<TLShapeId, ColaNode> = new Map();
   colaLinks: Map<TLShapeId, ColaIdLink> = new Map();
   colaConstraints: ColaConstraint[] = [];
+  frameCounter: number; // Declare the frame counter
 
   constructor(editor: Editor) {
     super(editor)
     this.graphSim = new Layout();
-    const simLoop = () => {
-      this.step();
-      this.animFrame = requestAnimationFrame(simLoop);
-    };
-    simLoop();
+    
+    this.simLoop = this.simLoop.bind(this); // Bind the simLoop function
+    this.simLoop(); // Start the simulation loop
   }
 
   startSimulation() {
     if (this.animFrame === -1) {
-      const simLoop = () => {
-        this.step();
-        this.animFrame = requestAnimationFrame(simLoop);
-      };
-      simLoop();
+      this.simLoop(); // Restart the simulation loop
     }
   }
 
@@ -62,6 +61,11 @@ export class GraphLayoutCollection extends BaseCollection {
       cancelAnimationFrame(this.animFrame);
       this.animFrame = -1;
     }
+  }
+
+  simLoop() {
+      this.step();
+    this.animFrame = requestAnimationFrame(this.simLoop);
   }
 
   override onAdd(shapes: TLShape[]) {
@@ -113,7 +117,7 @@ export class GraphLayoutCollection extends BaseCollection {
   }
 
   step = () => {
-    this.graphSim.start(1, 0, 0, 0, true, false);
+    this.graphSim.start(0, 0, 1, 0, false, false);
     for (const node of this.graphSim.nodes() as ColaNode[]) {
 
       const shape = this.editor.getShape(node.id);
@@ -207,15 +211,20 @@ export class GraphLayoutCollection extends BaseCollection {
     });
 
     this.graphSim
+      .alpha(0.1)
       .nodes(nodes)
       // @ts-ignore
       .links(links)
       .constraints(constraints)
     //   you could use .linkDistance(250) too, which is stable but does not handle size/rotation
     //   .linkDistance(250)
+    //   .jaccardLinkLengths(200, 2) 
+    //   .symmetricDiffLinkLengths(100, 0.7) // Use symmetric difference similarity for link lengths
+    // .linkDistance(150)
+    //   .convergenceThreshold(0.001)
       .linkDistance((edge) => calcEdgeDistance(edge as ColaNodeLink))
       .avoidOverlaps(true)
-      .handleDisconnected(true)
+      .handleDisconnected(false);
   }
 
   refreshConstraints() {
@@ -267,7 +276,6 @@ function getCornerToCenterOffset(w: number, h: number, rotation: number) {
 }
 
 function calcEdgeDistance(edge: ColaNodeLink) {
-  const LINK_DISTANCE = 100;
 
   // horizontal and vertical distances between centers
   const dx = edge.target.x - edge.source.x;

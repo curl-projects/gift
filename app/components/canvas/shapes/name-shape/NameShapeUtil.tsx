@@ -32,9 +32,10 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
 	static override type = 'name' as const
 	static override props = nameShapeProps
 
-	override canEdit = () => true
-
-	override canResize = () => true
+	override canEdit = () => false
+    override hideResizeHandles = () => true
+    override hideRotateHandle = () => true
+	override canResize = () => false
 
 
 	getDefaultProps(): ExcerptShape['props'] {
