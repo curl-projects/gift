@@ -56,14 +56,12 @@ export const assert: (value: unknown, message?: string) => asserts value = omitF
 
 
 export function updateThreadBindingProps(editor: Editor, shapeId: TLShapeId) {
-    console.log("UPDATED THREAD BINDING")
 
     // get any threads attached to the shape
     const threadBindings = editor.getBindingsToShape(shapeId, 'thread')
 
     for(let binding of threadBindings){
         // determine if it's the start or end shape
-        console.log("BINDING", binding)
         if(binding.props.terminal === 'end'){
             const endShape = editor.getShape(shapeId)
 
@@ -176,7 +174,6 @@ export class ThreadBindingUtil extends BindingUtil<TLThreadBinding> {
 	// when the shape an thread is bound to changes
 	override onAfterChangeToShape({ binding }: BindingOnShapeChangeOptions<TLThreadBinding>): void {
 		reparentThread(this.editor, binding.fromId)
-		// this.updateThreadBinding(binding);
 	}
 
 	// when the thread itself changes

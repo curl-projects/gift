@@ -28,8 +28,7 @@ export function calculateAnchor(startShape=null, endShape=null) {
     else if(endShape?.type === 'excerpt'){
         endIsPrecise = true;
         endIsExact = true;
-        // console.log("DIMS:", endShape.props.w, endShape.props.h)
-        endAnchor = { x: 12 / endShape.props.w, y: 25 / endShape.props.h };
+        endAnchor = { x: Math.max(6.5 / endShape.props.w, 0), y: Math.max(12.7 / endShape.props.h, 0) };
 
     }
     else if(endShape?.type === 'name'){
@@ -135,8 +134,8 @@ export function generateExcerpts(editor, concept) {
                     }
                 });
 
-                // introduces them into the graph
                 createBoundThread(editor, createShapeId(concept.id), createShapeId(excerpt.id));
+
             }
         }
     } else {

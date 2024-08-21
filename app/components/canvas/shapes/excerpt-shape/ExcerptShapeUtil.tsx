@@ -18,6 +18,7 @@ import { motion, useAnimate } from 'framer-motion';
 import { TypeAnimation } from 'react-type-animation';
 import { useLoaderData } from "@remix-run/react"
 import ExcerptMediaEditor from './ExcerptMediaEditor';
+import { updateThreadBindingProps } from '~/components/canvas/bindings/thread-binding/ThreadBindingUtil';
 
 const excerptShapeProps = {
 	w: T.number,
@@ -88,6 +89,7 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 
 		useEffect(() => {
             const handleResize = () => {
+				console.debug("RESIZING EXCERPT!")
               if (shapeRef.current?.clientHeight) {
                 this.editor.updateShape({
                   type: shape.type,
@@ -97,6 +99,11 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
                     h: shapeRef.current.clientHeight
                   }
                 });
+				console.log("RESIZED:"
+				)
+                // Update thread binding props
+                updateThreadBindingProps(this.editor, shape.id);
+
               }
             };
         
@@ -155,6 +162,10 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 						}
 					});
 				} else {
+					// Set initial width before starting the animation
+					shapeRef.current.style.width = "300px";
+					shapeRef.current.style.maxWidth = "300px";
+
 					await animate(scope.current, {
 						height: "0px",
 						width: '300px',
@@ -187,15 +198,17 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 			<HTMLContainer
 				id={shape.id}
 				className={styles.container}
-
 				style={{
+					border: '2px solid green',
 					pointerEvents: 'all',
 				}}
 			>
 				<div 
 					className={styles.excerptBox}
 					ref={shapeRef}>
-					<p className={styles.excerptText}>
+					<p className={styles.excerptText} style={{
+						minWidth: '300px',
+					}}>
 						<motion.span
 							className={styles.connectionPoint}
 							initial={{ scale: 0 }}

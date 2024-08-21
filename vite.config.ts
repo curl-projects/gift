@@ -21,5 +21,9 @@ export default defineConfig({
   },
   ssr: {
     noExternal: ["remix-utils"],
-  },
+  },sever: {
+    watch: {
+      usePolling: true,
+    }
+  }
 });
