@@ -37,6 +37,10 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
     override hideRotateHandle = () => true
 	override canResize = () => false
 
+    override hideSelectionBoundsBg = () => true
+    override hideSelectionBoundsFg = () => true
+    
+
 
 	getDefaultProps(): ExcerptShape['props'] {
 		return { 
@@ -57,8 +61,8 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
 	component(shape: ExcerptShape) {
 		const shapeRef = useRef();
         const [scope, animate] = useAnimate()
+        const isOnlySelected = this.editor.getOnlySelectedShapeId() === shape.id;
 
-        
 		useEffect(()=>{
 			if(shapeRef.current && shapeRef.current.clientHeight !== 0 && shapeRef.current.clientWidth !== 0){
                 console.log("SCOPE CURRENT", shapeRef.current, shapeRef.current.clientWidth, shapeRef.current.clientHeight)
@@ -79,7 +83,49 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
                 transition: { duration: 0.5, ease: "easeOut", delay }
             })
         };
-        
+
+        const dashedRingVariants = {
+            hidden: { scale: 0, rotate: 0, x: "-50%", y: "-50%" },
+            visible: {
+                scale: 1.5, // Larger than the largest outer ring
+                rotate: 360,
+                x: "-50%",
+                y: "-50%",
+                transition: { duration: 1, ease: "easeOut" }
+            },
+            rotate: {
+                rotate: [0, 360],
+                transition: { repeat: Infinity, duration: 10, ease: "linear" }
+            },
+            exit: {
+                scale: 0,
+                rotate: 0,
+                x: "-50%",
+                y: "-50%",
+                transition: { duration: 1, ease: "easeIn" }
+            }
+        };
+
+        useEffect(() => {
+            if (isOnlySelected) {
+                this.editor.zoomToBounds(this.editor.getShapePageBounds(shape), {
+                    animation: {
+                        duration: 300,
+                        ease: "easeInOut"
+                    },
+                    targetZoom: 1,
+                });
+
+                // Trigger ripple animation
+                animate(".nameCircle", { scale: 0.9 }, { duration: 0.2, ease: 'easeInOut' })
+                    .then(() => animate(".nameCircle", { scale: 1.1 }, { duration: 0.2, ease: 'easeInOut' }))
+                    .then(() => {
+                        animate(".nameCircle", { scale: 1 }, { duration: 0.2, ease: 'easeInOut' });
+                        animate(`.ripple`, { scale: [0, 8], opacity: [1, 0], x: "-50%", y: "-50%" }, { duration: 1.5, ease: "easeOut", delay: 0 });
+                    });
+            }
+        }, [isOnlySelected, animate, shape]);
+
         return (
 			<HTMLContainer 
 				id={shape.id}
@@ -135,6 +181,15 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
                         variants={ringVariants}
                         transition={{ delay: 0 }}
                     />
+                    {isOnlySelected && (
+                        <motion.div
+                            className={styles.dashedRing}
+                            initial="hidden"
+                            animate={["visible", "rotate"]}
+                            exit="exit"
+                            variants={dashedRingVariants}
+                        />
+                    )}
                     </div>  
                 </div>
 
@@ -143,7 +198,8 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
 	}
 
 
-	indicator(shape: ExcerptShape) {
+	indicator(shape: NameShape) {
+        return
 		return <rect width={shape.props.w} height={shape.props.h} />
 
 	}

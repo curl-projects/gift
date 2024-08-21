@@ -47,8 +47,10 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 	override canEdit = () => true
 	override canScroll = () => true;
 
-	override canResize = () => false
+	override canResize = () => false;
 
+	override hideSelectionBoundsBg = () => true;
+	override hideSelectionBoundsFg = () => true;
 
 	getDefaultProps(): ExcerptShape['props'] {
 		return {
@@ -193,6 +195,30 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 
 			animateDimensions();
 		}, [isOnlySelected, scope]);
+
+
+
+   	const dashedRingVariants = {
+        hidden: { scale: 0, rotate: 0, x: "-50%", y: "-50%" },
+        visible: {
+            scale: 1.5, // Adjust scale as needed
+            rotate: 360,
+            x: "-50%",
+            y: "-50%",
+            transition: { duration: 1, ease: "easeOut" }
+        },
+        rotate: {
+            rotate: [0, 360],
+            transition: { repeat: Infinity, duration: 10, ease: "linear" }
+        },
+        exit: {
+            scale: 0,
+            rotate: 0,
+            x: "-50%",
+            y: "-50%",
+            transition: { duration: 1, ease: "easeIn" }
+				}
+			};
 		
 
 		return (
@@ -214,7 +240,17 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 							initial={{ scale: 0 }}
 							animate={{ scale: 1 }}
 							transition={{ delay: 1, duration: 0.2, ease: 'easeInOut' }}
-						/>
+						>
+						   {this.editor.getOnlySelectedShapeId() === shape.id && (
+								<motion.div
+									className={styles.dashedRing}
+									initial="hidden"
+									animate={["visible", "rotate"]}
+									exit="exit"
+									variants={dashedRingVariants}
+								/>
+		                    )}
+						</motion.span>
 						<span className='excerptTextContent'>{shape.props.content}</span>
 						{/* <TypeAnimation
 							sequence={[1000, `${shape.props.content}`, () => {
@@ -262,7 +298,6 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 
 
 	indicator(shape: ExcerptShape) {
-		return <rect width={shape.props.w} height={shape.props.h} />
-
+		return null;
 	}
 }

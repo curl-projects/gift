@@ -100,8 +100,6 @@ export class ThreadShapeUtil extends ShapeUtil<TLThreadShape> {
 	}
 
 
-    override canDrag = () => false
-
 	override canSnap = () => {
 		return false
 	}
@@ -361,6 +359,7 @@ export class ThreadShapeUtil extends ShapeUtil<TLThreadShape> {
 	}
 
 	override onTranslateStart = (shape: TLThreadShape) => {
+        return 
 		const bindings = getThreadBindings(this.editor, shape)
 
 		const terminalsInThreadSpace = getThreadTerminalsInThreadSpace(this.editor, shape, bindings)
@@ -430,6 +429,8 @@ export class ThreadShapeUtil extends ShapeUtil<TLThreadShape> {
 	}
 
 	override onTranslate = (initialShape: TLThreadShape, shape: TLThreadShape) => {
+
+        return 
 		const atTranslationStart = shapeAtTranslationStart.get(initialShape)
 		if (!atTranslationStart) return
 
@@ -640,6 +641,7 @@ export class ThreadShapeUtil extends ShapeUtil<TLThreadShape> {
 	}
 
 	indicator(shape: TLThreadShape) {
+        return
 		// eslint-disable-next-line react-hooks/rules-of-hooks
 		const isEditing = useIsEditing(shape.id)
 

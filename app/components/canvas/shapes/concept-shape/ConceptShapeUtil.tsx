@@ -57,9 +57,10 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
 	static override type = 'concept' as const
 	static override props = conceptShapeProps
 
-	override canEdit = () => true
+	override canEdit = () => false
 	override canResize = () => false
-
+    override hideSelectionBoundsBg = () => true
+    override hideSelectionBoundsFg = () => true;
 
 	getDefaultProps(): ConceptShape['props'] {
 		return { 
@@ -182,7 +183,29 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
                 y: "-50%",
                 transition: { duration: 0.5, ease: "easeOut", delay }
             })
-        };        
+        };    
+        
+        const dashedRingVariants = {
+            hidden: { scale: 0, rotate: 0, x: "-50%", y: "-50%" },
+            visible: {
+                scale: 1.5, // Larger than the largest outer ring
+                rotate: 360,
+                x: "-50%",
+                y: "-50%",
+                transition: { duration: 1, ease: "easeOut" }
+            },
+            rotate: {
+                rotate: [0, 360],
+                transition: { repeat: Infinity, duration: 30, ease: "linear" }
+            },
+            exit: {
+                scale: 0,
+                rotate: 0,
+                x: "-50%",
+                y: "-50%",
+                transition: { duration: 1, ease: "easeIn" }
+            }
+        };
 
         const selectedShapeIds = this.editor.getSelectedShapeIds();
         const memoizedSelectedShapeIds = useMemo(() => selectedShapeIds, [selectedShapeIds]);
@@ -250,8 +273,7 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
 		return (
 			<HTMLContainer 
 				id={shape.id}
-				className={styles.container}
-				// onMouseEnter={() => setIsHovered(true)}
+				className={styles.container}				// onMouseEnter={() => setIsHovered(true)}
 				// onMouseLeave={() => setIsHovered(false)}
 				>
 					
@@ -262,8 +284,20 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
 					</div>
 				)}
 
-				<div className={styles.shapeContent} ref={shapeRef}>
+				<div className={styles.shapeContent} ref={shapeRef} style={{
+                    cursor: 'pointer',
+                }}>
                 <div className={styles.circleContainer} ref={scope}>
+                {this.editor.getOnlySelectedShapeId() === shape.id && (
+                        <motion.div
+                            className={styles.selectionRing}
+                            initial="hidden"
+                            animate={["visible", "rotate"]}
+                            exit="exit"
+                            variants={dashedRingVariants}
+                        />
+                    )}
+
                 <motion.div
                         className={`${styles.outerRing} conceptCircle`}
                         initial="hidden"
@@ -318,7 +352,8 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
 	}
 
 	indicator(shape: ConceptShape) {
-		return <rect width={shape.props.w} height={shape.props.h} />
+        return null
+		// return <rect width={shape.props.w} height={shape.props.h} />
 
 	}
 }
