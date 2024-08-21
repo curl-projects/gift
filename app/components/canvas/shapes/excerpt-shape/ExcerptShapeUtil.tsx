@@ -91,7 +91,6 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 
 		useEffect(() => {
             const handleResize = () => {
-				console.debug("RESIZING EXCERPT!")
               if (shapeRef.current?.clientHeight) {
                 this.editor.updateShape({
                   type: shape.type,
@@ -101,8 +100,6 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
                     h: shapeRef.current.clientHeight
                   }
                 });
-				console.log("RESIZED:"
-				)
                 // Update thread binding props
                 updateThreadBindingProps(this.editor, shape.id);
 
@@ -234,6 +231,7 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 					ref={shapeRef}>
 					<p className={styles.excerptText} style={{
 						minWidth: '300px',
+						cursor: "pointer",
 					}}>
 						<motion.span
 							className={styles.connectionPoint}
@@ -252,21 +250,6 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 		                    )}
 						</motion.span>
 						<span className='excerptTextContent'>{shape.props.content}</span>
-						{/* <TypeAnimation
-							sequence={[1000, `${shape.props.content}`, () => {
-								this.editor.updateShape({
-									id: shape.id,
-									type: shape.type,
-									props: {
-										w: shapeRef.current.clientWidth,
-										h: shapeRef.current.clientHeight
-									}
-								});
-							}]}
-							speed={{ type: "keyStrokeDelayInMs", value: 10 }}
-							cursor={false}
-							repeat={0}
-						/> */}
 					</p>
 					<div
 						ref={scope}
@@ -276,11 +259,9 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 							padding: isOnlySelected ? "20px" : "0px"
 						}}
 						onScrollCapture={(e) => {
-							console.log("SCROLL CAPTURE")
 							e.stopPropagation();
 						}}
 						onWheelCapture={(e) => {
-							console.log("WHEEL CAPTURE")
 							e.stopPropagation();
 						}}
 					>

@@ -273,20 +273,35 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
 		return (
 			<HTMLContainer 
 				id={shape.id}
-				className={styles.container}				// onMouseEnter={() => setIsHovered(true)}
-				// onMouseLeave={() => setIsHovered(false)}
+				className={styles.container}				
+    
 				>
 					
 				{
 				isHovered &&  shape.props.description && (
-					<div className={styles.hoverDescription}>
-						{shape.props.description}
-					</div>
+					<motion.div 
+						className={styles.hoverDescription}
+						initial={{ opacity: 0, }}
+						animate={{ opacity: 1,}}
+						exit={{ opacity: 0 }}
+						transition={{ duration: 0.3, ease: "linear" }}
+						style={{ transform: 'translateX(-50%)', overflow: 'hidden' }}
+					>
+						<p>
+							{shape.props.description}
+						</p>
+					</motion.div>
 				)}
 
-				<div className={styles.shapeContent} ref={shapeRef} style={{
-                    cursor: 'pointer',
-                }}>
+				<div 
+                    className={styles.shapeContent} 
+                    ref={shapeRef} 
+                    style={{
+                        cursor: 'pointer',
+                        }}
+                    onMouseEnter={() => setIsHovered(true)}
+                    onMouseLeave={() => setIsHovered(false)}
+                    >
                 <div className={styles.circleContainer} ref={scope}>
                 {this.editor.getOnlySelectedShapeId() === shape.id && (
                         <motion.div

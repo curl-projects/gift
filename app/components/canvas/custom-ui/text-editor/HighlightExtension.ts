@@ -22,21 +22,24 @@ function rgbToRgba(rgbString, alpha = 0.3) {
 
 }
 
-
 function findColors(doc: Node, highlights: any, color: string): DecorationSet {
-  const regex = highlights?.length > 0 ? new RegExp(highlights.map(item => item.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|'), 'gi') : new RegExp('a^', 'gi'); // This regex will never match anything
+    const regex = highlights?.length > 0 
+    ? new RegExp(highlights.map(item => item.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/['"]/g, '["\'“”]')).join('|'), 'gi') 
+      : new RegExp('a^', 'gi'); // This regex will never match anything
+  
 
   console.log("HIGHLIGHTS:", highlights)
   console.log("REGEX:", regex)
-  // const hexColor = /(#[0-9a-f]{3,6})\b/gi
   const decorations: Decoration[] = []
 
   doc.descendants((node, position) => {
+
     if (!node.text) {
       return
     }
 
     Array.from(node.text.matchAll(regex)).forEach(match => {
+        console.log("MATCH:", match)
       const index = match.index || 0
       const from = position + index
       const to = from + match[0].length // Use the length of the matched text

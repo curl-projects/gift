@@ -26,7 +26,6 @@ type NameShape = TLBaseShape<
 	}
 >
 
-
 /** @public */
 export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
 	static override type = 'name' as const
@@ -62,6 +61,7 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
 		const shapeRef = useRef();
         const [scope, animate] = useAnimate()
         const isOnlySelected = this.editor.getOnlySelectedShapeId() === shape.id;
+        const [isHovered, setIsHovered] = useState(false);
 
 		useEffect(()=>{
 			if(shapeRef.current && shapeRef.current.clientHeight !== 0 && shapeRef.current.clientWidth !== 0){
@@ -131,7 +131,13 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
 				id={shape.id}
 				className={styles.container}
 				>
-                <div className={styles.shapeContent} ref={shapeRef}>
+                <div 
+                    className={styles.shapeContent} 
+                    ref={shapeRef} 
+                    style={{ cursor: 'pointer' }}
+                    onMouseEnter={() => setIsHovered(true)}
+                    onMouseLeave={() => setIsHovered(false)}
+                >
                     <div className={styles.circleContainer} ref={scope}>
                         <motion.div
                             className={`${styles.mostOuterRing} nameCircle`}
@@ -192,15 +198,27 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
                     )}
                     </div>  
                 </div>
-
+                {
+                isHovered && shape.props.name && (
+                    <motion.div 
+                        className={styles.hoverDescription}
+                        initial={{ opacity: 0}}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                        style={{ transform: 'translateX(-50%)', overflow: 'hidden' }}
+                    >
+                        <p>
+                            {shape.props.name}
+                        </p>
+                    </motion.div>
+                )}
 			</HTMLContainer>
 		)
 	}
 
-
 	indicator(shape: NameShape) {
         return
 		return <rect width={shape.props.w} height={shape.props.h} />
-
 	}
 }

@@ -68,12 +68,25 @@ body {
 }
 
 .tiptap ul li {
-  color: brown;
+  color: #EB5757;
 }
+
+ul,
+ol {
+  padding: 0 1rem;
+  margin: 0.6rem 1rem 1.25rem 0.4rem;
+
+  li p {
+    margin-top: 0.25em;
+    margin-bottom: 0.25em;
+  }
+}
+
 
 .tiptap li {
   color: pink;
 }
+
 
 p.is-editor-empty:first-child::before {
   content: attr(data-placeholder);

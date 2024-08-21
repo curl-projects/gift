@@ -146,6 +146,7 @@ export default function WorldCanvas() {
                             databaseId: concept.id,
                             text: concept.title,
                             plainText: concept.title,
+                            description: concept.description,
                         }
                     })
                 }
@@ -164,7 +165,7 @@ export default function WorldCanvas() {
                         props: {
                             w: 200,
                             h: 100,
-                            name: "AV",
+                            name: user.name,
                         },
                     });
                 }
