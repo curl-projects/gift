@@ -23,6 +23,7 @@ export function calculateAnchor(startShape=null, endShape=null) {
     if (endShape?.type === 'concept') {
         endIsPrecise = true;
         endIsExact = true;
+        console.log("H:", endShape.props.h)
         endAnchor = { x: (56/2) / endShape.props.w, y: (56 / 2 ) / endShape.props.h };
     }
     else if(endShape?.type === 'excerpt'){
@@ -51,6 +52,8 @@ export function createBoundThread(editor, startShapeId, endShapeId) {
         }
 
         const { startAnchor, startIsExact, startIsPrecise, endAnchor, endIsExact, endIsPrecise } = calculateAnchor(startShape, endShape);
+        console.log("START SHAPE TYPE:", startShape.type, "END SHAPE TYPE:", endShape.type)
+        console.log("START ANCHOR:", startAnchor, "END ANCHOR:", endAnchor)
 
         const threadId = createShapeId();
         editor.createShape({
@@ -91,7 +94,7 @@ export function createBoundThread(editor, startShapeId, endShapeId) {
     return null;
 }
 
-function hasExistingThread(editor, startShapeId, endShapeId) {
+export function hasExistingThread(editor, startShapeId, endShapeId) {
     const bindings = editor.getBindingsToShape(startShapeId, 'thread');
     for (let binding of bindings) {
         let threadBindings = editor.getBindingsFromShape(binding.fromId, 'thread');

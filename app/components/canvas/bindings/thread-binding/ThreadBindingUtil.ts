@@ -81,7 +81,9 @@ export function updateThreadBindingProps(editor: Editor, shapeId: TLShapeId) {
     
         }
         else if(binding.props.terminal === 'start'){
-            const { startAnchor, startIsExact, startIsPrecise, endAnchor, endIsExact, endIsPrecise } = calculateAnchor(null, endShape);
+            const startShape = editor.getShape(shapeId)
+
+            const { startAnchor, startIsExact, startIsPrecise, endAnchor, endIsExact, endIsPrecise } = calculateAnchor(startShape, null);
 
 			editor.updateBinding({
 				id: binding.id,

@@ -26,9 +26,8 @@ import { ThreadShapeUtil } from "~/components/canvas/shapes/thread-shape/ThreadS
 import { ThreadShapeTool } from "~/components/canvas/shapes/thread-shape/ThreadShapeTool"
 import { ThreadBindingUtil} from "~/components/canvas/bindings/thread-binding/ThreadBindingUtil"
 
-
 // HELPERS
-import { createBoundThread } from './helpers/thread-funcs';
+import { createBoundThread, hasExistingThread } from './helpers/thread-funcs';
 import { Stars } from './custom-ui/aesthetics/stars/Stars';
 import { Clouds } from './custom-ui/aesthetics/clouds/Clouds';
 
@@ -170,13 +169,20 @@ export default function WorldCanvas() {
                     });
                 }
 
-                console.log("SHAPE POSITION", editor.getShapePageBounds(editor.getShape(centralShapeId)).center)
-
                 // create threads
                 const conceptShapes = editor.getCurrentPageShapes().filter(shape => shape.type === 'concept')
 
                 for(let conceptShape of conceptShapes){
                     createBoundThread(editor, centralShapeId, conceptShape.id)
+                }
+
+                // create bound threads based on concept connections
+                for(let concept of user.concepts){
+                    for(let linkedConcept of concept.linkedEnd){
+                        if(!hasExistingThread(editor, createShapeId(concept.id), createShapeId(linkedConcept.linkedStart.id))){
+                            createBoundThread(editor, createShapeId(concept.id), createShapeId(linkedConcept.linkedStart.id))
+                        }
+                    }
                 }
 
             }}

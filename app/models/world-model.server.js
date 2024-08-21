@@ -16,6 +16,18 @@ export async function getWorldContent(uniqueName){
                         include: {
                             media: true
                         }
+                    },
+                    linkedStart: {
+                        include: {
+                            linkedStart: true,
+                            linkedEnd: true,
+                        }
+                    },
+                    linkedEnd: {
+                        include: {
+                            linkedEnd: true,
+                            linkedStart: true,
+                        }
                     }
                 }
             }

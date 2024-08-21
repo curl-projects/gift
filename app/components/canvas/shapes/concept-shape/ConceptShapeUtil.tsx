@@ -65,7 +65,7 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
 	getDefaultProps(): ConceptShape['props'] {
 		return { 
 			w: 200,
-			h: 20,
+			h: 56,
 			text: "",
 			plainText: "",
 			description: "No description",
