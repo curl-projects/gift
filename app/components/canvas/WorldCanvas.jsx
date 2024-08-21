@@ -47,19 +47,19 @@ export default function WorldCanvas() {
     const collections = [GraphLayoutCollection]
     const components = {
         Toolbar: null,
-        // MainMenu: null,
+        MainMenu: null,
         DebugMenu: null,
-        // DebugPanel: null,
-        // Minimap: null,
-        // PageMenu: null,
-        // ActionsMenu: null,
-        // ZoomMenu: null,
-        // QuickActions: null,
-        // NavigationPanel: null,
-        // HelpMenu: null,
-        // ContextMenu: null,
-        // StylePanel: null,
-        // SharePanel: null,
+        DebugPanel: null,
+        Minimap: null,
+        PageMenu: null,
+        ActionsMenu: null,
+        ZoomMenu: null,
+        QuickActions: null,
+        NavigationPanel: null,
+        HelpMenu: null,
+        ContextMenu: null,
+        StylePanel: null,
+        SharePanel: null,
     }
 
     const PERSISTENCE_KEY = 'canvas-persistence'
@@ -190,7 +190,7 @@ export default function WorldCanvas() {
         >
             {editor && (
                 <CollectionProvider editor={editor} collections={collections}>
-                    <GraphUi />
+                    {/* <GraphUi /> */}
                     <CustomToolbar />
                     <GraphTrigger />
                     <SelectionListener />

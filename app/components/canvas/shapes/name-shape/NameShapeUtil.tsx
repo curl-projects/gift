@@ -108,13 +108,13 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
 
         useEffect(() => {
             if (isOnlySelected) {
-                this.editor.zoomToBounds(this.editor.getShapePageBounds(shape), {
-                    animation: {
-                        duration: 300,
-                        ease: "easeInOut"
-                    },
-                    targetZoom: 1,
-                });
+                // this.editor.zoomToBounds(this.editor.getShapePageBounds(shape), {
+                //     animation: {
+                //         duration: 300,
+                //         ease: "easeInOut"
+                //     },
+                //     targetZoom: 1,
+                // });
 
                 // Trigger ripple animation
                 animate(".nameCircle", { scale: 0.9 }, { duration: 0.2, ease: 'easeInOut' })
