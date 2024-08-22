@@ -10,13 +10,14 @@ export const useCollection = <T extends BaseCollection = BaseCollection>(collect
 
   const collection = context.get(collectionId);
   if (!collection) {
-    throw new Error(`Collection with id '${collectionId}' not found`);
+    // console.warn("No Collection")
   }
 
-  const [size, setSize] = useState<number>(collection.size);
+  const [size, setSize] = useState<number>(collection?.size || 0);
 
   useEffect(() => {
-    // Subscribe to collection changes
+    if(collection){
+      // Subscribe to collection changes
     const unsubscribe = collection.subscribe(() => {
       setSize(collection.size);
     });
@@ -25,6 +26,7 @@ export const useCollection = <T extends BaseCollection = BaseCollection>(collect
     setSize(collection.size);
 
     return unsubscribe; // Cleanup on unmount
+  }
   }, [collection]);
 
   return { collection: collection as T, size };

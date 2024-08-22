@@ -118,6 +118,7 @@ export class GraphLayoutCollection extends BaseCollection {
 
   step = () => {
     this.graphSim.start(0, 0, 1, 0, false, false);
+    
     for (const node of this.graphSim.nodes() as ColaNode[]) {
 
       const shape = this.editor.getShape(node.id);

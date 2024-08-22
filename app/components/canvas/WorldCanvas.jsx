@@ -127,33 +127,35 @@ export default function WorldCanvas() {
     }
 
     return (
-        <Tldraw
-            store={store}
-            shapeUtils={shapeUtils}
-            bindingUtils={bindingUtils}
-            tools={tools}
-            components={components}
-            onMount={(editor) => {
-                setEditor(editor)
-            }}
-        >
-            {editor && (
-                <CollectionProvider editor={editor} collections={collections}>
-                    {/* <GraphUi /> */}
-                    <ConstellationPainter 
-                        user={data.user} 
-                    />
-                    <CustomToolbar />
-                    <ConstellationLabel 
-                        name={data.user.name}
-                    />
-                    <GraphTrigger />
-                    <SelectionListener />
-                    <Stars />
-                    <Clouds />
-                </CollectionProvider>
-            )}
+        <CollectionProvider editor={editor} collections={collections}>
+            <Tldraw
+                store={store}
+                shapeUtils={shapeUtils}
+                bindingUtils={bindingUtils}
+                tools={tools}
+                components={components}
+                onMount={(editor) => {
+                    setEditor(editor)
+                }}
+            >
+                {editor && (
+                    <>
+                        <GraphUi />
+                        <ConstellationPainter 
+                            user={data.user} 
+                        />
+                        <CustomToolbar />
+                        <ConstellationLabel 
+                            name={data.user.name}
+                        />
+                        <GraphTrigger />
+                        <SelectionListener />
+                        <Stars />
+                        <Clouds />
+                    </>
+                )}
 
-        </Tldraw>
+            </Tldraw>
+        </CollectionProvider>
     )
 }

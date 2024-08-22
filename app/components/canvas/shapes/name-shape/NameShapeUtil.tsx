@@ -12,6 +12,7 @@ import { useLoaderData } from '@remix-run/react';
 import styles from './NameShapeUtil.module.css';
 import { motion, useAnimate } from 'framer-motion';
 import { conceptsExist, generateConcepts, generateConceptLinks } from "~/components/canvas/helpers/thread-funcs"
+import { useCollection } from "~/components/canvas/custom-ui/collections";
 
 const nameShapeProps = {
 	w: T.number,
@@ -66,6 +67,7 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
         const [isHovered, setIsHovered] = useState(false);
         const [isClicked, setIsClicked] = useState(false);
         const data = useLoaderData();
+        const { collection, size } = useCollection('graph')
 
 		useEffect(()=>{
 			if(shapeRef.current && shapeRef.current.clientHeight !== 0 && shapeRef.current.clientWidth !== 0){
@@ -113,28 +115,20 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
         useEffect(() => {
             if (isOnlySelected) {
              
-
                 // Trigger ripple animation
                 animate(".nameCircle", { scale: 0.9 }, { duration: 0.2, ease: 'easeInOut' })
                     .then(() => animate(".nameCircle", { scale: 1.1 }, { duration: 0.2, ease: 'easeInOut' }))
                     .then(() => {
                         animate(".nameCircle", { scale: 1 }, { duration: 0.2, ease: 'easeInOut' });
                         animate(`.ripple`, { scale: [0, 8], opacity: [1, 0], x: "-50%", y: "-50%" }, { duration: 1.5, ease: "easeOut", delay: 0 });
-
-                        if(!conceptsExist(this.editor, data.user.concepts)){
-                            generateConcepts(this.editor, shape.id, data.user.concepts)
-                        }
-                    }).then(() => {
-                        setTimeout(() => {
-                            // Do something else here after waiting for 0.5 seconds
-                            // generateConceptLinks(this.editor, data.user.concepts)
-
-                        }, 2000);
                     })
             }
         }, [isOnlySelected, animate, shape]);
 
         useEffect(()=>{
+            console.log("IS CLICKED:", isClicked)
+            if(collection){
+
             if(isClicked){
                 this.editor.zoomToBounds(this.editor.getShapePageBounds(shape), {
                     animation: {
@@ -161,7 +155,38 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
                     }, 2000);
                 })
             }
-        }, [isClicked])
+            else{
+                // zoom the camera so that it's centred around the shape
+                this.editor.zoomToBounds(this.editor.getShapePageBounds(shape), {
+                    animation: {
+                        duration: 300,
+                        ease: "easeInOut"
+                    },
+                    targetZoom: 1,
+                });
+
+                // turn physics off momentarily
+                // collection.stopSimulation();
+                
+                // fade out and move concepts towards the center of the screen or the center of the shape
+                // const concepts = data.user.concepts.map(concept => this.editor.getShape({id: createShapeId(concept.id), type: 'concept'}))
+
+    
+                for(let concept of data.user.concepts){
+                    this.editor.animateShape({id: createShapeId(concept.id), type: 'concept', x: shape.props.x, y: shape.props.y}, {
+                        animation: {
+                        duration: 300,
+                        ease: "easeInOut"
+                    },
+                });
+
+                // delete shapes when they get there
+                
+                // turn physics back on
+            }
+        }
+        }
+        }, [isClicked, collection])
 
         return (
 			<HTMLContainer 
