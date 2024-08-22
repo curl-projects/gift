@@ -174,7 +174,7 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
 	
 		const [isHovered, setIsHovered] = useState(false)
 
-        const randomDelay = Math.random() * 0.5;    
+        const randomDelay = 1;    
         const ringVariants = {
             hidden: { scale: 0, x: "-50%", y: "-50%" },
             visible: (delay = 0) => ({
@@ -355,7 +355,14 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
                     transition={{ delay: 0 }}
                 />
 				</div>
-                    <p className={styles.editorContent}>{shape.props.plainText}</p>
+                    <motion.p 
+                        className={styles.editorContent} 
+                        initial={{ opacity: 0 }} 
+                        animate={{ opacity: 1 }} 
+                        transition={{ delay: 2, duration: 1, ease: 'easeInOut' }}
+                    >
+                        {shape.props.plainText}
+                    </motion.p>
 					{/* <EditorContent 
 						editor={editor}
 						// onKeyDown={stopEventPropagation}

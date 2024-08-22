@@ -6,12 +6,18 @@ import { Tldraw, createTLStore, defaultShapeUtils, defaultBindingUtils, DefaultS
 import { ClientOnly } from 'remix-utils/client-only';
 
 // CUSTOM UI
+import { ConstellationPainter } from "~/components/canvas/custom-ui/utilities/ConstellationPainter"
 import CustomToolbar from "~/components/canvas/custom-ui/custom-toolbar/CustomToolbar"
 import { CollectionProvider } from "~/components/canvas/custom-ui/collections";
 import { GraphLayoutCollection } from "~/components/canvas/custom-ui/graph/GraphLayoutCollection";
 import { GraphUi } from "~/components/canvas/custom-ui/graph/GraphUi";
 import { GraphTrigger } from "~/components/canvas/custom-ui/graph/GraphTrigger";
 import { SelectionListener } from "~/components/canvas/custom-ui/listeners/SelectionListener";
+import { ConstellationLabel } from "~/components/canvas/custom-ui/game-ui/ConstellationLabel"
+import { Stars } from './custom-ui/aesthetics/stars/Stars';
+import { Clouds } from './custom-ui/aesthetics/clouds/Clouds';
+
+
 // CUSTOM SHAPES
 import { NameShapeUtil } from "~/components/canvas/shapes/name-shape/NameShapeUtil"
 import { NameShapeTool } from "~/components/canvas/shapes/name-shape/NameShapeTool"
@@ -27,9 +33,7 @@ import { ThreadShapeTool } from "~/components/canvas/shapes/thread-shape/ThreadS
 import { ThreadBindingUtil} from "~/components/canvas/bindings/thread-binding/ThreadBindingUtil"
 
 // HELPERS
-import { createBoundThread, hasExistingThread } from './helpers/thread-funcs';
-import { Stars } from './custom-ui/aesthetics/stars/Stars';
-import { Clouds } from './custom-ui/aesthetics/clouds/Clouds';
+import { createBoundThread, hasExistingThread } from '~/components/canvas/helpers/thread-funcs';
 
 export default function WorldCanvas() {
     const [editor, setEditor] = useState(null)
@@ -131,67 +135,18 @@ export default function WorldCanvas() {
             components={components}
             onMount={(editor) => {
                 setEditor(editor)
-
-                // load data
-                const user = data.user
-
-                console.log("USER DATA:", user)
-
-                // create concepts
-                for(let concept of user.concepts){
-                    editor.createShape({
-                        id: createShapeId(concept.id),
-                        type: 'concept',
-                        props: {
-                            databaseId: concept.id,
-                            text: concept.title,
-                            plainText: concept.title,
-                            description: concept.description,
-                        }
-                    })
-                }
-
-                // create central data object
-                const centralShapeId = createShapeId('name');
-
-                const centralShape = editor.getShape(centralShapeId)
-                if (!centralShape) {
-                    console.log("CENTRAL SHAPE ID:", centralShapeId)
-                    editor.createShape({
-                        id: centralShapeId,
-                        type: 'name',
-                        x: -100, // Half the width to center it
-                        y: -50,  // Half the height to center it
-                        props: {
-                            w: 200,
-                            h: 100,
-                            name: user.name,
-                        },
-                    });
-                }
-
-                // create threads
-                const conceptShapes = editor.getCurrentPageShapes().filter(shape => shape.type === 'concept')
-
-                for(let conceptShape of conceptShapes){
-                    createBoundThread(editor, centralShapeId, conceptShape.id)
-                }
-
-                // create bound threads based on concept connections
-                for(let concept of user.concepts){
-                    for(let linkedConcept of concept.linkedEnd){
-                        if(!hasExistingThread(editor, createShapeId(concept.id), createShapeId(linkedConcept.linkedStart.id))){
-                            createBoundThread(editor, createShapeId(concept.id), createShapeId(linkedConcept.linkedStart.id))
-                        }
-                    }
-                }
-
             }}
         >
             {editor && (
                 <CollectionProvider editor={editor} collections={collections}>
                     {/* <GraphUi /> */}
+                    <ConstellationPainter 
+                        user={data.user} 
+                    />
                     <CustomToolbar />
+                    <ConstellationLabel 
+                        name={data.user.name}
+                    />
                     <GraphTrigger />
                     <SelectionListener />
                     <Stars />

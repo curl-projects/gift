@@ -184,3 +184,54 @@ export function excerptsExist(editor, concept){
 
     return excerptShapes.length === concept.excerpts.length;
 }
+
+export function conceptsExist(editor, concepts) {
+    const conceptIds = concepts.map(concept => createShapeId(concept.id));
+
+    console.log("CONCEPT IDS:", conceptIds);
+    const conceptShapes = conceptIds.map(id => editor.getShape(id)).filter(shape => shape !== undefined);
+    console.log("CONCEPT SHAPES:", conceptShapes);
+
+    return conceptShapes.length === concepts.length;
+}
+
+export function generateConcepts(editor, centralShapeId, concepts) {
+    if (concepts && concepts.length > 0) {
+        const points = generatePointsAroundCircle(0, 0, 300, concepts.length, 0);
+
+        for (let i = 0; i < concepts.length; i++) {
+            const concept = concepts[i];
+            const conceptShape = editor.getShape(createShapeId(concept.id));
+            const { x, y } = points[i];
+            let conceptShapeId = createShapeId(concept.id)
+            if (!conceptShape) {
+                editor.createShape({
+                    id: conceptShapeId,
+                    type: "concept",
+                    x: x,
+                    y: y,
+                    props: {
+                        text: concept.title,
+                        plainText: concept.title,
+                        description: concept.description,
+                        databaseId: concept.id,
+                    }
+                });
+
+                createBoundThread(editor, centralShapeId, conceptShapeId)
+            }
+        }
+    } else {
+        console.warn("No concepts found");
+    }
+}
+
+export function generateConceptLinks(editor, concepts){
+    for(let concept of concepts){
+        for(let linkedConcept of concept.linkedEnd){
+            if(!hasExistingThread(editor, createShapeId(concept.id), createShapeId(linkedConcept.linkedStart.id))){
+                createBoundThread(editor, createShapeId(concept.id), createShapeId(linkedConcept.linkedStart.id))
+            }
+        }
+    }
+}

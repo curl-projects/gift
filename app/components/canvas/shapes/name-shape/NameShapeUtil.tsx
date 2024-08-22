@@ -8,8 +8,10 @@ import {
 } from '@tldraw/editor'
 import { T, createShapeId } from 'tldraw';
 import { useCallback, useState, useEffect, useRef, useLayoutEffect } from 'react'
+import { useLoaderData } from '@remix-run/react';
 import styles from './NameShapeUtil.module.css';
 import { motion, useAnimate } from 'framer-motion';
+import { conceptsExist, generateConcepts, generateConceptLinks } from "~/components/canvas/helpers/thread-funcs"
 
 const nameShapeProps = {
 	w: T.number,
@@ -62,6 +64,8 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
         const [scope, animate] = useAnimate()
         const isOnlySelected = this.editor.getOnlySelectedShapeId() === shape.id;
         const [isHovered, setIsHovered] = useState(false);
+        const [isClicked, setIsClicked] = useState(false);
+        const data = useLoaderData();
 
 		useEffect(()=>{
 			if(shapeRef.current && shapeRef.current.clientHeight !== 0 && shapeRef.current.clientWidth !== 0){
@@ -73,7 +77,7 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
 			}
 		}, [this.editor, shapeRef.current])
 
-        const randomDelay = 0
+        const randomDelay = 0.2
         const ringVariants = {
             hidden: { scale: 0, x: "-50%", y: "-50%" },
             visible: (delay = 0) => ({
@@ -108,13 +112,7 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
 
         useEffect(() => {
             if (isOnlySelected) {
-                // this.editor.zoomToBounds(this.editor.getShapePageBounds(shape), {
-                //     animation: {
-                //         duration: 300,
-                //         ease: "easeInOut"
-                //     },
-                //     targetZoom: 1,
-                // });
+             
 
                 // Trigger ripple animation
                 animate(".nameCircle", { scale: 0.9 }, { duration: 0.2, ease: 'easeInOut' })
@@ -122,9 +120,48 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
                     .then(() => {
                         animate(".nameCircle", { scale: 1 }, { duration: 0.2, ease: 'easeInOut' });
                         animate(`.ripple`, { scale: [0, 8], opacity: [1, 0], x: "-50%", y: "-50%" }, { duration: 1.5, ease: "easeOut", delay: 0 });
-                    });
+
+                        if(!conceptsExist(this.editor, data.user.concepts)){
+                            generateConcepts(this.editor, shape.id, data.user.concepts)
+                        }
+                    }).then(() => {
+                        setTimeout(() => {
+                            // Do something else here after waiting for 0.5 seconds
+                            // generateConceptLinks(this.editor, data.user.concepts)
+
+                        }, 2000);
+                    })
             }
         }, [isOnlySelected, animate, shape]);
+
+        useEffect(()=>{
+            if(isClicked){
+                this.editor.zoomToBounds(this.editor.getShapePageBounds(shape), {
+                    animation: {
+                        duration: 300,
+                        ease: "easeInOut"
+                    },
+                    targetZoom: 1,
+                });
+
+                animate(".nameCircle", { scale: 0.7 }, { duration: 0.2, ease: 'easeInOut' })
+                .then(() => animate(".nameCircle", { scale: 1.2 }, { duration: 0.2, ease: 'easeInOut' }))
+                .then(() => {
+                    animate(".nameCircle", { scale: 1 }, { duration: 0.2, ease: 'easeInOut' });
+                    animate(`.ripple`, { scale: [0, 8], opacity: [1, 0], x: "-50%", y: "-50%" }, { duration: 1.5, ease: "easeOut", delay: 0 });
+
+                    if(!conceptsExist(this.editor, data.user.concepts)){
+                        generateConcepts(this.editor, shape.id, data.user.concepts)
+                    }
+                }).then(() => {
+                    setTimeout(() => {
+                        // Do something else here after waiting for 0.5 seconds
+                        // generateConceptLinks(this.editor, data.user.concepts)
+
+                    }, 2000);
+                })
+            }
+        }, [isClicked])
 
         return (
 			<HTMLContainer 
@@ -137,6 +174,7 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
                     style={{ cursor: 'pointer' }}
                     onMouseEnter={() => setIsHovered(true)}
                     onMouseLeave={() => setIsHovered(false)}
+                    onPointerDown={()=>setIsClicked(p => !p)}
                 >
                     <div className={styles.circleContainer} ref={scope}>
                         <motion.div

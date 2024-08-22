@@ -18,17 +18,17 @@ export function GraphTrigger(){
     const { collection, size } = useCollection('graph')
     const editor = useEditor()
 
-    useLayoutEffect(()=>{
-        const relevantShapes = editor.getCurrentPageShapes().filter(shape => ['thread', 'concept', 'excerpt', 'name'].includes(shape.type))
-        collection.add(relevantShapes)
+    // useLayoutEffect(()=>{
+    //     const relevantShapes = editor.getCurrentPageShapes().filter(shape => ['thread', 'concept', 'excerpt', 'name'].includes(shape.type))
+    //     collection.add(relevantShapes)
 
-        editor.zoomToBounds(editor.getShapePageBounds(relevantShapes.find(shape => shape.type === 'name')), {
-            animation: {
-                duration: 400
-            },
-            targetZoom: 1,
-        })
-    }, [])
+    //     editor.zoomToBounds(editor.getShapePageBounds(relevantShapes.find(shape => shape.type === 'name')), {
+    //         animation: {
+    //             duration: 400
+    //         },
+    //         targetZoom: 1,
+    //     })
+    // }, [])
 
     useLayoutEffect(()=>{
         editor.store.listen((change) => handleStoreEvent(editor, change, collection))
