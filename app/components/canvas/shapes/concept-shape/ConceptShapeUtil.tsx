@@ -16,7 +16,7 @@ import { Text } from '@tiptap/extension-text';
 import { Node } from "@tiptap/core";
 import Placeholder from '@tiptap/extension-placeholder'
 import styles from './ConceptShapeUtil.module.css';
-import { motion, useAnimate } from 'framer-motion';
+import { motion, useAnimate, AnimatePresence } from 'framer-motion';
 import { generateExcerpts, tearDownExcerpts, excerptsExist } from "~/components/canvas/helpers/thread-funcs"
 import { applyProgressiveBlur, removeProgressiveBlur } from '~/components/canvas/helpers/distribution-funcs';
 import { updateThreadBindingProps } from '~/components/canvas/bindings/thread-binding/ThreadBindingUtil';
@@ -200,10 +200,9 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
             },
             exit: {
                 scale: 0,
-                rotate: 0,
                 x: "-50%",
                 y: "-50%",
-                transition: { duration: 1, ease: "easeIn" }
+                transition: { duration: 0.3, ease: "easeIn" }
             }
         };
 
@@ -303,15 +302,18 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
                     onMouseLeave={() => setIsHovered(false)}
                     >
                 <div className={styles.circleContainer} ref={scope}>
-                {this.editor.getOnlySelectedShapeId() === shape.id && (
-                        <motion.div
-                            className={styles.selectionRing}
-                            initial="hidden"
-                            animate={["visible", "rotate"]}
-                            exit="exit"
-                            variants={dashedRingVariants}
-                        />
-                    )}
+                <AnimatePresence>
+                    {this.editor.getOnlySelectedShapeId() === shape.id && (
+                            <motion.div
+                                key='selectionRing'
+                                className={styles.selectionRing}
+                                initial="hidden"
+                                animate={["visible", "rotate"]}
+                                exit="exit"
+                                variants={dashedRingVariants}
+                            />
+                        )}
+                </AnimatePresence>
 
                 <motion.div
                         className={`${styles.outerRing} conceptCircle`}

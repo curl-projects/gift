@@ -10,7 +10,7 @@ import { T, createShapeId } from 'tldraw';
 import { useCallback, useState, useEffect, useRef, useLayoutEffect } from 'react'
 import { useLoaderData } from '@remix-run/react';
 import styles from './NameShapeUtil.module.css';
-import { motion, useAnimate } from 'framer-motion';
+import { motion, useAnimate, AnimatePresence } from 'framer-motion';
 import { conceptsExist, generateConcepts, generateConceptLinks } from "~/components/canvas/helpers/thread-funcs"
 import { useCollection } from "~/components/canvas/custom-ui/collections";
 import { animateShapeProperties } from "~/components/canvas/helpers/animation-funcs"
@@ -91,32 +91,54 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
                 transition: { duration: 0.5, ease: "easeOut", delay }
             })
         };
-
         const dashedRingVariants = {
             hidden: { scale: 0, rotate: 0, x: "-50%", y: "-50%" },
-            visible: {
+            visible: (delay = 0) => ({
                 scale: 1.5, // Larger than the largest outer ring
                 rotate: 360,
                 x: "-50%",
                 y: "-50%",
-                transition: { duration: 1, ease: "easeOut" }
-            },
+                transition: { duration: 1, ease: "easeOut", delay }
+            }),
             rotate: {
                 rotate: [0, 360],
                 transition: { repeat: Infinity, duration: 10, ease: "linear" }
             },
             exit: {
                 scale: 0,
-                rotate: 0,
+                // rotate: [0, 360],
                 x: "-50%",
                 y: "-50%",
-                transition: { duration: 1, ease: "easeIn" }
+                transition: { duration: 0.3, ease: "easeIn" }
             }
         };
 
+        const orbitingRingVariants = {
+            hidden: { scale: 0, rotate: 0, x: "-50%", y: "-50%" },
+            visible: (custom) => ({
+                scale: 1, // Larger than the largest outer ring
+                rotate: 360,
+                x: "-50%",
+                y: "-50%",
+                transition: { duration: 1, ease: "easeOut", delay: custom.delay }
+            }),
+            rotate: {
+                rotate: [0, 360],
+                transition: { repeat: Infinity, duration: 40, ease: "linear" }
+            },
+            exit: {
+                scale: 0,
+                rotate: 0,
+                x: "-50%",
+                y: "-50%",
+                transition: { duration: 0.2, ease: "easeIn" }
+            }
+        };
+
+
         useEffect(() => {
             if (isOnlySelected) {
-             
+        
                 // Trigger ripple animation
                 animate(".nameCircle", { scale: 0.9 }, { duration: 0.2, ease: 'easeInOut' })
                     .then(() => animate(".nameCircle", { scale: 1.1 }, { duration: 0.2, ease: 'easeInOut' }))
@@ -142,7 +164,7 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
                     targetZoom: 1,
                 });
 
-                animate(".nameCircle", { scale: 0.7 }, { duration: 0.2, ease: 'easeInOut' })
+                animate(".nameCircle", { scale: 0.8 }, { duration: 0.2, ease: 'easeInOut' })
                 .then(() => animate(".nameCircle", { scale: 1.2 }, { duration: 0.2, ease: 'easeInOut' }))
                 .then(() => {
                     animate(".nameCircle", { scale: 1 }, { duration: 0.2, ease: 'easeInOut' });
@@ -189,7 +211,7 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
 
                     // Start the nameCircle animation simultaneously
  
-                    animate(".nameCircle", { scale: 0.8 }, { duration: 0.3, ease: 'easeInOut', delay: 0.2 })
+                    animate(".nameCircle", { scale: 0.8 }, { duration: 0.2, ease: 'easeInOut', delay: 0.15 })
                     .then(() => animate(".nameCircle", { scale: 1.2 }, { duration: 0.2, ease: 'easeInOut' }))
                     .then(() => animate(".nameCircle", { scale: 1 }, { duration: 0.2, ease: 'easeInOut' }))
                     // .then(() => {
@@ -228,6 +250,31 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
                     onPointerDown={()=>setIsClicked(p => !p)}
                 >
                     <div className={styles.circleContainer} ref={scope}>
+                    {/* <AnimatePresence>
+                        {!isClicked &&
+                            <motion.div 
+                                key='orbitingRing'
+                                className={`${styles.orbitingRingOne} nameCircle`}
+                                initial="hidden"
+                                exit="exit"
+                                animate={["visible", "rotate"]} // Apply both visible and rotate variants
+                                custom={{ delay: randomDelay + 1.5 }} // Delay for outer ring
+                                variants={orbitingRingVariants}
+                            />
+                        }
+                        </AnimatePresence> */}
+                        <AnimatePresence>
+                        {isOnlySelected && ( 
+                            <motion.div
+                                key="dashedRing"
+                                className={styles.dashedRing}
+                                initial="hidden"
+                                animate={["visible", "rotate"]}
+                                exit="exit"
+                                variants={dashedRingVariants}
+                            />
+                        )}
+                        </AnimatePresence>
                         <motion.div
                             className={`${styles.mostOuterRing} nameCircle`}
                             initial="hidden"
@@ -276,15 +323,6 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
                         variants={ringVariants}
                         transition={{ delay: 0 }}
                     />
-                    {isOnlySelected && (
-                        <motion.div
-                            className={styles.dashedRing}
-                            initial="hidden"
-                            animate={["visible", "rotate"]}
-                            exit="exit"
-                            variants={dashedRingVariants}
-                        />
-                    )}
                     </div>  
                 </div>
                 {
