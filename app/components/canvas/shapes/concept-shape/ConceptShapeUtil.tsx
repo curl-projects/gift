@@ -353,7 +353,7 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
                     <motion.div
                     initial="hidden"
                     className={`${styles.ripple} ripple`}
-                variants={ringVariants}
+                     variants={ringVariants}
                     transition={{ delay: 0 }}
                 />
 				</div>

@@ -69,10 +69,12 @@ export class DriftShapeUtil extends BaseBoxShapeUtil<DriftShape> {
 		const [isHovered, setIsHovered] = useState(false)
 		const shapeRef = useRef<HTMLDivElement>(null);
 		const controls = useAnimationControls()
+		const [scope, animate] = useAnimate();
 
 		useEffect(() => {
 			if (shape.props.triggerDelete) {
 				controls.start("hidden").then(()=>{
+					console.log("DELETING DRIFT")
 					this.editor.deleteShape(shape.id);
 				})
 				
@@ -116,15 +118,23 @@ export class DriftShapeUtil extends BaseBoxShapeUtil<DriftShape> {
 			visible: { opacity: 1 }
 		};
 
+		const rippleVariants = {
+			hidden: { opacity: 0, x: "-50%", y: "-50%" },
+			visible: { opacity: 0, x: "-50%", y: "-50%" } 
+		}
+
 		useEffect(()=>{
 			controls.start("visible")
+			animate(`.ripple`, { scale: [1, 3], opacity: [0, 1, 0], x: "-50%", y: "-50%" }, { duration: 8, ease: "easeOut" });
+
 		}, [])
 	
 
 		return (
 			<div 
 				id={shape.id}
-				className={styles.container}				
+				className={styles.container}	
+				ref={scope}			
 				>
 				<div 
                     className={styles.shapeContent} 
@@ -146,6 +156,18 @@ export class DriftShapeUtil extends BaseBoxShapeUtil<DriftShape> {
 					>
 						{shape.props.text}
 					</motion.p>
+					<motion.div 
+						initial="hidden"
+						animate="hidden"
+						className={`${styles.ripple} ripple`}
+						style={{
+							height: shapeRef.current?.clientWidth,
+							width: shapeRef.current?.clientWidth
+						}}
+						variants={rippleVariants}
+						// transition={{ delay: 0}}
+					>
+					</motion.div>
 				</div>
 			</div>
 		)

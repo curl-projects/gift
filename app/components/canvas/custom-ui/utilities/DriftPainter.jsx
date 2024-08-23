@@ -41,7 +41,7 @@ const calculateHeightBasedOnContent = (content) => {
 
 const createDriftShape = (editor, excerpt, existingShapes) => {
     const id = createShapeId(`drift-${excerpt.id}-${Math.random()}`);
-    const shapeWidth = 400;
+    const shapeWidth = 450;
     const shapeHeight = calculateHeightBasedOnContent(excerpt.content);
 
     const centerX = window.innerWidth / 2;
@@ -101,8 +101,8 @@ export function DriftPainter({ user }){
             const existingShapes = [];
 
             const createAndReplaceShape = (excerpt, index) => {
-                
-                const randomTimeout = Math.random() * 5000 + 5000; // Random time between 5s and 10s
+                console.log("CREATING DRIFT")
+                const randomTimeout = Math.random() * 15000 + 5000; // Random time between 5s and 10s
                 const shapeId = createDriftShape(editor, excerpt, existingShapes);
                 
                 setTimeout(() => {
@@ -120,7 +120,10 @@ export function DriftPainter({ user }){
             };
 
             selectedExcerpts.forEach((excerpt, index) => {
-                createAndReplaceShape(excerpt, index);
+                const randomDelay = Math.random() * 3000; // Random delay up to 5 seconds
+                setTimeout(() => {
+                    createAndReplaceShape(excerpt, index);
+                }, randomDelay);
             });
         }
 
