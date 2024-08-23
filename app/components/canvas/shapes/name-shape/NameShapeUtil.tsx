@@ -15,6 +15,7 @@ import { conceptsExist, generateConcepts, generateConceptLinks } from "~/compone
 import { useCollection } from "~/components/canvas/custom-ui/collections";
 import { animateShapeProperties } from "~/components/canvas/helpers/animation-funcs"
 import { deleteAssociatedThreads } from "~/components/canvas/helpers/thread-funcs"
+import { useConstellationMode } from '~/components/canvas/custom-ui/utilities/ConstellationModeContext';
 
 const nameShapeProps = {
 	w: T.number,
@@ -70,6 +71,7 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
         const [isClicked, setIsClicked] = useState(false);
         const data = useLoaderData();
         const { collection, size } = useCollection('graph')
+        const { drifting, setDrifting } = useConstellationMode();
 
 		useEffect(()=>{
 			if(shapeRef.current && shapeRef.current.clientHeight !== 0 && shapeRef.current.clientWidth !== 0){
@@ -138,7 +140,6 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
 
         useEffect(() => {
             if (isOnlySelected) {
-        
                 // Trigger ripple animation
                 animate(".nameCircle", { scale: 0.9 }, { duration: 0.2, ease: 'easeInOut' })
                     .then(() => animate(".nameCircle", { scale: 1.1 }, { duration: 0.2, ease: 'easeInOut' }))
@@ -154,6 +155,7 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
             if(collection && data){
 
             if(isClicked){
+                setDrifting(false);
                 collection.startSimulation();
 
                 this.editor.zoomToBounds(this.editor.getShapePageBounds(shape), {
@@ -228,10 +230,10 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
                
                 }
                 
-            // delete shapes when they get there
-            
-            // turn physics back on
-        }
+            }
+
+            collection.startSimulation();
+            setDrifting(true);
         }
         }
         }, [isClicked, collection, data])

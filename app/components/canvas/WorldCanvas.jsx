@@ -6,7 +6,9 @@ import { Tldraw, createTLStore, defaultShapeUtils, defaultBindingUtils, DefaultS
 import { ClientOnly } from 'remix-utils/client-only';
 
 // CUSTOM UI
+import { ConstellationModeProvider } from "~/components/canvas/custom-ui/utilities/ConstellationModeContext"
 import { ConstellationPainter } from "~/components/canvas/custom-ui/utilities/ConstellationPainter"
+import { DriftPainter } from "~/components/canvas/custom-ui/utilities/DriftPainter"
 import CustomToolbar from "~/components/canvas/custom-ui/custom-toolbar/CustomToolbar"
 import { CollectionProvider } from "~/components/canvas/custom-ui/collections";
 import { GraphLayoutCollection } from "~/components/canvas/custom-ui/graph/GraphLayoutCollection";
@@ -32,6 +34,8 @@ import { ThreadShapeUtil } from "~/components/canvas/shapes/thread-shape/ThreadS
 import { ThreadShapeTool } from "~/components/canvas/shapes/thread-shape/ThreadShapeTool"
 import { ThreadBindingUtil} from "~/components/canvas/bindings/thread-binding/ThreadBindingUtil"
 
+import { DriftShapeUtil } from "~/components/canvas/shapes/floating-excerpt-shape/DriftShapeUtil"
+
 // HELPERS
 import { createBoundThread, hasExistingThread } from '~/components/canvas/helpers/thread-funcs';
 
@@ -45,7 +49,7 @@ export default function WorldCanvas() {
         console.log("EDITOR:", editor)
     }, [editor])
 
-    const shapeUtils = [ConceptShapeUtil, ExcerptShapeUtil, ThreadShapeUtil, NameShapeUtil]
+    const shapeUtils = [ConceptShapeUtil, ExcerptShapeUtil, ThreadShapeUtil, NameShapeUtil, DriftShapeUtil]
     const tools = [ConceptShapeTool, ExcerptShapeTool, ThreadShapeTool, NameShapeTool]
     const bindingUtils = [ThreadBindingUtil]
     const collections = [GraphLayoutCollection]
@@ -127,35 +131,40 @@ export default function WorldCanvas() {
     }
 
     return (
-        <CollectionProvider editor={editor} collections={collections}>
-            <Tldraw
-                store={store}
-                shapeUtils={shapeUtils}
-                bindingUtils={bindingUtils}
-                tools={tools}
-                components={components}
-                onMount={(editor) => {
-                    setEditor(editor)
-                }}
-            >
-                {editor && (
-                    <>
-                        <GraphUi />
-                        <ConstellationPainter 
-                            user={data.user} 
-                        />
-                        <CustomToolbar />
-                        <ConstellationLabel 
-                            name={data.user.name}
-                        />
-                        <GraphTrigger />
-                        <SelectionListener />
-                        <Stars />
-                        <Clouds />
-                    </>
-                )}
+        <ConstellationModeProvider>
+            <CollectionProvider editor={editor} collections={collections}>
+                <Tldraw
+                    store={store}
+                    shapeUtils={shapeUtils}
+                    bindingUtils={bindingUtils}
+                    tools={tools}
+                    components={components}
+                    onMount={(editor) => {
+                        setEditor(editor)
+                    }}
+                >
+                    {editor && (
+                        <>
+                            <GraphUi />
+                            <DriftPainter 
+                                user={data.user}
+                            />
+                            <ConstellationPainter 
+                                user={data.user} 
+                            />
+                            <CustomToolbar />
+                            <ConstellationLabel 
+                                name={data.user.name}
+                            />
+                            <GraphTrigger />
+                            <SelectionListener />
+                            <Stars />
+                            <Clouds />
+                        </>
+                    )}
 
-            </Tldraw>
-        </CollectionProvider>
+                </Tldraw>
+            </CollectionProvider>
+        </ConstellationModeProvider>
     )
 }
