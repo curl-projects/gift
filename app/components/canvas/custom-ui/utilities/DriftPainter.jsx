@@ -39,23 +39,36 @@ const calculateHeightBasedOnContent = (content) => {
 //     );
 // }
 
-const createDriftShape = (editor, excerpt) => {
+const createDriftShape = (editor, excerpt, existingShapes) => {
     const id = createShapeId(`drift-${excerpt.id}-${Math.random()}`);
     const shapeWidth = 400;
-    const shapeHeight = calculateHeightBasedOnContent(excerpt.content); // You need to implement this function
+    const shapeHeight = calculateHeightBasedOnContent(excerpt.content);
 
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
+    const exclusionZone = 50; // Half of 100px
 
+    let randomX, randomY;
+    let isOverlapping;
 
-    const randomX = Math.random() * (window.innerWidth - shapeWidth);
-    const randomY = Math.random() * (window.innerHeight - shapeHeight);
+    do {
+        randomX = Math.random() * (window.innerWidth - shapeWidth);
+        randomY = Math.random() * (window.innerHeight - shapeHeight);
 
-    // console.log("RANDOM:", randomX, randomY)
-    // console.log("RANDOM SCREEN:", editor.screenToPage({x: randomX, y: randomY}))
-    // console.log("WINDOW:", window.innerWidth, window.innerHeight)
-
-    // console.log("TEST:", editor.screenToPage({x: 0, y: 0}))
-    // console.log("TEST 2:", editor.pageToViewport({x: 0, y: 0}))
-    // console.log("TEST 3:", customScreenToPage(editor, {x: 0, y: 0}))
+        isOverlapping = existingShapes.some(shape => {
+            return (
+                randomX < shape.x + shape.width &&
+                randomX + shapeWidth > shape.x &&
+                randomY < shape.y + shape.height &&
+                randomY + shapeHeight > shape.y
+            );
+        });
+    } while (
+        (randomX > centerX - exclusionZone - shapeWidth &&
+        randomX < centerX + exclusionZone &&
+        randomY > centerY - exclusionZone - shapeHeight &&
+        randomY < centerY + exclusionZone) || isOverlapping
+    );
 
     editor.createShape({
         id: id,
@@ -68,6 +81,8 @@ const createDriftShape = (editor, excerpt) => {
         }
     });
 
+    existingShapes.push({ x: randomX, y: randomY, width: shapeWidth, height: shapeHeight });
+
     return id;
 }
 
@@ -78,17 +93,17 @@ export function DriftPainter({ user }){
 
     useEffect(()=>{
         if(drifting){
-            console.log("HI!!!!!!!!!!!!!!!!!!!!!!!!!!")
             const excerpts = user.concepts.flatMap(concept => concept.excerpts);
 
             const shuffledExcerpts = shuffleArray([...excerpts]);
             const selectedExcerpts = shuffledExcerpts.slice(0, 5);
 
+            const existingShapes = [];
+
             const createAndReplaceShape = (excerpt, index) => {
                 
-                const randomTimeout = Math.random() * 5000 + 1000; // Random time between 5s and 10s
-                console.log("CREATING NEW DRIFT SHAPE! TIMEOUT:", randomTimeout)
-                const shapeId = createDriftShape(editor, excerpt);
+                const randomTimeout = Math.random() * 5000 + 5000; // Random time between 5s and 10s
+                const shapeId = createDriftShape(editor, excerpt, existingShapes);
                 
                 setTimeout(() => {
                     // delete shape
