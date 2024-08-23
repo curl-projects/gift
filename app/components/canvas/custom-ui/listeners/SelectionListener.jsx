@@ -14,7 +14,6 @@ export function SelectionListener({ user }){
             // zoom to the name 
             const name = editor.getShape(createShapeId(user.uniqueName))
 
-            console.log("NAME", name)
             if(name){
                 editor.zoomToBounds(editor.getShapePageBounds(name), {
                     animation: {

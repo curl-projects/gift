@@ -23,7 +23,6 @@ export function calculateAnchor(startShape=null, endShape=null) {
     if (endShape?.type === 'concept') {
         endIsPrecise = true;
         endIsExact = true;
-        console.log("H:", endShape.props.h)
         endAnchor = { x: (56/2) / endShape.props.w, y: (56 / 2 ) / endShape.props.h };
     }
     else if(endShape?.type === 'excerpt'){
@@ -59,6 +58,7 @@ export function createBoundThread(editor, startShapeId, endShapeId) {
         editor.createShape({
             id: threadId,
             type: "thread",
+            isLocked: true,
             props: {
                 threadheadStart: "none",
                 threadheadEnd: "none"
@@ -149,6 +149,15 @@ export function generateExcerpts(editor, concept) {
 export function deleteAssociatedThreads(editor, shapeId){
     const threadBindings = editor.getBindingsToShape(shapeId, 'thread');
     const threadIds = threadBindings.map(threadBinding => threadBinding.fromId);
+    
+    editor.updateShapes(threadIds.map(threadId => {
+        return {
+            id: threadId, 
+            type: "thread", 
+            isLocked: false
+        }
+    }))
+
     editor.deleteShapes(threadIds);
 }
 
@@ -162,6 +171,14 @@ export function tearDownExcerpts(editor, concept) {
         }).flat();
 
         // delete threads
+        editor.updateShapes(threadIds.map(threadId => {
+            return {
+                id: threadId, 
+                type: "thread", 
+                isLocked: false
+            }
+        }))
+
         editor.deleteShapes(threadIds);
 
         // delete excerpts
@@ -178,6 +195,15 @@ export function tearDownAllExcerpts(editor){
     })
 
     editor.deleteShapes(allExcerpts);
+
+    editor.updateShapes(threadIds.map(threadId => {
+        return {
+            id: threadId, 
+            type: "thread", 
+            isLocked: false
+        }
+    }))
+
     editor.deleteShapes(threadIds);
 }
 
