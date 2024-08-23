@@ -22,7 +22,8 @@ export function applyProgressiveBlur(editor, centralShape, excludeIds = []){
     const shapes = editor.getCurrentPageShapes();
     // exclude those in excludeIds
 
-    const threadIds = [...excludeIds, centralShape.id, createShapeId('name')].map(id => {
+    const threadIds = [...excludeIds, centralShape.id].map(id => {
+        console.log("ID:", id)
         const threadBindings = editor.getBindingsToShape(id, 'thread')
         const updatedThreadBindings = threadBindings.filter(binding => {
             // check if the other end of the thread binding links to the name or an excerpt

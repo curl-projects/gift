@@ -242,3 +242,21 @@ export function generateConceptLinks(editor, concepts){
     }
 }
 
+export function getChainToShape(data, databaseShapeId) {
+    function findPath(data, targetId, path = []) {
+        for (const key in data) {
+            if (data[key].id === targetId) {
+                return [...path, data[key].id];
+            }
+            if (typeof data[key] === 'object') {
+                const result = findPath(data[key], targetId, [...path, data[key].id]);
+                if (result) {
+                    return result;
+                }
+            }
+        }
+        return null;
+    }
+
+    return findPath(data, databaseShapeId);
+}

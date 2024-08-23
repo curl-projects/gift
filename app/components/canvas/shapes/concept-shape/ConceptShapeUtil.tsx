@@ -229,7 +229,7 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
                 if(!excerptsExist(this.editor, concept)){
                     generateExcerpts(this.editor, concept);
                     // removeProgressiveBlur(this.editor, shape, excerptIds);
-                    applyProgressiveBlur(this.editor, shape, excerptIds);
+                    applyProgressiveBlur(this.editor, shape, [...excerptIds, createShapeId(data.user.uniqueName)]);
                 }
                 else{
                     // do nothing, was clicked again
@@ -238,7 +238,7 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
             }
             else{
                 tearDownExcerpts(this.editor, concept)
-                removeProgressiveBlur(this.editor, shape, excerptIds); // TODO: do this globally
+                removeProgressiveBlur(this.editor, shape, [...excerptIds, createShapeId(data.user.uniqueName)]); // TODO: do this globally
             }
         }, [shape.props.expanded])
 

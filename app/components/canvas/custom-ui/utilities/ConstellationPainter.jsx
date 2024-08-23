@@ -13,7 +13,7 @@ export function ConstellationPainter({ user }){
         if(collection){
             // create central data object
             console.log("COLLECTION")
-            const centralShapeId = createShapeId('name');
+            const centralShapeId = createShapeId(user.uniqueName);
 
             const centralShape = editor.getShape(centralShapeId)
             if (!centralShape) {

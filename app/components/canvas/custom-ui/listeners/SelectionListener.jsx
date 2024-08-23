@@ -1,10 +1,9 @@
 import { createShapeId, useEditor, useValue } from "tldraw"
 import { useEffect } from 'react';
-import { useLoaderData } from "@remix-run/react";
 
-export function SelectionListener(){
+
+export function SelectionListener({ user }){
     const editor = useEditor();
-    const data = useLoaderData();
 
 
     const selectedShapeIds = useValue('selectedShapeIds', () => editor.getSelectedShapeIds(), [editor])
@@ -13,7 +12,7 @@ export function SelectionListener(){
         console.log("SELECTED SHAPES:", selectedShapeIds)
         if(selectedShapeIds.length === 0){
             // zoom to the name 
-            const name = editor.getShape(createShapeId('name'))
+            const name = editor.getShape(createShapeId(user.uniqueName))
 
             console.log("NAME", name)
             if(name){

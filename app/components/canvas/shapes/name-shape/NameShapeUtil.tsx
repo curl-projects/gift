@@ -20,7 +20,8 @@ import { useConstellationMode } from '~/components/canvas/custom-ui/utilities/Co
 const nameShapeProps = {
 	w: T.number,
 	h: T.number,
-	name: T.string
+	name: T.string,
+    expanded: T.boolean,
 }
 
 type NameShape = TLBaseShape<
@@ -29,6 +30,7 @@ type NameShape = TLBaseShape<
 		w: number
 		h: number
         name: string
+        expanded: boolean
 	}
 >
 
@@ -52,6 +54,7 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
 			w: 200,
 			h: 20,
 			name: "AV",
+            expanded: false,
 		}
 	}
 
@@ -70,7 +73,7 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
         const [isHovered, setIsHovered] = useState(false);
         const data = useLoaderData();
         const { collection, size } = useCollection('graph')
-        const { drifting, setDrifting, isClicked, setIsClicked } = useConstellationMode();
+        const { drifting, setDrifting } = useConstellationMode();
 
 		useEffect(()=>{
 			if(shapeRef.current && shapeRef.current.clientHeight !== 0 && shapeRef.current.clientWidth !== 0){
@@ -136,7 +139,6 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
             }
         };
 
-
         useEffect(() => {
             if (isOnlySelected) {
                 // Trigger ripple animation
@@ -150,11 +152,10 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
         }, [isOnlySelected, animate, shape]);
 
         useEffect(()=>{
-            console.log("IS CLICKED:", isClicked)
+            console.log("EXPANDED:", shape.props.expanded)
             if(collection && data){
 
-            if(isClicked){
-                collection.startSimulation();
+            if(shape.props.expanded){
 
                 this.editor.zoomToBounds(this.editor.getShapePageBounds(shape), {
                     animation: {
@@ -171,9 +172,11 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
                     animate(`.ripple`, { scale: [0, 8], opacity: [1, 0], x: "-50%", y: "-50%" }, { duration: 1.5, ease: "easeOut", delay: 0 });
 
                     if(!conceptsExist(this.editor, data.user.concepts)){
+                        console.log("GENERATING CONCEPTS")
                         generateConcepts(this.editor, shape.id, data.user.concepts)
                     }
                 }).then(() => {
+                    collection.startSimulation();
                     setTimeout(() => {
                         // Do something else here after waiting for 0.5 seconds
                         // generateConceptLinks(this.editor, data.user.concepts)
@@ -240,7 +243,7 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
             }, 600);
         }
         }
-        }, [isClicked, collection, data])
+        }, [shape.props.expanded, collection, data])
 
         return (
 			<HTMLContainer 
@@ -253,7 +256,13 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
                     style={{ cursor: 'pointer' }}
                     onMouseEnter={() => setIsHovered(true)}
                     onMouseLeave={() => setIsHovered(false)}
-                    onPointerDown={()=>setIsClicked(p => !p)}
+                    onPointerDown={() => this.editor.updateShape({
+                        id: shape.id,
+                        type: shape.type,
+                        props: {
+                            expanded: !shape.props.expanded
+                        }
+                    })}
                 >
                     <div className={styles.circleContainer} ref={scope}>
                     {/* <AnimatePresence>
@@ -270,7 +279,7 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
                         }
                         </AnimatePresence> */}
                         <AnimatePresence>
-                        {isOnlySelected && ( 
+                        {shape.props.expanded && ( 
                             <motion.div
                                 key="dashedRing"
                                 className={styles.dashedRing}
@@ -331,7 +340,7 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
                     />
                     </div>  
                 </div>
-                {
+                {/* {
                 isHovered && shape.props.name && (
                     <motion.div 
                         className={styles.hoverDescription}
@@ -345,7 +354,7 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
                             {shape.props.name}
                         </p>
                     </motion.div>
-                )}
+                )} */}
 			</HTMLContainer>
 		)
 	}

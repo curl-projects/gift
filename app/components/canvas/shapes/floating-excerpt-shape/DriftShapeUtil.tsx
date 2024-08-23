@@ -23,6 +23,7 @@ const driftShapeProps = {
 	type: T.string,
 	text: T.string,
 	triggerDelete: T.boolean,
+	parentDatabaseId: T.string,
 }
 
 type DriftShape = TLBaseShape<
@@ -33,6 +34,7 @@ type DriftShape = TLBaseShape<
 		type: string,
 		text: string,
 		triggerDelete: boolean
+		parentDatabaseId: string,
 	}
 >
 
@@ -53,6 +55,7 @@ export class DriftShapeUtil extends BaseBoxShapeUtil<DriftShape> {
 			type: "excerpt",
 			text: "",
 			triggerDelete: false,
+			parentDatabaseId: ""
 		}
 	}
 
@@ -71,7 +74,7 @@ export class DriftShapeUtil extends BaseBoxShapeUtil<DriftShape> {
 		const shapeRef = useRef<HTMLDivElement>(null);
 		const controls = useAnimationControls()
 		const [scope, animate] = useAnimate();
-		const { drifting, setDrifting, isClicked, setIsClicked } = useConstellationMode();
+		const { drifting, setDrifting, setExpandedShapes } = useConstellationMode();
 
 		useEffect(() => {
 			if (shape.props.triggerDelete) {
@@ -153,9 +156,11 @@ export class DriftShapeUtil extends BaseBoxShapeUtil<DriftShape> {
                     onMouseEnter={() => setIsHovered(true)}
                     onMouseLeave={() => setIsHovered(false)}
 					onPointerDown={()=> { 
-						setIsClicked(true)
+
 						setDrifting(false)
-						this.editor.select(createShapeId('name'))
+						setExpandedShapes(
+							getChainToShape(data.user, shape.props.parentDatabaseId)[1].map(databaseId => createShapeId(databaseId))
+						)
 					}}
                     >
 					<motion.p

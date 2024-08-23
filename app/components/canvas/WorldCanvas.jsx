@@ -157,7 +157,9 @@ export default function WorldCanvas() {
                                 name={data.user.name}
                             />
                             <GraphTrigger />
-                            <SelectionListener />
+                            <SelectionListener 
+                                user={data.user}
+                            />
                             <Stars />
                             <Clouds />
                         </>

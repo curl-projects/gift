@@ -78,6 +78,7 @@ const createDriftShape = (editor, excerpt, existingShapes) => {
         props: {
             type: 'excerpt',
             text: excerpt.content,
+            parentDatabaseId: excerpt.id,
         }
     });
 
