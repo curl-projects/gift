@@ -13,6 +13,8 @@ import styles from './NameShapeUtil.module.css';
 import { motion, useAnimate } from 'framer-motion';
 import { conceptsExist, generateConcepts, generateConceptLinks } from "~/components/canvas/helpers/thread-funcs"
 import { useCollection } from "~/components/canvas/custom-ui/collections";
+import { animateShapeProperties } from "~/components/canvas/helpers/animation-funcs"
+import { deleteAssociatedThreads } from "~/components/canvas/helpers/thread-funcs"
 
 const nameShapeProps = {
 	w: T.number,
@@ -127,9 +129,11 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
 
         useEffect(()=>{
             console.log("IS CLICKED:", isClicked)
-            if(collection){
+            if(collection && data){
 
             if(isClicked){
+                collection.startSimulation();
+
                 this.editor.zoomToBounds(this.editor.getShapePageBounds(shape), {
                     animation: {
                         duration: 300,
@@ -166,27 +170,49 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
                 });
 
                 // turn physics off momentarily
-                // collection.stopSimulation();
+                collection.stopSimulation();
                 
                 // fade out and move concepts towards the center of the screen or the center of the shape
                 // const concepts = data.user.concepts.map(concept => this.editor.getShape({id: createShapeId(concept.id), type: 'concept'}))
 
-    
-                for(let concept of data.user.concepts){
-                    this.editor.animateShape({id: createShapeId(concept.id), type: 'concept', x: shape.props.x, y: shape.props.y}, {
-                        animation: {
-                        duration: 300,
-                        ease: "easeInOut"
-                    },
-                });
-
-                // delete shapes when they get there
                 
-                // turn physics back on
-            }
+            for(let concept of data.user.concepts){
+                console.log("DATA:", data)
+                console.log("TRIGGERING ANIMATIONS!", shape.x, shape.y)
+    
+                const conceptShape = this.editor.getShape({id: createShapeId(concept.id), type: 'concept'})
+                console.log("CONCEPT SHAPE:", conceptShape)
+                let animTime = 300
+                if(conceptShape){
+                    // Start the ripple animation
+                    animate(`.ripple`, { scale: [8, 0], opacity: [1, 1], x: "-50%", y: "-50%" }, { duration: 0.5, ease: "easeOut", delay: 0 });
+
+                    // Start the nameCircle animation simultaneously
+ 
+                    animate(".nameCircle", { scale: 0.8 }, { duration: 0.3, ease: 'easeInOut', delay: 0.2 })
+                    .then(() => animate(".nameCircle", { scale: 1.2 }, { duration: 0.2, ease: 'easeInOut' }))
+                    .then(() => animate(".nameCircle", { scale: 1 }, { duration: 0.2, ease: 'easeInOut' }))
+                    // .then(() => {
+                    //     animate(".nameCircle", { scale: 1 }, { duration: 0.2, ease: 'easeInOut' });
+                    // });
+
+                    animateShapeProperties(this.editor, conceptShape.id, { x: shape.x, y: shape.y, opacity: 0 }, animTime, t => t * t).then(() => {
+                        deleteAssociatedThreads(this.editor, conceptShape.id)
+                        this.editor.deleteShape(conceptShape.id)
+                        // delete thread associated with concept
+                    })
+
+
+               
+                }
+                
+            // delete shapes when they get there
+            
+            // turn physics back on
         }
         }
-        }, [isClicked, collection])
+        }
+        }, [isClicked, collection, data])
 
         return (
 			<HTMLContainer 

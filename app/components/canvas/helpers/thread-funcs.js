@@ -146,6 +146,12 @@ export function generateExcerpts(editor, concept) {
     }
 }
 
+export function deleteAssociatedThreads(editor, shapeId){
+    const threadBindings = editor.getBindingsToShape(shapeId, 'thread');
+    const threadIds = threadBindings.map(threadBinding => threadBinding.fromId);
+    editor.deleteShapes(threadIds);
+}
+
 export function tearDownExcerpts(editor, concept) {
     if (concept.excerpts) {
         const excerptIds = concept.excerpts.map(excerpt => createShapeId(excerpt.id));
@@ -235,3 +241,4 @@ export function generateConceptLinks(editor, concepts){
         }
     }
 }
+
