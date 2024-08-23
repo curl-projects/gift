@@ -39,8 +39,8 @@ const calculateHeightBasedOnContent = (content) => {
 //     );
 // }
 
-const createDriftShape = (editor, excerpt, selfDestructTime) => {
-    const id = createShapeId(`drift-${excerpt.id}`);
+const createDriftShape = (editor, excerpt) => {
+    const id = createShapeId(`drift-${excerpt.id}-${Math.random()}`);
     const shapeWidth = 400;
     const shapeHeight = calculateHeightBasedOnContent(excerpt.content); // You need to implement this function
 
@@ -49,12 +49,12 @@ const createDriftShape = (editor, excerpt, selfDestructTime) => {
     const randomX = Math.random() * (window.innerWidth - shapeWidth);
     const randomY = Math.random() * (window.innerHeight - shapeHeight);
 
-    console.log("RANDOM:", randomX, randomY)
-    console.log("RANDOM SCREEN:", editor.screenToPage({x: randomX, y: randomY}))
-    console.log("WINDOW:", window.innerWidth, window.innerHeight)
+    // console.log("RANDOM:", randomX, randomY)
+    // console.log("RANDOM SCREEN:", editor.screenToPage({x: randomX, y: randomY}))
+    // console.log("WINDOW:", window.innerWidth, window.innerHeight)
 
-    console.log("TEST:", editor.screenToPage({x: 0, y: 0}))
-    console.log("TEST 2:", editor.pageToViewport({x: 0, y: 0}))
+    // console.log("TEST:", editor.screenToPage({x: 0, y: 0}))
+    // console.log("TEST 2:", editor.pageToViewport({x: 0, y: 0}))
     // console.log("TEST 3:", customScreenToPage(editor, {x: 0, y: 0}))
 
     editor.createShape({
@@ -65,40 +65,44 @@ const createDriftShape = (editor, excerpt, selfDestructTime) => {
         props: {
             type: 'excerpt',
             text: excerpt.content,
-            selfDestructTime: selfDestructTime
         }
     });
 
     return id;
 }
 
+
 export function DriftPainter({ user }){
     const editor = useEditor();
     const { drifting } = useConstellationMode();
-    const [driftShapeIds, setDriftShapeIds] = useState([]);
 
     useEffect(()=>{
         if(drifting){
+            console.log("HI!!!!!!!!!!!!!!!!!!!!!!!!!!")
             const excerpts = user.concepts.flatMap(concept => concept.excerpts);
-
-            const createAndReplaceShape = (excerpt, index) => {
-                const randomTimeout = Math.random() * 50000 + 5000; // Random time between 50s and 55s
-                const shapeId = createDriftShape(editor, excerpt, randomTimeout);
-
-                setTimeout(() => {
-                    const newExcerpt = excerpts[Math.floor(Math.random() * excerpts.length)];
-                    createAndReplaceShape(newExcerpt, index);
-                }, randomTimeout);
-
-                setDriftShapeIds((prevShapeIds) => {
-                    const newShapeIds = [...prevShapeIds];
-                    newShapeIds[index] = shapeId;
-                    return newShapeIds;
-                });
-            };
 
             const shuffledExcerpts = shuffleArray([...excerpts]);
             const selectedExcerpts = shuffledExcerpts.slice(0, 5);
+
+            const createAndReplaceShape = (excerpt, index) => {
+                
+                const randomTimeout = Math.random() * 5000 + 1000; // Random time between 5s and 10s
+                console.log("CREATING NEW DRIFT SHAPE! TIMEOUT:", randomTimeout)
+                const shapeId = createDriftShape(editor, excerpt);
+                
+                setTimeout(() => {
+                    // delete shape
+                    editor.updateShape({id: shapeId, type: "drift", props: {triggerDelete: true}});
+ 
+                    // wait until delete animation has played
+                    setTimeout(()=>{
+                        const newExcerpt = excerpts[Math.floor(Math.random() * excerpts.length)];
+                        createAndReplaceShape(newExcerpt, index);
+                    }, 1100)
+                    
+                }, randomTimeout);
+        
+            };
 
             selectedExcerpts.forEach((excerpt, index) => {
                 createAndReplaceShape(excerpt, index);
@@ -106,8 +110,9 @@ export function DriftPainter({ user }){
         }
 
         return () => {
-            driftShapeIds.forEach(shapeId => {
-                editor.deleteShape({id: shapeId, type: "drift"})
+            const drifts = editor.getCurrentPageShapes().filter(shape => shape.type === "drift");
+            drifts.forEach(drift => {
+                editor.updateShape({id: drift.id, type: "drift", props: {triggerDelete: true}})
             });
         };
     }, [drifting]);

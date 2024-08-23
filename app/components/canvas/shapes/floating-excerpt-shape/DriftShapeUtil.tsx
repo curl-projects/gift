@@ -11,7 +11,7 @@ import { T, createShapeId } from 'tldraw';
 import { useLoaderData } from '@remix-run/react';
 import { useCallback, useState, useEffect, useRef, useLayoutEffect, useMemo } from 'react'
 import styles from './DriftShapeUtil.module.css';
-import { motion, useAnimate, AnimatePresence } from 'framer-motion';
+import { motion, useAnimate, AnimatePresence, useAnimationControls } from 'framer-motion';
 // import { generateExcerpts, tearDownExcerpts, excerptsExist } from "~/components/canvas/helpers/thread-funcs"
 // import { applyProgressiveBlur, removeProgressiveBlur } from '~/components/canvas/helpers/distribution-funcs';
 // import { updateThreadBindingProps } from '~/components/canvas/bindings/thread-binding/ThreadBindingUtil';
@@ -21,7 +21,7 @@ const driftShapeProps = {
 	h: T.number,
 	type: T.string,
 	text: T.string,
-	selfDestructTime: T.number,
+	triggerDelete: T.boolean,
 }
 
 type DriftShape = TLBaseShape<
@@ -31,7 +31,7 @@ type DriftShape = TLBaseShape<
 		h: number
 		type: string,
 		text: string,
-		selfDestructTime: number,
+		triggerDelete: boolean
 	}
 >
 
@@ -51,7 +51,7 @@ export class DriftShapeUtil extends BaseBoxShapeUtil<DriftShape> {
 			h: 56,
 			type: "excerpt",
 			text: "",
-			selfDestructTime: 10000,
+			triggerDelete: false,
 		}
 	}
 
@@ -64,12 +64,25 @@ export class DriftShapeUtil extends BaseBoxShapeUtil<DriftShape> {
 	}
 
 	component(shape: DriftShape) {
-        const [scope, animate] = useAnimate();
 		const bounds = this.editor.getShapeGeometry(shape).bounds
 		const data: any = useLoaderData();
 		const [isHovered, setIsHovered] = useState(false)
-
+		console.log("SHAPE ID", shape.id)
 		const shapeRef = useRef<HTMLDivElement>(null);
+		const controls = useAnimationControls()
+
+		useEffect(() => {
+			if (shape.props.triggerDelete) {
+				controls.start("hidden").then(()=>{
+					this.editor.deleteShape(shape.id);
+				})
+				
+                // animate(shapeRef.current, { opacity: 0 }, { duration: 1 }).then(() => {
+				// 	console.log("DELETING HAPE")
+                //     this.editor.deleteShape(shape.id);
+                // });
+			}
+        }, [shape.props.triggerDelete]);
 
         useEffect(() => {
             const handleResize = () => {
@@ -99,16 +112,18 @@ export class DriftShapeUtil extends BaseBoxShapeUtil<DriftShape> {
           }, [shapeRef.current, this.editor, shape]);
 
 	
-		  useEffect(() => {
-            const timer = setTimeout(() => {
-                this.editor.deleteShape(shape.id);
-            }, shape.props.selfDestructTime-200);
+		  const variants = {
+			hidden: { opacity: 0 },
+			visible: { opacity: 1 }
+		};
 
-            return () => clearTimeout(timer);
-        }, [shape.props.selfDestructTime]);
+		useEffect(()=>{
+			controls.start("visible")
+		}, [])
+	
 
 		return (
-			<HTMLContainer 
+			<div 
 				id={shape.id}
 				className={styles.container}				
 				>
@@ -121,16 +136,19 @@ export class DriftShapeUtil extends BaseBoxShapeUtil<DriftShape> {
                     onMouseEnter={() => setIsHovered(true)}
                     onMouseLeave={() => setIsHovered(false)}
                     >
-                <motion.p 
-                    className={styles.editorContent} 
-                    initial={{ opacity: 0 }} 
-                    animate={{ opacity: 1 }} 
-                    transition={{ delay: 2, duration: 1, ease: 'easeInOut' }}
-                >
-                    {shape.props.text}
-                </motion.p>
+					<motion.p
+					key={shape.id} // Use shape.id as a stable and unique key
+					className={styles.editorContent} 
+					variants={variants}
+					initial="hidden"
+					animate={controls}
+					exit="hidden"
+					transition={{ delay: 0, duration: 2, ease: 'easeInOut' }}
+					>
+						{shape.props.text}
+					</motion.p>
 				</div>
-			</HTMLContainer>
+			</div>
 		)
 	}
 
