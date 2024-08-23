@@ -57,7 +57,7 @@ export default function WorldCanvas() {
         Toolbar: null,
         MainMenu: null,
         DebugMenu: null,
-        DebugPanel: null,
+        // DebugPanel: null,
         Minimap: null,
         PageMenu: null,
         ActionsMenu: null,

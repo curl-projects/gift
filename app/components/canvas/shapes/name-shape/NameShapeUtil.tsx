@@ -155,7 +155,6 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
             if(collection && data){
 
             if(isClicked){
-                setDrifting(false);
                 collection.startSimulation();
 
                 this.editor.zoomToBounds(this.editor.getShapePageBounds(shape), {
@@ -182,6 +181,8 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
 
                     }, 2000);
                 })
+                setDrifting(false);
+
             }
             else{
                 // zoom the camera so that it's centred around the shape
@@ -233,7 +234,10 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
             }
 
             collection.startSimulation();
-            setDrifting(true);
+            
+            setTimeout(() => {
+                setDrifting(true);
+            }, 600);
         }
         }
         }, [isClicked, collection, data])
