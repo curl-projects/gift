@@ -172,7 +172,7 @@ export function tearDownExcerpts(editor, concept) {
 export function tearDownAllExcerpts(editor){
     const allExcerpts = editor.getShapes('excerpt');
 
-    const threadIds = allExcerpts(excerpt => {
+    const threadIds = allExcerpts.map(excerpt => {
         const threadBindings = editor.getBindingsToShape(excerpt.id, 'thread');
         return threadBindings.map(threadBinding => threadBinding.fromId);
     })
@@ -244,12 +244,19 @@ export function generateConceptLinks(editor, concepts){
 
 export function getChainToShape(data, databaseShapeId) {
     function findPath(data, targetId, path = []) {
-        for (const key in data) {
-            if (data[key].id === targetId) {
-                return [...path, data[key].id];
+        if (Array.isArray(data)) {
+            for (const item of data) {
+                const result = findPath(item, targetId, path);
+                if (result) {
+                    return result;
+                }
             }
-            if (typeof data[key] === 'object') {
-                const result = findPath(data[key], targetId, [...path, data[key].id]);
+        } else if (typeof data === 'object' && data !== null) {
+            if (data.id === targetId || data.uniqueName === targetId) {
+                return [...path, data.id || data.uniqueName];
+            }
+            for (const key in data) {
+                const result = findPath(data[key], targetId, [...path, data.id || data.uniqueName]);
                 if (result) {
                     return result;
                 }

@@ -7,6 +7,7 @@ import { ClientOnly } from 'remix-utils/client-only';
 
 // CUSTOM UI
 import { ConstellationModeProvider } from "~/components/canvas/custom-ui/utilities/ConstellationModeContext"
+import { ConstellationFinder } from "~/components/canvas/custom-ui/utilities/ConstellationFinder"
 import { ConstellationPainter } from "~/components/canvas/custom-ui/utilities/ConstellationPainter"
 import { DriftPainter } from "~/components/canvas/custom-ui/utilities/DriftPainter"
 import CustomToolbar from "~/components/canvas/custom-ui/custom-toolbar/CustomToolbar"
@@ -152,6 +153,7 @@ export default function WorldCanvas() {
                             <ConstellationPainter 
                                 user={data.user} 
                             />
+                            <ConstellationFinder />
                             <CustomToolbar />
                             <ConstellationLabel 
                                 name={data.user.name}

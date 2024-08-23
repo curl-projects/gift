@@ -16,6 +16,7 @@ import { motion, useAnimate, AnimatePresence, useAnimationControls } from 'frame
 // import { applyProgressiveBlur, removeProgressiveBlur } from '~/components/canvas/helpers/distribution-funcs';
 // import { updateThreadBindingProps } from '~/components/canvas/bindings/thread-binding/ThreadBindingUtil';
 import { useConstellationMode } from '~/components/canvas/custom-ui/utilities/ConstellationModeContext';
+import { getChainToShape } from '~/components/canvas/helpers/thread-funcs';
 
 const driftShapeProps = {
 	w: T.number,
@@ -74,7 +75,7 @@ export class DriftShapeUtil extends BaseBoxShapeUtil<DriftShape> {
 		const shapeRef = useRef<HTMLDivElement>(null);
 		const controls = useAnimationControls()
 		const [scope, animate] = useAnimate();
-		const { drifting, setDrifting, setExpandedShapes } = useConstellationMode();
+		const { drifting, setDrifting, setExpandedShapeIds } = useConstellationMode();
 
 		useEffect(() => {
 			if (shape.props.triggerDelete) {
@@ -83,7 +84,7 @@ export class DriftShapeUtil extends BaseBoxShapeUtil<DriftShape> {
 					this.editor.deleteShape(shape.id);
 				})
 				
-                // animate(shapeRef.current, { opacity: 0 }, { duration: 1 }).then(() => {
+			// animate(shapeRef.current, { opacity: 0 }, { duration: 1 }).then(() => {
 				// 	console.log("DELETING HAPE")
                 //     this.editor.deleteShape(shape.id);
                 // });
@@ -158,8 +159,9 @@ export class DriftShapeUtil extends BaseBoxShapeUtil<DriftShape> {
 					onPointerDown={()=> { 
 
 						setDrifting(false)
-						setExpandedShapes(
-							getChainToShape(data.user, shape.props.parentDatabaseId)[1].map(databaseId => createShapeId(databaseId))
+						console.log("BLAH:", getChainToShape(data.user, shape.props.parentDatabaseId).map(databaseId => createShapeId(databaseId)))
+						setExpandedShapeIds(
+							getChainToShape(data.user, shape.props.parentDatabaseId).map(databaseId => createShapeId(databaseId))
 						)
 					}}
                     >
