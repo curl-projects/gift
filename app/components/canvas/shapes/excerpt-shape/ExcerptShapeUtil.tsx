@@ -26,6 +26,7 @@ const excerptShapeProps = {
 	content: T.string,
 	databaseId: T.string,
 	media: T.any,
+	expanded: T.boolean,
 }
 
 type ExcerptShape = TLBaseShape<
@@ -36,6 +37,7 @@ type ExcerptShape = TLBaseShape<
 		content: string,
 		databaseId: string,
 		media: any,
+		expanded: boolean,
 	}
 >
 
@@ -59,6 +61,7 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 			content: "",
 			databaseId: "no-id",
 			media: null,
+			expanded: false,
 		}
 	}
 
@@ -76,18 +79,26 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 		const isOnlySelected = this.editor.getOnlySelectedShapeId() === shape.id;
 		const [scope, animate] = useAnimate(); // Use animation controls
 
-		// useEffect(() => {
-		// 	if (shapeRef.current) {
-		// 		this.editor.updateShape({
-		// 			id: shape.id,
-		// 			type: shape.type,
-		// 			props: {
-		// 				// w: shapeRef.current.clientWidth,
-		// 				h: shapeRef.current.clientHeight
-		// 			}
-		// 		});
-		// 	}
-		// }, [this.editor, shapeRef.current, isOnlySelected]);
+		useEffect(()=>{
+			if(isOnlySelected){
+				this.editor.updateShape({
+					id: shape.id,
+					type: shape.type,
+					props: {
+						expanded: true
+					}
+				})
+			}
+			else{
+				this.editor.updateShape({
+					id: shape.id,
+					type: shape.type,
+					props: {
+						expanded: false
+					}
+				})
+			}
+		}, [isOnlySelected])
 
 		useEffect(() => {
             const handleResize = () => {
@@ -122,7 +133,7 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
  
 		useEffect(() => {
 			const animateDimensions = async () => {
-				if (isOnlySelected && scope.current) {
+				if (shape.props.expanded && scope.current) {
 					this.editor.updateShape({
 						id: shape.id,
 						type: shape.type,
@@ -191,7 +202,7 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 			};
 
 			animateDimensions();
-		}, [isOnlySelected, scope]);
+		}, [shape.props.expanded, scope]);
 
 
 
@@ -256,7 +267,7 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 						className={styles.excerptMediaBox}
 						style={{
 							height: "0px",
-							padding: isOnlySelected ? "20px" : "0px"
+							padding: shape.props.expanded ? "20px" : "0px"
 						}}
 						onScrollCapture={(e) => {
 							console.log('onScrollCapture event:', e);
@@ -275,7 +286,7 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 							e.stopPropagation();
 						}}
 					>
-						{(isOnlySelected && scope.current) &&
+						{(shape.props.expanded && scope.current) &&
 							<ExcerptMediaEditor
 								content={shape.props.content}
 								media={shape.props.media}

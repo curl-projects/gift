@@ -27,9 +27,8 @@ const conceptShapeProps = {
 	text: T.any,
 	plainText: T.any,
 	description: T.any,
-    excerpts: T.any,
     databaseId: T.string,
-    excerptsOpen: T.boolean,
+    expanded: T.boolean,
 }
 
 type ConceptShape = TLBaseShape<
@@ -40,17 +39,10 @@ type ConceptShape = TLBaseShape<
 		text: any,
 		plainText: any,
 		description: any,
-        excerpts: any,
         databaseId: string,
-        excerptsOpen: boolean,
+        expanded: boolean,
 	}
 >
-
-const OneLiner = Node.create({
-	name: "oneLiner",
-	topNode: true,
-	content: "block",
-  });
 
 /** @public */
 export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
@@ -69,9 +61,8 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
 			text: "",
 			plainText: "",
 			description: "No description",
-            excerpts: [],
-            excerptsOpen: false,
-            databaseId: 'no-id'
+            expanded: false,
+            databaseId: 'no-id',
 		}
 	}
 
@@ -89,54 +80,7 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
 		const data: any = useLoaderData();
 
 		const shapeRef = useRef<HTMLDivElement>(null);
-		const horizontalBuffer = 6
-		const verticalBuffer = 2
 
-		// const editor = useEditor({
-		// 	extensions: [
-		// 	  OneLiner,
-		// 	  Text,
-        //       Paragraph,
-		// 	  Placeholder.configure({
-		// 		placeholder: "Unknown Concept"
-		// 	  })
-		// 	],
-		// 	content: shape.props.text,
-		
-
-		// 	onUpdate: ({ editor }) => {
-		// 		stopEventPropagation;
-
-		// 		shapeRef.current && this.editor.updateShape<ConceptShape>({
-		// 			id: shape.id,
-		// 			type: 'concept',
-		// 			props: {
-		// 				text: editor.getJSON(),
-		// 				plainText: editor.getText(),
-		// 				w: shapeRef.current?.clientWidth+horizontalBuffer,
-		// 				h: shapeRef.current?.clientHeight+verticalBuffer,
-		// 			}
-		// 		})
-		// 	},
-
-		// 	onSelectionUpdate: ({ editor }) => {
-		// 	}
-		//   });
-
-        
-
-		// useEffect(()=>{
-		// 	if(shapeRef.current){
-		// 		this.editor.updateShape<ConceptShape>({
-		// 			id: shape.id,
-		// 			type: 'concept',
-		// 			props: {
-		// 				w: shapeRef.current?.clientWidth+horizontalBuffer,
-        //                 h: shapeRef.current?.clientHeight+verticalBuffer,
-		// 			}
-		// 		})
-		// 	}
-		//   }, [shapeRef.current])
 
         useEffect(() => {
             const handleResize = () => {
@@ -231,24 +175,13 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
                         targetZoom: 1,
                     })
 
-                    // Trigger ripple animation
-                    animate(".conceptCircle", { scale: 0.9 }, { duration: 0.2, ease: 'easeInOut' })
-                        .then(() => animate(".conceptCircle", { scale: 1.1 }, { duration: 0.2, ease: 'easeInOut' }))
-                        .then(() => {
-                            animate(".conceptCircle", { scale: 1 }, { duration: 0.2, ease: 'easeInOut' });
-                            animate(`.ripple`, { scale: [0, 8], opacity: [1, 0], x: "-50%", y: "-50%" }, { duration: 1.5, ease: "easeOut", delay: 0 });
-                        });
-
-                    // Create excerpts if they don't exist
-                    if(!excerptsExist(this.editor, concept)){
-                        generateExcerpts(this.editor, concept);
-                        // removeProgressiveBlur(this.editor, shape, excerptIds);
-                        applyProgressiveBlur(this.editor, shape, excerptIds);
-                    }
-                    else{
-                        // do nothing, was clicked again
-                        console.log("Excerpts already exist")
-                    }
+                    this.editor.updateShape({
+                        id: shape.id,
+                        type: shape.type,
+                        props: {
+                            expanded: true
+                        }
+                    })
                 }
                 else if(excerptIds.some(id => memoizedSelectedShapeIds.includes(id))){
                     // excerpt was clicked, shape handles its own logic
@@ -258,22 +191,61 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
                 }
             }
             else{
-                tearDownExcerpts(this.editor, concept)
-                if(!memoizedSelectedShapeIds.map(id => this.editor.getShape(id)).some(shape => ['excerpt', 'concept'].includes(shape?.type))){
-                    console.log("No concept or excerpt selected", memoizedSelectedShapeIds.map(id => this.editor.getShape(id)))
-                    removeProgressiveBlur(this.editor, shape, excerptIds);
-                }
-                else{
+
+                this.editor.updateShape({
+                    id: shape.id,
+                    type: shape.type,
+                    props: {
+                        expanded: false
+                    }
+                })
+                // tearDownExcerpts(this.editor, concept)
+                // removeProgressiveBlur(this.editor, shape, excerptIds);
+
+                // if(!memoizedSelectedShapeIds.map(id => this.editor.getShape(id)).some(shape => ['excerpt', 'concept'].includes(shape?.type))){
+                //     console.log("No concept or excerpt selected", memoizedSelectedShapeIds.map(id => this.editor.getShape(id)))
+                //     removeProgressiveBlur(this.editor, shape, excerptIds);
+                // }
+                // else{
                     
-                }            
+                // }            
             }
         }, [memoizedSelectedShapeIds]);
+
+        useEffect(()=>{
+            const concept = data.user.concepts.find(concept => shape.props.databaseId === concept.id);
+            const excerptIds = concept.excerpts.map(excerpt => createShapeId(excerpt.id));
+            
+            if(shape.props.expanded){
+                // Trigger ripple animation
+                animate(".conceptCircle", { scale: 0.9 }, { duration: 0.2, ease: 'easeInOut' })
+                    .then(() => animate(".conceptCircle", { scale: 1.1 }, { duration: 0.2, ease: 'easeInOut' }))
+                    .then(() => {
+                        animate(".conceptCircle", { scale: 1 }, { duration: 0.2, ease: 'easeInOut' });
+                        animate(`.ripple`, { scale: [0, 8], opacity: [1, 0], x: "-50%", y: "-50%" }, { duration: 1.5, ease: "easeOut", delay: 0 });
+                    });
+
+                // Create excerpts if they don't exist
+                if(!excerptsExist(this.editor, concept)){
+                    generateExcerpts(this.editor, concept);
+                    // removeProgressiveBlur(this.editor, shape, excerptIds);
+                    applyProgressiveBlur(this.editor, shape, excerptIds);
+                }
+                else{
+                    // do nothing, was clicked again
+                    console.log("Excerpts already exist")
+                }
+            }
+            else{
+                tearDownExcerpts(this.editor, concept)
+                removeProgressiveBlur(this.editor, shape, excerptIds); // TODO: do this globally
+            }
+        }, [shape.props.expanded])
 
 		return (
 			<HTMLContainer 
 				id={shape.id}
 				className={styles.container}				
-    
 				>
 					
 				{

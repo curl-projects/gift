@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { createShapeId, useEditor, Vec } from 'tldraw';
 import { useConstellationMode } from '~/components/canvas/custom-ui/utilities/ConstellationModeContext';
 
@@ -90,6 +90,7 @@ const createDriftShape = (editor, excerpt, existingShapes) => {
 export function DriftPainter({ user }){
     const editor = useEditor();
     const { drifting } = useConstellationMode();
+    const timeouts = useRef([]);
 
     useEffect(()=>{
         if(drifting){
@@ -105,29 +106,34 @@ export function DriftPainter({ user }){
                 const randomTimeout = Math.random() * 15000 + 5000; // Random time between 5s and 10s
                 const shapeId = createDriftShape(editor, excerpt, existingShapes);
                 
-                setTimeout(() => {
+                const timeoutId = setTimeout(() => {
                     // delete shape
                     editor.updateShape({id: shapeId, type: "drift", props: {triggerDelete: true}});
  
                     // wait until delete animation has played
-                    setTimeout(()=>{
+                    const deleteTimeoutId = setTimeout(()=>{
                         const newExcerpt = excerpts[Math.floor(Math.random() * excerpts.length)];
                         createAndReplaceShape(newExcerpt, index);
-                    }, 1100)
+                    }, 4100);
+                    timeouts.current.push(deleteTimeoutId);
                     
                 }, randomTimeout);
+                timeouts.current.push(timeoutId);
         
             };
 
             selectedExcerpts.forEach((excerpt, index) => {
                 const randomDelay = Math.random() * 3000; // Random delay up to 5 seconds
-                setTimeout(() => {
+                const delayTimeoutId = setTimeout(() => {
                     createAndReplaceShape(excerpt, index);
                 }, randomDelay);
+                timeouts.current.push(delayTimeoutId);
             });
         }
 
         return () => {
+            timeouts.current.forEach(clearTimeout);
+            timeouts.current = [];
             const drifts = editor.getCurrentPageShapes().filter(shape => shape.type === "drift");
             drifts.forEach(drift => {
                 editor.updateShape({id: drift.id, type: "drift", props: {triggerDelete: true}})

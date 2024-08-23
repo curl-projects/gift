@@ -15,6 +15,7 @@ import { motion, useAnimate, AnimatePresence, useAnimationControls } from 'frame
 // import { generateExcerpts, tearDownExcerpts, excerptsExist } from "~/components/canvas/helpers/thread-funcs"
 // import { applyProgressiveBlur, removeProgressiveBlur } from '~/components/canvas/helpers/distribution-funcs';
 // import { updateThreadBindingProps } from '~/components/canvas/bindings/thread-binding/ThreadBindingUtil';
+import { useConstellationMode } from '~/components/canvas/custom-ui/utilities/ConstellationModeContext';
 
 const driftShapeProps = {
 	w: T.number,
@@ -40,10 +41,10 @@ export class DriftShapeUtil extends BaseBoxShapeUtil<DriftShape> {
 	static override type = 'drift' as const
 	static override props = driftShapeProps
 
-	// override canEdit = () => false
-	// override canResize = () => false
-    // override hideSelectionBoundsBg = () => true
-    // override hideSelectionBoundsFg = () => true;
+	override canEdit = () => false
+	override canResize = () => false
+    override hideSelectionBoundsBg = () => true
+    override hideSelectionBoundsFg = () => true;
 
 	getDefaultProps(): DriftShape['props'] {
 		return { 
@@ -70,6 +71,7 @@ export class DriftShapeUtil extends BaseBoxShapeUtil<DriftShape> {
 		const shapeRef = useRef<HTMLDivElement>(null);
 		const controls = useAnimationControls()
 		const [scope, animate] = useAnimate();
+		const { drifting, setDrifting, isClicked, setIsClicked } = useConstellationMode();
 
 		useEffect(() => {
 			if (shape.props.triggerDelete) {
@@ -114,8 +116,14 @@ export class DriftShapeUtil extends BaseBoxShapeUtil<DriftShape> {
 
 	
 		  const variants = {
-			hidden: { opacity: 0 },
-			visible: { opacity: 1 }
+			hidden: { 
+				opacity: 0,
+				transition: { duration: 4, ease: "easeOut" } // Set duration for hidden variant
+			},
+			visible: { 
+				opacity: 1,
+				transition: { duration: 2, ease: "easeInOut"} // Set duration for visible variant
+			}
 		};
 
 		const rippleVariants = {
@@ -144,6 +152,11 @@ export class DriftShapeUtil extends BaseBoxShapeUtil<DriftShape> {
                         }}
                     onMouseEnter={() => setIsHovered(true)}
                     onMouseLeave={() => setIsHovered(false)}
+					onPointerDown={()=> { 
+						setIsClicked(true)
+						setDrifting(false)
+						this.editor.select(createShapeId('name'))
+					}}
                     >
 					<motion.p
 					key={shape.id} // Use shape.id as a stable and unique key

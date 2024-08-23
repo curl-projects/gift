@@ -68,10 +68,9 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
         const [scope, animate] = useAnimate()
         const isOnlySelected = this.editor.getOnlySelectedShapeId() === shape.id;
         const [isHovered, setIsHovered] = useState(false);
-        const [isClicked, setIsClicked] = useState(false);
         const data = useLoaderData();
         const { collection, size } = useCollection('graph')
-        const { drifting, setDrifting } = useConstellationMode();
+        const { drifting, setDrifting, isClicked, setIsClicked } = useConstellationMode();
 
 		useEffect(()=>{
 			if(shapeRef.current && shapeRef.current.clientHeight !== 0 && shapeRef.current.clientWidth !== 0){
