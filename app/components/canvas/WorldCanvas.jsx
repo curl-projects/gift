@@ -9,7 +9,6 @@ import { ClientOnly } from 'remix-utils/client-only';
 import { ConstellationModeProvider } from "~/components/canvas/custom-ui/utilities/ConstellationModeContext"
 import { ConstellationFinder } from "~/components/canvas/custom-ui/utilities/ConstellationFinder"
 import { ConstellationPainter } from "~/components/canvas/custom-ui/utilities/ConstellationPainter"
-import { ConstellationArranger } from "~/components/canvas/custom-ui/utilities/ConstellationArranger"
 import { DriftPainter } from "~/components/canvas/custom-ui/utilities/DriftPainter"
 import CustomToolbar from "~/components/canvas/custom-ui/custom-toolbar/CustomToolbar"
 import { CollectionProvider } from "~/components/canvas/custom-ui/collections";
@@ -20,7 +19,7 @@ import { SelectionListener } from "~/components/canvas/custom-ui/listeners/Selec
 import { ConstellationLabel } from "~/components/canvas/custom-ui/game-ui/ConstellationLabel"
 import { Stars } from './custom-ui/aesthetics/stars/Stars';
 import { Clouds } from './custom-ui/aesthetics/clouds/Clouds';
-
+import { handleDoubleClickOnCanvas } from '~/components/canvas/helpers/canvasOverride';
 
 // CUSTOM SHAPES
 import { NameShapeUtil } from "~/components/canvas/shapes/name-shape/NameShapeUtil"
@@ -113,6 +112,26 @@ export default function WorldCanvas() {
     //     };
     // }, [store]);
 
+    const overrides = {
+        //[a]
+        actions(_editor, actions) {
+            console.log("ACTIONS:", actions)
+            const newActions = {
+                ...actions,
+                'delete': { ...actions['delete'], kbd: '' },
+            }
+    
+            return newActions
+        },
+        //[b]
+        tools(_editor, tools) {
+            const newTools = { ...tools, 
+                // draw: { ...tools.draw, kbd: 'p' } 
+            }
+            return newTools
+        },
+    }
+
     if (navigation.state === 'loading') {
         return (
             <div className="tldraw__editor">
@@ -140,9 +159,13 @@ export default function WorldCanvas() {
                     shapeUtils={shapeUtils}
                     bindingUtils={bindingUtils}
                     tools={tools}
+                    overrides={overrides}
                     components={components}
                     onMount={(editor) => {
                         setEditor(editor)
+                        editor.root.children.select.children.idle.handleDoubleClickOnCanvas = function(info) {
+                            handleDoubleClickOnCanvas.call(this, info)
+                          }.bind({ editor, parent: editor.root.children.select.children.idle.parent });  
                     }}
                 >
                     {editor && (
@@ -154,7 +177,6 @@ export default function WorldCanvas() {
                             <ConstellationPainter 
                                 user={data.user} 
                             />
-                            <ConstellationArranger />
                             <ConstellationFinder />
                             <CustomToolbar />
                             <ConstellationLabel 

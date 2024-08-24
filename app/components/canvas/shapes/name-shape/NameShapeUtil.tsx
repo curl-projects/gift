@@ -289,6 +289,7 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
                                 variants={dashedRingVariants}
                             />
                         )}
+                        
                         </AnimatePresence>
                         <motion.div
                             className={`${styles.mostOuterRing} nameCircle`}
