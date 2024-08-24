@@ -43,7 +43,7 @@ export class AnnotationBindingUtil extends BindingUtil<AnnotationModelBinding>{
 		shapeAfter,
 	}: any): void {
 
-        console.log("CHANGE TO SHAPE!")
+        // console.log("CHANGE TO SHAPE!")
 		const annotation = this.editor.getShape(binding.fromId)!
 
 		const boundShape: any = this.editor.getShape(binding.toId)!
@@ -54,6 +54,9 @@ export class AnnotationBindingUtil extends BindingUtil<AnnotationModelBinding>{
 			x: boundShape.x,
 			y: boundShape.y,
 		})
+
+        // we need to be tracking the update of the position of the tiptap node to which the annotation is attached\
+
 	}
 
 	// when the thing we're stuck to is deleted, delete the sticker too

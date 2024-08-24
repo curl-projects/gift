@@ -48,6 +48,21 @@ export default function ExcerptMediaEditor({ excerpt, tldrawEditor }) {
 
         const tempAnnotationId = createShapeId('temp-annotation')
 
+
+        const startCoords = editor.view.coordsAtPos(from);
+        const endCoords = editor.view.coordsAtPos(to);
+
+        console.log("START COORDS", startCoords)
+        console.log("START COORDS CANVAS", tldrawEditor.screenToPage({x: 0, y: startCoords.top}))
+        console.log("END COORDS", endCoords)
+        const rect = {
+          top: Math.min(startCoords.top, endCoords.top),
+          bottom: Math.max(startCoords.bottom, endCoords.bottom),
+          left: Math.min(startCoords.left, endCoords.left),
+          right: Math.max(startCoords.right, endCoords.right),
+        };
+        console.log("RECT", rect);
+
         if(nodes && nodes.length !== 0){
             // set visible if not visible 
             const tempAnnotation = tldrawEditor.getShape({type: "annotation", id: tempAnnotationId})
@@ -55,24 +70,29 @@ export default function ExcerptMediaEditor({ excerpt, tldrawEditor }) {
                 console.log("CREATING TEMP ANNOTATION")
                 tldrawEditor.createShape({
                     id: tempAnnotationId,
+                    // figrure out what x and y need to be
+                    x: excerpt.x + excerpt.props.w + 40,
+                    y: tldrawEditor.screenToPage({x: 0, y: startCoords.top}).y, // convert this to page space
                     type: 'annotation',
                     isLocked: false,
                     opacity: 1,
-                }).createBinding({
-                    fromId: tempAnnotationId,
-                    toId: excerpt.id,
-                    type: "annotation" ,
-                    props: {
-
-                    }
                 })
+                // .createBinding({ // the binding is only for the persistent selections
+                //     fromId: tempAnnotationId,
+                //     toId: excerpt.id,
+                //     type: "annotation" ,
+                //     props: {
+                //     }
+                // })
             }
             else{
                 tldrawEditor.updateShape({
                     id: tempAnnotationId,
                     type: 'annotation',
                     isLocked: false,
-                    opacity: 1
+                    opacity: 1,
+                    x: excerpt.x + excerpt.props.w + 80,
+                    y: tldrawEditor.screenToPage({x: 0, y: startCoords.top}).y,
                 })
             }
             
@@ -85,6 +105,13 @@ export default function ExcerptMediaEditor({ excerpt, tldrawEditor }) {
                 opacity: 0
             })
         }
+
+
+
+        // get the canvas position from these screen coordinates
+        
+        // also get the canvas position of the right hand side of the media
+  
 
         
         console.log("SELECTED TEXT:", selectedText)
