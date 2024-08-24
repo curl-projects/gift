@@ -8,7 +8,7 @@ import {
 } from '@tldraw/editor'
 
 import { T, createShapeId } from 'tldraw';
-import { useLoaderData } from '@remix-run/react';
+import { useLoaderData, useFetcher } from '@remix-run/react';
 import { useCallback, useState, useEffect, useRef, useLayoutEffect, useMemo } from 'react'
 import styles from './AnnotationShapeUtil.module.css';
 import { motion, useAnimate, AnimatePresence, useAnimationControls } from 'framer-motion';
@@ -20,6 +20,8 @@ const annotationShapeProps = {
 	type: T.string,
 	text: T.string,
 	temporary: T.boolean,
+	from: T.number,
+	to: T.number,
 }
 
 type AnnotationShape = TLBaseShape<
@@ -30,6 +32,8 @@ type AnnotationShape = TLBaseShape<
 		type: string,
 		text: string,
 		temporary: boolean,
+		from: number,
+		to: number,
 	}
 >
 
@@ -50,6 +54,8 @@ export class AnnotationShapeUtil extends BaseBoxShapeUtil<AnnotationShape> {
 			type: "comment",
 			text: "No Text",
 			temporary: true,
+			from: 0,
+			to: 10,
 		}
 	}
 
@@ -68,7 +74,7 @@ export class AnnotationShapeUtil extends BaseBoxShapeUtil<AnnotationShape> {
 		const shapeRef = useRef<HTMLDivElement>(null);
 		const controls = useAnimationControls()
 		const [scope, animate] = useAnimate();
-		const { annotationing, setAnnotationing, setExpandedShapeIds } = useConstellationMode();
+		const fetcher = useFetcher({ key: 'annotation-fetcher'});
 
         useEffect(() => {
             const handleResize = () => {
@@ -96,8 +102,6 @@ export class AnnotationShapeUtil extends BaseBoxShapeUtil<AnnotationShape> {
               resizeObserver.disconnect();
             };
           }, [shapeRef.current, this.editor, shape]);
-
-	
 
 		return (
 			<div 
@@ -127,11 +131,26 @@ export class AnnotationShapeUtil extends BaseBoxShapeUtil<AnnotationShape> {
 								fontWeight: '800',
 								cursor: 'pointer',
 							}}
-							onPointerDown={() => {
+							onPointerDown={async () => {
+								console.log("POINTER DOWN ON NEW ANNOTATION")
 								const mediaBinding = this.editor.getBindingsFromShape(shape.id, 'annotation').find(binding => {
 									console.log("BINDING:", this.editor.getShape(binding.toId), this.editor.getShape(binding.toId).type === 'excerpt')
 									return this.editor.getShape(binding.toId).type === 'excerpt'
 								})
+
+								// save annotation to database
+								if (mediaBinding) {
+									// fetcher.submit(
+									// 	{
+									// 		actionType: "saveAnnotation",
+									// 		mediaId: mediaBinding.toId,
+									// 		content: shape.props.text,
+									// 		fromPos: shape.props.from,
+									// 		toPos: shape.props.to,
+									// 	},
+									// 	{ method: "post", action: "/world-models.$person" }
+									// );
+								}
 
 								console.log("MEDIA BINDING", mediaBinding)
 

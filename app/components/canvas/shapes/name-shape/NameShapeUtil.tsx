@@ -139,6 +139,10 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
             }
         };
 
+        // useEffect(()=>{
+        //     console.log("NEW DATA:", data)
+        // }, [data])
+
         useEffect(() => {
             if (isOnlySelected) {
                 // Trigger ripple animation
@@ -150,6 +154,10 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
                     })
             }
         }, [isOnlySelected, animate, shape]);
+
+        useEffect(()=>{
+            console.log("NEW COLLECTION:", collection)
+        }, [collection])
 
         useEffect(()=>{
             console.log("EXPANDED:", shape.props.expanded)
@@ -243,7 +251,7 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
             }, 600);
         }
         }
-        }, [shape.props.expanded, collection, data])
+        }, [shape.props.expanded, data])
 
         return (
 			<HTMLContainer 
@@ -289,7 +297,7 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
                                 variants={dashedRingVariants}
                             />
                         )}
-                        
+
                         </AnimatePresence>
                         <motion.div
                             className={`${styles.mostOuterRing} nameCircle`}

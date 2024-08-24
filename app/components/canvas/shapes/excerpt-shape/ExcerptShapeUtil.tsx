@@ -286,6 +286,7 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 							<ExcerptMediaEditor
 								excerpt={shape}
 								tldrawEditor={this.editor}
+								annotations={data.user.concepts.flatMap(concept => concept.excerpts).find(excerpt => excerpt.id === shape.props.databaseId)?.media.annotations || []}
 							/>
 						}
 					</div>

@@ -14,7 +14,11 @@ export async function getWorldContent(uniqueName){
                 include: {
                     excerpts: {
                         include: {
-                            media: true
+                            media: {
+                                include: {
+                                    annotations: true,
+                                }
+                            }
                         }
                     },
                     linkedStart: {
@@ -40,3 +44,18 @@ export async function getWorldContent(uniqueName){
 
     return user
 }
+
+export async function saveAnnotation(mediaId, content, fromPos, toPos) {
+    const annotation = await prisma.annotation.create({
+        data: {
+            mediaId: mediaId,
+            content: content,
+            fromPos: parseInt(fromPos),
+            toPos: parseInt(toPos),
+        },
+    });
+
+    return annotation;
+}
+
+

@@ -9,9 +9,18 @@ import { createShapeId } from 'tldraw';
 import { ColorHighlighter } from "~/components/canvas/custom-ui/text-editor/HighlightExtension"
 import { findHighlightPositions } from "~/components/canvas/helpers/media-funcs"
 
-export default function ExcerptMediaEditor({ excerpt, tldrawEditor }) {
+export default function ExcerptMediaEditor({ excerpt, tldrawEditor, annotations }) {
   const converter = new showdown.Converter();
   const [htmlContent, setHtmlContent] = useState(converter.makeHtml(excerpt.props.media?.content || ""));
+  const [annotationHighlights, setAnnotationHighlights] = useState([])
+
+
+  useEffect(()=>{
+    // load all of the annotations
+    console.log("ANNOTATIONS:", annotations)
+  }, [annotations])
+
+  // we want to make sure that there's an annotation for each highlight
 
   useEffect(() => {
     console.log("HTML CONTENT:", htmlContent);
@@ -77,6 +86,10 @@ export default function ExcerptMediaEditor({ excerpt, tldrawEditor }) {
                     type: 'annotation',
                     isLocked: false,
                     opacity: 1,
+                    props: {
+                        from: from,
+                        to: to
+                    }
                 }).createBinding({ // the binding is only for the persistent selections
                     fromId: tempAnnotationId,
                     toId: excerpt.id,
@@ -93,6 +106,10 @@ export default function ExcerptMediaEditor({ excerpt, tldrawEditor }) {
                     opacity: 1,
                     x: excerpt.x + excerpt.props.w + 40,
                     y: tldrawEditor.screenToPage({x: 0, y: startCoords.top}).y,
+                    props: {
+                        from: from,
+                        to: to,
+                    }
                 })
             }
             
@@ -128,7 +145,7 @@ export default function ExcerptMediaEditor({ excerpt, tldrawEditor }) {
   });
   
   useEffect(()=>{
-    const highlightPositions = findHighlightPositions(editor.state.doc, [excerpt.props.content, 'It is timeful']);
+    const highlightPositions = findHighlightPositions(editor.state.doc, [excerpt.props.content, 'It is timeful', ...annotationHighlights]);
     console.log("HIGHLIGHT POSITIONS:", highlightPositions)
     editor.commands.updateData({
         highlights: highlightPositions,

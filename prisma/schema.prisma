@@ -40,9 +40,9 @@ model Excerpt {
   id        String  @id @default(uuid())
   content   String
   conceptId String
-  mediaId   String?
+  mediaId   String
   concept   Concept @relation(fields: [conceptId], references: [id])
-  Media     Media?  @relation(fields: [mediaId], references: [id])
+  media     Media  @relation(fields: [mediaId], references: [id])
 }
 
 model Media {
@@ -51,8 +51,8 @@ model Media {
   url        String
   content    String?      @default("Media content")
   userId     String?
-  Annotation Annotation[]
-  Excerpt    Excerpt[]
+  annotations Annotation[]
+  excerpts    Excerpt[]
   user       User?        @relation(fields: [userId], references: [uniqueName])
 }
 
@@ -62,5 +62,5 @@ model Annotation {
   mediaId String
   fromPos Int
   toPos   Int
-  Media   Media  @relation(fields: [mediaId], references: [id])
+  media   Media  @relation(fields: [mediaId], references: [id])
 }
