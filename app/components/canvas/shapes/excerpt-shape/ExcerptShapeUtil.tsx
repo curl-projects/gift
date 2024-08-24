@@ -80,7 +80,7 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 		const [scope, animate] = useAnimate(); // Use animation controls
 
 		useEffect(()=>{
-			if(isOnlySelected){
+			if(isOnlySelected || this.editor.getShape(this.editor.getOnlySelectedShapeId())?.type === 'annotation'){
 				this.editor.updateShape({
 					id: shape.id,
 					type: shape.type,

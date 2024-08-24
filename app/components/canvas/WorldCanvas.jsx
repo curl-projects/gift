@@ -118,7 +118,6 @@ export default function WorldCanvas() {
     const overrides = {
         //[a]
         actions(_editor, actions) {
-            console.log("ACTIONS:", actions)
 
             const newActions = {
                 ...actions,

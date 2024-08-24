@@ -162,7 +162,8 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
             // trigger if the concept or its excerpts are selected
             if(memoizedSelectedShapeIds.length === 1 && 
                 (memoizedSelectedShapeIds.includes(shape.id) ||
-                 excerptIds.some(id => memoizedSelectedShapeIds.includes(id))
+                 excerptIds.some(id => memoizedSelectedShapeIds.includes(id)) ||
+                this.editor.getShape(memoizedSelectedShapeIds[0])?.type === 'annotation'
                 )
             ){
                 // if the concept is selected and its excerpts don't exist, create its excerpts
@@ -185,6 +186,9 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
                 }
                 else if(excerptIds.some(id => memoizedSelectedShapeIds.includes(id))){
                     // excerpt was clicked, shape handles its own logic
+                }
+                else if(this.editor.getShape(memoizedSelectedShapeIds[0])?.type === 'annotation'){
+                    // annotation was clicked, shape handles its own logic
                 }
                 else{
                     console.warn("Something weird was selected", memoizedSelectedShapeIds)

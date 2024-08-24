@@ -165,6 +165,7 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
 
             if(shape.props.expanded){
 
+                console.log("ZOOMING TO CENTRAL SHAPE")
                 this.editor.zoomToBounds(this.editor.getShapePageBounds(shape), {
                     animation: {
                         duration: 300,
@@ -245,7 +246,7 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
 
             collection.startSimulation();
             
-            // needs to be in a time out because the canvas position doesn't update while all of these changes are happening
+        // needs to be in a time out because the canvas position doesn't update while all of these changes are happening
             setTimeout(() => {
                 setDrifting(true);
             }, 600);

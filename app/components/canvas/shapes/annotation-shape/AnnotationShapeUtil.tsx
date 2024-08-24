@@ -74,7 +74,7 @@ export class AnnotationShapeUtil extends BaseBoxShapeUtil<AnnotationShape> {
 		const shapeRef = useRef<HTMLDivElement>(null);
 		const controls = useAnimationControls()
 		const [scope, animate] = useAnimate();
-		const fetcher = useFetcher({ key: 'annotation-fetcher'});
+		// const fetcher = useFetcher({ key: 'annotation-fetcher'});
 
         useEffect(() => {
             const handleResize = () => {
@@ -114,10 +114,14 @@ export class AnnotationShapeUtil extends BaseBoxShapeUtil<AnnotationShape> {
                     ref={shapeRef} 
                     style={{
                         cursor: 'pointer',
+						display: 'flex',
+						flexDirection: 'column',
+						justifyContent: 'center',
+						alignItems: 'center',
                         }}
                     >
                     <p style={{
-						fontSize: "50px",
+						fontSize: "30px",
 						color: "orange",
 						fontWeight: '800',
 					}}>
@@ -126,7 +130,7 @@ export class AnnotationShapeUtil extends BaseBoxShapeUtil<AnnotationShape> {
 					{shape.props.temporary &&
 						<button 
 							style={{
-								fontSize: "50px",
+								fontSize: "30px",
 								color: "blue",
 								fontWeight: '800',
 								cursor: 'pointer',
@@ -153,15 +157,6 @@ export class AnnotationShapeUtil extends BaseBoxShapeUtil<AnnotationShape> {
 								}
 
 								console.log("MEDIA BINDING", mediaBinding)
-
-								// add highlight
-								this.editor.updateShape({
-									id: mediaBinding.toId,
-									type: "excerpt",
-									props: {
-											
-									}
-								})
 
 							}}>
 							Highlight

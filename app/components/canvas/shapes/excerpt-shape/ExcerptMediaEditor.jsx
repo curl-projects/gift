@@ -45,8 +45,8 @@ export default function ExcerptMediaEditor({ excerpt, tldrawEditor, annotations 
     },
     onSelectionUpdate: ({ editor }) => {
         const { from, to } = editor.state.selection;
-        console.log("FROM:", from)
-        console.log("TO:", to)
+        // console.log("FROM:", from)
+        // console.log("TO:", to)
     
         const selectedText = editor.state.doc.textBetween(from, to, ' ');
         
@@ -62,22 +62,22 @@ export default function ExcerptMediaEditor({ excerpt, tldrawEditor, annotations 
         const startCoords = editor.view.coordsAtPos(from);
         const endCoords = editor.view.coordsAtPos(to);
 
-        console.log("START COORDS", startCoords)
-        console.log("START COORDS CANVAS", tldrawEditor.screenToPage({x: 0, y: startCoords.top}))
-        console.log("END COORDS", endCoords)
+        // console.log("START COORDS", startCoords)
+        // console.log("START COORDS CANVAS", tldrawEditor.screenToPage({x: 0, y: startCoords.top}))
+        // console.log("END COORDS", endCoords)
         const rect = {
           top: Math.min(startCoords.top, endCoords.top),
           bottom: Math.max(startCoords.bottom, endCoords.bottom),
           left: Math.min(startCoords.left, endCoords.left),
           right: Math.max(startCoords.right, endCoords.right),
         };
-        console.log("RECT", rect);
+        // console.log("RECT", rect);
 
         if(nodes && nodes.length !== 0){
             // set visible if not visible 
             const tempAnnotation = tldrawEditor.getShape({type: "annotation", id: tempAnnotationId})
             if(!tempAnnotation){
-                console.log("CREATING TEMP ANNOTATION")
+                // console.log("CREATING TEMP ANNOTATION")
                 tldrawEditor.createShape({
                     id: tempAnnotationId,
                     // figrure out what x and y need to be
