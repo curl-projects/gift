@@ -55,6 +55,8 @@ export async function saveAnnotation(mediaId, content, fromPos, toPos) {
         },
     });
 
+    console.log("ANNOTATION:", annotation)
+
     return annotation;
 }
 

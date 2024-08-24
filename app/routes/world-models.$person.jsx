@@ -1,8 +1,9 @@
-import { useLoaderData } from "@remix-run/react";
+import { useActionData, useLoaderData } from "@remix-run/react";
 import { json } from "@remix-run/node";
 import { ClientOnly } from "remix-utils/client-only";
 import WorldCanvas from "~/components/canvas/WorldCanvas.jsx";
 import { getWorldContent, saveAnnotation } from "~/models/world-model.server";
+import { useEffect } from "react";
 
 export async function loader({ params }) {
   const person = params.person;
@@ -29,15 +30,20 @@ export async function action({ request }) {
         const annotation = await saveAnnotation(mediaId, content, fromPos, toPos);
         return json({ annotation });
       } catch (error) {
+        console.error("ERROR:", error)
         return json({ error: error.message }, { status: 500 });
       }
-
     default:
       return json({ error: "Unknown action type" }, { status: 400 });
   }
 }
 
 export default function WorldModel(){
+    const actionData = useActionData();
+
+    useEffect(()=>{
+        console.log("ACTION DATA:", actionData)
+    }, [actionData])
 
     return(
         <div className='canvasDiv'>

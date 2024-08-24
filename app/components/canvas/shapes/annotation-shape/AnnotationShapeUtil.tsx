@@ -74,7 +74,13 @@ export class AnnotationShapeUtil extends BaseBoxShapeUtil<AnnotationShape> {
 		const shapeRef = useRef<HTMLDivElement>(null);
 		const controls = useAnimationControls()
 		const [scope, animate] = useAnimate();
-		// const fetcher = useFetcher({ key: 'annotation-fetcher'});
+		const fetcher = useFetcher();
+
+        useEffect(() => {
+            if (fetcher.state === "idle" && fetcher.data && fetcher.data.error) {
+                console.error("Fetcher Error:", fetcher.data.error);
+            }
+        }, [fetcher.state, fetcher.data]);
 
         useEffect(() => {
             const handleResize = () => {
@@ -116,8 +122,8 @@ export class AnnotationShapeUtil extends BaseBoxShapeUtil<AnnotationShape> {
                         cursor: 'pointer',
 						display: 'flex',
 						flexDirection: 'column',
-						justifyContent: 'center',
-						alignItems: 'center',
+						justifyContent: 'flex-start',
+						alignItems: 'flex-start',
                         }}
                     >
                     <p style={{
@@ -144,16 +150,18 @@ export class AnnotationShapeUtil extends BaseBoxShapeUtil<AnnotationShape> {
 
 								// save annotation to database
 								if (mediaBinding) {
-									// fetcher.submit(
-									// 	{
-									// 		actionType: "saveAnnotation",
-									// 		mediaId: mediaBinding.toId,
-									// 		content: shape.props.text,
-									// 		fromPos: shape.props.from,
-									// 		toPos: shape.props.to,
-									// 	},
-									// 	{ method: "post", action: "/world-models.$person" }
-									// );
+
+									console.log("GET MEDIA SHAPE", this.editor.getShape(mediaBinding.toId)?.props.media.id)
+									fetcher.submit(
+										{
+											actionType: "saveAnnotation",
+											mediaId: this.editor.getShape(mediaBinding.toId)?.props.media.id,
+											content: shape.props.text,
+											fromPos: shape.props.from,
+											toPos: shape.props.to,
+										},
+										{ method: "post", action: `/world-models/${data.user.uniqueName}` }
+									);
 								}
 
 								console.log("MEDIA BINDING", mediaBinding)

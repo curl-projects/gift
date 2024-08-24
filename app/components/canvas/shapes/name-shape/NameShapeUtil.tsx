@@ -139,9 +139,9 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
             }
         };
 
-        // useEffect(()=>{
-        //     console.log("NEW DATA:", data)
-        // }, [data])
+        useEffect(()=>{
+            console.log("NEW DATA:", data)
+        }, [data])
 
         useEffect(() => {
             if (isOnlySelected) {
