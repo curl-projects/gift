@@ -48,12 +48,12 @@ export class AnnotationBindingUtil extends BindingUtil<AnnotationModelBinding>{
 
 		const boundShape: any = this.editor.getShape(binding.toId)!
 
-		this.editor.updateShape({
-			id: annotation.id,
-			type: 'annotation',
-			x: boundShape.x,
-			y: boundShape.y,
-		})
+		// this.editor.updateShape({
+		// 	id: annotation.id,
+		// 	type: 'annotation',
+		// 	x: boundShape.x,
+		// 	y: boundShape.y,
+		// })
 
         // we need to be tracking the update of the position of the tiptap node to which the annotation is attached\
 

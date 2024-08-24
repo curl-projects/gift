@@ -32,27 +32,42 @@ function findColors(doc: Node, highlights: any, color: string): DecorationSet {
   console.log("REGEX:", regex)
   const decorations: Decoration[] = []
 
-  doc.descendants((node, position) => {
+  let textContent = '';
+  let positions = [];
 
-    if (!node.text) {
-      return
+  doc.descendants((node, position) => {
+    if (node.isText) {
+      textContent += node.text;
+      positions.push({ node, position, length: node.text.length });
+    }
+  });
+
+  Array.from(textContent.matchAll(regex)).forEach(match => {
+    console.log("MATCH:", match)
+    const index = match.index || 0
+    const length = match[0].length
+    let from = 0, to = 0, accumulatedLength = 0;
+
+    for (const { node, position, length: nodeLength } of positions) {
+      if (accumulatedLength + nodeLength > index && from === 0) {
+        from = position + (index - accumulatedLength);
+      }
+      if (accumulatedLength + nodeLength >= index + length) {
+        to = position + (index + length - accumulatedLength);
+        break;
+      }
+      accumulatedLength += nodeLength;
     }
 
-    Array.from(node.text.matchAll(regex)).forEach(match => {
-        console.log("MATCH:", match)
-      const index = match.index || 0
-      const from = position + index
-      const to = from + match[0].length // Use the length of the matched text
-      const decoration = Decoration.inline(from, to, {
-        class: 'concept-highlight',
-        style: `--concept-highlight-color-border: ${color}; --concept-highlight-color: ${rgbToRgba(color)}`,
-      })
+    const decoration = Decoration.inline(from, to, {
+      class: 'concept-highlight',
+      style: `--concept-highlight-color-border: ${color}; --concept-highlight-color: ${rgbToRgba(color)}`,
+    });
 
-      decorations.push(decoration)
-    })
-  })
+    decorations.push(decoration);
+  });
 
-  return DecorationSet.create(doc, decorations)
+  return DecorationSet.create(doc, decorations);
 }
 
 declare module '@tiptap/core' {

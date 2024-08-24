@@ -119,6 +119,35 @@ export class AnnotationShapeUtil extends BaseBoxShapeUtil<AnnotationShape> {
 					}}>
                         {shape.props.text}
                     </p>
+					{shape.props.temporary &&
+						<button 
+							style={{
+								fontSize: "50px",
+								color: "blue",
+								fontWeight: '800',
+								cursor: 'pointer',
+							}}
+							onPointerDown={() => {
+								const mediaBinding = this.editor.getBindingsFromShape(shape.id, 'annotation').find(binding => {
+									console.log("BINDING:", this.editor.getShape(binding.toId), this.editor.getShape(binding.toId).type === 'excerpt')
+									return this.editor.getShape(binding.toId).type === 'excerpt'
+								})
+
+								console.log("MEDIA BINDING", mediaBinding)
+
+								// add highlight
+								this.editor.updateShape({
+									id: mediaBinding.toId,
+									type: "excerpt",
+									props: {
+										
+									}
+								})
+
+							}}>
+							Highlight
+						</button>
+					}
 				</div>
 			</div>
 		)

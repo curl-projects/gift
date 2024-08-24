@@ -76,14 +76,13 @@ export default function ExcerptMediaEditor({ excerpt, tldrawEditor }) {
                     type: 'annotation',
                     isLocked: false,
                     opacity: 1,
+                }).createBinding({ // the binding is only for the persistent selections
+                    fromId: tempAnnotationId,
+                    toId: excerpt.id,
+                    type: "annotation" ,
+                    props: {
+                    }
                 })
-                // .createBinding({ // the binding is only for the persistent selections
-                //     fromId: tempAnnotationId,
-                //     toId: excerpt.id,
-                //     type: "annotation" ,
-                //     props: {
-                //     }
-                // })
             }
             else{
                 tldrawEditor.updateShape({
@@ -91,7 +90,7 @@ export default function ExcerptMediaEditor({ excerpt, tldrawEditor }) {
                     type: 'annotation',
                     isLocked: false,
                     opacity: 1,
-                    x: excerpt.x + excerpt.props.w + 80,
+                    x: excerpt.x + excerpt.props.w + 40,
                     y: tldrawEditor.screenToPage({x: 0, y: startCoords.top}).y,
                 })
             }
@@ -129,7 +128,7 @@ export default function ExcerptMediaEditor({ excerpt, tldrawEditor }) {
   
   useEffect(()=>{
     editor.commands.updateData({
-        highlights: [excerpt.props.content],
+        highlights: [excerpt.props.content, 'It is timeful'],
         color: "rgb(130, 162, 223)"
     })
 
