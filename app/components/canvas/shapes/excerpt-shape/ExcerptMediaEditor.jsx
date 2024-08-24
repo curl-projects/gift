@@ -5,12 +5,12 @@ import Link from "@tiptap/extension-link";
 import * as showdown from 'showdown';
 import { Heading } from '@tiptap/extension-heading';
 import { Paragraph } from '@tiptap/extension-paragraph';
-import { stopEventPropagation } from 'tldraw';
+import { createShapeId } from 'tldraw';
 import { ColorHighlighter } from "~/components/canvas/custom-ui/text-editor/HighlightExtension"
 
-export default function ExcerptMediaEditor({ content, media }) {
+export default function ExcerptMediaEditor({ excerpt, tldrawEditor }) {
   const converter = new showdown.Converter();
-  const [htmlContent, setHtmlContent] = useState(converter.makeHtml(media?.content || ""));
+  const [htmlContent, setHtmlContent] = useState(converter.makeHtml(excerpt.props.media?.content || ""));
 
   useEffect(() => {
     console.log("HTML CONTENT:", htmlContent);
@@ -33,13 +33,76 @@ export default function ExcerptMediaEditor({ content, media }) {
     onUpdate: ({ editor }) => {
       setHtmlContent(editor.getHTML());
     },
-    onSelectionUpdate: () => {
+    onSelectionUpdate: ({ editor }) => {
+        const { from, to } = editor.state.selection;
+        console.log("FROM:", from)
+        console.log("TO:", to)
+    
+        const selectedText = editor.state.doc.textBetween(from, to, ' ');
+        
+        const fragment = editor.state.doc.cut(from, to);
+        const nodes = [];
+        fragment.forEach(node => {
+          nodes.push(node.toJSON());
+        });
+
+        const tempAnnotationId = createShapeId('temp-annotation')
+
+        if(nodes && nodes.length !== 0){
+            // set visible if not visible 
+            const tempAnnotation = tldrawEditor.getShape({type: "annotation", id: tempAnnotationId})
+            if(!tempAnnotation){
+                console.log("CREATING TEMP ANNOTATION")
+                tldrawEditor.createShape({
+                    id: tempAnnotationId,
+                    type: 'annotation',
+                    isLocked: false,
+                    opacity: 1,
+                }).createBinding({
+                    fromId: tempAnnotationId,
+                    toId: excerpt.id,
+                    type: "annotation" ,
+                    props: {
+
+                    }
+                })
+            }
+            else{
+                tldrawEditor.updateShape({
+                    id: tempAnnotationId,
+                    type: 'annotation',
+                    isLocked: false,
+                    opacity: 1
+                })
+            }
+            
+        }
+        else if(nodes && nodes.length === 0){
+            tldrawEditor.updateShape({
+                id: tempAnnotationId,
+                type: 'annotation',
+                isLocked: true,
+                opacity: 0
+            })
+        }
+
+        
+        console.log("SELECTED TEXT:", selectedText)
+        console.log("NODES:", nodes)
+
+
+      const selection = window.getSelection();
+      if(selection.rangeCount > 0){
+        const range = selection.getRangeAt(0);
+        const rect = range.getBoundingClientRect();
+        console.log("RECT", rect)
+    }
     }
   });
   
   useEffect(()=>{
     editor.commands.updateData({
-        highlights: [content],
+        highlights: [excerpt.props.content],
         color: "rgb(130, 162, 223)"
     })
 
@@ -52,7 +115,7 @@ export default function ExcerptMediaEditor({ content, media }) {
       }, 500);
   
 
-  }, [editor, content])
+  }, [editor, excerpt.props.content])
 
   useEffect(() => {
     if (editor) {
@@ -61,7 +124,8 @@ export default function ExcerptMediaEditor({ content, media }) {
   }, [htmlContent, editor]);
 
   return (
-      <EditorContent editor={editor}
+      <EditorContent 
+        editor={editor}
       />
   );
 }

@@ -1,0 +1,17 @@
+.container {
+    /* pointer-events: none;
+    height: fit-content;
+    width: fit-content;
+    position: relative; */
+  }
+  
+  .shapeContent {
+    width: 400px;
+    box-shadow: 0px 36px 42px -4px rgba(77, 77, 77, 0.15);
+    pointer-events: all;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    color: transparent;
+    position: relative;
+  }

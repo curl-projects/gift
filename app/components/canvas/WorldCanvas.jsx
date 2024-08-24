@@ -35,7 +35,10 @@ import { ThreadShapeUtil } from "~/components/canvas/shapes/thread-shape/ThreadS
 import { ThreadShapeTool } from "~/components/canvas/shapes/thread-shape/ThreadShapeTool"
 import { ThreadBindingUtil} from "~/components/canvas/bindings/thread-binding/ThreadBindingUtil"
 
-import { DriftShapeUtil } from "~/components/canvas/shapes/floating-excerpt-shape/DriftShapeUtil"
+import { DriftShapeUtil } from "~/components/canvas/shapes/drift-shape/DriftShapeUtil"
+
+import { AnnotationShapeUtil } from "~/components/canvas/shapes/annotation-shape/AnnotationShapeUtil"
+import { AnnotationBindingUtil } from "~/components/canvas/bindings/annotation-binding/AnnotationBindingUtil"
 
 // HELPERS
 import { createBoundThread, hasExistingThread } from '~/components/canvas/helpers/thread-funcs';
@@ -50,9 +53,9 @@ export default function WorldCanvas() {
         console.log("EDITOR:", editor)
     }, [editor])
 
-    const shapeUtils = [ConceptShapeUtil, ExcerptShapeUtil, ThreadShapeUtil, NameShapeUtil, DriftShapeUtil]
+    const shapeUtils = [ConceptShapeUtil, ExcerptShapeUtil, ThreadShapeUtil, NameShapeUtil, DriftShapeUtil, AnnotationShapeUtil]
     const tools = [ConceptShapeTool, ExcerptShapeTool, ThreadShapeTool, NameShapeTool]
-    const bindingUtils = [ThreadBindingUtil]
+    const bindingUtils = [ThreadBindingUtil, AnnotationBindingUtil]
     const collections = [GraphLayoutCollection]
     const components = {
         Toolbar: null,
@@ -116,6 +119,7 @@ export default function WorldCanvas() {
         //[a]
         actions(_editor, actions) {
             console.log("ACTIONS:", actions)
+
             const newActions = {
                 ...actions,
                 'delete': { ...actions['delete'], kbd: '' },

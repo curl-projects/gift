@@ -270,26 +270,22 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 							padding: shape.props.expanded ? "20px" : "0px"
 						}}
 						onScrollCapture={(e) => {
-							console.log('onScrollCapture event:', e);
 							e.stopPropagation();
 						}}
 						onWheelCapture={(e) => {
-							console.log('onWheelCapture event:', e);
 							e.stopPropagation();
 						}}
 						onDrag={(e) => {
-							console.log('onDrag event:', e);
 							e.stopPropagation();
 						}}
 						onPointerDown={(e) => {
-							console.log('onPointerDown event:', e);
 							e.stopPropagation();
 						}}
 					>
 						{(shape.props.expanded && scope.current) &&
 							<ExcerptMediaEditor
-								content={shape.props.content}
-								media={shape.props.media}
+								excerpt={shape}
+								tldrawEditor={this.editor}
 							/>
 						}
 					</div>
