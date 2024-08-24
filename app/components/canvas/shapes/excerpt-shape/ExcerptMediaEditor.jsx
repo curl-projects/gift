@@ -7,6 +7,7 @@ import { Heading } from '@tiptap/extension-heading';
 import { Paragraph } from '@tiptap/extension-paragraph';
 import { createShapeId } from 'tldraw';
 import { ColorHighlighter } from "~/components/canvas/custom-ui/text-editor/HighlightExtension"
+import { findHighlightPositions } from "~/components/canvas/helpers/media-funcs"
 
 export default function ExcerptMediaEditor({ excerpt, tldrawEditor }) {
   const converter = new showdown.Converter();
@@ -127,8 +128,10 @@ export default function ExcerptMediaEditor({ excerpt, tldrawEditor }) {
   });
   
   useEffect(()=>{
+    const highlightPositions = findHighlightPositions(editor.state.doc, [excerpt.props.content, 'It is timeful']);
+    console.log("HIGHLIGHT POSITIONS:", highlightPositions)
     editor.commands.updateData({
-        highlights: [excerpt.props.content, 'It is timeful'],
+        highlights: highlightPositions,
         color: "rgb(130, 162, 223)"
     })
 

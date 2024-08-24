@@ -140,7 +140,7 @@ export class AnnotationShapeUtil extends BaseBoxShapeUtil<AnnotationShape> {
 									id: mediaBinding.toId,
 									type: "excerpt",
 									props: {
-										
+											
 									}
 								})
 
