@@ -252,7 +252,7 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
             }, 600);
         }
         }
-        }, [shape.props.expanded, data])
+        }, [shape.props.expanded])
 
         return (
 			<HTMLContainer 
