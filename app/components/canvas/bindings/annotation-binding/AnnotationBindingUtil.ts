@@ -48,18 +48,21 @@ export class AnnotationBindingUtil extends BindingUtil<AnnotationModelBinding>{
 
 		const boundShape: any = this.editor.getShape(binding.toId)!
 
-		// this.editor.updateShape({
-		// 	id: annotation.id,
-		// 	type: 'annotation',
-		// 	x: boundShape.x,
-		// 	y: boundShape.y,
-		// })
+		this.editor.updateShape({
+			id: annotation.id,
+			type: 'annotation',
+			x: boundShape.x,
+			y: boundShape.y,
+		})
 
-        // we need to be tracking the update of the position of the tiptap node to which the annotation is attached\
+        // we need to be tracking the update of the position of the tiptap node to which the annotation is attached -- that means we need access 
+        // the editor from with this method
+
+        //-
 
 	}
 
-	// when the thing we're stuck to is deleted, delete the sticker too
+	// when the thing we're stuck to is deleted, delete the annotation too
 	override onBeforeDeleteToShape({ binding }: BindingOnShapeDeleteOptions<AnnotationModelBinding>): void {
 		this.editor.deleteShape(binding.fromId)
 	}

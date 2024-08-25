@@ -9,22 +9,52 @@ import { createShapeId } from 'tldraw';
 import { ColorHighlighter } from "~/components/canvas/custom-ui/text-editor/HighlightExtension"
 import { findHighlightPositions } from "~/components/canvas/helpers/media-funcs"
 
-export default function ExcerptMediaEditor({ excerpt, tldrawEditor, annotations }) {
+function updateAnnotationPositions(tldrawEditor, editor, annotations, excerpt){
+    // create annotations that don't exist
+    console.log("UPDATING ANNOTATION POSITIONS")
+    for(let annotation of annotations){
+        const annotationShapeId = createShapeId(annotation.id)
+            const startCoords = editor.view.coordsAtPos(annotation.fromPos);
+
+            console.log("X:", excerpt.x + excerpt.props.w + 40)
+            console.log("Y:", tldrawEditor.screenToPage({x: 0, y: startCoords.top}).y)
+            
+            tldrawEditor.updateShape({
+                id: annotationShapeId,
+                type: "annotation",
+                x: excerpt.x + excerpt.props.w + 40,
+                y: tldrawEditor.screenToPage({x: 0, y: startCoords.top}).y,
+            })
+    }
+}
+
+function updateTemporaryAnnotation(tldrawEditor, editor, fromPos, toPos, excerpt){
+    const tempAnnotationId = createShapeId('temp-annotation')
+    const startCoords = editor.view.coordsAtPos(fromPos);
+
+    tldrawEditor.updateShape({
+        id: tempAnnotationId,
+        type: 'annotation',
+        isLocked: false,
+        opacity: 1,
+        x: excerpt.x + excerpt.props.w + 40,
+        y: tldrawEditor.screenToPage({x: 0, y: startCoords.top}).y,
+        props: {
+            from: fromPos,
+            to: toPos,
+        }
+    })
+}
+
+export default function ExcerptMediaEditor({ excerpt, tldrawEditor, annotations, shapeRef, scrollChange }) {
   const converter = new showdown.Converter();
   const [htmlContent, setHtmlContent] = useState(converter.makeHtml(excerpt.props.media?.content || ""));
   const [annotationHighlights, setAnnotationHighlights] = useState([])
+  const [selectionPosition, setSelectionPosition] = useState({from: null, to: null})
 
-
-  useEffect(()=>{
-    // load all of the annotations
-    console.log("ANNOTATIONS:", annotations)
-  }, [annotations])
-
-  // we want to make sure that there's an annotation for each highlight
-
-  useEffect(() => {
-    console.log("HTML CONTENT:", htmlContent);
-  }, [htmlContent]);
+//   useEffect(() => {
+//     console.log("HTML CONTENT:", htmlContent);
+//   }, [htmlContent]);
 
   const editor = useEditor({
     extensions: [
@@ -45,18 +75,20 @@ export default function ExcerptMediaEditor({ excerpt, tldrawEditor, annotations 
     },
     onSelectionUpdate: ({ editor }) => {
         const { from, to } = editor.state.selection;
+        setSelectionPosition({from: from, to: to})
         // console.log("FROM:", from)
         // console.log("TO:", to)
     
         const selectedText = editor.state.doc.textBetween(from, to, ' ');
+       
+
+        const tempAnnotationId = createShapeId('temp-annotation')
         
         const fragment = editor.state.doc.cut(from, to);
         const nodes = [];
         fragment.forEach(node => {
           nodes.push(node.toJSON());
         });
-
-        const tempAnnotationId = createShapeId('temp-annotation')
 
 
         const startCoords = editor.view.coordsAtPos(from);
@@ -65,12 +97,6 @@ export default function ExcerptMediaEditor({ excerpt, tldrawEditor, annotations 
         // console.log("START COORDS", startCoords)
         // console.log("START COORDS CANVAS", tldrawEditor.screenToPage({x: 0, y: startCoords.top}))
         // console.log("END COORDS", endCoords)
-        const rect = {
-          top: Math.min(startCoords.top, endCoords.top),
-          bottom: Math.max(startCoords.bottom, endCoords.bottom),
-          left: Math.min(startCoords.left, endCoords.left),
-          right: Math.max(startCoords.right, endCoords.right),
-        };
         // console.log("RECT", rect);
 
         if(nodes && nodes.length !== 0){
@@ -128,22 +154,37 @@ export default function ExcerptMediaEditor({ excerpt, tldrawEditor, annotations 
         // get the canvas position from these screen coordinates
         
         // also get the canvas position of the right hand side of the media
-  
 
-        
-        console.log("SELECTED TEXT:", selectedText)
-        console.log("NODES:", nodes)
-
-
-      const selection = window.getSelection();
-      if(selection.rangeCount > 0){
-        const range = selection.getRangeAt(0);
-        const rect = range.getBoundingClientRect();
-        console.log("RECT", rect)
-    }
     }
   });
+
+  useEffect(() => {
+    const handleResize = () => {
+        // update annotation positions on resize
+        updateAnnotationPositions(tldrawEditor, editor, annotations, excerpt)
+        updateTemporaryAnnotation(tldrawEditor, editor, selectionPosition.from, selectionPosition.to, excerpt)
+
+    };
+
+    const resizeObserver = new ResizeObserver(handleResize);
+    if (shapeRef?.current) {
+      resizeObserver.observe(shapeRef.current);
+    }
+
+    return () => {
+      if (shapeRef?.current) {
+        resizeObserver.unobserve(shapeRef.current);
+      }
+      resizeObserver.disconnect();
+    };
+  }, [shapeRef.current, tldrawEditor, excerpt]);
   
+  useEffect(()=>{
+    console.log("UPDATING ANNOTATION SCROLL")
+    updateAnnotationPositions(tldrawEditor, editor, annotations, excerpt)
+    updateTemporaryAnnotation(tldrawEditor, editor, selectionPosition.from, selectionPosition.to, excerpt)
+  }, [scrollChange])
+
   useEffect(()=>{
     const highlightPositions = findHighlightPositions(editor.state.doc, [excerpt.props.content, 'It is timeful', ...annotationHighlights]);
     console.log("HIGHLIGHT POSITIONS:", highlightPositions)
@@ -163,6 +204,60 @@ export default function ExcerptMediaEditor({ excerpt, tldrawEditor, annotations 
 
   }, [editor, excerpt.props.content])
 
+  useEffect(()=>{
+    // load all of the annotations
+    console.log("ANNOTATIONS:", annotations)
+
+
+    // create annotations that don't exist
+    for(let annotation of annotations){
+        const annotationShapeId = createShapeId(annotation.id)
+        if(!tldrawEditor.getShape(annotationShapeId)){
+            
+            const startCoords = editor.view.coordsAtPos(annotation.fromPos);
+
+            console.log("X:", excerpt.x + excerpt.props.w + 40)
+            console.log("Y:", tldrawEditor.screenToPage({x: 0, y: startCoords.top}).y)
+            
+            console.log("CREATING ANNOTATION:", annotation)
+            tldrawEditor.createShape({
+                id: annotationShapeId,
+                type: "annotation",
+                x: excerpt.x + excerpt.props.w + 40,
+                y: tldrawEditor.screenToPage({x: 0, y: startCoords.top}).y,
+                props: {
+                    from: annotation.fromPos,
+                    to: annotation.toPos
+                }
+            }).createBinding({
+                fromId: annotationShapeId,
+                toId: excerpt.id,
+                type: "annotation",
+                props: {
+
+                }
+            })
+        }
+        // else{ 
+        // }
+    }
+
+    const annotationShapeIds = tldrawEditor.getCurrentPageShapes().filter(shape => shape.type === 'annotation').map(shape => shape.id)
+
+    console.log("ANNOTATION SHAPE IDS:", annotationShapeIds)
+
+    // delete annotations that shouldn't exist
+    for(let shapeId of annotationShapeIds){
+        console.log("SHAPE ID:", shapeId)
+        console.log("ANNOTATIONS MUTATED:", annotations.map(annotation => createShapeId(annotation.id)))
+        if(!annotations.map(annotation => createShapeId(annotation.id)).includes(shapeId)){
+            console.log("DELETING ANNOTATION")
+            tldrawEditor.deleteShape(shapeId);
+        }
+    }
+  }, [annotations])
+
+
   useEffect(() => {
     if (editor) {
       editor.commands.setContent(htmlContent);
@@ -170,8 +265,22 @@ export default function ExcerptMediaEditor({ excerpt, tldrawEditor, annotations 
   }, [htmlContent, editor]);
 
   return (
+    <div style={{
+        width: "100%",
+        height: "100%",
+    }}
+    onScrollCapture={(e) => {
+        console.log("SCROLL CAPTURE INNER")
+        // e.stopPropagation();
+    }}
+    onScroll={(e) => {
+        console.log("SCROLL CAPTURE INNERf")
+        // e.stopPropagation();
+    }}
+    >
       <EditorContent 
         editor={editor}
       />
+    </div>
   );
 }

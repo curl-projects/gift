@@ -76,6 +76,8 @@ export class AnnotationShapeUtil extends BaseBoxShapeUtil<AnnotationShape> {
 		const [scope, animate] = useAnimate();
 		const fetcher = useFetcher();
 
+		const maskPosition = 100; // Adjust this value dynamically as needed
+
         useEffect(() => {
             if (fetcher.state === "idle" && fetcher.data && fetcher.data.error) {
                 console.error("Fetcher Error:", fetcher.data.error);
@@ -109,6 +111,20 @@ export class AnnotationShapeUtil extends BaseBoxShapeUtil<AnnotationShape> {
             };
           }, [shapeRef.current, this.editor, shape]);
 
+		useEffect(()=>{
+			// on a positional update, get the position of the bound excerpt object
+			const mediaBinding = this.editor.getBindingsFromShape(shape.id, 'annotation').find(binding => {
+				console.log("BINDING:", this.editor.getShape(binding.toId), this.editor.getShape(binding.toId).type === 'excerpt')
+				return this.editor.getShape(binding.toId).type === 'excerpt'
+			})
+			const mediaShape = this.editor.getShape(mediaBinding.toId)
+
+			const top = Math.max(0, mediaShape.y - shape.y)
+			const bottom = Math.max(0, (shape.y+shape.props.h) - (mediaShape.y + mediaShape.props.h))
+			shapeRef.current.style.clipPath = `inset(${top}px 0 ${bottom}px 0)`;
+
+		}, [shape.x, shape.y])
+
 		return (
 			<div 
 				id={shape.id}
@@ -124,6 +140,7 @@ export class AnnotationShapeUtil extends BaseBoxShapeUtil<AnnotationShape> {
 						flexDirection: 'column',
 						justifyContent: 'flex-start',
 						alignItems: 'flex-start',
+						background: `linear-gradient(to bottom, transparent ${maskPosition}px, white ${maskPosition}px)`, // Adjust gradient as needed
                         }}
                     >
                     <p style={{

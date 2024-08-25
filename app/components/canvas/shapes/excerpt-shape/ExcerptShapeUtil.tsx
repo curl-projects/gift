@@ -77,10 +77,15 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 		const shapeRef = useRef();
 		const data = useLoaderData();
 		const isOnlySelected = this.editor.getOnlySelectedShapeId() === shape.id;
+		const selectedShapeIds = this.editor.getSelectedShapeIds();
 		const [scope, animate] = useAnimate(); // Use animation controls
+		const [scrollChange, setScrollChange] = useState(null)
 
 		useEffect(()=>{
-			if(isOnlySelected || this.editor.getShape(this.editor.getOnlySelectedShapeId())?.type === 'annotation'){
+			if(selectedShapeIds.length === 1 && 
+				(selectedShapeIds[0] === shape.id ||
+				 this.editor.getShape(selectedShapeIds[0])?.type === 'annotation'
+				)){
 				this.editor.updateShape({
 					id: shape.id,
 					type: shape.type,
@@ -270,6 +275,10 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 							padding: shape.props.expanded ? "20px" : "0px"
 						}}
 						onScrollCapture={(e) => {
+							console.log("E:", e)
+							setScrollChange(e.target.scrollTop)
+							console.log("SCROLL CAPTURE", e.target.scrollTop);
+
 							e.stopPropagation();
 						}}
 						onWheelCapture={(e) => {
@@ -287,6 +296,8 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 								excerpt={shape}
 								tldrawEditor={this.editor}
 								annotations={data.user.concepts.flatMap(concept => concept.excerpts).find(excerpt => excerpt.id === shape.props.databaseId)?.media.annotations || []}
+								shapeRef={shapeRef}
+								scrollChange={scrollChange}
 							/>
 						}
 					</div>
@@ -299,4 +310,7 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 	indicator(shape: ExcerptShape) {
 		return null;
 	}
+
+
+	
 }

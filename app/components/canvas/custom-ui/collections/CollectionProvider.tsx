@@ -40,7 +40,6 @@ const CollectionProvider: React.FC<CollectionProviderProps> = ({ editor, collect
 
   useEffect(() => {
     if (editor) {
-      console.log("EDITOR FOUND")
       const initializedCollections = new Map<string, BaseCollection>();
       for (const ColClass of collectionClasses) {
         const instance = new ColClass(editor);
@@ -53,7 +52,6 @@ const CollectionProvider: React.FC<CollectionProviderProps> = ({ editor, collect
   // Subscribe to shape changes in the editor
   useEffect(() => {
     if (editor && collections) {
-      console.log("EDITOR AND COLLECTIONS")
       editor.sideEffects.registerAfterChangeHandler('shape', (prev: TLRecord, next: TLRecord) => {
         if (next.typeName !== 'shape') return;
           const prevShape = prev as TLShape;

@@ -77,7 +77,6 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
 
 		useEffect(()=>{
 			if(shapeRef.current && shapeRef.current.clientHeight !== 0 && shapeRef.current.clientWidth !== 0){
-                console.log("SCOPE CURRENT", shapeRef.current, shapeRef.current.clientWidth, shapeRef.current.clientHeight)
 				this.editor.updateShape({id: shape.id, type: shape.type, props: {
 					w: shapeRef.current.clientWidth,
 					h: shapeRef.current.clientHeight
@@ -139,10 +138,6 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
             }
         };
 
-        useEffect(()=>{
-            console.log("NEW DATA:", data)
-        }, [data])
-
         useEffect(() => {
             if (isOnlySelected) {
                 // Trigger ripple animation
@@ -156,16 +151,9 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
         }, [isOnlySelected, animate, shape]);
 
         useEffect(()=>{
-            console.log("NEW COLLECTION:", collection)
-        }, [collection])
-
-        useEffect(()=>{
-            console.log("EXPANDED:", shape.props.expanded)
             if(collection && data){
 
             if(shape.props.expanded){
-
-                console.log("ZOOMING TO CENTRAL SHAPE")
                 this.editor.zoomToBounds(this.editor.getShapePageBounds(shape), {
                     animation: {
                         duration: 300,
@@ -213,11 +201,8 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
 
                 
             for(let concept of data.user.concepts){
-                console.log("DATA:", data)
-                console.log("TRIGGERING ANIMATIONS!", shape.x, shape.y)
     
                 const conceptShape = this.editor.getShape({id: createShapeId(concept.id), type: 'concept'})
-                console.log("CONCEPT SHAPE:", conceptShape)
                 let animTime = 300
                 if(conceptShape){
                     // Start the ripple animation
