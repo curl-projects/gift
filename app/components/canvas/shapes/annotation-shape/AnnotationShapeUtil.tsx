@@ -122,7 +122,11 @@ export class AnnotationShapeUtil extends BaseBoxShapeUtil<AnnotationShape> {
 			const top = Math.max(0, mediaShape.y - shape.y)
 			const bottom = Math.max(0, (shape.y+shape.props.h) - (mediaShape.y + mediaShape.props.h))
 			shapeRef.current.style.clipPath = `inset(${top}px 0 ${bottom}px 0)`;
-
+			if (top > 0 || bottom > 0) {
+				shapeRef.current.style.maskImage = `linear-gradient(to bottom, transparent ${top}px, black ${top + 20}px, black calc(100% - ${bottom + 20}px), transparent calc(100% - ${bottom}px))`;
+			} else {
+				shapeRef.current.style.maskImage = 'none';
+			}
 		}, [shape.x, shape.y])
 
 		return (
@@ -140,7 +144,6 @@ export class AnnotationShapeUtil extends BaseBoxShapeUtil<AnnotationShape> {
 						flexDirection: 'column',
 						justifyContent: 'flex-start',
 						alignItems: 'flex-start',
-						background: `linear-gradient(to bottom, transparent ${maskPosition}px, white ${maskPosition}px)`, // Adjust gradient as needed
                         }}
                     >
                     <p style={{
@@ -195,6 +198,7 @@ export class AnnotationShapeUtil extends BaseBoxShapeUtil<AnnotationShape> {
 	indicator(shape: AnnotationShape) {
         return null
 		// return <rect width={shape.props.w} height={shape.props.h} />
-
 	}
+
+
 }

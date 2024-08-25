@@ -40,19 +40,25 @@ export class AnnotationBindingUtil extends BindingUtil<AnnotationModelBinding>{
 	// when the shape we're stuck to changes, update the sticker's position
 	override onAfterChangeToShape({
 		binding,
+        shapeBefore,
 		shapeAfter,
 	}: any): void {
+
 
         // console.log("CHANGE TO SHAPE!")
 		const annotation = this.editor.getShape(binding.fromId)!
 
 		const boundShape: any = this.editor.getShape(binding.toId)!
+        
+        console.log("BOUND SHAPE:", boundShape)
+        console.log("SHAPE AFTER:", shapeAfter)
 
+        // translate the annotation's position by the amound that the shape has moved
 		this.editor.updateShape({
 			id: annotation.id,
 			type: 'annotation',
-			x: boundShape.x,
-			y: boundShape.y,
+			x: annotation.x + (shapeAfter.x - shapeBefore.x),
+			y: annotation.y + (shapeAfter.y - shapeBefore.y),
 		})
 
         // we need to be tracking the update of the position of the tiptap node to which the annotation is attached -- that means we need access 
