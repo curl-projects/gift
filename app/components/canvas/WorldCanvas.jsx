@@ -13,6 +13,7 @@ import { DriftPainter } from "~/components/canvas/custom-ui/utilities/DriftPaint
 import CustomToolbar from "~/components/canvas/custom-ui/custom-toolbar/CustomToolbar"
 import { CollectionProvider } from "~/components/canvas/custom-ui/collections";
 import { GraphLayoutCollection } from "~/components/canvas/custom-ui/graph/GraphLayoutCollection";
+import { AnnotationLayoutCollection } from "~/components/canvas/custom-ui/graph/AnnotationLayoutCollection";
 import { GraphUi } from "~/components/canvas/custom-ui/graph/GraphUi";
 import { GraphTrigger } from "~/components/canvas/custom-ui/graph/GraphTrigger";
 import { SelectionListener } from "~/components/canvas/custom-ui/listeners/SelectionListener";
@@ -56,7 +57,9 @@ export default function WorldCanvas() {
     const shapeUtils = [ConceptShapeUtil, ExcerptShapeUtil, ThreadShapeUtil, NameShapeUtil, DriftShapeUtil, AnnotationShapeUtil]
     const tools = [ConceptShapeTool, ExcerptShapeTool, ThreadShapeTool, NameShapeTool]
     const bindingUtils = [ThreadBindingUtil, AnnotationBindingUtil]
-    const collections = [GraphLayoutCollection]
+    const collections = [GraphLayoutCollection, 
+        // AnnotationLayoutCollection
+    ]
     const components = {
         Toolbar: null,
         MainMenu: null,

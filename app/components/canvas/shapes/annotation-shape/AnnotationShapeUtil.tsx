@@ -13,6 +13,8 @@ import { useCallback, useState, useEffect, useRef, useLayoutEffect, useMemo } fr
 import styles from './AnnotationShapeUtil.module.css';
 import { motion, useAnimate, AnimatePresence, useAnimationControls } from 'framer-motion';
 import { useConstellationMode } from '~/components/canvas/custom-ui/utilities/ConstellationModeContext';
+import StarterKit from '@tiptap/starter-kit';
+import { EditorContent, useEditor } from '@tiptap/react';
 
 const annotationShapeProps = {
 	w: T.number,
@@ -22,6 +24,7 @@ const annotationShapeProps = {
 	temporary: T.boolean,
 	from: T.number,
 	to: T.number,
+	selected: T.boolean,
 }
 
 type AnnotationShape = TLBaseShape<
@@ -34,6 +37,7 @@ type AnnotationShape = TLBaseShape<
 		temporary: boolean,
 		from: number,
 		to: number,
+		selected: boolean,
 	}
 >
 
@@ -53,9 +57,10 @@ export class AnnotationShapeUtil extends BaseBoxShapeUtil<AnnotationShape> {
 			h: 56,
 			type: "comment",
 			text: "No Text",
-			temporary: true,
+			temporary: false,
 			from: 0,
 			to: 10,
+			selected: false,
 		}
 	}
 
@@ -129,6 +134,24 @@ export class AnnotationShapeUtil extends BaseBoxShapeUtil<AnnotationShape> {
 			}
 		}, [shape.x, shape.y])
 
+		
+		const editor = useEditor({
+			extensions: [StarterKit],
+			content: shape.props.text,
+			onUpdate: ({ editor }) => {
+				const html = editor.getHTML();
+				// Update the shape's text property with the new content
+				this.editor.updateShape({
+					type: shape.type,
+					id: shape.id,
+					props: {
+						text: html,
+					},
+				});
+			},
+		});
+
+
 		return (
 			<div 
 				id={shape.id}
@@ -139,20 +162,21 @@ export class AnnotationShapeUtil extends BaseBoxShapeUtil<AnnotationShape> {
                     className={styles.shapeContent} 
                     ref={shapeRef} 
                     style={{
-                        cursor: 'pointer',
-						display: 'flex',
-						flexDirection: 'column',
-						justifyContent: 'flex-start',
-						alignItems: 'flex-start',
+						backgroundColor: isHovered ? "rgba(0, 0, 0, 0.4)" : "rgba(0, 0, 0, 0.1)",
+						left: isHovered ? '-10px' : "0px",
+						boxShadow: isHovered ? "0px 36px 42px -4px rgba(77, 77, 77, 0.4)" : "0px 36px 42px -4px rgba(77, 77, 77, 0.15)",
+						border: shape.props.selected ? "2px solid blue" : "none",
                         }}
+					onMouseEnter={() => setIsHovered(true)}
+					onMouseLeave={() => setIsHovered(false)}
                     >
-                    <p style={{
-						fontSize: "30px",
-						color: "orange",
-						fontWeight: '800',
-					}}>
-                        {shape.props.text}
-                    </p>
+					<div className={styles.headerRow}>
+						<div className={styles.iconWrapper}></div>
+						<p className={styles.userName}> Finn Macken</p>
+						<p className={styles.timeStamp}>1m</p>
+					</div>
+					<EditorContent editor={editor} className={styles.textContent}/>
+
 					{shape.props.temporary &&
 						<button 
 							style={{

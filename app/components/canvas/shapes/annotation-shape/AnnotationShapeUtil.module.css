@@ -6,17 +6,51 @@
   }
   
   .shapeContent {
-    width: 400px;
-    box-shadow: 0px 36px 42px -4px rgba(77, 77, 77, 0.15);
+    width: 250px;
     pointer-events: all;
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    color: transparent;
     position: relative;
+    box-shadow: 0px 36px 42px -4px rgba(77, 77, 77, 0.15);
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out, left 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    padding: 8px;
   }
 
   .maskWrapper{
     width: 100%;
     overflow: hidden;
+  }
+
+  .headerRow{
+    display: flex;
+    padding: 8px 16px;
+    gap: 8px;
+    width: 100%;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  .iconWrapper{
+
+  }
+
+  .userName{
+    font-weight: 500;
+    font-family: "Inter";
+    font-size: 14px;
+    color: white;
+  }
+
+  .timeStamp{
+    font-size: 12px;
+    line-height: 16px;
+    color: rgb(172, 171, 169);
+    font-family: "Inter";
+    font-weight: 400;
+
+  }
+
+  .textContent{
+    line-height: 20px;
+    cursor: text;
+    padding: 0px 16px;
   }

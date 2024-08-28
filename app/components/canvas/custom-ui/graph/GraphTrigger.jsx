@@ -4,6 +4,7 @@ import { useEditor } from "tldraw"
 
 export function GraphTrigger(){
     const { collection, size } = useCollection('graph')
+    const { collection: annotationCollection, size: annotationSize } = useCollection('annotation')
     const editor = useEditor()
 
     const handleStoreEvent = useCallback((change) => {
@@ -12,8 +13,11 @@ export function GraphTrigger(){
                 if(record.typeName === 'shape' && (['thread', 'concept', 'excerpt', 'name'].includes(record.type))){
                     const shape = editor.getShape(record.id)
                     collection.add([shape])
-                    // collection.startSimulation();
                 }
+                // else if(record.typeName === 'shape' && record.type === 'annotation'){
+                //     const shape = editor.getShape(record.id)
+                //     annotationCollection.add([shape])
+                // }
             }
         }
     }, [editor, collection])

@@ -49,9 +49,6 @@ export class AnnotationBindingUtil extends BindingUtil<AnnotationModelBinding>{
 		const annotation = this.editor.getShape(binding.fromId)!
 
 		const boundShape: any = this.editor.getShape(binding.toId)!
-        
-        console.log("BOUND SHAPE:", boundShape)
-        console.log("SHAPE AFTER:", shapeAfter)
 
         // translate the annotation's position by the amound that the shape has moved
 		this.editor.updateShape({
@@ -67,6 +64,29 @@ export class AnnotationBindingUtil extends BindingUtil<AnnotationModelBinding>{
         //-
 
 	}
+    
+    override onAfterChangeFromShape({
+		binding,
+        shapeBefore,
+		shapeAfter,
+	}: any): void {
+
+        // const annotations = this.editor.getCurrentPageShapes().filter(shape => shape.type === 'annotation');
+        // for(let annotation of annotations){
+        //     while (shapeAfter.x < annotation.x + annotation.props.w &&
+        //         shapeAfter.x + shapeAfter.props.w > annotation.x &&
+        //         shapeAfter.y < annotation.y + annotation.props.h &&
+        //         shapeAfter.y + shapeAfter.props.h > annotation.y) {
+                
+        //         this.editor.updateShape({
+        //             id: annotation.id,
+        //             type: 'annotation',
+        //             y: annotation.y + 10,
+        //         });
+        //     }
+
+        // }
+    }
 
 	// when the thing we're stuck to is deleted, delete the annotation too
 	override onBeforeDeleteToShape({ binding }: BindingOnShapeDeleteOptions<AnnotationModelBinding>): void {

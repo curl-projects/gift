@@ -4,28 +4,26 @@ import { Decoration, DecorationSet } from '@tiptap/pm/view'
 import { Extension } from '@tiptap/core'
 
 function rgbToRgba(rgbString, alpha = 0.3) {
-  // Match the RGB values using a regular expression
   console.log("RGB STRING:", rgbString)
   const rgbMatch = rgbString.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
 
   if(rgbMatch){
-    // Extract the R, G, and B values
     const [r, g, b] = rgbMatch.slice(1).map(Number);
-    // Return the RGBA string
     return `rgba(${r}, ${g}, ${b}, ${alpha})`;
   }
   
-  console.warn("No RGB String Found")
+//   console.warn("No RGB String Found")
   return rgbString
 }
 
-function findColors(doc: Node, highlights: { from: number, to: number }[], color: string): DecorationSet {
+function findColors(doc: Node, highlights: { from: number, to: number, color: string, shapeId: string }[]): DecorationSet {
   const decorations: Decoration[] = []
 
-  highlights.forEach(({ from, to }) => {
+  highlights.forEach(({ from, to, color, shapeId }) => {
     const decoration = Decoration.inline(from, to, {
       class: 'concept-highlight',
       style: `--concept-highlight-color-border: ${color}; --concept-highlight-color: ${rgbToRgba(color)}`,
+      'data-shape-id': shapeId, // Add a data attribute to identify the decoration
     });
     decorations.push(decoration);
   });
@@ -41,7 +39,7 @@ declare module '@tiptap/core' {
        * @param attributes The highlight attributes
        * @example editor.commands.setHighlight({ color: 'red' })
        */
-      updateData: (attributes?: { highlights: { from: number, to: number }[], color: string }) => ReturnType,
+      updateData: (attributes?: { highlights: { from: number, to: number, color: string }[] }) => ReturnType,
     }
   }
 }
@@ -51,10 +49,9 @@ export const ColorHighlighter = Extension.create({
 
   addCommands() {
     return {
-      updateData: ({ highlights, color }) => ({ commands }) => {
+      updateData: ({ highlights }) => ({ commands }) => {
         console.log("NEW HIGHLIGHT DATA:", highlights)
         this.storage.highlights = highlights;
-        this.storage.color = color;
         return true;
       },
     }
@@ -63,19 +60,20 @@ export const ColorHighlighter = Extension.create({
   addStorage() {
     return {
       highlights: this.options?.highlights || [],
-      color: this.options?.color || "rgb(130, 162, 223)"
+      tldrawEditor: this.options?.tldrawEditor || null,
     }
   },
 
   addOptions() {
     return {
       highlights: [],
-      color: "rgb(130, 162, 223)"
+      tldrawEditor: null,
     }
   },
 
   addProseMirrorPlugins() {
-    const findColorsWithStorage = (doc) => findColors(doc, this.storage.highlights, this.storage.color)
+    const findColorsWithStorage = (doc) => findColors(doc, this.storage.highlights)
+    const tldrawEditor = this.options.tldrawEditor; // Capture tldrawEditor in a closure
 
     return [
       new Plugin({
@@ -90,6 +88,25 @@ export const ColorHighlighter = Extension.create({
         props: {
           decorations(state) {
             return this.getState(state)
+          },
+          handleClick(view, pos, event) {
+            const target = event.target as HTMLElement;
+            if (target.classList.contains('concept-highlight')) {
+              const shapeId = target.getAttribute('data-shape-id');
+              console.log('Clicked on highlight with shapeId:', shapeId);
+              
+              console.log("TLDRAW EDITOR:", tldrawEditor)
+              tldrawEditor.updateShape({
+                id: shapeId,
+                props: {
+                    selected: !tldrawEditor.getShape(shapeId).props.selected
+                }
+              })
+              // Add your custom click handling logic here
+
+              return true; // Prevent default behavior
+            }
+            return false; // Allow default behavior
           },
         },
       }),

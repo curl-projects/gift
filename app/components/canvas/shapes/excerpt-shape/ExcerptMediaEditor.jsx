@@ -63,7 +63,8 @@ export default function ExcerptMediaEditor({ excerpt, tldrawEditor, annotations,
         paragraph: true
       }),
       ColorHighlighter.configure({
-        data: ['Hello']
+        data: ['Hello'],
+        tldrawEditor: tldrawEditor,
       }),
     //   CustomHeading,
     //   CustomParagraph,
@@ -186,11 +187,12 @@ export default function ExcerptMediaEditor({ excerpt, tldrawEditor, annotations,
   }, [scrollChange])
 
   useEffect(()=>{
-    const highlightPositions = findHighlightPositions(editor.state.doc, [excerpt.props.content, 'It is timeful', ...annotationHighlights]);
+    const intHighlightPositions = findHighlightPositions(editor.state.doc, [excerpt.props.content, 'It is timeful'], "rgb(130, 162, 223)");
+
+    const highlightPositions = intHighlightPositions.map(highlight => ({...highlight, color: "rgb(130, 162, 223)", shapeId: excerpt.id}))
     console.log("HIGHLIGHT POSITIONS:", highlightPositions)
     editor.commands.updateData({
         highlights: highlightPositions,
-        color: "rgb(130, 162, 223)"
     })
 
     setTimeout(() => {
@@ -202,7 +204,7 @@ export default function ExcerptMediaEditor({ excerpt, tldrawEditor, annotations,
       }, 500);
   
 
-  }, [editor, excerpt.props.content])
+  }, [editor, excerpt.props.content. annotationHighlights])
 
   useEffect(()=>{
     // load all of the annotations
@@ -238,8 +240,13 @@ export default function ExcerptMediaEditor({ excerpt, tldrawEditor, annotations,
                 }
             })
         }
-        // else{ 
-        // }
+
+        // add annotations to the set of highlights
+        const existingHighlights = editor.storage.colorHighlighter.highlights || [];
+        const combinedHighlights = [...existingHighlights, ...annotations.map(annotation => ({from: annotation.fromPos, to: annotation.toPos, color: 'rgb(255, 192, 203)', shapeId: createShapeId(annotation.id)}))];
+        editor.commands.updateData({
+            highlights: combinedHighlights,
+        })
     }
 
     const annotationShapeIds = tldrawEditor.getCurrentPageShapes().filter(shape => shape.type === 'annotation').map(shape => shape.id)
