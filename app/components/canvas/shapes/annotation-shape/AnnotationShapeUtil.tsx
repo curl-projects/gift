@@ -25,6 +25,7 @@ const annotationShapeProps = {
 	from: T.number,
 	to: T.number,
 	selected: T.boolean,
+	hovered: T.boolean,
 }
 
 type AnnotationShape = TLBaseShape<
@@ -38,6 +39,7 @@ type AnnotationShape = TLBaseShape<
 		from: number,
 		to: number,
 		selected: boolean,
+		hovered: boolean,
 	}
 >
 
@@ -61,6 +63,7 @@ export class AnnotationShapeUtil extends BaseBoxShapeUtil<AnnotationShape> {
 			from: 0,
 			to: 10,
 			selected: false,
+			hovered: false,
 		}
 	}
 
@@ -80,6 +83,7 @@ export class AnnotationShapeUtil extends BaseBoxShapeUtil<AnnotationShape> {
 		const controls = useAnimationControls()
 		const [scope, animate] = useAnimate();
 		const fetcher = useFetcher();
+		const [link, setLink] = useState("")
 
 		const maskPosition = 100; // Adjust this value dynamically as needed
 
@@ -119,21 +123,76 @@ export class AnnotationShapeUtil extends BaseBoxShapeUtil<AnnotationShape> {
 		useEffect(()=>{
 			// on a positional update, get the position of the bound excerpt object
 			const mediaBinding = this.editor.getBindingsFromShape(shape.id, 'annotation').find(binding => {
-				console.log("BINDING:", this.editor.getShape(binding.toId), this.editor.getShape(binding.toId).type === 'excerpt')
 				return this.editor.getShape(binding.toId).type === 'excerpt'
 			})
-			const mediaShape = this.editor.getShape(mediaBinding.toId)
 
-			const top = Math.max(0, mediaShape.y - shape.y)
-			const bottom = Math.max(0, (shape.y+shape.props.h) - (mediaShape.y + mediaShape.props.h))
-			shapeRef.current.style.clipPath = `inset(${top}px 0 ${bottom}px 0)`;
-			if (top > 0 || bottom > 0) {
-				shapeRef.current.style.maskImage = `linear-gradient(to bottom, transparent ${top}px, black ${top + 20}px, black calc(100% - ${bottom + 20}px), transparent calc(100% - ${bottom}px))`;
-			} else {
-				shapeRef.current.style.maskImage = 'none';
+
+			const mediaShape = mediaBinding ? this.editor.getShape(mediaBinding.toId) : undefined
+
+			if(mediaShape){
+				const top = Math.max(0, mediaShape.y - shape.y)
+				const bottom = Math.max(0, (shape.y+shape.props.h) - (mediaShape.y + mediaShape.props.h))
+				shapeRef.current.style.clipPath = `inset(${top}px 0 ${bottom}px 0)`;
+				if (top > 0 || bottom > 0) {
+					shapeRef.current.style.maskImage = `linear-gradient(to bottom, transparent ${top}px, black ${top + 20}px, black calc(100% - ${bottom + 20}px), transparent calc(100% - ${bottom}px))`;
+				} else {
+					shapeRef.current.style.maskImage = 'none';
+				}
 			}
 		}, [shape.x, shape.y])
 
+		useEffect(()=>{
+			console.log("IMPORTANT UPDATE!")
+			if(shape.props.temporary){
+				console.log("SHAPE OPACITY:", shape.opacity)
+				const mediaBinding = this.editor.getBindingsFromShape(shape.id, 'annotation').find(binding => {
+					console.log("BINDING:", this.editor.getShape(binding.toId), this.editor.getShape(binding.toId).type === 'excerpt')
+					return this.editor.getShape(binding.toId).type === 'excerpt'
+				})
+
+				const mediaObject = mediaBinding ? this.editor.getShape(mediaBinding.toId) : undefined
+
+				if(shape.opacity === 1){
+					console.log("SHAPE IS VISIBLE!")
+					
+					if(mediaObject && this.editor){
+						console.log("EDITOR:", this.editor)
+
+						const mediaBounds = this.editor.getShapePageBounds(mediaObject);
+						const annotationBounds = this.editor.getShapePageBounds(shape);
+						
+						console.log("BOUNDS:", annotationBounds, mediaBounds)
+							// Calculate the combined bounding box
+						const combinedBounds = {
+							x: Math.min(mediaBounds.x, annotationBounds.x),
+							y: Math.min(mediaBounds.y, annotationBounds.y),
+							w: Math.max(annotationBounds.x+annotationBounds.w, mediaBounds.x+mediaBounds.w) - Math.min(annotationBounds.x, mediaBounds.x),
+							h: Math.max(mediaBounds.h, annotationBounds.h),
+						};
+						
+						setTimeout(() => {
+							this.editor.zoomToBounds(combinedBounds, {
+								animation: {
+									duration: 300
+								},
+								targetZoom: 4,
+							});
+						}, 200)
+						
+					}
+				}
+				else if(shape.opacity === 0){
+					if(mediaObject){
+						this.editor.zoomToBounds(this.editor.getShapePageBounds(mediaObject), {
+							targetZoom: 3,
+							animation: {
+								duration: 300
+							}
+						})
+					}
+				}
+			}
+		}, [shape.opacity, shape.props.temporary, shape.props.selected])
 		
 		const editor = useEditor({
 			extensions: [StarterKit],
@@ -165,10 +224,42 @@ export class AnnotationShapeUtil extends BaseBoxShapeUtil<AnnotationShape> {
 						backgroundColor: isHovered ? "rgba(0, 0, 0, 0.4)" : "rgba(0, 0, 0, 0.1)",
 						left: isHovered ? '-10px' : "0px",
 						boxShadow: isHovered ? "0px 36px 42px -4px rgba(77, 77, 77, 0.4)" : "0px 36px 42px -4px rgba(77, 77, 77, 0.15)",
-						border: shape.props.selected ? "2px solid blue" : "none",
+						border: shape.props.hovered ? '2px solid pink' : (shape.props.selected ? "2px solid blue" : "none"),
+						visibility: (shape.props.temporary || shape.props.hovered || shape.props.selected) ? "visible" : "hidden"
                         }}
 					onMouseEnter={() => setIsHovered(true)}
 					onMouseLeave={() => setIsHovered(false)}
+					onPointerDown={() => {
+						// trigger camera zoom
+
+						const mediaBinding = this.editor.getBindingsFromShape(shape.id, 'annotation').find(binding => {
+							return this.editor.getShape(binding.toId).type === 'excerpt'
+						})
+
+						const mediaObject = mediaBinding ? this.editor.getShape(mediaBinding.toId) : undefined
+
+						if(mediaObject && this.editor){
+
+
+							const mediaBounds = this.editor.getShapePageBounds(mediaObject);
+							const annotationBounds = this.editor.getShapePageBounds(shape);
+							
+								// Calculate the combined bounding box
+							const combinedBounds = {
+								x: Math.min(mediaBounds.x, annotationBounds.x),
+								y: Math.min(mediaBounds.y, annotationBounds.y),
+								w: Math.max(annotationBounds.x+annotationBounds.w, mediaBounds.x+mediaBounds.w) - Math.min(annotationBounds.x, mediaBounds.x),
+								h: Math.max(mediaBounds.h, annotationBounds.h),
+							};
+					
+							this.editor.zoomToBounds(combinedBounds, {
+							animation: {
+								duration: 300
+							},
+							targetZoom: 4,
+						});
+						}
+					}}
                     >
 					<div className={styles.headerRow}>
 						<div className={styles.iconWrapper}></div>
@@ -180,12 +271,13 @@ export class AnnotationShapeUtil extends BaseBoxShapeUtil<AnnotationShape> {
 					{shape.props.temporary &&
 						<button 
 							style={{
-								fontSize: "30px",
+								fontSize: "10px",
 								color: "blue",
 								fontWeight: '800',
 								cursor: 'pointer',
+	
 							}}
-							onPointerDown={async () => {
+							onPointerDown={async (e) => {
 								console.log("POINTER DOWN ON NEW ANNOTATION")
 								const mediaBinding = this.editor.getBindingsFromShape(shape.id, 'annotation').find(binding => {
 									console.log("BINDING:", this.editor.getShape(binding.toId), this.editor.getShape(binding.toId).type === 'excerpt')
@@ -195,7 +287,6 @@ export class AnnotationShapeUtil extends BaseBoxShapeUtil<AnnotationShape> {
 								// save annotation to database
 								if (mediaBinding) {
 
-									console.log("GET MEDIA SHAPE", this.editor.getShape(mediaBinding.toId)?.props.media.id)
 									fetcher.submit(
 										{
 											actionType: "saveAnnotation",
@@ -207,8 +298,10 @@ export class AnnotationShapeUtil extends BaseBoxShapeUtil<AnnotationShape> {
 										{ method: "post", action: `/world-models/${data.user.uniqueName}` }
 									);
 								}
+								
 
-								console.log("MEDIA BINDING", mediaBinding)
+								e.preventDefault();
+
 
 							}}>
 							Highlight

@@ -95,7 +95,6 @@ export const ColorHighlighter = Extension.create({
               const shapeId = target.getAttribute('data-shape-id');
               console.log('Clicked on highlight with shapeId:', shapeId);
               
-              console.log("TLDRAW EDITOR:", tldrawEditor)
               tldrawEditor.updateShape({
                 id: shapeId,
                 props: {
@@ -108,6 +107,38 @@ export const ColorHighlighter = Extension.create({
             }
             return false; // Allow default behavior
           },
+          handleDOMEvents: {
+            mouseover(view, event){
+                const target = event.target as HTMLElement;
+                if (target.classList.contains('concept-highlight')) {
+                  const shapeId = target.getAttribute('data-shape-id');
+                  const shape = tldrawEditor.getShape(target.getAttribute('data-shape-id'))
+                  if(shape.type === 'annotation'){
+                    tldrawEditor.updateShape({
+                        id: shapeId,
+                        props: {
+                            hovered: true,
+                        }
+                      })
+                  }
+                }
+            },
+            mouseout(view, event){
+                const target = event.target as HTMLElement;
+                if (target.classList.contains('concept-highlight')) {
+                  const shapeId = target.getAttribute('data-shape-id');
+                  const shape = tldrawEditor.getShape(target.getAttribute('data-shape-id'))
+                  if(shape.type === 'annotation'){
+                    tldrawEditor.updateShape({
+                        id: shapeId,
+                        props: {
+                            hovered: false,
+                        }
+                      })
+                  }
+                }
+            }
+          }
         },
       }),
     ]

@@ -110,7 +110,7 @@ p.is-editor-empty:first-child::before {
 }
 
 /* TIPTAP HIGHLIGHT */
-@-webkit-keyframes highlight {
+@-webkit-keyframes highlight { 
     to {
       background-position: 0 0;
     }
@@ -132,11 +132,13 @@ p.is-editor-empty:first-child::before {
     border-bottom: 1px solid var(--concept-highlight-color-border);
     margin-bottom: -1px;
     cursor: pointer;
+    position: relative;
+    z-index: 1;
   }
 
 .concept-highlight:hover{
   transition: background-color 0.3s ease-in-out;
-  background-color: var(--concept-highlight-color-hover);
+  background-color: var(--concept-highlight-color-border);
 }
 
 .excerptTextContent {
