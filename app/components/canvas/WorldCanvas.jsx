@@ -20,6 +20,7 @@ import { SelectionListener } from "~/components/canvas/custom-ui/listeners/Selec
 import { ConstellationLabel } from "~/components/canvas/custom-ui/game-ui/ConstellationLabel"
 import { Stars } from './custom-ui/aesthetics/stars/Stars';
 import { Clouds } from './custom-ui/aesthetics/clouds/Clouds';
+import { NarratorVoice } from "./custom-ui/game-ui/Narrator/NarratorVoice"
 import { handleDoubleClickOnCanvas } from '~/components/canvas/helpers/canvasOverride';
 
 // CUSTOM SHAPES
@@ -194,6 +195,7 @@ export default function WorldCanvas() {
                             />
                             <Stars />
                             <Clouds />
+                            <NarratorVoice />
                         </>
                     )}
 

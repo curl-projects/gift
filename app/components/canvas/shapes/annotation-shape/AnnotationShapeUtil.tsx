@@ -15,6 +15,7 @@ import { motion, useAnimate, AnimatePresence, useAnimationControls } from 'frame
 import { useConstellationMode } from '~/components/canvas/custom-ui/utilities/ConstellationModeContext';
 import StarterKit from '@tiptap/starter-kit';
 import { EditorContent, useEditor } from '@tiptap/react';
+import { useConstellationMode } from "~/components/canvas/custom-ui/utilities/ConstellationModeContext";
 
 const annotationShapeProps = {
 	w: T.number,
@@ -84,6 +85,8 @@ export class AnnotationShapeUtil extends BaseBoxShapeUtil<AnnotationShape> {
 		const [scope, animate] = useAnimate();
 		const fetcher = useFetcher();
 		const [link, setLink] = useState("")
+		const { setNarratorEvent } = useConstellationMode();
+
 
 		const maskPosition = 100; // Adjust this value dynamically as needed
 
@@ -222,7 +225,7 @@ export class AnnotationShapeUtil extends BaseBoxShapeUtil<AnnotationShape> {
                     ref={shapeRef} 
                     style={{
 						backgroundColor: isHovered ? "rgba(0, 0, 0, 0.4)" : "rgba(0, 0, 0, 0.1)",
-						left: isHovered ? '-10px' : "0px",
+						left: (shape.props.temporary || shape.props.selected || isHovered) ? '-10px' : "0px",
 						boxShadow: isHovered ? "0px 36px 42px -4px rgba(77, 77, 77, 0.4)" : "0px 36px 42px -4px rgba(77, 77, 77, 0.15)",
 						border: shape.props.hovered ? '2px solid pink' : (shape.props.selected ? "2px solid blue" : "none"),
 						visibility: (shape.props.temporary || shape.props.hovered || shape.props.selected) ? "visible" : "hidden"
@@ -231,33 +234,8 @@ export class AnnotationShapeUtil extends BaseBoxShapeUtil<AnnotationShape> {
 					onMouseLeave={() => setIsHovered(false)}
 					onPointerDown={() => {
 						// trigger camera zoom
-
-						const mediaBinding = this.editor.getBindingsFromShape(shape.id, 'annotation').find(binding => {
-							return this.editor.getShape(binding.toId).type === 'excerpt'
-						})
-
-						const mediaObject = mediaBinding ? this.editor.getShape(mediaBinding.toId) : undefined
-
-						if(mediaObject && this.editor){
-
-
-							const mediaBounds = this.editor.getShapePageBounds(mediaObject);
-							const annotationBounds = this.editor.getShapePageBounds(shape);
-							
-								// Calculate the combined bounding box
-							const combinedBounds = {
-								x: Math.min(mediaBounds.x, annotationBounds.x),
-								y: Math.min(mediaBounds.y, annotationBounds.y),
-								w: Math.max(annotationBounds.x+annotationBounds.w, mediaBounds.x+mediaBounds.w) - Math.min(annotationBounds.x, mediaBounds.x),
-								h: Math.max(mediaBounds.h, annotationBounds.h),
-							};
-					
-							this.editor.zoomToBounds(combinedBounds, {
-							animation: {
-								duration: 300
-							},
-							targetZoom: 4,
-						});
+						if(shape.props.temporary){
+							setNarratorEvent("leaveAnnotation")
 						}
 					}}
                     >
@@ -265,6 +243,9 @@ export class AnnotationShapeUtil extends BaseBoxShapeUtil<AnnotationShape> {
 						<div className={styles.iconWrapper}></div>
 						<p className={styles.userName}> Finn Macken</p>
 						<p className={styles.timeStamp}>1m</p>
+					</div>
+					<div className={styles.linkRow}>
+						
 					</div>
 					<EditorContent editor={editor} className={styles.textContent}/>
 

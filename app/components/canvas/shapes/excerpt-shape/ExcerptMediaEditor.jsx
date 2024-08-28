@@ -78,10 +78,6 @@ const triggerZoom = () => {
     if(tempAnnotation){
         const mediaBounds = tldrawEditor.getShapePageBounds(excerpt);
         const annotationBounds = tldrawEditor.getShapePageBounds(tempAnnotation);
-    
-    
-    
-    
         
         const combinedBounds = {
             x: Math.min(mediaBounds.x, annotationBounds.x),
@@ -97,9 +93,11 @@ const triggerZoom = () => {
             targetZoom: 4,
         });
     }
+
+    
 };
 
-const debouncedTriggerZoom = debounce(triggerZoom, 10);
+const debouncedTriggerZoom = debounce(triggerZoom, 50);
 
 
 

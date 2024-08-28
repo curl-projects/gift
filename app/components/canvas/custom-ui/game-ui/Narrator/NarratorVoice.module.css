@@ -1,0 +1,80 @@
+@import url('https://fonts.googleapis.com/css2?family=Handjet:wght@100..900&display=swap');
+
+.voiceContainer {
+    width: 100%;
+    position: fixed;
+    left: 0;
+    right: 0;
+    pointer-events: none;
+}
+
+.voiceContainer.bottom {
+    bottom: 0;
+}
+
+.voiceContainer.three-quarters {
+    bottom: 50%;
+}
+
+.voiceText {
+    font-size: 50px;
+    color: rgba(255, 255, 255, 0.4); /* Make the text itself transparent */
+    font-family: "Handjet", sans-serif;
+    font-weight: 300; 
+    z-index: 1000;
+    background: 
+        url(/images/cloud-overlay.png) repeat-x center center / cover, /* Forward-moving clouds */
+        url(/images/cloud-overlay.png) repeat-x center center / cover; /* Reverse-moving clouds */
+    -webkit-background-clip: text; /* Clip the background to the text */
+    background-clip: text;
+    background-size: 100% 100%, 100% 100%; 
+    animation: cloudLoop 40s linear infinite alternate !important, /* Apply the forward-moving cloud animation */
+               cloudLoopReverse 40s linear infinite alternate !important; /* Apply the reverse-moving cloud animation */
+}
+
+.voiceContainerInner {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    padding: 60px 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.voiceContainerDarkening {
+    position: absolute;
+    top: -100%;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.5), transparent); /* Optional: gradient effect */
+}
+
+.threeQuartersDarkening {
+    top: -100%;
+    bottom: -100%;
+    background: 
+        linear-gradient(to top, transparent, rgba(0, 0, 0, 0.5) 50%, transparent), 
+        linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.5) 50%, transparent); /* Gradient on both sides */
+
+}
+
+@keyframes cloudLoop {
+    0% {
+        background-position: 0 0;
+    }
+    100% {
+        background-position: -50% 0;
+    }
+}
+
+@keyframes cloudLoopReverse {
+    0% {
+        background-position: -50% 0;
+    }
+    100% {
+        background-position: 0 0;
+    }
+}

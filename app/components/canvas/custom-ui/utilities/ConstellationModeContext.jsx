@@ -7,9 +7,10 @@ const ConstellationModeContext = createContext();
 export const ConstellationModeProvider = ({ children }) => {
     const [drifting, setDrifting] = useState(false);
     const [expandedShapeIds, setExpandedShapeIds] = useState([])
+    const [narratorEvent, setNarratorEvent] = useState(null)
 
     return (
-        <ConstellationModeContext.Provider value={{ drifting, setDrifting, expandedShapeIds, setExpandedShapeIds }}>
+        <ConstellationModeContext.Provider value={{ drifting, setDrifting, expandedShapeIds, setExpandedShapeIds, narratorEvent, setNarratorEvent }}>
             {children}
         </ConstellationModeContext.Provider>
     );
