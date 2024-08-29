@@ -94,10 +94,10 @@ const triggerZoom = () => {
         });
     }
 
-    
+
 };
 
-const debouncedTriggerZoom = debounce(triggerZoom, 50);
+const debouncedTriggerZoom = debounce(triggerZoom, 150);
 
 
 
@@ -256,63 +256,63 @@ const debouncedTriggerZoom = debounce(triggerZoom, 50);
 
   }, [editor, excerpt.props.content. annotationHighlights])
 
-//   useEffect(()=>{
-//     // load all of the annotations
-//     console.log("ANNOTATIONS:", annotations)
+  useEffect(()=>{
+    // load all of the annotations
+    console.log("ANNOTATIONS:", annotations)
 
 
-//     // create annotations that don't exist
-//     for(let annotation of annotations){
-//         const annotationShapeId = createShapeId(annotation.id)
-//         if(!tldrawEditor.getShape(annotationShapeId)){
+    // create annotations that don't exist
+    for(let annotation of annotations){
+        const annotationShapeId = createShapeId(annotation.id)
+        if(!tldrawEditor.getShape(annotationShapeId)){
             
-//             const startCoords = editor.view.coordsAtPos(annotation.fromPos);
+            const startCoords = editor.view.coordsAtPos(annotation.fromPos);
 
-//             console.log("X:", excerpt.x + excerpt.props.w + 40)
-//             console.log("Y:", tldrawEditor.screenToPage({x: 0, y: startCoords.top}).y)
+            console.log("X:", excerpt.x + excerpt.props.w + 40)
+            console.log("Y:", tldrawEditor.screenToPage({x: 0, y: startCoords.top}).y)
             
-//             console.log("CREATING ANNOTATION:", annotation)
-//             tldrawEditor.createShape({
-//                 id: annotationShapeId,
-//                 type: "annotation",
-//                 x: excerpt.x + excerpt.props.w + 40,
-//                 y: tldrawEditor.screenToPage({x: 0, y: startCoords.top}).y,
-//                 props: {
-//                     from: annotation.fromPos,
-//                     to: annotation.toPos
-//                 }
-//             }).createBinding({
-//                 fromId: annotationShapeId,
-//                 toId: excerpt.id,
-//                 type: "annotation",
-//                 props: {
+            console.log("CREATING ANNOTATION:", annotation)
+            tldrawEditor.createShape({
+                id: annotationShapeId,
+                type: "annotation",
+                x: excerpt.x + excerpt.props.w + 40,
+                y: tldrawEditor.screenToPage({x: 0, y: startCoords.top}).y,
+                props: {
+                    from: annotation.fromPos,
+                    to: annotation.toPos
+                }
+            }).createBinding({
+                fromId: annotationShapeId,
+                toId: excerpt.id,
+                type: "annotation",
+                props: {
 
-//                 }
-//             })
-//         }
+                }
+            })
+        }
 
-//         // add annotations to the set of highlights
-//         const existingHighlights = editor.storage.colorHighlighter.highlights || [];
-//         const combinedHighlights = [...existingHighlights, ...annotations.map(annotation => ({from: annotation.fromPos, to: annotation.toPos, color: 'rgb(255, 192, 203)', shapeId: createShapeId(annotation.id)}))];
-//         editor.commands.updateData({
-//             highlights: combinedHighlights,
-//         })
-//     }
+        // add annotations to the set of highlights
+        const existingHighlights = editor.storage.colorHighlighter.highlights || [];
+        const combinedHighlights = [...existingHighlights, ...annotations.map(annotation => ({from: annotation.fromPos, to: annotation.toPos, color: 'rgb(255, 192, 203)', shapeId: createShapeId(annotation.id)}))];
+        editor.commands.updateData({
+            highlights: combinedHighlights,
+        })
+    }
 
-//     const annotationShapeIds = tldrawEditor.getCurrentPageShapes().filter(shape => shape.type === 'annotation').map(shape => shape.id)
+    const annotationShapeIds = tldrawEditor.getCurrentPageShapes().filter(shape => shape.type === 'annotation').map(shape => shape.id)
 
-//     console.log("ANNOTATION SHAPE IDS:", annotationShapeIds)
+    console.log("ANNOTATION SHAPE IDS:", annotationShapeIds)
 
-//     // delete annotations that shouldn't exist
-//     for(let shapeId of annotationShapeIds){
-//         console.log("SHAPE ID:", shapeId)
-//         console.log("ANNOTATIONS MUTATED:", annotations.map(annotation => createShapeId(annotation.id)))
-//         if(!annotations.map(annotation => createShapeId(annotation.id)).includes(shapeId)){
-//             console.log("DELETING ANNOTATION")
-//             tldrawEditor.deleteShape(shapeId);
-//         }
-//     }
-//   }, [annotations])
+    // delete annotations that shouldn't exist
+    for(let shapeId of annotationShapeIds){
+        console.log("SHAPE ID:", shapeId)
+        console.log("ANNOTATIONS MUTATED:", annotations.map(annotation => createShapeId(annotation.id)))
+        if(!annotations.map(annotation => createShapeId(annotation.id)).includes(shapeId)){
+            console.log("DELETING ANNOTATION")
+            tldrawEditor.deleteShape(shapeId);
+        }
+    }
+  }, [annotations])
 
 
   useEffect(() => {

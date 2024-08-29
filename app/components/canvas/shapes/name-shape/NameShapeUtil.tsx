@@ -232,9 +232,9 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
             collection.startSimulation();
             
         // needs to be in a time out because the canvas position doesn't update while all of these changes are happening
-            setTimeout(() => {
-                setDrifting(true);
-            }, 600);
+            // setTimeout(() => {
+            //     setDrifting(true);
+            // }, 600);
         }
         }
         }, [shape.props.expanded])

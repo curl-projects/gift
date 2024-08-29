@@ -4,8 +4,9 @@ import styles from "./NarratorVoice.module.css";
 import { useConstellationMode } from "~/components/canvas/custom-ui/utilities/ConstellationModeContext";
 
 export function NarratorVoice() {
-    const { narratorEvent, setNarratorEvent } = useConstellationMode();
-    const [visible, setVisible] = useState(false);
+    const { narratorEvent, setNarratorEvent, setDrifting } = useConstellationMode();
+    const [textVisible, setTextVisible] = useState(false);
+    const [darkeningVisible, setDarkeningVisible] = useState(false);
     const [currentText, setCurrentText] = useState('');
     const [currentIndex, setCurrentIndex] = useState(0);
     const [commands, setCommands] = useState([]);
@@ -29,12 +30,15 @@ export function NarratorVoice() {
                 'duration': 3000,
                 'requiresInteraction': true,
                 'position': 'three-quarters'
+            },
+            {
+                'callback': () => setDrifting(true)
             }
         ],
         'leaveAnnotation': [
             {
                 'text': 'You must offer up something in return',
-                'duration': 1000,
+                'duration': 3000,
                 'requiresInteraction': false,
                 'position': 'bottom'
             }
@@ -45,24 +49,33 @@ export function NarratorVoice() {
         if (narratorEvent && narratorOrchestration[narratorEvent]) {
             setCommands(narratorOrchestration[narratorEvent]);
             setCurrentIndex(0);
+            setDarkeningVisible(true);
             executeCommands(narratorOrchestration[narratorEvent], 0);
         }
     }, [narratorEvent]);
 
     const executeCommands = useCallback((commands, index) => {
         if (index >= commands.length) {
-            setVisible(false);
+            setTextVisible(false);
+            setDarkeningVisible(false);
             return;
         }
 
         const command = commands[index];
+
+        if (command.callback) {
+            command.callback();
+            executeCommands(commands, index + 1);
+            return;
+        }
+
         setCurrentText(command.text);
         setPosition(command.position);
-        setVisible(true);
+        setTextVisible(true);
 
         if (!command.requiresInteraction) {
             const id = setTimeout(() => {
-                setVisible(false);
+                setTextVisible(false);
                 setTimeout(() => {
                     executeCommands(commands, index + 1);
                 }, 3000); // Fade out duration
@@ -77,7 +90,7 @@ export function NarratorVoice() {
             if (timeoutId) {
                 clearTimeout(timeoutId);
             }
-            setVisible(false);
+            setTextVisible(false);
             setTimeout(() => {
                 executeCommands(commands, currentIndex + 1);
                 setCurrentIndex((prevIndex) => prevIndex + 1);
@@ -94,7 +107,7 @@ export function NarratorVoice() {
 
     return (
         <AnimatePresence>
-            {visible && (
+            {darkeningVisible && (
                 <motion.div
                     className={`${styles.voiceContainer} ${styles[position]}`}
                     initial={{ opacity: 0 }}
@@ -103,7 +116,19 @@ export function NarratorVoice() {
                     transition={{ duration: 3 }}
                 >
                     <div className={styles.voiceContainerInner}>
-                        <p className={styles.voiceText}>{currentText}</p>
+                        <AnimatePresence>
+                            {textVisible && (
+                                <motion.p
+                                    className={styles.voiceText}
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    transition={{ duration: 3 }}
+                                >
+                                    {currentText}
+                                </motion.p>
+                            )}
+                        </AnimatePresence>
                         <div className={`${styles.voiceContainerDarkening} ${position === 'three-quarters' ? styles.threeQuartersDarkening : ''}`} />
                     </div>
                 </motion.div>
