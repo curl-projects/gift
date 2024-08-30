@@ -8,7 +8,7 @@
   .shapeContent {
     width: 250px;
     pointer-events: all;
-    position: relative;
+    /* position: relative; */
     box-shadow: 0px 36px 42px -4px rgba(77, 77, 77, 0.15);
     cursor: pointer;
     transition: background-color 0.3s ease-in-out, left 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
@@ -54,3 +54,64 @@
     cursor: text;
     padding: 0px 16px;
   }
+
+/* EFFECTS CSS */
+  .ripple {
+    border: 1px solid rgba(251, 247, 245, 0.3);
+    filter: blur(4px);
+    border-radius: 100%;
+    box-shadow: 0px 0px 10px 0px rgba(251, 247, 245, 0.3);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    /* height: 56px;
+    width: 56px; */
+    pointer-events: none;
+  }
+
+  .innerRing{
+    border: 2.6px dashed rgba(251, 247, 245, 0.2);
+    border-radius: 100%;
+    /* height: 56px;
+    width: 56px;  */
+    position: absolute;
+    top: 50%;
+    filter: blur(1px);
+    left: 50%;
+    box-shadow: 0px 0px 10px 0px rgba(251, 247, 245, 0.2);
+
+  }
+
+  
+  .outerRing {
+    border: 2.6px double rgba(251, 247, 245, 0.2);
+    border-radius: 100%;
+    /* height: 56px;
+    width: 56px;  */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    /* filter: blur(1px); */
+    box-shadow: 0px 0px 10px 0px rgba(251, 247, 245, 0.2);
+  }
+
+  .innerGlow {
+    /* height: 18px;
+    width: 18px; */
+    border-radius: 100%;
+    background-color: rgba(251, 247, 245, 0.6);
+    filter: blur(13.66px);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    box-shadow: 0px 0px 10px 0px rgba(251, 247, 245, 0.2);
+  }
+
+    /* Placeholder (at the top) */
+    .textContent p.is-editor-empty:first-child::before {
+      color: pink;
+      content: attr(data-placeholder);
+      float: left;
+      height: 0;
+      pointer-events: none;
+    }

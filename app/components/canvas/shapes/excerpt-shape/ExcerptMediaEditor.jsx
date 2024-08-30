@@ -35,6 +35,9 @@ function updateTemporaryAnnotation(tldrawEditor, editor, fromPos, toPos, excerpt
     console.log*"UPDATING TEMPORARY ANNOTATION"
 
     if(fromPos && toPos){
+        
+      tldrawEditor.deselect(tempAnnotationId)
+      
         tldrawEditor.updateShape({
             id: tempAnnotationId,
             type: 'annotation',
@@ -47,6 +50,9 @@ function updateTemporaryAnnotation(tldrawEditor, editor, fromPos, toPos, excerpt
                 selected: true,
             }
         })
+
+       
+
     }
 }
 
@@ -83,7 +89,7 @@ const triggerZoom = () => {
             x: Math.min(mediaBounds.x, annotationBounds.x),
             y: Math.min(mediaBounds.y, annotationBounds.y),
             w: Math.max(annotationBounds.x + annotationBounds.w, mediaBounds.x + mediaBounds.w) - Math.min(annotationBounds.x, mediaBounds.x),
-            h: Math.max(mediaBounds.h, annotationBounds.h),
+            h: Math.max(mediaBounds.h, annotationBounds.h) / 2,
         };
     
         tldrawEditor.zoomToBounds(combinedBounds, {
@@ -198,6 +204,9 @@ const debouncedTriggerZoom = debounce(triggerZoom, 150);
                     selected: false
                 }
             })
+
+            // the shape doesn't automatically deselect normally
+            tldrawEditor.deselect(tempAnnotationId)
         }
 
 

@@ -16,6 +16,7 @@ import { useConstellationMode } from '~/components/canvas/custom-ui/utilities/Co
 import StarterKit from '@tiptap/starter-kit';
 import { EditorContent, useEditor } from '@tiptap/react';
 import { useConstellationMode } from "~/components/canvas/custom-ui/utilities/ConstellationModeContext";
+import Placeholder from '@tiptap/extension-placeholder'
 
 const annotationShapeProps = {
 	w: T.number,
@@ -51,15 +52,15 @@ export class AnnotationShapeUtil extends BaseBoxShapeUtil<AnnotationShape> {
 
 	override canEdit = () => false
 	override canResize = () => false
-    override hideSelectionBoundsBg = () => false
-    override hideSelectionBoundsFg = () => false;
+    override hideSelectionBoundsBg = () => true;
+    override hideSelectionBoundsFg = () => true;
 
 	getDefaultProps(): AnnotationShape['props'] {
 		return { 
 			w: 200,
 			h: 56,
 			type: "comment",
-			text: "No Text",
+			text: "",
 			temporary: false,
 			from: 0,
 			to: 10,
@@ -80,13 +81,41 @@ export class AnnotationShapeUtil extends BaseBoxShapeUtil<AnnotationShape> {
 		const bounds = this.editor.getShapeGeometry(shape).bounds
 		const data: any = useLoaderData();
 		const [isHovered, setIsHovered] = useState(false)
+		const [charCount, setCharCount] = useState(0)
 		const shapeRef = useRef<HTMLDivElement>(null);
 		const controls = useAnimationControls()
 		const [scope, animate] = useAnimate();
 		const fetcher = useFetcher();
 		const [link, setLink] = useState("")
 		const { setNarratorEvent } = useConstellationMode();
+		const isOnlySelected = this.editor.getOnlySelectedShape()?.id === shape.id
 
+		const [ringSize, setRingSize] = useState({ width: 0, height: 0 });
+
+		useEffect(() => {
+			const updateRingSize = () => {
+				if (shapeRef.current) {
+					setRingSize({
+						width: shapeRef.current.clientWidth,
+						height: shapeRef.current.clientHeight,
+					});
+				}
+			};
+
+			updateRingSize();
+
+			const resizeObserver = new ResizeObserver(updateRingSize);
+			if (shapeRef.current) {
+				resizeObserver.observe(shapeRef.current);
+			}
+
+			return () => {
+				if (shapeRef.current) {
+					resizeObserver.unobserve(shapeRef.current);
+				}
+				resizeObserver.disconnect();
+			};
+		}, [shapeRef.current]);
 
 		const maskPosition = 100; // Adjust this value dynamically as needed
 
@@ -198,10 +227,16 @@ export class AnnotationShapeUtil extends BaseBoxShapeUtil<AnnotationShape> {
 		}, [shape.opacity, shape.props.temporary, shape.props.selected])
 		
 		const editor = useEditor({
-			extensions: [StarterKit],
+			extensions: [
+				StarterKit,
+				Placeholder.configure({
+					placeholder: "Offer up something...",
+				}),
+			],
 			content: shape.props.text,
 			onUpdate: ({ editor }) => {
 				const html = editor.getHTML();
+				setCharCount(editor.getText().length)
 				// Update the shape's text property with the new content
 				this.editor.updateShape({
 					type: shape.type,
@@ -214,31 +249,137 @@ export class AnnotationShapeUtil extends BaseBoxShapeUtil<AnnotationShape> {
 		});
 
 
+		const rippleVariants = {
+			hidden: { opacity: 0, x: "-50%", y: "-50%" },
+			visible: { opacity: 0, x: "-50%", y: "-50%" } 
+		}
+
+		const innerRingVariants = {
+			hidden: { scale: 0, x: "-50%", y: "-50%" },
+			visible: (delay = 0) => ({
+				scale: 1.2,
+				x: "-50%", 
+				y: "-50%",
+				transition: { duration: 1, ease: "easeOut", delay },
+				rotate: 360
+			}),
+			rotate: {
+				rotate: [0, 360],
+				transition: { repeat: Infinity, duration: 30, ease: "linear" }
+			}
+		};
+
+		const outerRingVariants = {
+			hidden: { scale: 0, x: "-50%", y: "-50%" },
+			visible: (delay = 0) => ({
+				scale: 2,
+				x: "-50%", 
+				y: "-50%",
+				transition: { duration: 1, ease: "easeOut", delay },
+				rotate: -360
+			}),
+			rotate: {
+				rotate: [0, -360],
+				transition: { repeat: Infinity, duration: 30, ease: "linear" }
+			}
+		};
+
+
+
+		useEffect(()=>{
+			if(shape.props.temporary && isOnlySelected){
+				console.log("RUNNING EFFECT!")
+				animate(`.ripple`, { scale: [1, 3], opacity: [0, 1, 0], x: "-50%", y: "-50%" }, { duration: 4, ease: "easeOut" });
+			}
+		}, [isOnlySelected])
+
+
 		return (
 			<div 
 				id={shape.id}
 				className={styles.container}	
 				ref={scope}			
 				>
+					{shape.props.temporary &&
+					<>
+						<motion.div 
+							initial="visible"
+							animate="visible"
+							className={`${styles.ripple} ripple`}
+							style={{
+								height: ringSize.width,
+								width: ringSize.width
+							}}
+							variants={rippleVariants}
+								// transition={{ delay: 0}}
+							>
+							</motion.div>
+							<AnimatePresence>
+								{charCount >= 100 && 
+									<>
+										<motion.div
+										initial="hidden"
+										className={`${styles.outerRing} conceptCircle`}
+											animate={["visible", "rotate"]}
+											style={{
+												height: ringSize.width,
+												width: ringSize.width
+											}}
+											custom={0} // Delay for outer ring
+											variants={outerRingVariants}
+										/>
+									</>
+								}
+							</AnimatePresence>
+							<AnimatePresence>
+								{charCount >= 50 &&
+									<>
+									<motion.div
+									className={`${styles.innerRing} conceptCircle`}
+									initial="hidden"
+									style={{
+										height: ringSize.width,
+										width: ringSize.width
+									}}
+									animate={["visible", "rotate"]}
+									custom={0} // Delay for inner ring
+									variants={innerRingVariants}
+									/>
+									{/* <motion.div
+										initial="hidden"
+										className={`${styles.innerGlow} conceptCircle`}
+											animate="visible"
+											style={{
+												height: ringSize.width,
+												width: ringSize.width
+											}}
+											custom={0} // Delay for outer ring
+											variants={innerRingVariants}
+										/> */}
+									</>
+								}
+							</AnimatePresence>
+					</>
+					}
 				<div 
                     className={styles.shapeContent} 
                     ref={shapeRef} 
                     style={{
-						backgroundColor: isHovered ? "rgba(0, 0, 0, 0.4)" : "rgba(0, 0, 0, 0.1)",
+						backgroundColor: isHovered ? "rgba(0, 0, 0, 0.2)" : "rgba(0, 0, 0, 0.1)",
 						left: (shape.props.temporary || shape.props.selected || isHovered) ? '-10px' : "0px",
 						boxShadow: isHovered ? "0px 36px 42px -4px rgba(77, 77, 77, 0.4)" : "0px 36px 42px -4px rgba(77, 77, 77, 0.15)",
-						border: shape.props.hovered ? '2px solid pink' : (shape.props.selected ? "2px solid blue" : "none"),
+						// border: shape.props.hovered ? '2px solid pink' : (shape.props.selected ? "2px solid blue" : "none"),
 						visibility: (shape.props.temporary || shape.props.hovered || shape.props.selected) ? "visible" : "hidden"
                         }}
 					onMouseEnter={() => setIsHovered(true)}
 					onMouseLeave={() => setIsHovered(false)}
 					onPointerDown={() => {
-						// trigger camera zoom
 						if(shape.props.temporary){
 							setNarratorEvent("leaveAnnotation")
 						}
 					}}
                     >
+						
 					<div className={styles.headerRow}>
 						<div className={styles.iconWrapper}></div>
 						<p className={styles.userName}> Finn Macken</p>
@@ -250,6 +391,7 @@ export class AnnotationShapeUtil extends BaseBoxShapeUtil<AnnotationShape> {
 					<EditorContent editor={editor} className={styles.textContent}/>
 
 					{shape.props.temporary &&
+					<>
 						<button 
 							style={{
 								fontSize: "10px",
@@ -287,6 +429,10 @@ export class AnnotationShapeUtil extends BaseBoxShapeUtil<AnnotationShape> {
 							}}>
 							Highlight
 						</button>
+						<p style={{
+							color: 'white',
+						}}>{charCount} characters</p>
+					</>
 					}
 				</div>
 			</div>

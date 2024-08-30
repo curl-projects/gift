@@ -2,8 +2,11 @@ import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import styles from "./NarratorVoice.module.css";
 import { useConstellationMode } from "~/components/canvas/custom-ui/utilities/ConstellationModeContext";
+import { useEditor, createShapeId } from "tldraw";
 
 export function NarratorVoice() {
+    const editor = useEditor();
+
     const { narratorEvent, setNarratorEvent, setDrifting } = useConstellationMode();
     const [textVisible, setTextVisible] = useState(false);
     const [darkeningVisible, setDarkeningVisible] = useState(false);
@@ -13,9 +16,9 @@ export function NarratorVoice() {
     const [timeoutId, setTimeoutId] = useState(null);
     const [position, setPosition] = useState('bottom');
 
-    useEffect(() => {
-        setNarratorEvent('welcome');
-    }, [setNarratorEvent]);
+    // useEffect(() => {
+    //     setNarratorEvent('welcome');
+    // }, [setNarratorEvent]);
 
     const narratorOrchestration = {
         'welcome': [
@@ -33,14 +36,19 @@ export function NarratorVoice() {
             },
             {
                 'callback': () => setDrifting(true)
-            }
+            },
         ],
         'leaveAnnotation': [
             {
                 'text': 'You must offer up something in return',
                 'duration': 3000,
                 'requiresInteraction': false,
-                'position': 'bottom'
+                'position': 'bottom',
+                'waitForCondition': useCallback(() => {
+                    // console.log("SHAPE ID:", editor.getOnlySelectedShape()?.id)
+                    // console.log("TEMP ANNOTATION ID:", createShapeId("temp-annotation"))
+                    return editor.getOnlySelectedShape()?.id !== createShapeId("temp-annotation")
+                }, [editor])
             }
         ]
     };
@@ -58,6 +66,7 @@ export function NarratorVoice() {
         if (index >= commands.length) {
             setTextVisible(false);
             setDarkeningVisible(false);
+            setNarratorEvent(null);
             return;
         }
 
@@ -73,7 +82,22 @@ export function NarratorVoice() {
         setPosition(command.position);
         setTextVisible(true);
 
-        if (!command.requiresInteraction) {
+        if (command.waitForCondition) {
+            const checkCondition = () => {
+                // console.log("COMMAND:", command.waitForCondition)
+                // console.log("COMMAND FUNCTION:", command.waitForCondition())
+                // console.log("EDITOR SHAPE:", editor.getOnlySelectedShape(), createShapeId('temp-annotation'))
+                if (command.waitForCondition()) {
+                    setTextVisible(false);
+                    setTimeout(() => {
+                        executeCommands(commands, index + 1);
+                    }, 3000); // Fade out duration
+                } else {
+                    setTimeout(checkCondition, 500); // Throttle to 100 ms
+                }
+            };
+            checkCondition();
+        } else if (!command.requiresInteraction) {
             const id = setTimeout(() => {
                 setTextVisible(false);
                 setTimeout(() => {

@@ -88,7 +88,7 @@ ol {
 }
 
 
-p.is-editor-empty:first-child::before {
+/* p.is-editor-empty:first-child::before {
   content: attr(data-placeholder);
   float: left;
   height: 0;
@@ -96,7 +96,7 @@ p.is-editor-empty:first-child::before {
   opacity: 0.5 !important;
   color: rgba(0, 0, 0, 0.3) !important;
   white-space: nowrap;
-}
+} */
 
 .custom-type-animation-cursor::after {
   content: "|";
