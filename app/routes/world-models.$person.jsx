@@ -4,6 +4,7 @@ import { ClientOnly } from "remix-utils/client-only";
 import WorldCanvas from "~/components/canvas/WorldCanvas.jsx";
 import { getWorldContent, saveAnnotation } from "~/models/world-model.server";
 import { useEffect } from "react";
+import SceneEnvironment from "~/components/environment/SceneEnvironment";
 
 export async function loader({ params }) {
   const person = params.person;
@@ -46,12 +47,37 @@ export default function WorldModel(){
     }, [actionData])
 
     return(
-        <div className='canvasDiv'>
-            <ClientOnly>
-                {() => <WorldCanvas 
+      <>
+        <div id='constellation-canvas' 
+          style={{
+              position: 'fixed',
+              border: '2px solid #DAD9D6',
+              height: '84vh',
+              width: '44vw',
+              overflow: 'scroll',
+              left: '24px',
+              zIndex: '100000000',
 
-                />}
-            </ClientOnly>
+          }}>
+            {/* <h1 style={{
+              color: 'white',
+            }}>Hello!</h1> */}
+                <WorldCanvas />
         </div>
+        <div style={{
+          height: '100vh',
+          width: '100vw',
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          zIndex: 0,
+          overflow: 'hidden',
+        }}>
+          <SceneEnvironment />
+        </div>
+
+       
+        
+        </>
     )
 }

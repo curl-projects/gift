@@ -10,6 +10,7 @@ import { ConstellationModeProvider } from "~/components/canvas/custom-ui/utiliti
 import { ConstellationFinder } from "~/components/canvas/custom-ui/utilities/ConstellationFinder"
 import { ConstellationPainter } from "~/components/canvas/custom-ui/utilities/ConstellationPainter"
 import { DriftPainter } from "~/components/canvas/custom-ui/utilities/DriftPainter"
+import { GameController } from "~/components/canvas/custom-ui/game-ui/GameControls/GameController"
 import CustomToolbar from "~/components/canvas/custom-ui/custom-toolbar/CustomToolbar"
 import { CollectionProvider } from "~/components/canvas/custom-ui/collections";
 import { GraphLayoutCollection } from "~/components/canvas/custom-ui/graph/GraphLayoutCollection";
@@ -22,6 +23,7 @@ import { Stars } from './custom-ui/aesthetics/stars/Stars';
 import { Clouds } from './custom-ui/aesthetics/clouds/Clouds';
 import { NarratorVoice } from "./custom-ui/game-ui/Narrator/NarratorVoice"
 import { handleDoubleClickOnCanvas } from '~/components/canvas/helpers/canvasOverride';
+
 
 // CUSTOM SHAPES
 import { NameShapeUtil } from "~/components/canvas/shapes/name-shape/NameShapeUtil"

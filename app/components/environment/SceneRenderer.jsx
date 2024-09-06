@@ -53,14 +53,19 @@ export default function SceneRenderer({
     }, [antialias, engineOptions, adaptToDeviceRatio, sceneOptions, onRender, onSceneReady]);
 
     return (
-        <canvas
-            ref={canvasRef}
-            {...rest}
-            style={{
-                height: '100%',
-                width: '100%',
-            }}
-        />
+        <div id='canvasZone' ref={canvasZoneRef} style={{
+            height: "100vh",
+            width: "100vw",
+        }}>
+            <canvas
+                ref={canvasRef}
+                {...rest}
+                style={{
+                    height: '100%',
+                    width: '100%',
+                }}
+            />
+        </div>
 
     )
 }

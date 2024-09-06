@@ -17,6 +17,7 @@
   "dependencies": {
     "@babylonjs/core": "^7.19.1",
     "@babylonjs/gui": "^7.19.1",
+    "@babylonjs/inspector": "^7.24.0",
     "@babylonjs/loaders": "^7.19.1",
     "@prisma/client": "5.18.0",
     "@remix-run/node": "^2.11.1",

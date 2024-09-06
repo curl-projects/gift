@@ -21,9 +21,11 @@ export default defineConfig({
   },
   ssr: {
     noExternal: ["remix-utils"],
-  },sever: {
+  },
+  server: {
     watch: {
       usePolling: true,
     }
-  }
+  },
+  assetsInclude: ["**/*.glb"], // Add this line to include .glb files as assets
 });
