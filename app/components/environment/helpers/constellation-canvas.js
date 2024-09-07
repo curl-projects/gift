@@ -81,7 +81,7 @@ export function addConstellationCanvas(scene, canvasZoneRef, RenderingGroups) {
           childDiv.style.pointerEvents = 'auto'; // Ensure childDiv can receive mouse events
           div.appendChild(childDiv);
 
-          refreshPosition();
+        //   refreshPosition();
 
           div.addEventListener('mouseout', () => {
             elementFocused = false;
@@ -97,6 +97,7 @@ export function addConstellationCanvas(scene, canvasZoneRef, RenderingGroups) {
         depthMask.backFaceCulling = false;
         // depthMask.disableColorWrite = true;
         // depthMask.disableLighting = true;
+        // depthMask.freeze();
 
         maskMesh.material = depthMask;
         maskMesh.onBeforeRenderObservable.add(() => engine.setColorWrite(false));
@@ -326,9 +327,30 @@ export function addConstellationCanvas(scene, canvasZoneRef, RenderingGroups) {
     //   plane.rotationQuaternion = null;
     //   plane.checkCollisions = true;
 
+     // Setup the CSS renderer and Youtube object
+     let existingRenderer = document.getElementById("css-container");
+     if (existingRenderer) existingRenderer.remove();
      let renderer = setupRenderer();
-     createCSSobject(plane, scene, 'blah', renderer)
+     createCSSobject(plane, scene, 'qgKbpe4qvno', renderer);
      createMaskingScreen(plane, scene, renderer)
+ 
+     // New bit that toggles on/off pointer events to body
+     var listener = function(evt) {
+         let pick = scene.pick(Math.round(evt.offsetX), Math.round(evt.offsetY));
+         if (pick.hit) {
+             if (pick.pickedMesh.name === "constellationCanvas") {
+                 if (!elementFocused) {
+                     elementFocused = true
+                     console.log("YOUTUBE")
+                     document.getElementsByTagName('body')[0].style.pointerEvents = 'none'
+                 }
+             }
+         }
+     }
+ 
+     window.addEventListener('pointermove', listener);
+     window.addEventListener('pointerdown', listener);
+     window.addEventListener('pointerup', listener);
 
     //   let existingRenderer = document.getElementById("css-container");
     //   if (existingRenderer) existingRenderer.remove();
