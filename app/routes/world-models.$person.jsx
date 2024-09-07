@@ -48,7 +48,7 @@ export default function WorldModel(){
 
     return(
       <>
-        <div id='constellation-canvas' 
+        {/* <div id='constellation-canvas' 
           style={{
               position: 'fixed',
               border: '2px solid #DAD9D6',
@@ -59,11 +59,8 @@ export default function WorldModel(){
               zIndex: '100000000',
 
           }}>
-            {/* <h1 style={{
-              color: 'white',
-            }}>Hello!</h1> */}
-                <WorldCanvas />
-        </div>
+              <WorldCanvas />
+        </div> */}
         <div style={{
           height: '100vh',
           width: '100vw',

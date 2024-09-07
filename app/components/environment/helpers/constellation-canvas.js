@@ -6,11 +6,9 @@ var CSSobject = null;
 var plane = null;
 
 export function addConstellationCanvas(scene, canvasZoneRef) {
-  return new Promise((resolve, reject) => {
     try {
       const engine = scene.getEngine();
       const camera = scene.cameras.find(cam => cam.name === 'babylon-camera');
-
 
       var setupRenderer = function () {
         let container = document.createElement('div');
@@ -57,21 +55,33 @@ export function addConstellationCanvas(scene, canvasZoneRef) {
         div.style.height = `${height}px`;
         div.style.zIndex = '1';
         CSSobject = new CSS3DObject(div, scene);
+        
         refreshPosition();
 
-        var childDiv = document.getElementById('constellation-canvas');
-        console.log("CHILD DIV:", childDiv)
-        if (childDiv) {
-          childDiv.style.position = 'absolute';
-          childDiv.style.left = '0';
-          childDiv.style.top = '0';
+        var iframe = document.createElement( 'iframe' )
+        iframe.id = 'video-' + videoID
+        iframe.style.width = width + 'px'
+        iframe.style.height = height + 'px'
+        iframe.style.border = '0px'
+        iframe.allow = 'autoplay'
+        iframe.src = [ 'https://www.youtube.com/embed/', videoID, '?rel=0&enablejsapi=1&disablekb=1&autoplay=1&controls=0&fs=0&modestbranding=1' ].join( '' )
+        div.appendChild(iframe)   
 
-          childDiv.style.width = `${width}px`;
-          childDiv.style.height = `${height}px`;
-          childDiv.style.pointerEvents = 'auto'; // Ensure childDiv can receive mouse events
-          div.appendChild(childDiv);
+        refreshPosition();
 
-          refreshPosition();
+        // var childDiv = document.getElementById('constellation-canvas');
+        // console.log("CHILD DIV:", childDiv)
+        // if (childDiv) {
+        //   childDiv.style.position = 'absolute';
+        //   childDiv.style.left = '0';
+        //   childDiv.style.top = '0';
+
+        //   childDiv.style.width = `${width}px`;
+        //   childDiv.style.height = `${height}px`;
+        //   childDiv.style.pointerEvents = 'auto'; // Ensure childDiv can receive mouse events
+        //   div.appendChild(childDiv);
+
+        //   refreshPosition();
 
           div.addEventListener('mouseout', () => {
             elementFocused = false;
@@ -79,7 +89,7 @@ export function addConstellationCanvas(scene, canvasZoneRef) {
             document.body.style.pointerEvents = 'auto';
             document.body.style.overflow = 'unset';
           });
-        }
+        // }
       };
 
       function createMaskingScreen(maskMesh, scene) {
@@ -89,6 +99,7 @@ export function addConstellationCanvas(scene, canvasZoneRef) {
         maskMesh.material = depthMask;
         maskMesh.onBeforeRenderObservable.add(() => engine.setColorWrite(false));
         maskMesh.onAfterRenderObservable.add(() => engine.setColorWrite(true));
+      
         // maskMesh.renderingGroupId = 1;
         var mask_index = scene.meshes.indexOf(maskMesh);
         scene.meshes[mask_index] = scene.meshes[0];
@@ -299,50 +310,55 @@ export function addConstellationCanvas(scene, canvasZoneRef) {
       scene.clearColor = new BABYLON.Color4(0, 0, 0, 0);
 
       plane = BABYLON.MeshBuilder.CreatePlane("constellationCanvas", { width: 1, height: 1 }, scene);
+      plane.scaling.x = 6
+      plane.scaling.y = 4
     //   plane.material = new BABYLON.StandardMaterial("redMaterial", scene);
     //   plane.material.diffuseColor = new BABYLON.Color3(1, 0, 0); // RGB for red
-      plane.rotation = new BABYLON.Vector3(0, Math.PI, 0);
+    //   plane.rotation = new BABYLON.Vector3(0, Math.PI, 0);
       plane.position = new BABYLON.Vector3(0, 2, 0);
-      plane.rotationQuaternion = null;
-      plane.checkCollisions = true;
+    //   plane.rotationQuaternion = null;
+    //   plane.checkCollisions = true;
 
-      let existingRenderer = document.getElementById("css-container");
-      if (existingRenderer) existingRenderer.remove();
-      let renderer = setupRenderer();
-      createCSSobject(plane, scene, 'qgKbpe4qvno', renderer);
-      createMaskingScreen(plane, scene, renderer);
+     let renderer = setupRenderer();
+     createCSSobject(plane, scene, 'blah', renderer)
+     createMaskingScreen(plane, scene, renderer)
 
-      var listener = function (evt) {
-        let pick = scene.pick(Math.round(evt.offsetX), Math.round(evt.offsetY));
-        if (pick.hit) {
-          console.log("PICK HIT:", pick.pickedMesh)
-          if (pick.pickedMesh.name === "constellationCanvas") {
-            if (!elementFocused) {
-              elementFocused = true;
-              console.log("Constellation Canvas Picked");
-            //   document.body.style.pointerEvents = 'none';
-            //   document.body.style.overflow = 'hidden';
-            }
-          }
-        }
-      }
+    //   let existingRenderer = document.getElementById("css-container");
+    //   if (existingRenderer) existingRenderer.remove();
+    //   let renderer = setupRenderer();
+    //   createCSSobject(plane, scene, 'qgKbpe4qvno', renderer);
+    //   createMaskingScreen(plane, scene, renderer);
 
-      const canvas = engine.getRenderingCanvas();
-      canvas.addEventListener('pointermove', listener);
-      canvas.addEventListener('pointerdown', listener);
-      canvas.addEventListener('pointerup', listener);
+    //   var listener = function (evt) {
+    //     let pick = scene.pick(Math.round(evt.offsetX), Math.round(evt.offsetY));
+    //     if (pick.hit) {
+    //       console.log("PICK HIT:", pick.pickedMesh)
+    //       if (pick.pickedMesh.name === "constellationCanvas") {
+    //         if (!elementFocused) {
+    //           elementFocused = true;
+    //           console.log("Constellation Canvas Picked");
+    //         //   document.body.style.pointerEvents = 'none';
+    //         //   document.body.style.overflow = 'hidden';
+    //         }
+    //       }
+    //     }
+    //   }
 
-      // Add observer to refresh the CSSobject position whenever the plane changes
-      scene.onAfterRenderObservable.add(() => {
-        if (plane) {
-          refreshPosition();
-        }
-      });
+    //   const canvas = engine.getRenderingCanvas();
+    //   canvas.addEventListener('pointermove', listener);
+    //   canvas.addEventListener('pointerdown', listener);
+    //   canvas.addEventListener('pointerup', listener);
+
+    //   // Add observer to refresh the CSSobject position whenever the plane changes
+    //   scene.onAfterRenderObservable.add(() => {
+    //     if (plane) {
+    //       refreshPosition();
+    //     }
+    //   });
 
       // Resolve the promise when setup is complete
-      resolve();
+    //   resolve();
     } catch (error) {
-      reject(error);
+      console.error("Constellation Canvas Error:", error)
     }
-  });
 }
