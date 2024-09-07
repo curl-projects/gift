@@ -44,8 +44,8 @@ export function addConstellationCanvas(scene, canvasZoneRef, RenderingGroups) {
       }
 
       var createCSSobject = function (mesh, scene, videoID, renderer) {
-        let width = document.documentElement.clientWidth / 2;
-        let height = document.documentElement.clientHeight / 2;
+        let width = document.documentElement.clientWidth;
+        let height = document.documentElement.clientHeight;
         scene.onBeforeRenderObservable.add(() => {
           renderer.render(scene, camera);
         });

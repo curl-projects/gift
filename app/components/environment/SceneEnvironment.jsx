@@ -13,11 +13,11 @@ import { HtmlMesh } from "babylon-htmlmesh";
 import ReactDOMServer from "react-dom/server";
 import WorldCanvas from "../canvas/WorldCanvas";
 import { createFocusButton } from "./helpers/gui";
-
+import { addSkybox } from "./helpers/skybox";
 const RenderingGroups = {
     embeddedElements: 0,
     skybox: 1,
-    environment: 1,
+    environment: 2,
 }
 
 export default function SceneEnvironment() {
@@ -25,9 +25,7 @@ export default function SceneEnvironment() {
 
     async function onSceneReady(scene) {
         
-        scene.clearColor = new BABYLON.Color4(0, 0, 0, 0);
-
-         
+        // scene.clearColor = new BABYLON.Color4(0, 0, 0, 0);
 
         const camera = addMovableCamera(scene);
         const light = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(1, 1, 0), scene);
@@ -50,10 +48,14 @@ export default function SceneEnvironment() {
 
         // needed for embedded elements
         scene.setRenderingAutoClearDepthStencil(RenderingGroups.skybox, false, false, false);
+        scene.setRenderingAutoClearDepthStencil(RenderingGroups.environment, false, false, false);
 
         scene.onReadyObservable.addOnce(async() => {
             addConstellationCanvas(scene, canvasZoneRef, RenderingGroups);
         });
+
+        // addSkybox(scene);
+
 
         createFocusButton(scene, camera);
 
