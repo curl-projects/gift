@@ -58,30 +58,30 @@ export function addConstellationCanvas(scene, canvasZoneRef, RenderingGroups) {
         
         refreshPosition();
 
-        var iframe = document.createElement( 'iframe' )
-        iframe.id = 'video-' + videoID
-        iframe.style.width = width + 'px'
-        iframe.style.height = height + 'px'
-        iframe.style.border = '0px'
-        iframe.allow = 'autoplay'
-        iframe.src = [ 'https://www.youtube.com/embed/', videoID, '?rel=0&enablejsapi=1&disablekb=1&autoplay=1&controls=0&fs=0&modestbranding=1' ].join( '' )
-        div.appendChild(iframe)   
+        // var iframe = document.createElement( 'iframe' )
+        // iframe.id = 'video-' + videoID
+        // iframe.style.width = width + 'px'
+        // iframe.style.height = height + 'px'
+        // iframe.style.border = '0px'
+        // iframe.allow = 'autoplay'
+        // iframe.src = [ 'https://www.youtube.com/embed/', videoID, '?rel=0&enablejsapi=1&disablekb=1&autoplay=1&controls=0&fs=0&modestbranding=1' ].join( '' )
+        // div.appendChild(iframe)   
 
-        refreshPosition();
+        // refreshPosition();
 
-        // var childDiv = document.getElementById('constellation-canvas');
-        // console.log("CHILD DIV:", childDiv)
-        // if (childDiv) {
-        //   childDiv.style.position = 'absolute';
-        //   childDiv.style.left = '0';
-        //   childDiv.style.top = '0';
+        var childDiv = document.getElementById('constellation-canvas');
+        console.log("CHILD DIV:", childDiv)
+        if (childDiv) {
+          childDiv.style.position = 'absolute';
+          childDiv.style.left = '0';
+          childDiv.style.top = '0';
 
-        //   childDiv.style.width = `${width}px`;
-        //   childDiv.style.height = `${height}px`;
-        //   childDiv.style.pointerEvents = 'auto'; // Ensure childDiv can receive mouse events
-        //   div.appendChild(childDiv);
+          childDiv.style.width = `${width}px`;
+          childDiv.style.height = `${height}px`;
+          childDiv.style.pointerEvents = 'auto'; // Ensure childDiv can receive mouse events
+          div.appendChild(childDiv);
 
-        //   refreshPosition();
+          refreshPosition();
 
           div.addEventListener('mouseout', () => {
             elementFocused = false;
@@ -89,7 +89,7 @@ export function addConstellationCanvas(scene, canvasZoneRef, RenderingGroups) {
             document.body.style.pointerEvents = 'auto';
             document.body.style.overflow = 'unset';
           });
-        // }
+        }
       };
 
       function createMaskingScreen(maskMesh, scene) {
@@ -312,7 +312,7 @@ export function addConstellationCanvas(scene, canvasZoneRef, RenderingGroups) {
       scene.clearColor = new BABYLON.Color4(0, 0, 0, 0);
 
       plane = BABYLON.MeshBuilder.CreatePlane("constellationCanvas", { width: 1, height: 1 }, scene);
-      plane.material = 
+      plane.material = // this should be an error but for some insane reason it's required for it to work.
       plane.scaling.x = 6
       plane.scaling.y = 4
       plane.renderingGroupId = RenderingGroups.embeddedElements;

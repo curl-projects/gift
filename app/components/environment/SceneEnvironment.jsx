@@ -49,9 +49,11 @@ export default function SceneEnvironment() {
         // const sphere = BABYLON.MeshBuilder.CreateSphere('sphere', { diameter: 1 }, scene);
         // sphere.renderingGroupId = RenderingGroups.environment
 
-        scene.setRenderingAutoClearDepthStencil(1, false, false, false);
+        scene.setRenderingAutoClearDepthStencil(RenderingGroups.skybox, false, false, false);
 
-        addConstellationCanvas(scene, canvasZoneRef, RenderingGroups);
+        scene.onReadyObservable.addOnce(() => {
+            addConstellationCanvas(scene, canvasZoneRef, RenderingGroups);
+        });
 
 
 
