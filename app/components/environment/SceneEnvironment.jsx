@@ -12,6 +12,7 @@ import { HtmlMeshRenderer } from "babylon-htmlmesh";
 import { HtmlMesh } from "babylon-htmlmesh";
 import ReactDOMServer from "react-dom/server";
 import WorldCanvas from "../canvas/WorldCanvas";
+import { createFocusButton } from "./helpers/gui";
 
 const RenderingGroups = {
     embeddedElements: 0,
@@ -53,14 +54,16 @@ export default function SceneEnvironment() {
 
         scene.onReadyObservable.addOnce(() => {
             addConstellationCanvas(scene, canvasZoneRef, RenderingGroups);
+            
         });
 
+        createFocusButton(scene, camera);
 
+        // const { Inspector } = await import('@babylonjs/inspector');
 
-        const { Inspector } = await import('@babylonjs/inspector');
-        Inspector.Show(scene, {
-            // overlay: true
-        });
+        // Inspector.Show(scene, {
+        //     overlay: true
+        // });
         
         
        

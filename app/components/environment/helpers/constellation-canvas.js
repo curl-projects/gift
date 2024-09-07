@@ -34,6 +34,8 @@ export function addConstellationCanvas(scene, canvasZoneRef, RenderingGroups) {
       function refreshPosition() {
         CSSobject.position.copyFrom(plane.getAbsolutePosition());
         CSSobject.scaling.copyFrom(plane.scaling);
+        CSSobject.element.style.width = `${window.innerWidth}px`; // Set width to viewport width
+        CSSobject.element.style.height = `${window.innerHeight}px`; // Set height to viewport height
         refreshRotation();
       }
 
@@ -44,8 +46,8 @@ export function addConstellationCanvas(scene, canvasZoneRef, RenderingGroups) {
       }
 
       var createCSSobject = function (mesh, scene, videoID, renderer) {
-        let width = 550;
-        let height = 800;
+        let width = window.innerWidth;
+        let height = window.innerHeight;
         scene.onBeforeRenderObservable.add(() => {
           renderer.render(scene, camera);
         });
@@ -312,17 +314,17 @@ export function addConstellationCanvas(scene, canvasZoneRef, RenderingGroups) {
 
       scene.clearColor = new BABYLON.Color4(0, 0, 0, 0);
 
-      plane = BABYLON.MeshBuilder.CreatePlane("constellationCanvas", { width: 1, height: 1 }, scene);
+      plane = BABYLON.MeshBuilder.CreatePlane("constellationCanvas", { width: window.innerWidth / 500, height: window.innerHeight / 500 }, scene);
       plane.material = // this should be an error but for some insane reason it's required for it to work.
-      plane.scaling.x = 6
-      plane.scaling.y = 4
+    //   plane.scaling.x = window.innerWidth / 500
+    //   plane.scaling.y = window.innerHeight / 500
       plane.renderingGroupId = RenderingGroups.embeddedElements;
       const matPlane = new BABYLON.StandardMaterial("plane", scene);
 
       plane.material = matPlane;
     //   plane.material = new BABYLON.StandardMaterial("redMaterial", scene);
     //   plane.material.diffuseColor = new BABYLON.Color3(1, 0, 0); // RGB for red
-    //   plane.rotation = new BABYLON.Vector3(0, Math.PI, 0);
+      plane.rotation = new BABYLON.Vector3(0, Math.PI, 0);
       plane.position = new BABYLON.Vector3(0, 2, 0);
     //   plane.rotationQuaternion = null;
     //   plane.checkCollisions = true;
@@ -348,45 +350,11 @@ export function addConstellationCanvas(scene, canvasZoneRef, RenderingGroups) {
          }
      }
  
-     window.addEventListener('pointermove', listener);
-     window.addEventListener('pointerdown', listener);
-     window.addEventListener('pointerup', listener);
+    //  window.addEventListener('pointermove', listener);
+    //  window.addEventListener('pointerdown', listener);
+    //  window.addEventListener('pointerup', listener);
 
-    //   let existingRenderer = document.getElementById("css-container");
-    //   if (existingRenderer) existingRenderer.remove();
-    //   let renderer = setupRenderer();
-    //   createCSSobject(plane, scene, 'qgKbpe4qvno', renderer);
-    //   createMaskingScreen(plane, scene, renderer);
-
-    //   var listener = function (evt) {
-    //     let pick = scene.pick(Math.round(evt.offsetX), Math.round(evt.offsetY));
-    //     if (pick.hit) {
-    //       console.log("PICK HIT:", pick.pickedMesh)
-    //       if (pick.pickedMesh.name === "constellationCanvas") {
-    //         if (!elementFocused) {
-    //           elementFocused = true;
-    //           console.log("Constellation Canvas Picked");
-    //         //   document.body.style.pointerEvents = 'none';
-    //         //   document.body.style.overflow = 'hidden';
-    //         }
-    //       }
-    //     }
-    //   }
-
-    //   const canvas = engine.getRenderingCanvas();
-    //   canvas.addEventListener('pointermove', listener);
-    //   canvas.addEventListener('pointerdown', listener);
-    //   canvas.addEventListener('pointerup', listener);
-
-    //   // Add observer to refresh the CSSobject position whenever the plane changes
-    //   scene.onAfterRenderObservable.add(() => {
-    //     if (plane) {
-    //       refreshPosition();
-    //     }
-    //   });
-
-      // Resolve the promise when setup is complete
-    //   resolve();
+  
     } catch (error) {
       console.error("Constellation Canvas Error:", error)
     }
