@@ -34,8 +34,6 @@ export function addConstellationCanvas(scene, canvasZoneRef, RenderingGroups) {
       function refreshPosition() {
         CSSobject.position.copyFrom(plane.getAbsolutePosition());
         CSSobject.scaling.copyFrom(plane.scaling);
-        CSSobject.element.style.width = `${window.innerWidth}px`; // Set width to viewport width
-        CSSobject.element.style.height = `${window.innerHeight}px`; // Set height to viewport height
         refreshRotation();
       }
 
@@ -46,8 +44,8 @@ export function addConstellationCanvas(scene, canvasZoneRef, RenderingGroups) {
       }
 
       var createCSSobject = function (mesh, scene, videoID, renderer) {
-        let width = window.innerWidth;
-        let height = window.innerHeight;
+        let width = document.documentElement.clientWidth / 2;
+        let height = document.documentElement.clientHeight / 2;
         scene.onBeforeRenderObservable.add(() => {
           renderer.render(scene, camera);
         });
@@ -83,7 +81,7 @@ export function addConstellationCanvas(scene, canvasZoneRef, RenderingGroups) {
           childDiv.style.pointerEvents = 'auto'; // Ensure childDiv can receive mouse events
           div.appendChild(childDiv);
 
-        //   refreshPosition();
+          refreshPosition();
 
           div.addEventListener('mouseout', () => {
             elementFocused = false;
@@ -229,8 +227,14 @@ export function addConstellationCanvas(scene, canvasZoneRef, RenderingGroups) {
             var camMatrix = camera.getWorldMatrix();
             var innerMatrix = objectMatrixWorld.m;
 
-            const constellationCanvasWidth = 5.5;
-            const constellationCanvasHeight = 8.0;
+            const constellationCanvasWidth = document.documentElement.clientWidth / 100;
+            const constellationCanvasHeight = document.documentElement.clientHeight / 100;
+
+            // const constellationCanvasWidth = document.documentElement.clientWidth;
+            // const constellationCanvasHeight = document.documentElement.clientHeight;
+
+            console.log("CANVAS WIDTH:", constellationCanvasWidth)
+            console.log("CANVAS HEIGHT:", constellationCanvasHeight)
 
             innerMatrix[0] *= 0.01 / constellationCanvasWidth;
             innerMatrix[2] *= 0.01 / constellationCanvasWidth;
@@ -312,12 +316,13 @@ export function addConstellationCanvas(scene, canvasZoneRef, RenderingGroups) {
         }
       }
 
+
       scene.clearColor = new BABYLON.Color4(0, 0, 0, 0);
 
-      plane = BABYLON.MeshBuilder.CreatePlane("constellationCanvas", { width: window.innerWidth / 500, height: window.innerHeight / 500 }, scene);
+      plane = BABYLON.MeshBuilder.CreatePlane("constellationCanvas", { width: 1, height: 1 }, scene);
       plane.material = // this should be an error but for some insane reason it's required for it to work.
-    //   plane.scaling.x = window.innerWidth / 500
-    //   plane.scaling.y = window.innerHeight / 500
+      plane.scaling.x = document.documentElement.clientWidth / 100
+      plane.scaling.y = document.documentElement.clientHeight / 100
       plane.renderingGroupId = RenderingGroups.embeddedElements;
       const matPlane = new BABYLON.StandardMaterial("plane", scene);
 
@@ -325,7 +330,7 @@ export function addConstellationCanvas(scene, canvasZoneRef, RenderingGroups) {
     //   plane.material = new BABYLON.StandardMaterial("redMaterial", scene);
     //   plane.material.diffuseColor = new BABYLON.Color3(1, 0, 0); // RGB for red
       plane.rotation = new BABYLON.Vector3(0, Math.PI, 0);
-      plane.position = new BABYLON.Vector3(0, 2, 0);
+      plane.position = new BABYLON.Vector3(0, 4, 0);
     //   plane.rotationQuaternion = null;
     //   plane.checkCollisions = true;
 

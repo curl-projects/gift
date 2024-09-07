@@ -197,7 +197,7 @@ export default function WorldCanvas() {
                                 user={data.user}
                             />
                             <Stars />
-                            <Clouds />
+                            {/* <Clouds /> */}
                             <NarratorVoice />
                         </>
                     )}

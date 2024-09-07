@@ -27,12 +27,10 @@ export default function SceneEnvironment() {
         
         scene.clearColor = new BABYLON.Color4(0, 0, 0, 0);
 
-
+         
 
         const camera = addMovableCamera(scene);
         const light = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(1, 1, 0), scene);
-
-              
     
         BABYLON.SceneLoader.ImportMesh("", "/assets/", "simple-landscape.glb", scene, function (meshes) {
             meshes.forEach(mesh => {
@@ -50,22 +48,36 @@ export default function SceneEnvironment() {
         // const sphere = BABYLON.MeshBuilder.CreateSphere('sphere', { diameter: 1 }, scene);
         // sphere.renderingGroupId = RenderingGroups.environment
 
+        // needed for embedded elements
         scene.setRenderingAutoClearDepthStencil(RenderingGroups.skybox, false, false, false);
 
-        scene.onReadyObservable.addOnce(() => {
+        scene.onReadyObservable.addOnce(async() => {
             addConstellationCanvas(scene, canvasZoneRef, RenderingGroups);
-            
         });
 
         createFocusButton(scene, camera);
 
+        void Promise.all([
+            import("@babylonjs/core/Debug/debugLayer"),
+            import("@babylonjs/inspector"),
+        ]).then((_values) => {
+            console.log(_values);
+            scene.debugLayer.show({
+                handleResize: true,
+                overlay: true,
+                // globalRoot: document.getElementById("#root") || undefined,
+            });
+        });
+
+
         // const { Inspector } = await import('@babylonjs/inspector');
 
         // Inspector.Show(scene, {
-        //     overlay: true
+        //     overlay: false
         // });
-        
-        
+
+       
+   
        
 
         // scene.renderingManager.setRenderingOrder(0, (a, b) => {
