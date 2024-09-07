@@ -8,11 +8,9 @@ import { addConstellationCanvas } from "./helpers/constellation-canvas";
 // import redwoodsModel from '~/components/environment/assets/simple-landscape.glb';
 import { addMovableCamera } from "./helpers/cameras";
 // import { Inspector } from '@babylonjs/inspector';
-import { HtmlMeshRenderer } from "babylon-htmlmesh";
-import { HtmlMesh } from "babylon-htmlmesh";
 import ReactDOMServer from "react-dom/server";
 import WorldCanvas from "../canvas/WorldCanvas";
-import { createFocusButton } from "./helpers/gui";
+import { createCanvasControlsButton, createFocusButton, createFullscreenUI } from "./helpers/gui";
 import { addSkybox } from "./helpers/skybox";
 const RenderingGroups = {
     embeddedElements: 0,
@@ -56,8 +54,9 @@ export default function SceneEnvironment() {
 
         // addSkybox(scene);
 
-
-        createFocusButton(scene, camera);
+        const advancedTexture = createFullscreenUI();
+        createFocusButton(scene, camera, advancedTexture);
+        createCanvasControlsButton(scene, advancedTexture);
 
         // void Promise.all([
         //     import("@babylonjs/core/Debug/debugLayer"),

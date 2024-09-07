@@ -83,12 +83,12 @@ export function addConstellationCanvas(scene, canvasZoneRef, RenderingGroups) {
 
           refreshPosition();
 
-          div.addEventListener('mouseout', () => {
-            elementFocused = false;
-            console.log("CANVAS");
-            document.body.style.pointerEvents = 'auto';
-            document.body.style.overflow = 'unset';
-          });
+        //   div.addEventListener('mouseout', () => {
+        //     elementFocused = false;
+        //     console.log("CANVAS");
+        //     document.body.style.pointerEvents = 'auto';
+        //     document.body.style.overflow = 'unset';
+        //   });
         }
       };
 
@@ -232,9 +232,6 @@ export function addConstellationCanvas(scene, canvasZoneRef, RenderingGroups) {
 
             // const constellationCanvasWidth = document.documentElement.clientWidth;
             // const constellationCanvasHeight = document.documentElement.clientHeight;
-
-            console.log("CANVAS WIDTH:", constellationCanvasWidth)
-            console.log("CANVAS HEIGHT:", constellationCanvasHeight)
 
             innerMatrix[0] *= 0.01 / constellationCanvasWidth;
             innerMatrix[2] *= 0.01 / constellationCanvasWidth;

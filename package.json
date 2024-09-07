@@ -40,7 +40,6 @@
     "@tldraw/tldraw": "^2.4.4",
     "@tldraw/tlschema": "^2.4.4",
     "@tldraw/utils": "^2.4.4",
-    "babylon-htmlmesh": "^2.0.1",
     "concurrently": "^8.2.2",
     "framer-motion": "^11.3.24",
     "isbot": "^4.1.0",
