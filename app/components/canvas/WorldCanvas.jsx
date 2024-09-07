@@ -161,6 +161,7 @@ export default function WorldCanvas() {
     }
 
     return (
+
         <ConstellationModeProvider>
             <CollectionProvider editor={editor} collections={collections}>
                 <Tldraw

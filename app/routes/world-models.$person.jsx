@@ -40,6 +40,7 @@ export async function action({ request }) {
 }
 
 export default function WorldModel(){
+    const data = useLoaderData();
     const actionData = useActionData();
 
     useEffect(()=>{
@@ -48,19 +49,9 @@ export default function WorldModel(){
 
     return(
       <>
-        {/* <div id='constellation-canvas' 
-          style={{
-              position: 'fixed',
-              border: '2px solid #DAD9D6',
-              height: '84vh',
-              width: '44vw',
-              overflow: 'scroll',
-              left: '24px',
-              zIndex: '100000000',
-
-          }}>
+        <div id='constellation-canvas'>
               <WorldCanvas />
-        </div> */}
+        </div>
         <div style={{
           height: '100vh',
           width: '100vw',
@@ -70,7 +61,7 @@ export default function WorldModel(){
           zIndex: 0,
           overflow: 'hidden',
         }}>
-          <SceneEnvironment />
+          <SceneEnvironment/>
         </div>
 
        

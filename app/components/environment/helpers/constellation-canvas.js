@@ -5,7 +5,7 @@ var elementFocused = false;
 var CSSobject = null;
 var plane = null;
 
-export function addConstellationCanvas(scene, canvasZoneRef) {
+export function addConstellationCanvas(scene, canvasZoneRef, RenderingGroups) {
     try {
       const engine = scene.getEngine();
       const camera = scene.cameras.find(cam => cam.name === 'babylon-camera');
@@ -93,8 +93,10 @@ export function addConstellationCanvas(scene, canvasZoneRef) {
       };
 
       function createMaskingScreen(maskMesh, scene) {
-        let depthMask = new BABYLON.StandardMaterial('matDepthMask', scene);
+        let depthMask = maskMesh.material; // new BABYLON.StandardMaterial('matDepthMask', scene);
         depthMask.backFaceCulling = false;
+        // depthMask.disableColorWrite = true;
+        // depthMask.disableLighting = true;
 
         maskMesh.material = depthMask;
         maskMesh.onBeforeRenderObservable.add(() => engine.setColorWrite(false));
@@ -310,8 +312,13 @@ export function addConstellationCanvas(scene, canvasZoneRef) {
       scene.clearColor = new BABYLON.Color4(0, 0, 0, 0);
 
       plane = BABYLON.MeshBuilder.CreatePlane("constellationCanvas", { width: 1, height: 1 }, scene);
+      plane.material = 
       plane.scaling.x = 6
       plane.scaling.y = 4
+      plane.renderingGroupId = RenderingGroups.embeddedElements;
+      const matPlane = new BABYLON.StandardMaterial("plane", scene);
+
+      plane.material = matPlane;
     //   plane.material = new BABYLON.StandardMaterial("redMaterial", scene);
     //   plane.material.diffuseColor = new BABYLON.Color3(1, 0, 0); // RGB for red
     //   plane.rotation = new BABYLON.Vector3(0, Math.PI, 0);
