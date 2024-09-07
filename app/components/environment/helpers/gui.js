@@ -20,8 +20,8 @@ function focusOnConstellationCanvas(scene, camera) {
         const fovY = 2 * Math.atan((canvasHeight / 2) / camera.position.length());
 
         // Set the camera's FOV and aspect ratio
-        camera.fov = fovY;
-        camera.aspectRatio = canvasAspectRatio;
+        // camera.fov = fovY;
+        // camera.aspectRatio = canvasAspectRatio;
 
         // Calculate the new camera position
         const canvasNormal = constellationCanvas.forward;
@@ -34,9 +34,15 @@ function focusOnConstellationCanvas(scene, camera) {
         const ease = new BABYLON.CubicEase();
         ease.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEINOUT);
 
-        BABYLON.Animation.CreateAndStartAnimation('cameraMove', camera, 'position', framerate, animationDuration / (1000 / framerate), camera.position, newPosition, 0, ease);
-        BABYLON.Animation.CreateAndStartAnimation('cameraTarget', camera, 'target', framerate, animationDuration / (1000 / framerate), camera.target, constellationCanvas.position, 0, ease);
-        BABYLON.Animation.CreateAndStartAnimation('cameraFOV', camera, 'fov', framerate, animationDuration / (1000 / framerate), camera.fov, fovY, 0, ease);
+        // Create animations
+        const positionAnimation = BABYLON.Animation.CreateAndStartAnimation('cameraMove', camera, 'position', framerate, animationDuration / (1000 / framerate), camera.position, newPosition, 0, ease);
+        const targetAnimation = BABYLON.Animation.CreateAndStartAnimation('cameraTarget', camera, 'target', framerate, animationDuration / (1000 / framerate), camera.target, constellationCanvas.position, 0, ease);
+        const fovAnimation = BABYLON.Animation.CreateAndStartAnimation('cameraFOV', camera, 'fov', framerate, animationDuration / (1000 / framerate), camera.fov, fovY, 0, ease);
+
+        // Ensure the aspect ratio is set after the animation completes
+        // positionAnimation.onAnimationEnd = () => {
+        //     camera.aspectRatio = canvasAspectRatio;
+        // };
     }
 }
 
