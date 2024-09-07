@@ -2,9 +2,12 @@ import * as BABYLON from "@babylonjs/core";
 
 export function addMovableCamera(scene) {
     // Create a Universal Camera
-    const camera = new BABYLON.FreeCamera("babylon-camera", new BABYLON.Vector3(0, 5, 12), scene);
+    const camera = new BABYLON.UniversalCamera("babylon-camera", new BABYLON.Vector3(0, 5, 12), scene);
     camera.rotation.y += Math.PI;
     camera.rotation.x += BABYLON.Tools.ToRadians(10)
+
+    // nearly minimum value, required because we get very close to the constellation plane
+    camera.minZ = 0.001;
     
     // Attach the camera to the canvas
     const canvas = scene.getEngine().getRenderingCanvas();

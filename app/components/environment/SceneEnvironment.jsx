@@ -59,17 +59,17 @@ export default function SceneEnvironment() {
 
         createFocusButton(scene, camera);
 
-        void Promise.all([
-            import("@babylonjs/core/Debug/debugLayer"),
-            import("@babylonjs/inspector"),
-        ]).then((_values) => {
-            console.log(_values);
-            scene.debugLayer.show({
-                handleResize: true,
-                overlay: true,
-                // globalRoot: document.getElementById("#root") || undefined,
-            });
-        });
+        // void Promise.all([
+        //     import("@babylonjs/core/Debug/debugLayer"),
+        //     import("@babylonjs/inspector"),
+        // ]).then((_values) => {
+        //     console.log(_values);
+        //     scene.debugLayer.show({
+        //         handleResize: true,
+        //         overlay: true,
+        //         // globalRoot: document.getElementById("#root") || undefined,
+        //     });
+        // });
 
 
         // const { Inspector } = await import('@babylonjs/inspector');

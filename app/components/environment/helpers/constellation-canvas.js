@@ -330,7 +330,10 @@ export function addConstellationCanvas(scene, canvasZoneRef, RenderingGroups) {
     //   plane.material = new BABYLON.StandardMaterial("redMaterial", scene);
     //   plane.material.diffuseColor = new BABYLON.Color3(1, 0, 0); // RGB for red
       plane.rotation = new BABYLON.Vector3(0, Math.PI, 0);
-      plane.position = new BABYLON.Vector3(0, 4, 0);
+      plane.position = new BABYLON.Vector3(0, 8, 0);
+
+      // disable frustrum culling to prevent blinking   
+      plane.alwaysSelectAsActiveMesh = true
     //   plane.rotationQuaternion = null;
     //   plane.checkCollisions = true;
 
