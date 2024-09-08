@@ -18,43 +18,55 @@ export function createFocusButton(scene, camera, advancedTexture) {
             const canvasWidth = constellationCanvas.scaling.x
             const canvasHeight = constellationCanvas.scaling.y
     
-            // Calculate the aspect ratio of the canvas
-            const canvasAspectRatio = canvasWidth / canvasHeight;
     
             // Calculate the required FOV to fit the canvas height
             const fovY = 2 * Math.atan((canvasHeight / 2) / camera.position.length());
     
-            // Set the camera's FOV and aspect ratio
-            // camera.fov = fovY;
-            // camera.aspectRatio = canvasAspectRatio;
-    
-            // Calculate the new camera position
+      
 
-            console.log("CONSTELLATION CANVAS", constellationCanvas)
-            // constellationCanvas.computeWorldMatrix(true);
-            // const worldMatrix = constellationCanvas.getWorldMatrix();
-            // const canvasNormal = worldMatrix.getRow(2);
-            const canvasNormal = constellationCanvas.forward;
-            console.log("CANVAS NORMAL", canvasNormal)
+            const canvasNormal = constellationCanvas.forward; // this should be up if vertical and forward if looking down
             const distanceToCanvas = (canvasHeight / 2) / Math.tan(fovY / 2);
             console.log("CANVASHEIGHT", canvasHeight)
             const newPosition = constellationCanvas.position.subtract(canvasNormal.scale(distanceToCanvas));
     
+            // Calculate the new camera target
+            const newTarget = constellationCanvas.position;
+            // camera.setTarget(newTarget)
+            
             // Animate the camera to its new position and orientation
             const animationDuration = 1000; // milliseconds
             const framerate = 60;
             const ease = new BABYLON.CubicEase();
             ease.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEINOUT);
-    
+
             // Create animations
-            const positionAnimation = BABYLON.Animation.CreateAndStartAnimation('cameraMove', camera, 'position', framerate, animationDuration / (1000 / framerate), camera.position, newPosition, 0, ease);
-            const targetAnimation = BABYLON.Animation.CreateAndStartAnimation('cameraTarget', camera, 'target', framerate, animationDuration / (1000 / framerate), camera.target, constellationCanvas.position, 0, ease);
-            const fovAnimation = BABYLON.Animation.CreateAndStartAnimation('cameraFOV', camera, 'fov', framerate, animationDuration / (1000 / framerate), camera.fov, fovY, 0, ease);
-    
-            // Ensure the aspect ratio is set after the animation completes
-            // positionAnimation.onAnimationEnd = () => {
-            //     camera.aspectRatio = canvasAspectRatio;
-            // };
+            // const positionAnimation = BABYLON.Animation.CreateAndStartAnimation('cameraMove', camera, 'position', framerate, animationDuration / (1000 / framerate), camera.position, newPosition, 0, ease);
+            const targetAnimation = new BABYLON.Animation('cameraTarget', 'target', framerate, BABYLON.Animation.ANIMATIONTYPE_VECTOR3, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
+            // const fovAnimation = BABYLON.Animation.CreateAndStartAnimation('cameraFOV', camera, 'fov', framerate, animationDuration / (1000 / framerate), camera.fov, fovY, 0, ease);
+
+            // Set keyframes for target animation
+            const targetKeys = [];
+            targetKeys.push({ frame: 0, value: camera.target });
+            targetKeys.push({ frame: animationDuration / (1000 / framerate), value: constellationCanvas.position });
+            targetAnimation.setKeys(targetKeys);
+            targetAnimation.setEasingFunction(ease);
+
+            // Start the target animation
+            scene.beginDirectAnimation(camera, [targetAnimation], 0, animationDuration / (1000 / framerate), false);
+
+            // Play the animations
+            // positionAnimation.start();
+            // targetAnimation.start();
+            // fovAnimation.start();
+
+            // Create an animation group
+            // const animationGroup = new BABYLON.AnimationGroup("cameraAnimations");
+            // // animationGroup.addTargetedAnimation(positionAnimation, camera);
+            // animationGroup.addTargetedAnimation(targetAnimation, camera);
+            // // animationGroup.addTargetedAnimation(fovAnimation, camera);
+
+            // // Start the animation group
+            // animationGroup.play();
         }
     }
 

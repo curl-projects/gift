@@ -11,12 +11,7 @@ import { addMovableCamera } from "../helpers/cameras";
 import ReactDOMServer from "react-dom/server";
 import { createCanvasControlsButton, createFocusButton, createFullscreenUI } from "../helpers/gui";
 import { addSkybox } from "../helpers/skybox";
-
-const RenderingGroups = {
-    embeddedElements: 0,
-    skybox: 1,
-    environment: 2,
-}
+import { RenderingGroups } from "../helpers/constants"; // Import the RenderingGroups
 
 export function CampfireScene() {
     const canvasZoneRef = useRef();

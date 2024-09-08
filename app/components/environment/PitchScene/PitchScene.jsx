@@ -22,16 +22,16 @@ export function PitchScene(){
         const camera = addMovableCamera(scene, "babylon-camera");
         const light = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(1, 1, 0), scene);
 
-        enableFloatingPhysics(scene);
+        // enableFloatingPhysics(scene);
 
         BABYLON.SceneLoader.ImportMesh("", "/assets/", "redwoods-landscape.glb", scene, function (meshes) {
             meshes.forEach(mesh => {
                 mesh.renderingGroupId = RenderingGroups.environment
 
-                if(mesh.name === 'campfire'){
-                    const { fireSPS, fireBaseSPS, embersSPS, smokeSPS } = addCampfireParticles(scene, mesh);
-                    const shadowGenerator = addCampfireLight(scene, mesh);
-                }
+                // if(mesh.name === 'campfire'){
+                //     const { fireSPS, fireBaseSPS, embersSPS, smokeSPS } = addCampfireParticles(scene, mesh);
+                //     const shadowGenerator = addCampfireLight(scene, mesh);
+                // }
             })
         })
 
@@ -41,14 +41,13 @@ export function PitchScene(){
 
         // fadeInScene(scene, camera);
 
-        const textCamera = addGUICamera(scene, "text-camera", camera, 0x10000000);
-
+        // const textCamera = addGUICamera(scene, "text-camera", camera, 0x10000000);
         // doesn't work if you set it in the addGUICamera function
-        scene.activeCameras = [camera, textCamera]
+        // scene.activeCameras = [camera, textCamera]
 
         // Add floating text in the center of the screen
         
-        addCenteredPhysicsText(scene, "Hello, World!", textCamera, 0x10000000);
+        // addCenteredPhysicsText(scene, "Hello, World!", textCamera, 0x10000000);
 
         scene.onReadyObservable.addOnce(async() => {
             addConstellationCanvas(scene, canvasZoneRef, RenderingGroups);
