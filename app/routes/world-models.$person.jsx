@@ -4,7 +4,7 @@ import { ClientOnly } from "remix-utils/client-only";
 import WorldCanvas from "~/components/canvas/WorldCanvas.jsx";
 import { getWorldContent, saveAnnotation } from "~/models/world-model.server";
 import { useEffect } from "react";
-import SceneEnvironment from "~/components/environment/SceneEnvironment";
+import { CampfireScene } from "~/components/environment/CampfireScene/CampfireScene";
 
 export async function loader({ params }) {
   const person = params.person;
@@ -49,10 +49,7 @@ export default function WorldModel(){
 
     return(
       <>
-        <div id='constellation-canvas'>
-              <WorldCanvas />
-        </div>
-        <div style={{
+        <div id='constellation-canvas' style={{
           height: '100vh',
           width: '100vw',
           position: 'fixed',
@@ -61,8 +58,19 @@ export default function WorldModel(){
           zIndex: 0,
           overflow: 'hidden',
         }}>
-          <SceneEnvironment/>
+              <WorldCanvas />
         </div>
+        {/* <div style={{
+          height: '100vh',
+          width: '100vw',
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          zIndex: 0,
+          overflow: 'hidden',
+        }}>
+          <CampfireScene/>
+        </div> */}
 
        
         

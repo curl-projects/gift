@@ -1,7 +1,7 @@
-import SceneEnvironment from "~/components/environment/SceneEnvironment";
+import { CampfireScene } from "~/components/environment/CampfireScene/CampfireScene";
 
 export default function Environment(){
     return(
-        <SceneEnvironment />
+        <CampfireScene />
     )
 }

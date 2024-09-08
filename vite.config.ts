@@ -29,6 +29,10 @@ export default defineConfig({
   ssr: {
     noExternal: ["remix-utils", "babylon-htmlmesh"],
   },
+  optimizeDeps: {
+    // needed so that vite doesn't clear the .wasm file
+    exclude: ['@babylonjs/havok']
+  },
   server: {
     watch: {
       usePolling: true,

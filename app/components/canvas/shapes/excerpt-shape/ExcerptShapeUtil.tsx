@@ -138,7 +138,9 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
  
 		useEffect(() => {
 			const animateDimensions = async () => {
-				if (shape.props.expanded && scope.current) {
+				if(scope.current && shapeRef.current){
+				if (shape.props.expanded) {
+					console.log("EXECUTING ANIMATION")
 					this.editor.updateShape({
 						id: shape.id,
 						type: shape.type,
@@ -205,6 +207,7 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 					});
 				}
 			};
+		}
 
 			animateDimensions();
 		}, [shape.props.expanded, scope]);
@@ -256,7 +259,7 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 							transition={{ delay: 1, duration: 0.2, ease: 'easeInOut' }}
 						>
 						   {this.editor.getOnlySelectedShapeId() === shape.id && (
-								<motion.div
+								<motion.span
 									className={styles.dashedRing}
 									initial="hidden"
 									animate={["visible", "rotate"]}

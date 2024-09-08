@@ -1,24 +1,25 @@
 import "@babylonjs/core/Maths/math"
 
 import { useRef } from "react";
-import SceneRenderer from "./SceneRenderer";
+import SceneRenderer from "../SceneRenderer";
 import * as BABYLON from '@babylonjs/core';
 import '@babylonjs/loaders';
-import { addConstellationCanvas } from "./helpers/constellation-canvas";
+import { addConstellationCanvas } from "../helpers/constellation-canvas";
 // import redwoodsModel from '~/components/environment/assets/simple-landscape.glb';
-import { addMovableCamera } from "./helpers/cameras";
+import { addMovableCamera } from "../helpers/cameras";
 // import { Inspector } from '@babylonjs/inspector';
 import ReactDOMServer from "react-dom/server";
-import WorldCanvas from "../canvas/WorldCanvas";
-import { createCanvasControlsButton, createFocusButton, createFullscreenUI } from "./helpers/gui";
-import { addSkybox } from "./helpers/skybox";
+import WorldCanvas from "../../canvas/WorldCanvas";
+import { createCanvasControlsButton, createFocusButton, createFullscreenUI } from "../helpers/gui";
+import { addSkybox } from "../helpers/skybox";
+
 const RenderingGroups = {
     embeddedElements: 0,
     skybox: 1,
     environment: 2,
 }
 
-export default function SceneEnvironment() {
+export function CampfireScene() {
     const canvasZoneRef = useRef();
 
     async function onSceneReady(scene) {

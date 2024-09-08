@@ -52,14 +52,15 @@ export function createFocusButton(scene, camera, advancedTexture) {
     }
 
     // Add GUI and button
-    const button = GUI.Button.CreateSimpleButton("focusButton", "Focus on Canvas");
+    const button = GUI.Button.CreateSimpleButton("focusButton", "Focus on Constellations");
     button.width = "150px";
     button.height = "40px";
     button.color = "white";
     button.cornerRadius = 20;
     button.background = "green";
     button.onPointerUpObservable.add(() => focusOnConstellationCanvas(scene, camera));
-    
+    button.pointerEvents = "auto";
+
     // Position the button at the bottom center
     button.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
     button.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
@@ -70,7 +71,7 @@ export function createFocusButton(scene, camera, advancedTexture) {
 export function createCanvasControlsButton(scene, advancedTexture){
     let elementFocused = false;    
 
-    const toggleButton = GUI.Button.CreateSimpleButton("toggleButton", "Toggle Control");
+    const toggleButton = GUI.Button.CreateSimpleButton("toggleButton", "Give Control to Constellations");
     toggleButton.width = "150px";
     toggleButton.height = "40px";
     toggleButton.color = "white";
@@ -80,18 +81,11 @@ export function createCanvasControlsButton(scene, advancedTexture){
     toggleButton.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
     toggleButton.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
     toggleButton.left = "160px"; // Adjust this value to position the button above the focus button
+    toggleButton.pointerEvents = "auto";
     advancedTexture.addControl(toggleButton);
 
     function toggleControl() {
-        elementFocused = !elementFocused;
-        if (elementFocused) {
-            document.body.style.pointerEvents = 'none';
-            console.log("Control given to constellation canvas");
-        } else {
-            document.body.style.pointerEvents = 'auto';
-            document.body.style.overflow = 'unset';
-            console.log("Control given to Babylon.js canvas");
-        }
+        document.body.style.pointerEvents = 'none';
     }
 
 }

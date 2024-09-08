@@ -17,6 +17,22 @@ export function ConstellationLabel({ name }){
                 <div className={styles.constellationMetadataWrapper}>
                     <p className={styles.constellationMetadataLabel}>Exploration Status</p>
                     <p className={styles.constellationMetadataValue}>3 Remaining</p>
+                    <button 
+                        onPointerUp={() => {
+                            document.body.style.pointerEvents = 'auto';
+                            document.body.style.overflow = 'unset';
+                            console.log("GIVING CONTROL BACK")
+                        }}
+                        style={{
+                            border: '2px solid green',
+                            height: "40px",
+                            width: '200px',
+                            background: 'green',
+                            color: "white",
+                        }}
+                    >
+                        Give Control to Campfire
+                    </button>
                 </div>
             </div>
         </div>

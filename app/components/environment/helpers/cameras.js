@@ -1,8 +1,8 @@
 import * as BABYLON from "@babylonjs/core";
 
-export function addMovableCamera(scene) {
+export function addMovableCamera(scene, name) {
     // Create a Universal Camera
-    const camera = new BABYLON.UniversalCamera("babylon-camera", new BABYLON.Vector3(0, 5, 12), scene);
+    const camera = new BABYLON.UniversalCamera(name, new BABYLON.Vector3(0, 5, 12), scene);
     camera.rotation.y += Math.PI;
     camera.rotation.x += BABYLON.Tools.ToRadians(10)
 
@@ -32,5 +32,12 @@ export function addMovableCamera(scene) {
     // Set the ellipsoid to prevent the camera from going through objects
     // camera.ellipsoid = new BABYLON.Vector3(1, 1, 1);
     
+    return camera;
+}
+
+export function addGUICamera(scene, name, parentCamera, layerMask){
+    const camera = new BABYLON.UniversalCamera(name, new BABYLON.Vector3(0, 0, 0), scene);
+    camera.layerMask = layerMask;
+    camera.parent = parentCamera;
     return camera;
 }

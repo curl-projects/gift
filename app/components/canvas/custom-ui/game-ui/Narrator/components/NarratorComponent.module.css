@@ -1,0 +1,44 @@
+.narratorContainer {
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    pointer-events: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.narratorText {
+    font-size: 50px;
+    color: rgba(255, 255, 255, 0.4);
+    font-family: "Handjet", sans-serif;
+    font-weight: 300;
+    background: 
+        url(/images/cloud-overlay.png) repeat-x center center / cover,
+        url(/images/cloud-overlay.png) repeat-x center center / cover;
+    -webkit-background-clip: text;
+    background-clip: text;
+    background-size: 100% 100%, 100% 100%;
+    animation: cloudLoop 40s linear infinite alternate !important,
+               cloudLoopReverse 40s linear infinite alternate !important;
+}
+
+@keyframes cloudLoop {
+    0% {
+        background-position: 0 0;
+    }
+    100% {
+        background-position: -50% 0;
+    }
+}
+
+@keyframes cloudLoopReverse {
+    0% {
+        background-position: -50% 0;
+    }
+    100% {
+        background-position: 0 0;
+    }
+}
