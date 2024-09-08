@@ -4,12 +4,11 @@ import { useRef } from "react";
 import SceneRenderer from "../SceneRenderer";
 import * as BABYLON from '@babylonjs/core';
 import '@babylonjs/loaders';
-import { addConstellationCanvas } from "../helpers/constellation-canvas";
+import { addConstellationCanvas } from "../helpers/constellations";
 // import redwoodsModel from '~/components/environment/assets/simple-landscape.glb';
 import { addMovableCamera } from "../helpers/cameras";
 // import { Inspector } from '@babylonjs/inspector';
 import ReactDOMServer from "react-dom/server";
-import WorldCanvas from "../../canvas/WorldCanvas";
 import { createCanvasControlsButton, createFocusButton, createFullscreenUI } from "../helpers/gui";
 import { addSkybox } from "../helpers/skybox";
 
@@ -26,7 +25,7 @@ export function CampfireScene() {
         
         // scene.clearColor = new BABYLON.Color4(0, 0, 0, 0);
 
-        const camera = addMovableCamera(scene);
+        const camera = addMovableCamera(scene, 'babylon-camera');
         const light = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(1, 1, 0), scene);
     
         BABYLON.SceneLoader.ImportMesh("", "/assets/", "simple-landscape.glb", scene, function (meshes) {
@@ -71,55 +70,6 @@ export function CampfireScene() {
         //     });
         // });
 
-
-        // const { Inspector } = await import('@babylonjs/inspector');
-
-        // Inspector.Show(scene, {
-        //     overlay: false
-        // });
-
-       
-   
-       
-
-        // scene.renderingManager.setRenderingOrder(0, (a, b) => {
-        //     return a.getMesh().sortOrder < b.getMesh().sortOrder ? -1 : a.getMesh().sortOrder > b.getMesh().sortOrder ? 1 : 0;
-        // });
-
-
-
-
-        // const htmlMeshRenderer = new HtmlMeshRenderer(scene);
-        // const htmlMeshDiv = new HtmlMesh(scene, "html-mesh-div");
-        // const div = document.createElement("div");
-        // div.innerHTML = ReactDOMServer.renderToString(<WorldCanvas initialEntries={['/']} />);
-        // // div.style.backgroundColor = "white";
-        // // div.style.width = "480px";
-        // // div.style.height = "360px";
-        // // Style the form
-      
-        // htmlMeshDiv.setContent(div, 4, 3);
-        // htmlMeshDiv.position.x = 0;
-        // htmlMeshDiv.position.y = 4;
-        // htmlMeshDiv.position.y = 0;
-
-
-        
-
-        // scene.onReadyObservable.addOnce(() => {
-        //     addConstellationCanvas(scene, canvasZoneRef);
-        // });
-
-        // addConstellationCanvas(scene, canvasZoneRef);
-
-        
-
-        // const { Inspector } = await import('@babylonjs/inspector');
-
-        // Inspector.Show(scene, {
-        //     overlay: true
-        // });
-      
     }
 
     function onRender(scene) { }

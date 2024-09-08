@@ -15,8 +15,8 @@ export function createFocusButton(scene, camera, advancedTexture) {
             const boundingBox = boundingInfo.boundingBox;
     
             // Calculate the dimensions of the canvas
-            const canvasWidth = boundingBox.maximumWorld.x - boundingBox.minimumWorld.x;
-            const canvasHeight = boundingBox.maximumWorld.y - boundingBox.minimumWorld.y;
+            const canvasWidth = constellationCanvas.scaling.x
+            const canvasHeight = constellationCanvas.scaling.y
     
             // Calculate the aspect ratio of the canvas
             const canvasAspectRatio = canvasWidth / canvasHeight;
@@ -29,8 +29,15 @@ export function createFocusButton(scene, camera, advancedTexture) {
             // camera.aspectRatio = canvasAspectRatio;
     
             // Calculate the new camera position
+
+            console.log("CONSTELLATION CANVAS", constellationCanvas)
+            // constellationCanvas.computeWorldMatrix(true);
+            // const worldMatrix = constellationCanvas.getWorldMatrix();
+            // const canvasNormal = worldMatrix.getRow(2);
             const canvasNormal = constellationCanvas.forward;
+            console.log("CANVAS NORMAL", canvasNormal)
             const distanceToCanvas = (canvasHeight / 2) / Math.tan(fovY / 2);
+            console.log("CANVASHEIGHT", canvasHeight)
             const newPosition = constellationCanvas.position.subtract(canvasNormal.scale(distanceToCanvas));
     
             // Animate the camera to its new position and orientation

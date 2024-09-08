@@ -60,7 +60,7 @@ export default function WorldModel(){
         }}>
               <WorldCanvas />
         </div>
-        {/* <div style={{
+        <div style={{
           height: '100vh',
           width: '100vw',
           position: 'fixed',
@@ -70,10 +70,9 @@ export default function WorldModel(){
           overflow: 'hidden',
         }}>
           <CampfireScene/>
-        </div> */}
+        </div>
 
-       
-        
+    
         </>
     )
 }

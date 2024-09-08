@@ -11,6 +11,8 @@ import { fadeInScene } from "../helpers/post-processing";
 import { enableFloatingPhysics } from "../helpers/physics";
 import { addCenteredPhysicsText } from "../helpers/text"; // Import the new function
 import { RenderingGroups } from "../helpers/constants"; // Import the RenderingGroups
+import { addConstellationCanvas } from "../helpers/constellations";
+import { createCanvasControlsButton, createFocusButton, createFullscreenUI } from "../helpers/gui";
 
 export function PitchScene(){
     const canvasZoneRef = useRef();
@@ -20,10 +22,9 @@ export function PitchScene(){
         const camera = addMovableCamera(scene, "babylon-camera");
         const light = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(1, 1, 0), scene);
 
-    
         enableFloatingPhysics(scene);
 
-        BABYLON.SceneLoader.ImportMesh("", "/assets/", "simple-landscape.glb", scene, function (meshes) {
+        BABYLON.SceneLoader.ImportMesh("", "/assets/", "redwoods-landscape.glb", scene, function (meshes) {
             meshes.forEach(mesh => {
                 mesh.renderingGroupId = RenderingGroups.environment
 
@@ -38,8 +39,7 @@ export function PitchScene(){
         scene.setRenderingAutoClearDepthStencil(RenderingGroups.environment, false, false, false);
         scene.setRenderingAutoClearDepthStencil(RenderingGroups.text, false, false, false);
 
-        fadeInScene(scene, camera);
-
+        // fadeInScene(scene, camera);
 
         const textCamera = addGUICamera(scene, "text-camera", camera, 0x10000000);
 
@@ -47,7 +47,16 @@ export function PitchScene(){
         scene.activeCameras = [camera, textCamera]
 
         // Add floating text in the center of the screen
+        
         addCenteredPhysicsText(scene, "Hello, World!", textCamera, 0x10000000);
+
+        scene.onReadyObservable.addOnce(async() => {
+            addConstellationCanvas(scene, canvasZoneRef, RenderingGroups);
+        });
+
+        const advancedTexture = createFullscreenUI();
+        createFocusButton(scene, camera, advancedTexture);
+        createCanvasControlsButton(scene, advancedTexture);
     }
 
     function onRender(scene) { }
