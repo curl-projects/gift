@@ -204,3 +204,29 @@ export function createCanvasControlsButton(scene, advancedTexture){
     }
 
 }
+
+export function createResetButton(scene, advancedTexture){
+    let elementFocused = false;    
+
+    const toggleButton = GUI.Button.CreateSimpleButton("toggleButton", "Reset Everything");
+    toggleButton.width = "150px";
+    toggleButton.height = "40px";
+    toggleButton.color = "white";
+    toggleButton.cornerRadius = 20;
+    toggleButton.background = "blue";
+    toggleButton.onPointerUpObservable.add(() => toggleControl());
+    toggleButton.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+    toggleButton.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+    toggleButton.right = "160px"; // Adjust this value to position the button above the focus button
+    toggleButton.pointerEvents = "auto";
+    advancedTexture.addControl(resetScene);
+
+    function resetScene() {
+        const camera = scene.cameras.find(camera => camera.name === "babylon-camera");
+        camera.position = new BABYLON.Vector3(0, 5, 12);
+        camera.rotation = new BABYLON.Vector3(0, 0, 0);
+        camera.fov = 0.8 // default value for fov
+        camera.setTarget(new BABYLON.Vector3(0, 0, 0));
+    }
+
+}

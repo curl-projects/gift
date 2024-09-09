@@ -1,8 +1,14 @@
 import * as BABYLON from '@babylonjs/core';
+import { RenderingGroups } from './constants';
 
-export function addSkybox(scene) {
-    const hdrStars = BABYLON.CubeTexture.CreateFromPrefilteredData("/assets/night-sky.env", scene);
-    scene.environmentTexture = hdrStars;
-    scene.environmentIntensity = 0.1; // Decrease intensity (1.0 is the default value)
-    scene.createDefaultSkybox(hdrStars, true);
+export function addSkybox(scene, assetManager) {
+    const skyboxTask = assetManager.addCubeTextureTask("skyboxTask", "/assets/night-sky.env");
+    skyboxTask.onSuccess = function (task) {
+        scene.environmentTexture = task.texture;
+        scene.environmentIntensity = 0.1;
+        const skybox = scene.createDefaultSkybox(task.texture, true);
+        skybox.renderingGroupId = RenderingGroups.skybox;
+        skybox.material.applyFog = false;
+    };
+
 }

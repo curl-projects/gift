@@ -1,5 +1,6 @@
 import * as BABYLON from "@babylonjs/core";
 
+
 export function addCampfireParticles(scene, campfire) {
     var glowLayer = new BABYLON.GlowLayer("campfire-glow", scene);
     glowLayer.intensity = 1.0;

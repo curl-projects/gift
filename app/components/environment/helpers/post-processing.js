@@ -32,4 +32,6 @@ export function fadeInScene(scene, camera){
     postProcess.animations.push(animation);
     ppAni.addTargetedAnimation(animation, fadeLevel);
     ppAni.play();
+
+    scene.clearColor = new BABYLON.Color4(0, 0, 0, 0);
 }
