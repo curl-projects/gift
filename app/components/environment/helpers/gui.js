@@ -1,72 +1,160 @@
 import * as GUI from '@babylonjs/gui';
 import * as BABYLON from '@babylonjs/core';
+import { Matrix } from '@babylonjs/core';
 
 
 export function createFullscreenUI() {
     return GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
 }
 
+
+function calculateNewTargetRotations(camera, target){
+    const Epsilon = 0.001;
+    var targetRotationX;
+    var targetRotationY;
+    var targetRotationZ = 0;
+
+
+    camera.upVector.normalize();
+    const initialFocalDistance = target.subtract(camera.position).length();
+
+    if(camera.position.z === target.z){
+        camera.position.z += Epsilon;
+    }
+
+    camera._referencePoint.normalize().scaleInPlace(initialFocalDistance);
+
+    Matrix.LookAtLHToRef(camera.position, target, camera.upVector, camera._camMatrix);
+    camera._camMatrix.invert();
+
+    targetRotationX = Math.atan(camera._camMatrix.m[6] / camera._camMatrix.m[10]);
+
+      
+    const vDir = target.subtract(camera.position);
+
+    targetRotationY = vDir.x >= 0.0
+        ? -Math.atan(vDir.z / vDir.x) + Math.PI / 2.0
+        : -Math.atan(vDir.z / vDir.x) - Math.PI / 2.0;
+        
+
+    if (isNaN(targetRotationX)) {
+        console.log("X is NaN")
+        targetRotationX = 0;
+    }
+
+    if (isNaN(targetRotationY)) {
+        console.log("Y is NaN")
+        targetRotationY = 0;
+    }
+
+    if (isNaN(targetRotationZ)) {
+        console.log("Z is NaN")
+        targetRotationZ = 0;
+    }
+
+     // if (camera.rotationQuaternion) {
+            //     Quaternion.RotationYawPitchRollToRef(targetRotationY, targetRotationX, targetRotationZ, camera.rotationQuaternion);
+            // }
+
+
+    return { targetRotationX, targetRotationY, targetRotationZ };
+}
+
+function calculateNewPositionAndFov(camera, mesh){
+    const boundingInfo = mesh.getBoundingInfo();
+    const boundingBox = boundingInfo.boundingBox;
+
+    // Calculate the dimensions of the canvas
+    const canvasWidth = mesh.scaling.x
+    const canvasHeight = mesh.scaling.y
+
+    // Calculate the required FOV to fit the canvas height
+    const newFov = 2 * Math.atan((canvasHeight / 2) / camera.position.length());
+
+    // Calculate the new camera position
+
+    const canvasNormal = mesh.forward; // this should be 'up' if the component isn't vertical
+    const distanceToCanvas = (canvasHeight / 2) / Math.tan(newFov / 2);
+    const newPosition = mesh.position.subtract(canvasNormal.scale(distanceToCanvas));
+
+    return { newPosition, newFov };
+}
+
+
 export function createFocusButton(scene, camera, advancedTexture) {
     function focusOnConstellationCanvas(scene, camera) {
         const constellationCanvas = scene.getMeshByName('constellationCanvas');
         if (constellationCanvas) {
-            // Get the bounding box of the constellation canvas
-            const boundingInfo = constellationCanvas.getBoundingInfo();
-            const boundingBox = boundingInfo.boundingBox;
-    
-            // Calculate the dimensions of the canvas
-            const canvasWidth = constellationCanvas.scaling.x
-            const canvasHeight = constellationCanvas.scaling.y
-    
-    
-            // Calculate the required FOV to fit the canvas height
-            const fovY = 2 * Math.atan((canvasHeight / 2) / camera.position.length());
-    
-      
-
-            const canvasNormal = constellationCanvas.forward; // this should be up if vertical and forward if looking down
-            const distanceToCanvas = (canvasHeight / 2) / Math.tan(fovY / 2);
-            console.log("CANVASHEIGHT", canvasHeight)
-            const newPosition = constellationCanvas.position.subtract(canvasNormal.scale(distanceToCanvas));
-    
-            // Calculate the new camera target
-            const newTarget = constellationCanvas.position;
-            // camera.setTarget(newTarget)
-            
-            // Animate the camera to its new position and orientation
-            const animationDuration = 1000; // milliseconds
             const framerate = 60;
-            const ease = new BABYLON.CubicEase();
-            ease.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEINOUT);
 
-            // Create animations
-            // const positionAnimation = BABYLON.Animation.CreateAndStartAnimation('cameraMove', camera, 'position', framerate, animationDuration / (1000 / framerate), camera.position, newPosition, 0, ease);
-            const targetAnimation = new BABYLON.Animation('cameraTarget', 'target', framerate, BABYLON.Animation.ANIMATIONTYPE_VECTOR3, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
-            // const fovAnimation = BABYLON.Animation.CreateAndStartAnimation('cameraFOV', camera, 'fov', framerate, animationDuration / (1000 / framerate), camera.fov, fovY, 0, ease);
+            const Epsilon = 0.001;
 
-            // Set keyframes for target animation
-            const targetKeys = [];
-            targetKeys.push({ frame: 0, value: camera.target });
-            targetKeys.push({ frame: animationDuration / (1000 / framerate), value: constellationCanvas.position });
-            targetAnimation.setKeys(targetKeys);
-            targetAnimation.setEasingFunction(ease);
+            const target = constellationCanvas.position;
 
-            // Start the target animation
-            scene.beginDirectAnimation(camera, [targetAnimation], 0, animationDuration / (1000 / framerate), false);
+           
+            const { targetRotationX, targetRotationY, targetRotationZ } = calculateNewTargetRotations(camera, target);
+    
+            console.log("targetRotationX", targetRotationX)
+            console.log("targetRotationY", targetRotationY)
+            console.log("targetRotationZ", targetRotationZ)
+           
+           
+            const { newPosition, newFov } = calculateNewPositionAndFov(camera, constellationCanvas);
 
-            // Play the animations
-            // positionAnimation.start();
-            // targetAnimation.start();
-            // fovAnimation.start();
 
-            // Create an animation group
-            // const animationGroup = new BABYLON.AnimationGroup("cameraAnimations");
-            // // animationGroup.addTargetedAnimation(positionAnimation, camera);
-            // animationGroup.addTargetedAnimation(targetAnimation, camera);
-            // // animationGroup.addTargetedAnimation(fovAnimation, camera);
+            // Create animations for rotation
+            const rotationXAnimation = new BABYLON.Animation("rotationXAnimation", "rotation.x", framerate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
+            const rotationYAnimation = new BABYLON.Animation("rotationYAnimation", "rotation.y", framerate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
+            const rotationZAnimation = new BABYLON.Animation("rotationZAnimation", "rotation.z", framerate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
+            
+            // // Create animations for position and fov
+            const positionAnimation = new BABYLON.Animation("positionAnimation", "position", framerate, BABYLON.Animation.ANIMATIONTYPE_VECTOR3, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
+            const fovAnimation = new BABYLON.Animation("fovAnimation", "fov", framerate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
 
-            // // Start the animation group
-            // animationGroup.play();
+            // Set key frames for tation
+            const keyFramesX = [
+                { frame: 0, value: camera.rotation.x },
+                { frame: 1 * framerate, value: targetRotationX }
+            ];
+            const keyFramesY = [
+                { frame: 0, value: camera.rotation.y },
+                { frame: 1 * framerate, value: targetRotationY }
+            ];
+            const keyFramesZ = [
+                { frame: 0, value: camera.rotation.z },
+                { frame: 1 * framerate, value: targetRotationZ }
+            ];
+
+             // Set key frames for position
+             const positionKeyFrames = [
+                { frame: 0, value: camera.position.clone() },
+                { frame: 1 * framerate, value: newPosition }
+            ];
+
+            // Set key frames for FOV
+            const fovKeyFrames = [
+                { frame: 0, value: camera.fov },
+                { frame: 1 * framerate, value: newFov }
+            ];
+
+
+            rotationXAnimation.setKeys(keyFramesX);
+            rotationYAnimation.setKeys(keyFramesY);
+            rotationZAnimation.setKeys(keyFramesZ);
+            positionAnimation.setKeys(positionKeyFrames);
+            fovAnimation.setKeys(fovKeyFrames);
+
+
+            // Add animations to camera
+            camera.animations.push(rotationXAnimation);
+            camera.animations.push(rotationYAnimation);
+            camera.animations.push(rotationZAnimation);
+            camera.animations.push(positionAnimation);
+            camera.animations.push(fovAnimation);
+
+
+            // Start the animation
+            scene.beginDirectAnimation(camera, [rotationXAnimation, rotationYAnimation, rotationZAnimation, positionAnimation, fovAnimation], 0, 1 * framerate, false);
         }
     }
 

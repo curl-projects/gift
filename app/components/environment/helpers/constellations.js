@@ -322,19 +322,23 @@ export function addConstellationCanvas(scene, canvasZoneRef, RenderingGroups) {
       plane.renderingGroupId = RenderingGroups.embeddedElements;
       const matPlane = new BABYLON.StandardMaterial("plane", scene);
 
+
       plane.material = matPlane;
     //   plane.material = new BABYLON.StandardMaterial("redMaterial", scene);
     //   plane.material.diffuseColor = new BABYLON.Color3(1, 0, 0); // RGB for red
     //  plane.position = new BABYLON.Vector3(0, 8, 0); // Position above the camera
     //  plane.rotation = new BABYLON.Vector3(0, Math.PI, 0);
-    
+      
+      plane.rotationQuaternion = BABYLON.Quaternion.FromEulerAngles(-Math.PI / 2, Math.PI, 0); // Rotate to face upwards
+
       plane.rotation = new BABYLON.Vector3(-Math.PI / 2, Math.PI, 0); // Rotate to face upwards
+      
       plane.position = new BABYLON.Vector3(camera.position.x, camera.position.y + 20, camera.position.z); // Position above the camera
 
       // disable frustrum culling to prevent blinking   
       plane.alwaysSelectAsActiveMesh = true
-    //   plane.rotationQuaternion = null;
-    //   plane.checkCollisions = true;
+      // plane.rotationQuaternion = null;
+      plane.checkCollisions = true;
 
      // Setup the CSS renderer and Youtube object
      let existingRenderer = document.getElementById("css-container");

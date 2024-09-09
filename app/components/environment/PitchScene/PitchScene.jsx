@@ -4,7 +4,7 @@ import * as BABYLON from '@babylonjs/core';
 import '@babylonjs/loaders';
 
 
-import { addGUICamera, addMovableCamera } from "../helpers/cameras";
+import { addGUICamera, addMovableCamera, addArcCamera, addTargetCamera } from "../helpers/cameras";
 import { addCampfireParticles } from "../helpers/campfire";
 import { addCampfireLight } from "../helpers/lights";
 import { fadeInScene } from "../helpers/post-processing";

@@ -3,11 +3,12 @@ import * as BABYLON from "@babylonjs/core";
 export function addMovableCamera(scene, name) {
     // Create a Universal Camera
     const camera = new BABYLON.UniversalCamera(name, new BABYLON.Vector3(0, 5, 12), scene);
-    camera.rotation.y += Math.PI;
-    camera.rotation.x += BABYLON.Tools.ToRadians(10)
+    camera.setTarget(new BABYLON.Vector3(0, 0, 0));
+    // camera.rotation.y += Math.PI;
+    // camera.rotation.x += BABYLON.Tools.ToRadians(10)
 
     // nearly minimum value, required because we get very close to the constellation plane
-    camera.minZ = 0.001;
+    // camera.minZ = 0.001;
     
     // Attach the camera to the canvas
     const canvas = scene.getEngine().getRenderingCanvas();
@@ -32,6 +33,36 @@ export function addMovableCamera(scene, name) {
     // Set the ellipsoid to prevent the camera from going through objects
     // camera.ellipsoid = new BABYLON.Vector3(1, 1, 1);
     
+    return camera;
+}
+
+export function addArcCamera(scene, name){
+    const camera = new BABYLON.ArcRotateCamera(name, 0, 0, 0, new BABYLON.Vector3(0, 5, 12), scene);
+    const canvas = scene.getEngine().getRenderingCanvas();
+    camera.attachControl(canvas, true);
+    
+    camera.setPosition(new BABYLON.Vector3(0, 5, 12));
+    // Lock the target to the camera's position
+    camera.setTarget(camera.position);
+
+    // Adjust camera properties to mimic first-person behavior
+    camera.lowerRadiusLimit = 0.1;
+    camera.upperRadiusLimit = 0.1;
+    camera.wheelPrecision = 1000; // Disable zooming with the mouse wheel
+
+    // Optionally, adjust the camera's speed and inertia
+    camera.speed = 0.5;
+    camera.inertia = 0.9;
+
+    scene.activeCamera = camera;
+    return camera;
+}
+
+export function addTargetCamera(scene, name){
+    const camera = new BABYLON.TargetCamera(name, new BABYLON.Vector3(0, 5, 12), scene);
+    camera.setTarget(new BABYLON.Vector3(0, 0, 0));
+    const canvas = scene.getEngine().getRenderingCanvas();
+    camera.attachControl(canvas, true);
     return camera;
 }
 
