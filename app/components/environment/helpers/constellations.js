@@ -317,8 +317,9 @@ export function addConstellationCanvas(scene, canvasZoneRef, RenderingGroups) {
 
       plane = BABYLON.MeshBuilder.CreatePlane("constellationCanvas", { width: 1, height: 1 }, scene);
       plane.material = // this should be an error but for some insane reason it's required for it to work.
-      plane.scaling.x = document.documentElement.clientWidth / 100
-      plane.scaling.y = document.documentElement.clientHeight / 100
+      plane.scaling.x = document.documentElement.clientWidth / 12.5
+      plane.scaling.y = document.documentElement.clientHeight / 12.5
+
       plane.renderingGroupId = RenderingGroups.embeddedElements;
       const matPlane = new BABYLON.StandardMaterial("plane", scene);
 
@@ -333,7 +334,7 @@ export function addConstellationCanvas(scene, canvasZoneRef, RenderingGroups) {
 
       plane.rotation = new BABYLON.Vector3(-Math.PI / 2, Math.PI, 0); // Rotate to face upwards
       
-      plane.position = new BABYLON.Vector3(camera.position.x, camera.position.y + 20, camera.position.z); // Position above the camera
+      plane.position = new BABYLON.Vector3(camera.position.x, camera.position.y + 90, camera.position.z); // Position above the camera
 
       // disable frustrum culling to prevent blinking   
       plane.alwaysSelectAsActiveMesh = true

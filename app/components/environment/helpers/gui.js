@@ -157,12 +157,14 @@ export function createFocusButton(scene, camera, advancedTexture) {
             camera.animations.push(rotationXAnimation);
             camera.animations.push(rotationYAnimation);
             camera.animations.push(rotationZAnimation);
-            camera.animations.push(positionAnimation);
+            // camera.animations.push(positionAnimation);
             camera.animations.push(fovAnimation);
 
 
             // Start the animation
-            scene.beginDirectAnimation(camera, [rotationXAnimation, rotationYAnimation, rotationZAnimation, positionAnimation, fovAnimation], 0, 1 * framerate, false);
+            scene.beginDirectAnimation(camera, [rotationXAnimation, rotationYAnimation, rotationZAnimation, 
+                // positionAnimation, 
+                fovAnimation], 0, 1 * framerate, false);
         }
     }
 
