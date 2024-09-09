@@ -83,12 +83,12 @@ function calculateNewPositionAndFov(camera, mesh){
 
 export function createFocusButton(scene, camera, advancedTexture) {
     function focusOnConstellationCanvas(scene, camera) {
+        
         const constellationCanvas = scene.getMeshByName('constellationCanvas');
         if (constellationCanvas) {
+            
             const framerate = 60;
-
             const Epsilon = 0.001;
-
             const target = constellationCanvas.position;
 
            
@@ -101,6 +101,8 @@ export function createFocusButton(scene, camera, advancedTexture) {
            
             const { newPosition, newFov } = calculateNewPositionAndFov(camera, constellationCanvas);
 
+            const ease = new BABYLON.CubicEase();
+            ease.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEINOUT);
 
             // Create animations for rotation
             const rotationXAnimation = new BABYLON.Animation("rotationXAnimation", "rotation.x", framerate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
@@ -143,6 +145,12 @@ export function createFocusButton(scene, camera, advancedTexture) {
             rotationZAnimation.setKeys(keyFramesZ);
             positionAnimation.setKeys(positionKeyFrames);
             fovAnimation.setKeys(fovKeyFrames);
+
+            rotationXAnimation.setEasingFunction(ease);
+            rotationYAnimation.setEasingFunction(ease);
+            rotationZAnimation.setEasingFunction(ease);
+            positionAnimation.setEasingFunction(ease);
+            fovAnimation.setEasingFunction(ease);
 
 
             // Add animations to camera
