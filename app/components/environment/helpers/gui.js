@@ -7,6 +7,19 @@ export function createFullscreenUI() {
     return GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
 }
 
+function calculateNewFovWithoutPosition(camera, mesh){
+    const boundingInfo = mesh.getBoundingInfo();
+    const boundingBox = boundingInfo.boundingBox;
+
+    // Calculate the dimensions of the canvas
+    const canvasHeight = mesh.scaling.y
+
+    // Calculate the required FOV to fit the canvas height
+    const distanceToCanvas = camera.position.subtract(mesh.position).length();
+    const newFov = 2 * Math.atan((canvasHeight / 2) / distanceToCanvas);
+
+    return newFov;
+}
 
 function calculateNewTargetRotations(camera, target){
     const Epsilon = 0.001;
@@ -81,91 +94,165 @@ function calculateNewPositionAndFov(camera, mesh){
 }
 
 
+function focusAndMoveToConstellationCanvas(scene, camera){
+    const constellationCanvas = scene.getMeshByName('constellationCanvas');
+    if (constellationCanvas) {
+        
+        const framerate = 60;
+        const Epsilon = 0.001;
+        const target = constellationCanvas.position;
+
+        const { targetRotationX, targetRotationY, targetRotationZ } = calculateNewTargetRotations(camera, target);
+
+        console.log("targetRotationX", targetRotationX)
+        console.log("targetRotationY", targetRotationY)
+        console.log("targetRotationZ", targetRotationZ)
+       
+       
+        const { newPosition, newFov } = calculateNewPositionAndFov(camera, constellationCanvas);
+
+        const ease = new BABYLON.CubicEase();
+        ease.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEINOUT);
+
+        // Create animations for rotation
+        const rotationXAnimation = new BABYLON.Animation("rotationXAnimation", "rotation.x", framerate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
+        const rotationYAnimation = new BABYLON.Animation("rotationYAnimation", "rotation.y", framerate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
+        const rotationZAnimation = new BABYLON.Animation("rotationZAnimation", "rotation.z", framerate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
+        
+        // // Create animations for position and fov
+        const positionAnimation = new BABYLON.Animation("positionAnimation", "position", framerate, BABYLON.Animation.ANIMATIONTYPE_VECTOR3, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
+        const fovAnimation = new BABYLON.Animation("fovAnimation", "fov", framerate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
+
+        // Set key frames for tation
+        const keyFramesX = [
+            { frame: 0, value: camera.rotation.x },
+            { frame: 1 * framerate, value: targetRotationX }
+        ];
+        const keyFramesY = [
+            { frame: 0, value: camera.rotation.y },
+            { frame: 1 * framerate, value: targetRotationY }
+        ];
+        const keyFramesZ = [
+            { frame: 0, value: camera.rotation.z },
+            { frame: 1 * framerate, value: targetRotationZ }
+        ];
+
+         // Set key frames for position
+         const positionKeyFrames = [
+            { frame: 0, value: camera.position.clone() },
+            { frame: 1 * framerate, value: newPosition }
+        ];
+
+        // Set key frames for FOV
+        const fovKeyFrames = [
+            { frame: 0, value: camera.fov },
+            { frame: 1 * framerate, value: newFov }
+        ];
+
+
+        rotationXAnimation.setKeys(keyFramesX);
+        rotationYAnimation.setKeys(keyFramesY);
+        rotationZAnimation.setKeys(keyFramesZ);
+        positionAnimation.setKeys(positionKeyFrames);
+        fovAnimation.setKeys(fovKeyFrames);
+
+        rotationXAnimation.setEasingFunction(ease);
+        rotationYAnimation.setEasingFunction(ease);
+        rotationZAnimation.setEasingFunction(ease);
+        positionAnimation.setEasingFunction(ease);
+        fovAnimation.setEasingFunction(ease);
+
+
+        // Add animations to camera
+        camera.animations.push(rotationXAnimation);
+        camera.animations.push(rotationYAnimation);
+        camera.animations.push(rotationZAnimation);
+        camera.animations.push(positionAnimation);
+        camera.animations.push(fovAnimation);
+
+
+        // Start the animation
+        scene.beginDirectAnimation(camera, [rotationXAnimation, rotationYAnimation, rotationZAnimation, positionAnimation, fovAnimation], 0, 1 * framerate, false);
+    }
+}
+
+function focusWithoutMovingToConstellationCanvas(scene, camera){
+    const constellationCanvas = scene.getMeshByName('constellationCanvas');
+    if (constellationCanvas) {
+        
+        const framerate = 60;
+        const Epsilon = 0.001;
+        const target = constellationCanvas.position;
+
+       
+        const { targetRotationX, targetRotationY, targetRotationZ } = calculateNewTargetRotations(camera, target);
+
+        console.log("targetRotationX", targetRotationX)
+        console.log("targetRotationY", targetRotationY)
+        console.log("targetRotationZ", targetRotationZ)
+       
+        const newFov = calculateNewFovWithoutPosition(camera, constellationCanvas);
+
+        const ease = new BABYLON.CubicEase();
+        ease.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEINOUT);
+
+        // Create animations for rotation
+        const rotationXAnimation = new BABYLON.Animation("rotationXAnimation", "rotation.x", framerate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
+        const rotationYAnimation = new BABYLON.Animation("rotationYAnimation", "rotation.y", framerate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
+        const rotationZAnimation = new BABYLON.Animation("rotationZAnimation", "rotation.z", framerate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
+        
+        // // Create animations for position and fov
+        const fovAnimation = new BABYLON.Animation("fovAnimation", "fov", framerate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
+
+        // Set key frames for tation
+        const keyFramesX = [
+            { frame: 0, value: camera.rotation.x },
+            { frame: 1 * framerate, value: targetRotationX }
+        ];
+        const keyFramesY = [
+            { frame: 0, value: camera.rotation.y },
+            { frame: 1 * framerate, value: targetRotationY }
+        ];
+        const keyFramesZ = [
+            { frame: 0, value: camera.rotation.z },
+            { frame: 1 * framerate, value: targetRotationZ }
+        ];
+
+        // Set key frames for FOV
+        const fovKeyFrames = [
+            { frame: 0, value: camera.fov },
+            { frame: 1 * framerate, value: newFov }
+        ];
+
+
+        rotationXAnimation.setKeys(keyFramesX);
+        rotationYAnimation.setKeys(keyFramesY);
+        rotationZAnimation.setKeys(keyFramesZ);
+        fovAnimation.setKeys(fovKeyFrames);
+
+        rotationXAnimation.setEasingFunction(ease);
+        rotationYAnimation.setEasingFunction(ease);
+        rotationZAnimation.setEasingFunction(ease);
+        fovAnimation.setEasingFunction(ease);
+
+
+        // Add animations to camera
+        camera.animations.push(rotationXAnimation);
+        camera.animations.push(rotationYAnimation);
+        camera.animations.push(rotationZAnimation);
+        camera.animations.push(fovAnimation);
+
+
+        // Start the animation
+        scene.beginDirectAnimation(camera, [rotationXAnimation, rotationYAnimation, rotationZAnimation, fovAnimation], 0, 1 * framerate, false);
+    }
+}
+
+
 export function createFocusButton(scene, camera, advancedTexture) {
     function focusOnConstellationCanvas(scene, camera) {
-        
-        const constellationCanvas = scene.getMeshByName('constellationCanvas');
-        if (constellationCanvas) {
-            
-            const framerate = 60;
-            const Epsilon = 0.001;
-            const target = constellationCanvas.position;
-
-           
-            const { targetRotationX, targetRotationY, targetRotationZ } = calculateNewTargetRotations(camera, target);
-    
-            console.log("targetRotationX", targetRotationX)
-            console.log("targetRotationY", targetRotationY)
-            console.log("targetRotationZ", targetRotationZ)
-           
-           
-            const { newPosition, newFov } = calculateNewPositionAndFov(camera, constellationCanvas);
-
-            const ease = new BABYLON.CubicEase();
-            ease.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEINOUT);
-
-            // Create animations for rotation
-            const rotationXAnimation = new BABYLON.Animation("rotationXAnimation", "rotation.x", framerate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
-            const rotationYAnimation = new BABYLON.Animation("rotationYAnimation", "rotation.y", framerate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
-            const rotationZAnimation = new BABYLON.Animation("rotationZAnimation", "rotation.z", framerate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
-            
-            // // Create animations for position and fov
-            const positionAnimation = new BABYLON.Animation("positionAnimation", "position", framerate, BABYLON.Animation.ANIMATIONTYPE_VECTOR3, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
-            const fovAnimation = new BABYLON.Animation("fovAnimation", "fov", framerate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
-
-            // Set key frames for tation
-            const keyFramesX = [
-                { frame: 0, value: camera.rotation.x },
-                { frame: 1 * framerate, value: targetRotationX }
-            ];
-            const keyFramesY = [
-                { frame: 0, value: camera.rotation.y },
-                { frame: 1 * framerate, value: targetRotationY }
-            ];
-            const keyFramesZ = [
-                { frame: 0, value: camera.rotation.z },
-                { frame: 1 * framerate, value: targetRotationZ }
-            ];
-
-             // Set key frames for position
-             const positionKeyFrames = [
-                { frame: 0, value: camera.position.clone() },
-                { frame: 1 * framerate, value: newPosition }
-            ];
-
-            // Set key frames for FOV
-            const fovKeyFrames = [
-                { frame: 0, value: camera.fov },
-                { frame: 1 * framerate, value: newFov }
-            ];
-
-
-            rotationXAnimation.setKeys(keyFramesX);
-            rotationYAnimation.setKeys(keyFramesY);
-            rotationZAnimation.setKeys(keyFramesZ);
-            positionAnimation.setKeys(positionKeyFrames);
-            fovAnimation.setKeys(fovKeyFrames);
-
-            rotationXAnimation.setEasingFunction(ease);
-            rotationYAnimation.setEasingFunction(ease);
-            rotationZAnimation.setEasingFunction(ease);
-            positionAnimation.setEasingFunction(ease);
-            fovAnimation.setEasingFunction(ease);
-
-
-            // Add animations to camera
-            camera.animations.push(rotationXAnimation);
-            camera.animations.push(rotationYAnimation);
-            camera.animations.push(rotationZAnimation);
-            // camera.animations.push(positionAnimation);
-            camera.animations.push(fovAnimation);
-
-
-            // Start the animation
-            scene.beginDirectAnimation(camera, [rotationXAnimation, rotationYAnimation, rotationZAnimation, 
-                // positionAnimation, 
-                fovAnimation], 0, 1 * framerate, false);
-        }
+        // focusAndMoveToConstellationCanvas(scene, camera);
+        focusWithoutMovingToConstellationCanvas(scene, camera)
     }
 
     // Add GUI and button
