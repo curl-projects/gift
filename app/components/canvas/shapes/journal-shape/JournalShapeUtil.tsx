@@ -95,9 +95,13 @@ export class JournalShapeUtil extends BaseBoxShapeUtil<JournalShape> {
                     className={styles.shapeContent} 
                     style={{
                         cursor: 'pointer',
-                        }}
+                        }}   
                     >
+                        <div className={styles.outerBorder}/>
+                        <div className={styles.innerBorder}/>
+                        <h1 className={styles.journalLargeText}>The Orrery</h1>
 				</div>
+
 			</HTMLContainer>
 		)
 	}
