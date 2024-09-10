@@ -16,6 +16,17 @@
   }
 }
 
+
+@keyframes parallax {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    transform: translate(0, -1000px) scale(2);
+  }
+}
+
+
 .stars, .stars2, .stars3, .offsetStars {
   position: absolute;
   top: 0;
@@ -58,4 +69,14 @@
 /* New class for transition animation */
 .transition {
   animation: transitionStars 1s ease-out forwards;
+}
+
+/* New class for parallax animation */
+.parallax {
+  animation: parallax 2s ease-out forwards;
+}
+
+/* New class for warp speed animation */
+.warpSpeed {
+  animation: warpSpeed 1s ease-out forwards;
 }

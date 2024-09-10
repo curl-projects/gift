@@ -19,11 +19,11 @@ import { GraphUi } from "~/components/canvas/custom-ui/graph/GraphUi";
 import { GraphTrigger } from "~/components/canvas/custom-ui/graph/GraphTrigger";
 import { SelectionListener } from "~/components/canvas/custom-ui/listeners/SelectionListener";
 import { ConstellationLabel } from "~/components/canvas/custom-ui/game-ui/ConstellationLabel"
-import { Stars } from './custom-ui/aesthetics/stars/Stars';
+import { Stars } from '~/components/canvas/custom-ui/aesthetics/stars/Stars';
+import { WarpStars } from '~/components/canvas/custom-ui/aesthetics/WarpStars/WarpStars';
 import { Clouds } from './custom-ui/aesthetics/clouds/Clouds';
 import { NarratorVoice } from "./custom-ui/game-ui/Narrator/NarratorVoice"
 import { handleDoubleClickOnCanvas } from '~/components/canvas/helpers/canvasOverride';
-
 
 // CUSTOM SHAPES
 import { NameShapeUtil } from "~/components/canvas/shapes/name-shape/NameShapeUtil"
@@ -196,8 +196,9 @@ export default function WorldCanvas() {
                             <SelectionListener 
                                 user={data.user}
                             />
-                            <Stars />
-                            {/* <Clouds /> */}
+                            {/* <Stars /> */}
+                            <WarpStars />
+                            <Clouds />
                             <NarratorVoice />
                         </>
                     )}
