@@ -40,7 +40,7 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
 	static override type = 'name' as const
 	static override props = nameShapeProps
 
-	override canEdit = () => false
+	override canEdit = () => true
     override hideResizeHandles = () => true
     override hideRotateHandle = () => true
 	override canResize = () => false
@@ -50,7 +50,7 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
     
 
 
-	getDefaultProps(): ExcerptShape['props'] {
+	getDefaultProps(): NameShape['props'] {
 		return { 
 			w: 200,
 			h: 20,
@@ -59,7 +59,7 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
 		}
 	}
 
-	getGeometry(shape: ExcerptShape): Geometry2d {
+	getGeometry(shape: NameShape): Geometry2d {
 		return new Rectangle2d({
 			width: shape.props.w,
 			height: shape.props.h,
@@ -67,15 +67,24 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
 		})
 	}
 
-	component(shape: ExcerptShape) {
+	component(shape: NameShape) {
 		const shapeRef = useRef();
         const [scope, animate] = useAnimate()
         const isOnlySelected = this.editor.getOnlySelectedShapeId() === shape.id;
         const [isHovered, setIsHovered] = useState(false);
         const data = useLoaderData();
         const { collection, size } = useCollection('graph')
-        const { drifting, setDrifting } = useConstellationMode();
+        const { drifting, setDrifting, triggerWarp } = useConstellationMode();
         const { triggerEffect, activeEffect } = useStarFireSync();
+        
+
+
+        // useEffect(()=>{
+        //     console.log("SHAPE:", shape)
+        //     if(triggerWarp){
+        //         this.editor.updateShape({id: shape.id, type: shape.type })
+        //     }
+        // }, [triggerWarp])
 
 		useEffect(()=>{
 			if(shapeRef.current && shapeRef.current.clientHeight !== 0 && shapeRef.current.clientWidth !== 0){

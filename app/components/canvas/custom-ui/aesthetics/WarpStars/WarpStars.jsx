@@ -11,59 +11,76 @@ function timeStamp(){
 
 
 export function WarpStars({ 
-    density = 20, 
+    depth = 1000,
+    speed = 0.05,
+    density = 30, 
     starSize = 100, 
     backgroundColor = 'transparent', 
     starColor = 'white', 
     warpEffect = true, 
-    warpEffectLength = 5 
+    warpEffectLength = 1
 }) {
 
   const canvasRef = useRef(null);
   const starsRef = useRef([]);
   const paramsRef = useRef({
-      depth: 1000,
-      speed: 1,
+      depth,
+      speed,
       starSize,
       backgroundColor,
       starColor,
       warpEffect,
       warpEffectLength
   });
-  const { warpStarsActive, setWarpStarsActive } = useConstellationMode();
+  const { triggerWarp, setTriggerWarp } = useConstellationMode();
 
-  const animateParam = (param, targetValue, duration) => {
-      return new Promise((resolve) => {
-          const startValue = paramsRef.current[param];
-          const startTime = performance.now();
+  const animateParams = (params, duration, easingFunction = (t) => t) => {
+    return new Promise((resolve) => {
+        const startValues = {};
+        const startTime = performance.now();
 
-          const animate = () => {
-              const currentTime = performance.now();
-              const elapsedTime = currentTime - startTime;
-              const progress = Math.min(elapsedTime / duration, 1);
-              paramsRef.current[param] = startValue + (targetValue - startValue) * progress;
+        // Capture the start values of each parameter
+        for (const param in params) {
+            startValues[param] = paramsRef.current[param];
+        }
 
-              if (progress < 1) {
-                  requestAnimationFrame(animate);
-              } else {
-                  resolve();
-              }
-          };
+        const animate = () => {
+            const currentTime = performance.now();
+            const elapsedTime = currentTime - startTime;
+            const progress = Math.min(elapsedTime / duration, 1);
+            const easedProgress = easingFunction(progress);
 
-          requestAnimationFrame(animate);
-      });
-  };
+            // Update each parameter
+            for (const param in params) {
+                const startValue = startValues[param];
+                const targetValue = params[param];
+                paramsRef.current[param] = startValue + (targetValue - startValue) * easedProgress;
+            }
+
+            if (progress < 1) {
+                requestAnimationFrame(animate);
+            } else {
+                resolve();
+            }
+        };
+
+        requestAnimationFrame(animate);
+    });
+};
 
   useEffect(()=>{
-    setWarpStarsActive(true)
-    console.log('warpStarsActive', warpStarsActive)
-    setTimeout(()=>{
-        animateParam('speed', 0.05, 4000).then(()=>{
-            animateParam('warpEffectLength', 1, 500)
+    const easeInOutQuad = (t) => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+    if(triggerWarp){
+
+        animateParams({speed: 4, warpEffectLength: 5}, 500, easeInOutQuad).then(()=>{
+            setTimeout(()=>{
+                animateParams({speed: 0.05, warpEffectLength: 1}, 500, easeInOutQuad).then(()=>{
+                    setTriggerWarp(false)
+                })
+            }, 1000)
         })
-    //   setWarpStarsActive(false)
-    }, 1000)
-  }, [])
+    }
+  }, [triggerWarp])
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -100,7 +117,6 @@ export function WarpStars({
     let drawRequest = null;
 
     const draw = () => {
-      console.log('Drawing frame');
       const TIME = performance.now();
       move();
       if (canvas) {

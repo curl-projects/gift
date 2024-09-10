@@ -44,6 +44,8 @@ import { DriftShapeUtil } from "~/components/canvas/shapes/drift-shape/DriftShap
 import { AnnotationShapeUtil } from "~/components/canvas/shapes/annotation-shape/AnnotationShapeUtil"
 import { AnnotationBindingUtil } from "~/components/canvas/bindings/annotation-binding/AnnotationBindingUtil"
 
+import { JournalShapeUtil } from "~/components/canvas/shapes/journal-shape/JournalShapeUtil"
+
 // HELPERS
 import { createBoundThread, hasExistingThread } from '~/components/canvas/helpers/thread-funcs';
 
@@ -57,7 +59,7 @@ export default function WorldCanvas() {
         console.log("EDITOR:", editor)
     }, [editor])
 
-    const shapeUtils = [ConceptShapeUtil, ExcerptShapeUtil, ThreadShapeUtil, NameShapeUtil, DriftShapeUtil, AnnotationShapeUtil]
+    const shapeUtils = [ConceptShapeUtil, ExcerptShapeUtil, ThreadShapeUtil, NameShapeUtil, DriftShapeUtil, AnnotationShapeUtil, JournalShapeUtil]
     const tools = [ConceptShapeTool, ExcerptShapeTool, ThreadShapeTool, NameShapeTool]
     const bindingUtils = [ThreadBindingUtil, AnnotationBindingUtil]
     const collections = [GraphLayoutCollection, 
