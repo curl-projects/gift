@@ -14,6 +14,7 @@ export default function SceneRenderer({
     const canvasRef = useRef(null);
 
     useEffect(() => {
+        console.log("TRIGGERING!")
         const { current: canvas } = canvasRef;
 
         if (!canvas) return;
@@ -50,7 +51,7 @@ export default function SceneRenderer({
                 window.removeEventListener('resize', resize);
             }
         };
-    }, [antialias, engineOptions, adaptToDeviceRatio, sceneOptions, onRender, onSceneReady]);
+    }, []); // if you add dependencies here it reloads when context changes
 
     return (
         <div id='canvasZone' ref={canvasZoneRef} style={{

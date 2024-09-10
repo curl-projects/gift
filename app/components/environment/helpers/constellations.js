@@ -313,7 +313,7 @@ export function addConstellationCanvas(scene, canvasZoneRef, RenderingGroups) {
         }
       }
 
-      scene.clearColor = new BABYLON.Color4(0, 0, 0, 0);
+      scene.clearColor = new BABYLON.Color4(32 / 255, 40 / 255, 56 / 255, 0); // equivalent to rgb(49, 73, 91)
 
       plane = BABYLON.MeshBuilder.CreatePlane("constellationCanvas", { width: 1, height: 1 }, scene);
       plane.material = // this should be an error but for some insane reason it's required for it to work.
@@ -334,7 +334,7 @@ export function addConstellationCanvas(scene, canvasZoneRef, RenderingGroups) {
 
       plane.rotation = new BABYLON.Vector3(-Math.PI / 2, Math.PI, 0); // Rotate to face upwards
       
-      plane.position = new BABYLON.Vector3(camera.position.x, camera.position.y + 150, camera.position.z); // Position above the camera
+      plane.position = new BABYLON.Vector3(camera.position.x, camera.position.y + 250, camera.position.z); // Position above the camera
 
       // disable frustrum culling to prevent blinking   
       plane.alwaysSelectAsActiveMesh = true

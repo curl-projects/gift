@@ -35,3 +35,17 @@ export function fadeInScene(scene, camera){
 
     scene.clearColor = new BABYLON.Color4(0, 0, 0, 0);
 }
+
+
+
+export function addMotionBlur(scene, camera){
+    const motionblur = new BABYLON.MotionBlurPostProcess('motionBlur', scene, 1.0, camera)
+    motionblur.motionStrength = 2;
+    motionblur.isObjectBased = false; // apply motion blur to the camera, not based on object velocities
+    return motionblur
+}
+
+export function addLensEffects(scene, camera, parameters){
+    const lensEffects = new BABYLON.LensRenderingPipeline('lensEffects', parameters, scene, 1.0, camera)
+    return lensEffects
+}

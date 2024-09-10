@@ -16,6 +16,7 @@ import { useCollection } from "~/components/canvas/custom-ui/collections";
 import { animateShapeProperties } from "~/components/canvas/helpers/animation-funcs"
 import { deleteAssociatedThreads } from "~/components/canvas/helpers/thread-funcs"
 import { useConstellationMode } from '~/components/canvas/custom-ui/utilities/ConstellationModeContext';
+import { useStarFireSync } from '~/components/synchronization/StarFireSync';
 
 const nameShapeProps = {
 	w: T.number,
@@ -74,6 +75,7 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
         const data = useLoaderData();
         const { collection, size } = useCollection('graph')
         const { drifting, setDrifting } = useConstellationMode();
+        const { triggerEffect, activeEffect } = useStarFireSync();
 
 		useEffect(()=>{
 			if(shapeRef.current && shapeRef.current.clientHeight !== 0 && shapeRef.current.clientWidth !== 0){
@@ -137,6 +139,28 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
                 transition: { duration: 0.2, ease: "easeIn" }
             }
         };
+
+        useEffect(()=>{
+            console.log("ACTIVE EFFECT TRIGGERED:", activeEffect)
+            if(activeEffect && 
+               activeEffect.domain === "canvas" && 
+               activeEffect.selector.type === "shape" && 
+               activeEffect.selector.id === shape.id){
+                switch(activeEffect.effect){
+                    case "ripple":
+                        animate(".nameCircle", { scale: 0.9 }, { duration: 0.2, ease: 'easeInOut' })
+                        .then(() => animate(".nameCircle", { scale: 1.1 }, { duration: 0.2, ease: 'easeInOut' }))
+                        .then(() => {
+                            animate(".nameCircle", { scale: 1 }, { duration: 0.2, ease: 'easeInOut' });
+                            animate(`.ripple`, { scale: [0, 8], opacity: [1, 0], x: "-50%", y: "-50%" }, { duration: 1.5, ease: "easeOut", delay: 0 });
+                            if(activeEffect.callback){
+                                activeEffect.callback()
+                            }
+                        })
+                        break;
+                }
+            }
+        }, [activeEffect])
 
         useEffect(() => {
             if (isOnlySelected) {
