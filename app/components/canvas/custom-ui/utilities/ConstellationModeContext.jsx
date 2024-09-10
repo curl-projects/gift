@@ -6,11 +6,18 @@ const ConstellationModeContext = createContext();
 // Create a provider component
 export const ConstellationModeProvider = ({ children }) => {
     const [drifting, setDrifting] = useState(false);
+    const [warpStarsActive, setWarpStarsActive] = useState(false);
     const [expandedShapeIds, setExpandedShapeIds] = useState([])
     const [narratorEvent, setNarratorEvent] = useState(null)
 
     return (
-        <ConstellationModeContext.Provider value={{ drifting, setDrifting, expandedShapeIds, setExpandedShapeIds, narratorEvent, setNarratorEvent }}>
+        <ConstellationModeContext.Provider 
+            value={{ 
+                drifting, setDrifting, 
+                expandedShapeIds, setExpandedShapeIds, 
+                narratorEvent, setNarratorEvent, 
+                warpStarsActive, setWarpStarsActive,
+            }}>
             {children}
         </ConstellationModeContext.Provider>
     );

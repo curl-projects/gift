@@ -17,6 +17,7 @@ import { createCanvasControlsButton, createFocusButton, createFullscreenUI, crea
 import { addSkybox } from "../helpers/skybox";
 import { addFog, addFireflyParticles } from "../helpers/forest-effects";
 import { createFadeBehaviour } from "../helpers/mesh-behaviours";
+import { createCharacter } from "../helpers/characters";
 
 export function PitchScene(){
     const canvasZoneRef = useRef();
@@ -111,6 +112,9 @@ export function PitchScene(){
             // TODO: use these to trigger motion blur on certain animations
             camera.detachPostProcess(motionBlur)
             camera.attachPostProcess(motionBlur)
+
+
+            createCharacter(scene)
 
 
 

@@ -97,20 +97,6 @@ export const Stars = track(() => {
     setShadowsBigOffset(generateBoxShadow(50, 0, 0, 'orange'));
   }, []);
 
-  useEffect(()=>{
-    triggerParallax()
-  }, [])
-  
-  const triggerParallax = () => {
-    const stars = document.querySelectorAll(`.${styles.stars}, .${styles.stars2}, .${styles.stars3}, .${styles.offsetStars}`);
-    stars.forEach(star => {
-      star.classList.add(styles.parallax);
-      star.addEventListener('animationend', () => {
-        star.classList.remove(styles.parallax);
-      }, { once: true });
-    });
-  };
-
   return (
     <>
       <div id="stars" className={`${styles.stars}`} style={{ boxShadow: shadowsSmall }}></div>

@@ -196,13 +196,12 @@ export default function WorldCanvas() {
                             <SelectionListener 
                                 user={data.user}
                             />
-                            {/* <Stars /> */}
+                            <Stars />
                             <WarpStars />
                             <Clouds />
                             <NarratorVoice />
                         </>
                     )}
-
                 </Tldraw>
             </CollectionProvider>
         </ConstellationModeProvider>
