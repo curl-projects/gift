@@ -18,12 +18,18 @@ import Placeholder from '@tiptap/extension-placeholder'
 import styles from './JournalShapeUtil.module.css';
 import { motion, useAnimate, AnimatePresence } from 'framer-motion';
 import { InkBleed } from "~/components/canvas/custom-ui/post-processing-effects/InkBleed"
-import { JournalThread } from './JournalThread';
-import { JournalBorder } from './JournalBorder';
+import { JournalThread } from './journal-thread/JournalThread';
+import { JournalBorder } from './journal-border/JournalBorder';
+import { JournalMenu } from './journal-menu/JournalMenu';
+
+// pages
+import {Cover} from './journal-pages/cover/Cover';
+import {Pitch} from './journal-pages/pitch/Pitch';
 
 const journalShapeProps = {
 	w: T.number,
 	h: T.number,
+    expanded: T.boolean,
 }
 
 type JournalShape = TLBaseShape<
@@ -31,6 +37,7 @@ type JournalShape = TLBaseShape<
 	{
 		w: number,
 		h: number,
+        expanded: boolean,
 	}
 >
 
@@ -48,6 +55,7 @@ export class JournalShapeUtil extends BaseBoxShapeUtil<JournalShape> {
 		return { 
 			w: window.innerWidth * 0.4,
 			h: window.innerHeight * 0.8,
+            expanded: false,
 		}
 	}
 
@@ -64,6 +72,7 @@ export class JournalShapeUtil extends BaseBoxShapeUtil<JournalShape> {
 		const bounds = this.editor.getShapeGeometry(shape).bounds
 		const data: any = useLoaderData();
         const contentRef = useRef<HTMLDivElement>(null);
+        const [page, setPage] = useState('cover');
 
         const [inkVisible, setInkVisible] = useState(false);
         const [outerBorderVisibility, setOuterBorderVisibility] = useState({
@@ -99,45 +108,54 @@ export class JournalShapeUtil extends BaseBoxShapeUtil<JournalShape> {
           }, [this.editor, shape]);
 
           // triggers on animation frame
-          useEffect(() => {
-            const margin = window.innerHeight * 0.1;
+        //   useEffect(() => {
+        //     const margin = window.innerHeight * 0.1;
 
-            const updateShapePosition = () => {
-                const { x, y } = this.editor.screenToPage({ x: window.innerWidth * 0.6 - margin, y: margin });
-                this.editor.updateShape({
-                    type: shape.type,
-                    id: shape.id,
-                    x: x,
-                    y: y,
-                    props: {
-                        w: window.innerWidth * 0.4,
-                        h: window.innerHeight * 0.8,
-                    }
-                });
-                requestAnimationFrame(updateShapePosition);
-            };
+        //     const updateShapePosition = () => {
+        //         const { x, y } = this.editor.screenToPage({ x: window.innerWidth * 0.6 - margin, y: margin });
+        //         this.editor.updateShape({
+        //             type: shape.type,
+        //             id: shape.id,
+        //             x: x,
+        //             y: y,
+        //             props: {
+        //                 w: window.innerWidth * 0.4,
+        //                 h: window.innerHeight * 0.8,
+        //             }
+        //         });
+        //         requestAnimationFrame(updateShapePosition);
+        //     };
 
-            const animationId = requestAnimationFrame(updateShapePosition);
+        //     const animationId = requestAnimationFrame(updateShapePosition);
 
-            return () => cancelAnimationFrame(animationId);
-          }, [this.editor, shape]);    
-
+        //     return () => cancelAnimationFrame(animationId);
+        //   }, [this.editor, shape]);   
 		return (
-			<HTMLContainer 
+            <AnimatePresence>
+            {shape.props.expanded &&
+                <motion.div 
+                exit={{ opacity: 0 }}
+                transition={{ duration: 1, ease: 'easeInOut'}}
+                onAnimationComplete={(animation) => {
+                    if(animation?.opacity === 0){
+                        this.editor.deleteShape(shape.id)
+                    }
+                }}
+                key='journal'
 				id={shape.id}
 				className={styles.container}
                 style={{
                     width: shape.props.w,
                     height: shape.props.h,
-                    transform: 'scale(var(--tl-scale))',
-                    // transformOrigin: "top left",
                 }}				
 				>
 				<div 
                     className={styles.shapeContent}
                     ref={contentRef}
+                    onPointerDown={(e) => {
+                        e.stopPropagation();
+                    }}
                     style={{
-                        cursor: 'pointer',
                         }}   
                     >
                     <motion.div
@@ -156,29 +174,35 @@ export class JournalShapeUtil extends BaseBoxShapeUtil<JournalShape> {
                         backgroundPosition: 'center',
                         }}
                     />
+
                                     
                         {/* outer border */}
-                        <JournalBorder borderThickness={4} distance={20} borderVisibility={outerBorderVisibility}/>
+                        <JournalBorder borderThickness={4} distance={20} borderVisibility={outerBorderVisibility} />
 
                         {/* inner border */}
                         <JournalBorder borderThickness={2} distance={30} borderVisibility={innerBorderVisibility}/>
 
+                       
                         {inkVisible && (
                             <>
+                             <JournalMenu page={page} setPage={setPage}/>
                             {/* <InkBleed 
                                 initialBlur={200}
-                            delay={0}
-                            duration={4}
+                                delay={0}
+                                duration={4}
                             >
                             <div className={styles.exampleCircle}/>
                             </InkBleed> */}
-                            <InkBleed
-                                initialBlur={4}
-                                delay={0}
-                                duration={1}
-                            >
-                                <h1 className={styles.journalLargeText}>Journal</h1>
-                            </InkBleed>
+                            <div className={styles.journalPageContainer}>
+                                    <AnimatePresence>
+                                    {
+                                        {
+                                            'cover': <Cover key='cover'/>,
+                                            'pitch': <Pitch key='pitch'/>,
+                                        }[page]
+                                    }
+                                </AnimatePresence>
+                            </div>
                         </>
                         )}
                 </div>
@@ -266,8 +290,11 @@ export class JournalShapeUtil extends BaseBoxShapeUtil<JournalShape> {
                     />
 
                 </svg>
-			</HTMLContainer>
-		)
+			</motion.div>
+                }
+
+            </AnimatePresence>
+					)
 	}
 
 	indicator(shape: JournalShape) {

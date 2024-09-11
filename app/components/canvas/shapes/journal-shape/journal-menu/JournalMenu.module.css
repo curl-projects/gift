@@ -1,0 +1,27 @@
+.journalMenu{
+    display: flex;
+    gap: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 5px;
+
+}
+
+.menuItem{
+    height: fit-content;
+    width: fit-content;
+    padding: 10px;
+    /* border: 1px solid black; */
+    cursor: pointer;
+    pointer-events: all;
+}
+
+.menuItemText{
+    font-family: "Inknut Antiqua", serif;
+	color: rgba(80, 74, 68, 0.9);
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    font-style: italic;
+    /* filter: url(../journal-svg-filters/text-roughness.svg#fadedTextWithFlakes); */
+}

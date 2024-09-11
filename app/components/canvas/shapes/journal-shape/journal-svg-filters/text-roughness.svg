@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="0" width="0">
+    <defs>
+        <filter id="turbulence">
+            <feTurbulence type="fractalNoise" baseFrequency=".05" numOctaves="4" />
+        </filter>
+        <filter id="displacement">
+            <feDisplacementMap in="SourceGraphic" scale="4" />
+        </filter>
+        <filter id="combined">
+            <feTurbulence type="fractalNoise" baseFrequency=".05" numOctaves="4" />
+            <feDisplacementMap in="SourceGraphic" scale="2" />
+        </filter>
+
+
+
+         <filter id="fadedMarked">
+            <!-- Create noise -->
+            <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" result="noise" />
+            <!-- Displace the text based on the noise -->
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="10" xChannelSelector="R" yChannelSelector="G" />
+            <!-- Adjust transparency to create faded effect -->
+            <feComponentTransfer>
+                <feFuncA type="table" tableValues="0 0.5 1 0.5 0" />
+            </feComponentTransfer>
+        </filter>
+
+
+        <filter id="inkOnPage" x="-50%" y="-50%" width="200%" height="200%">
+            <!-- Create noise -->
+            <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" result="noise" />
+            
+            <!-- Desaturate the noise -->
+            <feColorMatrix type="saturate" values="0" in="noise" result="desaturatedNoise" />
+            
+            <!-- Apply a slight blur to the noise -->
+            <feGaussianBlur in="desaturatedNoise" stdDeviation="0.5" result="blurredNoise" />
+            
+            <!-- Use the displacement map to distort the source text -->
+            <feDisplacementMap in="SourceGraphic" in2="blurredNoise" scale="10" xChannelSelector="R" yChannelSelector="G" result="distortedText" />
+            
+            <!-- Reduce the opacity of the text -->
+            <feComponentTransfer in="distortedText" result="fadedText">
+                <feFuncA type="table" tableValues="0 0.5 1 0.5 0" />
+            </feComponentTransfer>
+            
+            <!-- Blend the text with the noise -->
+            <feBlend in="blurredNoise" in2="fadedText" mode="multiply" result="blendedText" />
+            
+            <!-- Merge the text and noise -->
+            <feMerge>
+                <feMergeNode in="blurredNoise" />
+                <feMergeNode in="blendedText" />
+            </feMerge>
+        </filter>
+
+
+      <filter id="textTexture" x="0" y="0" width="100%" height="100%">
+            <feImage href="/assets/smoke.png" result="texture" />
+            <feBlend in="SourceGraphic" in2="texture" mode="multiply" />
+            <!-- Optional: Adjust opacity to make the texture more visible -->
+            <feComponentTransfer>
+                <feFuncA type="linear" slope="1.5" />
+            </feComponentTransfer>
+        </filter>
+
+    <filter id="fadedTextWithFlakes" x="-20%" y="-20%" width="140%" height="140%">
+            <!-- Create noise for the flaky texture -->
+            <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="5" result="noise" />
+            
+            <!-- Threshold the noise to create flakes -->
+            <feColorMatrix in="noise" type="matrix" values="1 0 0 0 0
+                                                            0 1 0 0 0
+                                                            0 0 1 0 0
+                                                            0 0 0 9 -4" result="flakes" />
+            
+            <!-- Apply displacement map to the text -->
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" xChannelSelector="R" yChannelSelector="G" result="displacedText" />
+            
+            <!-- Blend the displaced text with the flakes -->
+            <feComposite in="displacedText" in2="flakes" operator="in" result="flakeyText" />
+            
+            <!-- Add some blur for a faded look -->
+            <feGaussianBlur in="flakeyText" stdDeviation="0.5" result="blurredText" />
+            
+            <!-- Adjust opacity for fading effect -->
+            <feComponentTransfer in="blurredText" result="fadedText">
+                <feFuncA type="linear" slope="0.8" intercept="0" />
+            </feComponentTransfer>
+            
+            <!-- Blend with original text to maintain some sharpness -->
+            <feBlend in="fadedText" in2="SourceGraphic" mode="multiply" />
+        </filter>
+
+    </defs>
+</svg>

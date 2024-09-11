@@ -8,7 +8,7 @@ export function JournalBorder({ borderThickness, distance, borderVisibility }){
     }, [borderVisibility])
     return(
         <div className={styles.journalBorder} style={{
-            top: `${distance}px`,
+            top: `${distance }px`,
             left: `${distance}px`,
             right: `${distance}px`,
             bottom: `${distance}px`,
