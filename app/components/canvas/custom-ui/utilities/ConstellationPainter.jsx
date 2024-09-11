@@ -10,6 +10,8 @@ export function ConstellationPainter({ user }){
     const { collection, size } = useCollection('graph')
     const { triggerWarp, setTriggerWarp } = useStarFireSync()
 
+    
+
     function createConstellationStar(name){
         const centralShapeId = createShapeId(name);
 
@@ -53,12 +55,16 @@ export function ConstellationPainter({ user }){
             setTimeout(()=>{
                 // delete all shapes
                 const constellationShapes = editor.getCurrentPageShapes().filter(shape => ['thread', 'concept', 'excerpt', 'name', 'annotation'].includes(shape.type))
-                const constellationThreads = constellationShapes.filter(shape => shape.type === 'thread')
 
-                editor.updateShapes(constellationThreads.map(shape => ({type: shape.type, id: shape.id, isLocked: false})))
-
-                editor.deleteShapes(constellationShapes.map(shape => shape.id))
-
+                // allows us to override thread locks
+                editor.run(
+                    () => {
+                        editor.deleteShapes(constellationShapes.map(shape => shape.id))
+                    }, {
+                        ignoreShapeLock: true
+                    }
+                )
+    
                 // reset the zoom
                 editor.resetZoom(editor.getViewportScreenCenter())
 

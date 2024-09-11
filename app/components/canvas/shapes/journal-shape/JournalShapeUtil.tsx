@@ -29,8 +29,8 @@ const journalShapeProps = {
 type JournalShape = TLBaseShape<
 	'journal',
 	{
-		w: number
-		h: number
+		w: number,
+		h: number,
 	}
 >
 
@@ -63,6 +63,8 @@ export class JournalShapeUtil extends BaseBoxShapeUtil<JournalShape> {
         const [scope, animate] = useAnimate();
 		const bounds = this.editor.getShapeGeometry(shape).bounds
 		const data: any = useLoaderData();
+        const contentRef = useRef<HTMLDivElement>(null);
+
         const [inkVisible, setInkVisible] = useState(false);
         const [outerBorderVisibility, setOuterBorderVisibility] = useState({
             bottom: false,
@@ -96,6 +98,30 @@ export class JournalShapeUtil extends BaseBoxShapeUtil<JournalShape> {
             };
           }, [this.editor, shape]);
 
+          // triggers on animation frame
+          useEffect(() => {
+            const margin = window.innerHeight * 0.1;
+
+            const updateShapePosition = () => {
+                const { x, y } = this.editor.screenToPage({ x: window.innerWidth * 0.6 - margin, y: margin });
+                this.editor.updateShape({
+                    type: shape.type,
+                    id: shape.id,
+                    x: x,
+                    y: y,
+                    props: {
+                        w: window.innerWidth * 0.4,
+                        h: window.innerHeight * 0.8,
+                    }
+                });
+                requestAnimationFrame(updateShapePosition);
+            };
+
+            const animationId = requestAnimationFrame(updateShapePosition);
+
+            return () => cancelAnimationFrame(animationId);
+          }, [this.editor, shape]);    
+
 		return (
 			<HTMLContainer 
 				id={shape.id}
@@ -103,10 +129,13 @@ export class JournalShapeUtil extends BaseBoxShapeUtil<JournalShape> {
                 style={{
                     width: shape.props.w,
                     height: shape.props.h,
+                    transform: 'scale(var(--tl-scale))',
+                    // transformOrigin: "top left",
                 }}				
 				>
 				<div 
-                    className={styles.shapeContent} 
+                    className={styles.shapeContent}
+                    ref={contentRef}
                     style={{
                         cursor: 'pointer',
                         }}   
