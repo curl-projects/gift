@@ -175,7 +175,7 @@ function focusAndMoveToConstellationCanvas(scene, camera){
     }
 }
 
-function focusWithoutMovingToConstellationCanvas(scene, camera, triggerEffect) {
+function focusWithoutMovingToConstellationCanvas(scene, camera, triggerEffect, setTriggerWarp) {
     const constellationCanvas = scene.getMeshByName('constellationCanvas');
     if (constellationCanvas) {
      
@@ -248,6 +248,7 @@ function focusWithoutMovingToConstellationCanvas(scene, camera, triggerEffect) {
 
         scene.beginDirectAnimation(camera, [rotationXAnimation, rotationYAnimation, rotationZAnimation], 0, targetAnimationDuration * framerate, false, 1, () => {
             // wait for the star to trigger
+
             triggerEffect({domain: "canvas", selector: {type: "shape", id: createShapeId("andre-vacha")}, effect: "ripple", callback: () => {
                 // start moving the redwoods out and widening the field of view
                 redwoodMeshes.map(mesh => customFadeOut(mesh, 1.5))
@@ -256,6 +257,8 @@ function focusWithoutMovingToConstellationCanvas(scene, camera, triggerEffect) {
 
                 // Start the FOV animation after rotation animations complete
                 scene.beginDirectAnimation(camera, [fovAnimation], 0, fovAnimationDuration * framerate, false);
+
+                setTriggerWarp(true);
                 }
             })
 
@@ -264,10 +267,10 @@ function focusWithoutMovingToConstellationCanvas(scene, camera, triggerEffect) {
 }
 
 
-export function createFocusButton(scene, camera, advancedTexture, triggerEffect) {
+export function createFocusButton(scene, camera, advancedTexture, triggerEffect, setTriggerWarp) {
     function focusOnConstellationCanvas(scene, camera) {
         // focusAndMoveToConstellationCanvas(scene, camera);
-        focusWithoutMovingToConstellationCanvas(scene, camera, triggerEffect)
+        focusWithoutMovingToConstellationCanvas(scene, camera, triggerEffect, setTriggerWarp)
     }
 
     // Add GUI and button

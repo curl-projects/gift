@@ -21,7 +21,7 @@ import { createCharacter } from "../helpers/characters";
 
 export function PitchScene(){
     const canvasZoneRef = useRef();
-    const { triggerEffect, activeEffect } = useStarFireSync();
+    const { triggerEffect, activeEffect, setTriggerWarp } = useStarFireSync();
 
     useEffect(() => {
         console.log("ACTIVE EFFECT", activeEffect)
@@ -126,7 +126,7 @@ export function PitchScene(){
             });
 
             const advancedTexture = createFullscreenUI();
-            createFocusButton(scene, camera, advancedTexture, triggerEffect);
+            createFocusButton(scene, camera, advancedTexture, triggerEffect, setTriggerWarp);
             createCanvasControlsButton(scene, advancedTexture);
             createResetButton(scene, advancedTexture);
         };

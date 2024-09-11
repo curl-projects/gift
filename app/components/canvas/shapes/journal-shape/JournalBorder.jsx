@@ -13,10 +13,10 @@ export function JournalBorder({ borderThickness, distance, borderVisibility }){
             right: `${distance}px`,
             bottom: `${distance}px`,
 
-            // borderBottom: borderVisibility.bottom ? `${borderThickness}px solid rgba(80, 74, 68, 0.5)` : 'none',
-            // borderLeft: borderVisibility.left ? `${borderThickness}px solid rgba(80, 74, 68, 0.5)` : 'none',
-            // borderRight: borderVisibility.right ? `${borderThickness}px solid rgba(80, 74, 68, 0.5)` : 'none',
-            // borderTop: borderVisibility.top ? `${borderThickness}px solid rgba(80, 74, 68, 0.5)` : 'none',
+            borderBottom: borderVisibility.bottom ? `${borderThickness}px solid rgba(80, 74, 68, 0.5)` : 'none',
+            borderLeft: borderVisibility.left ? `${borderThickness}px solid rgba(80, 74, 68, 0.5)` : 'none',
+            borderRight: borderVisibility.right ? `${borderThickness}px solid rgba(80, 74, 68, 0.5)` : 'none',
+            borderTop: borderVisibility.top ? `${borderThickness}px solid rgba(80, 74, 68, 0.5)` : 'none',
         }}/>
     )
 }

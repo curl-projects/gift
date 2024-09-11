@@ -4,6 +4,7 @@ const StarFireSyncContext = createContext();
 
 const StarFireSyncProvider = ({ children }) => {
     const [activeEffect, setActiveEffect] = useState(null);
+    const [triggerWarp, setTriggerWarp] = useState(false);
 
     const triggerEffect = useCallback(({domain, selector, effect, callback}) => {
         console.log("HELLO")
@@ -17,7 +18,7 @@ const StarFireSyncProvider = ({ children }) => {
     }, []);
 
     return (
-        <StarFireSyncContext.Provider value={{ triggerEffect, activeEffect }}>
+        <StarFireSyncContext.Provider value={{ triggerEffect, activeEffect, triggerWarp, setTriggerWarp }}>
             {children}
         </StarFireSyncContext.Provider>
     );

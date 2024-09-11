@@ -1,10 +1,10 @@
 import styles from "./ConstellationLabel.module.css"
 import { transliterateToLepcha } from "../../helpers/language-funcs"
-import { useConstellationMode } from "~/components/canvas/custom-ui/utilities/ConstellationModeContext"
+import { useStarFireSync } from "~/components/synchronization/StarFireSync"
 import { createShapeId, useEditor } from "tldraw"
 
 export function ConstellationLabel({ name }){
-    const { triggerWarp, setTriggerWarp } = useConstellationMode()
+    const { triggerWarp, setTriggerWarp } = useStarFireSync()
     const editor = useEditor()
 
     return(

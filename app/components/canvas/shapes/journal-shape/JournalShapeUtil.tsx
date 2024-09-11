@@ -63,6 +63,19 @@ export class JournalShapeUtil extends BaseBoxShapeUtil<JournalShape> {
         const [scope, animate] = useAnimate();
 		const bounds = this.editor.getShapeGeometry(shape).bounds
 		const data: any = useLoaderData();
+        const [inkVisible, setInkVisible] = useState(false);
+        const [outerBorderVisibility, setOuterBorderVisibility] = useState({
+            bottom: false,
+            left: false,
+            right: false,
+            top: false,
+        });
+        const [innerBorderVisibility, setInnerBorderVisibility] = useState({
+            bottom: false,
+            left: false,
+            right: false,
+            top: false,
+        });
 
         useEffect(() => {
             const handleResize = () => {
@@ -116,42 +129,112 @@ export class JournalShapeUtil extends BaseBoxShapeUtil<JournalShape> {
                     />
                                     
                         {/* outer border */}
-                        <JournalBorder borderThickness={4} distance={20}/>
+                        <JournalBorder borderThickness={4} distance={20} borderVisibility={outerBorderVisibility}/>
 
                         {/* inner border */}
-                        <JournalBorder borderThickness={2} distance={30}/>
+                        <JournalBorder borderThickness={2} distance={30} borderVisibility={innerBorderVisibility}/>
 
-                        {/* <InkBleed 
-                            initialBlur={200}
-                            delay={0.5}
+                        {inkVisible && (
+                            <>
+                            {/* <InkBleed 
+                                initialBlur={200}
+                            delay={0}
                             duration={4}
                             >
                             <div className={styles.exampleCircle}/>
-                        </InkBleed>
-                        <InkBleed
-                            initialBlur={4}
-                            delay={0.5}
-                            duration={1}
-                        >
-                            <h1 className={styles.journalLargeText}>The Orrery</h1>
-                        </InkBleed> */}
+                            </InkBleed> */}
+                            <InkBleed
+                                initialBlur={4}
+                                delay={0}
+                                duration={1}
+                            >
+                                <h1 className={styles.journalLargeText}>Journal</h1>
+                            </InkBleed>
+                        </>
+                        )}
                 </div>
+
                 
                 <svg className={styles.animatedLine} viewBox={`0 0 ${shape.props.w} ${shape.props.h}`}>
 
-                    <JournalThread d={`M -5 -5 L ${shape.props.w + 5} -5 L ${shape.props.w + 5} ${shape.props.h + 5} L -5 ${shape.props.h + 5} Z`} delay={0} duration={1} strokeWidth={1} pageContainer />
+                    <JournalThread 
+                        d={`M -5 -5 L ${shape.props.w + 5} -5 L ${shape.props.w + 5} ${shape.props.h + 5} L -5 ${shape.props.h + 5} Z`} 
+                        delay={0} 
+                        duration={1} 
+                        strokeWidth={1} 
+                        pageContainer 
+                    />
 
                     {/* outer line */}
-                    <JournalThread d={`M 20 20 L ${shape.props.w - 20} 20`} delay={1} strokeWidth={4}/>
-                    <JournalThread d={`M 20 20 L 20 ${shape.props.h - 20}`} delay={1} strokeWidth={4}/>
-                    <JournalThread d={`M 20 ${shape.props.h - 20} L ${shape.props.w - 20} ${shape.props.h - 20}`} delay={1.5} strokeWidth={4} />
-                    <JournalThread d={`M ${shape.props.w - 20} 20 L ${shape.props.w - 20} ${shape.props.h - 20}`} delay={1.5} strokeWidth={4} />
+
+                    {/* top */}
+                    <JournalThread 
+                        d={`M 20 20 L ${shape.props.w - 20} 20`} 
+                        delay={1}
+                        duration={0.5}
+                        strokeWidth={1} 
+                        onOpaque={() => setOuterBorderVisibility(prevState => ({...prevState, left: true}))}
+                    />
+
+                    {/* { left } */}
+                    <JournalThread 
+                        d={`M 20 20 L 20 ${shape.props.h - 20}`} 
+                        delay={1} 
+                        duration={0.5}
+                        strokeWidth={1} 
+                        onOpaque={() => setOuterBorderVisibility(prevState => ({...prevState, top: true}))}
+                    />
+                    
+                    {/* bottom */}
+                    <JournalThread 
+                        d={`M 20 ${shape.props.h - 20} L ${shape.props.w - 20} ${shape.props.h - 20}`} 
+                        delay={1.3}
+                        duration={0.5}
+                        strokeWidth={1} 
+                        onOpaque={() => setOuterBorderVisibility(prevState => ({...prevState, right: true}))}
+                    />
+
+                    {/* right */}
+                    <JournalThread 
+                        d={`M ${shape.props.w - 20} 20 L ${shape.props.w - 20} ${shape.props.h - 20}`} 
+                        delay={1.3}
+                        duration={0.5}
+                        strokeWidth={1} 
+                        onOpaque={() => setOuterBorderVisibility(prevState => ({...prevState, bottom: true}))}
+                    />
 
                     {/* inner line */}
-                    <JournalThread d={`M 30 30 L ${shape.props.w - 30} 30`} delay={2} strokeWidth={2} />
-                    <JournalThread d={`M 30 30 L 30 ${shape.props.h - 30}`} delay={2} strokeWidth={2} />
-                    <JournalThread d={`M 30 ${shape.props.h - 30} L ${shape.props.w - 30} ${shape.props.h - 30}`} delay={2.5} strokeWidth={2} />
-                    <JournalThread d={`M ${shape.props.w - 30} 30 L ${shape.props.w - 30} ${shape.props.h - 30}`} delay={2.5} strokeWidth={2} />
+                    <JournalThread 
+                        d={`M 30 30 L ${shape.props.w - 30} 30`} 
+                        delay={1.5}
+                        duration={0.5} 
+                        strokeWidth={1} 
+                        onOpaque={() => setInnerBorderVisibility(prevState => ({...prevState, left: true}))}
+                    />
+                    <JournalThread 
+                        d={`M 30 30 L 30 ${shape.props.h - 30}`} 
+                        delay={1.5}
+                        duration={0.5} 
+                        strokeWidth={1} 
+                        onOpaque={() => setInnerBorderVisibility(prevState => ({...prevState, top: true}))}
+                    />
+                    <JournalThread 
+                        d={`M 30 ${shape.props.h - 30} L ${shape.props.w - 30} ${shape.props.h - 30}`} 
+                        delay={1.8} 
+                        duration={0.5}
+                        strokeWidth={1} 
+                        onOpaque={() => setInnerBorderVisibility(prevState => ({...prevState, right: true}))}
+                    />
+                    <JournalThread 
+                        d={`M ${shape.props.w - 30} 30 L ${shape.props.w - 30} ${shape.props.h - 30}`} 
+                        delay={1.8} 
+                        duration={0.5}
+                        strokeWidth={1} 
+                        onOpaque={() => {
+                            setInnerBorderVisibility(prevState => ({...prevState, bottom: true}))
+                            setInkVisible(true)
+                        }}
+                    />
 
                 </svg>
 			</HTMLContainer>

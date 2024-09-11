@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useConstellationMode } from '~/components/canvas/custom-ui/utilities/ConstellationModeContext.jsx';
+import { useStarFireSync } from '~/components/synchronization/StarFireSync';
 import styles from './WarpStars.module.css';
 
 
@@ -32,7 +32,7 @@ export function WarpStars({
       warpEffect,
       warpEffectLength
   });
-  const { triggerWarp, setTriggerWarp } = useConstellationMode();
+  const { triggerWarp, setTriggerWarp } = useStarFireSync();
 
   const animateParams = (params, duration, easingFunction = (t) => t) => {
     return new Promise((resolve) => {
