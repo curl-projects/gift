@@ -1,0 +1,7 @@
+.pathLine{
+    filter: url('./journal-thread-glow.svg#glow') url("./roughness.svg#pencilTexture4");
+}
+
+.pageLine{
+    filter: url('./journal-thread-glow.svg#glow') url('./page-roughness.svg#combined');;
+}

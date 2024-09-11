@@ -57,7 +57,11 @@ export function ConstellationLabel({ name }){
                             const margin = window.innerHeight * 0.1;
                             
                             const { x, y } = editor.screenToPage({x: window.innerWidth * 0.6 - margin, y: margin})
-
+                            editor.deleteShape({
+                                type: "journal",
+                                id: createShapeId('journal'),
+                            })
+                            
                             editor.createShape({
                                 type: "journal",
                                 id: createShapeId('journal'),

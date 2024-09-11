@@ -20,7 +20,7 @@ import { GraphTrigger } from "~/components/canvas/custom-ui/graph/GraphTrigger";
 import { SelectionListener } from "~/components/canvas/custom-ui/listeners/SelectionListener";
 import { ConstellationLabel } from "~/components/canvas/custom-ui/game-ui/ConstellationLabel"
 import { Stars } from '~/components/canvas/custom-ui/aesthetics/stars/Stars';
-import { WarpStars } from '~/components/canvas/custom-ui/aesthetics/WarpStars/WarpStars';
+import { WarpStars } from '~/components/canvas/custom-ui/aesthetics/warp-stars/WarpStars';
 import { Clouds } from './custom-ui/aesthetics/clouds/Clouds';
 import { NarratorVoice } from "./custom-ui/game-ui/Narrator/NarratorVoice"
 import { handleDoubleClickOnCanvas } from '~/components/canvas/helpers/canvasOverride';

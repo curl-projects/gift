@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="0" width="0">
+    <defs>
+        <filter id="inkBleed">
+            <!-- Create noise -->
+            <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" result="noise" />
+            <!-- Displace the text using the noise -->
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="5" xChannelSelector="R" yChannelSelector="G" />
+            <!-- Blur the text slightly to give it a faded look -->
+            <feGaussianBlur stdDeviation="1" />
+            <!-- Reduce the opacity to make it look faded -->
+            <feComponentTransfer>
+                <feFuncA type="linear" slope="0.7" />
+            </feComponentTransfer>
+        </filter>
+    </defs>
+</svg>

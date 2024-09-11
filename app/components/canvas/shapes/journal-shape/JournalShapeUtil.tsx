@@ -17,6 +17,9 @@ import { Node } from "@tiptap/core";
 import Placeholder from '@tiptap/extension-placeholder'
 import styles from './JournalShapeUtil.module.css';
 import { motion, useAnimate, AnimatePresence } from 'framer-motion';
+import { InkBleed } from "~/components/canvas/custom-ui/post-processing-effects/InkBleed"
+import { JournalThread } from './JournalThread';
+import { JournalBorder } from './JournalBorder';
 
 const journalShapeProps = {
 	w: T.number,
@@ -61,8 +64,6 @@ export class JournalShapeUtil extends BaseBoxShapeUtil<JournalShape> {
 		const bounds = this.editor.getShapeGeometry(shape).bounds
 		const data: any = useLoaderData();
 
-
-
         useEffect(() => {
             const handleResize = () => {
                 this.editor.updateShape({
@@ -72,7 +73,7 @@ export class JournalShapeUtil extends BaseBoxShapeUtil<JournalShape> {
                     w: window.innerWidth * 0.4,
                     h: window.innerHeight * 0.8
                   }
-                });
+            });
             };
         
             window.addEventListener('resize', handleResize);
@@ -97,11 +98,62 @@ export class JournalShapeUtil extends BaseBoxShapeUtil<JournalShape> {
                         cursor: 'pointer',
                         }}   
                     >
-                        <div className={styles.outerBorder}/>
-                        <div className={styles.innerBorder}/>
-                        <h1 className={styles.journalLargeText}>The Orrery</h1>
-				</div>
+                    <motion.div
+                        className={styles.shapeContentBackground}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 1, delay: 1 }} // Adjust delay as needed
+                        style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        backgroundImage: 'url("/assets/old-paper.jpg")',
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        }}
+                    />
+                                    
+                        {/* outer border */}
+                        <JournalBorder borderThickness={4} distance={20}/>
 
+                        {/* inner border */}
+                        <JournalBorder borderThickness={2} distance={30}/>
+
+                        {/* <InkBleed 
+                            initialBlur={200}
+                            delay={0.5}
+                            duration={4}
+                            >
+                            <div className={styles.exampleCircle}/>
+                        </InkBleed>
+                        <InkBleed
+                            initialBlur={4}
+                            delay={0.5}
+                            duration={1}
+                        >
+                            <h1 className={styles.journalLargeText}>The Orrery</h1>
+                        </InkBleed> */}
+                </div>
+                
+                <svg className={styles.animatedLine} viewBox={`0 0 ${shape.props.w} ${shape.props.h}`}>
+
+                    <JournalThread d={`M -5 -5 L ${shape.props.w + 5} -5 L ${shape.props.w + 5} ${shape.props.h + 5} L -5 ${shape.props.h + 5} Z`} delay={0} duration={1} strokeWidth={1} pageContainer />
+
+                    {/* outer line */}
+                    <JournalThread d={`M 20 20 L ${shape.props.w - 20} 20`} delay={1} strokeWidth={4}/>
+                    <JournalThread d={`M 20 20 L 20 ${shape.props.h - 20}`} delay={1} strokeWidth={4}/>
+                    <JournalThread d={`M 20 ${shape.props.h - 20} L ${shape.props.w - 20} ${shape.props.h - 20}`} delay={1.5} strokeWidth={4} />
+                    <JournalThread d={`M ${shape.props.w - 20} 20 L ${shape.props.w - 20} ${shape.props.h - 20}`} delay={1.5} strokeWidth={4} />
+
+                    {/* inner line */}
+                    <JournalThread d={`M 30 30 L ${shape.props.w - 30} 30`} delay={2} strokeWidth={2} />
+                    <JournalThread d={`M 30 30 L 30 ${shape.props.h - 30}`} delay={2} strokeWidth={2} />
+                    <JournalThread d={`M 30 ${shape.props.h - 30} L ${shape.props.w - 30} ${shape.props.h - 30}`} delay={2.5} strokeWidth={2} />
+                    <JournalThread d={`M ${shape.props.w - 30} 30 L ${shape.props.w - 30} ${shape.props.h - 30}`} delay={2.5} strokeWidth={2} />
+
+                </svg>
 			</HTMLContainer>
 		)
 	}
