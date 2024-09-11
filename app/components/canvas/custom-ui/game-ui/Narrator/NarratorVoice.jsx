@@ -10,18 +10,18 @@ import SystemComponent from "./components/SystemComponent";
 export function NarratorVoice() {
     const editor = useEditor();
     const { narratorEvent, setNarratorEvent, setDrifting } = useConstellationMode();
-    const [narratorState, setNarratorState] = useState({ visible: false, text: '' });
-    const [systemState, setSystemState] = useState({ visible: false, text: '' });
+    const [narratorState, setNarratorState] = useState({ visible: false, text: '', requiresInteraction: false });
+    const [systemState, setSystemState] = useState({ visible: false, text: '', requiresInteraction: false });
     const [commands, setCommands] = useState([]);
 
-    // useEffect(() => {
-    //     setNarratorEvent('welcome');
-    // }, [setNarratorEvent]);
+    useEffect(() => {
+        setNarratorEvent('welcome');
+    }, [setNarratorEvent]);
 
     const narratorOrchestration = {
         'welcome': [
             {
-                "type": "system",
+                "type": "narrator",
                 'text': 'Welcome',
                 'duration': 3000,
                 'requiresInteraction': true,
@@ -32,10 +32,10 @@ export function NarratorVoice() {
                 'duration': 3000,
                 'requiresInteraction': true,
             },
-            {   
-                'type': 'callback',
-                'callback': () => setDrifting(true)
-            },
+            // {   
+            //     'type': 'callback',
+            //     'callback': () => setDrifting(true)
+            // },
         ],
         'leaveAnnotation': [
             {
@@ -59,8 +59,8 @@ export function NarratorVoice() {
         };
 
         if (index >= commands.length) {
-            setNarratorState({ visible: false, text: '' });
-            setSystemState({ visible: false, text: '' });
+            setNarratorState({ visible: false, text: '', requiresInteraction: false });
+            setSystemState({ visible: false, text: '', requiresInteraction: false });
             setNarratorEvent(null);
             return;
         }
@@ -69,14 +69,14 @@ export function NarratorVoice() {
 
         if (command.type === "system" || command.type === "narrator") {
             const setState = command.type === "system" ? setSystemState : setNarratorState;
-            setState({ visible: true, text: command.text });
+            setState({ visible: true, text: command.text, requiresInteraction: command.requiresInteraction });
 
             if (command.requiresInteraction) {
                 window.addEventListener('keydown', handleKeyDown);
             } else if (command.waitForCondition) {
                 const checkCondition = () => {
                     if (command.waitForCondition()) {
-                        setState({ visible: false, text: '' });
+                        setState({ visible: false, text: '', requiresInteraction: false });
                         setTimeout(() => {
                             executeCommands(commands, index + 1);
                         }, command.waitConditionTime || 1000);
@@ -87,7 +87,7 @@ export function NarratorVoice() {
                 checkCondition();
             } else if (command.duration) {
                 setTimeout(() => {
-                    setState({ visible: false, text: '' });
+                    setState({ visible: false, text: '', requiresInteraction: false });
                     executeCommands(commands, index + 1);
                 }, command.duration);
             } else {
@@ -110,8 +110,8 @@ export function NarratorVoice() {
 
     return (
         <>
-            <NarratorComponent visible={narratorState.visible} text={narratorState.text} />
-            <SystemComponent visible={systemState.visible} text={systemState.text} />
+            <NarratorComponent visible={narratorState.visible} text={narratorState.text} requiresInteraction={narratorState.requiresInteraction} />
+            <SystemComponent visible={systemState.visible} text={systemState.text} requiresInteraction={systemState.requiresInteraction} />
         </>
     );
 }

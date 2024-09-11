@@ -57,6 +57,9 @@ export function ConstellationLabel({ name }){
                             const journal = editor.getShape({type: 'journal', id: createShapeId('journal')})
 
 
+                            // animate the position of the central constellation
+                            // this.editor.updateShape({})
+
                             if(journal && journal.props.expanded){
                                 editor.updateShape({
                                     type: "journal",

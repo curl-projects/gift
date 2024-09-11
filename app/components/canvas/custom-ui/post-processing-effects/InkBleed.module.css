@@ -26,7 +26,7 @@
     bottom: 0;
     pointer-events: none;
 
-    background-color: rgba(80, 74, 68, 0.9);
+    background-color: transparent;
     opacity: 0.95;
     mix-blend-mode: lighten;
     z-index: 11;

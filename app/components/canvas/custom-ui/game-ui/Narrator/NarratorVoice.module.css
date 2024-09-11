@@ -31,7 +31,7 @@
     animation: cloudLoop 40s linear infinite alternate !important, /* Apply the forward-moving cloud animation */
                cloudLoopReverse 40s linear infinite alternate !important; /* Apply the reverse-moving cloud animation */
 }
-
+/* 
 .voiceContainerInner {
     position: relative;
     height: 100%;
@@ -41,7 +41,7 @@
     align-items: center;
     justify-content: center;
     flex-direction: column;
-}
+} */
 
 .voiceContainerDarkening {
     position: absolute;

@@ -169,6 +169,12 @@ export class JournalShapeUtil extends BaseBoxShapeUtil<JournalShape> {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ duration: 1, delay: 1 }} // Adjust delay as needed
+                            onAnimationComplete={(animation) => {
+                                console.log("BACKGROUND COMPLETED")
+                                if(animation?.opacity === 1){
+                                    setInkVisible(true)
+                                }
+                            }}
                             style={{
                             position: 'absolute',
                             top: 0,
@@ -291,7 +297,6 @@ export class JournalShapeUtil extends BaseBoxShapeUtil<JournalShape> {
                             strokeWidth={1} 
                             onOpaque={() => {
                                 setInnerBorderVisibility(prevState => ({...prevState, bottom: true}))
-                                setInkVisible(true)
                             }}
                         />
 
