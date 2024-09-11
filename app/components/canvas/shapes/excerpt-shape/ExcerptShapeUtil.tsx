@@ -136,6 +136,7 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
           }, [shapeRef.current, this.editor, shape]);
 		  
  
+		// todo: fix this so it's cleaner
 		useEffect(() => {
 			const animateDimensions = async () => {
 				if(scope.current && shapeRef.current){

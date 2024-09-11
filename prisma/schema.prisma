@@ -58,7 +58,9 @@ model Media {
 
 model Annotation {
   id      String @id @default(uuid())
+  annotationType    String @default("glyph")
   content String
+  glyph   String @default("")
   mediaId String
   fromPos Int
   toPos   Int

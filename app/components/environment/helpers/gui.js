@@ -258,7 +258,7 @@ function focusWithoutMovingToConstellationCanvas(scene, camera, triggerEffect, s
                 // Start the FOV animation after rotation animations complete
                 scene.beginDirectAnimation(camera, [fovAnimation], 0, fovAnimationDuration * framerate, false);
 
-                setTriggerWarp(true);
+                setTriggerWarp(prevState => ({...prevState, active: true, accDuration: 1000, deaccDuration: 1000}));
                 }
             })
 

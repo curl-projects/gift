@@ -40,7 +40,7 @@ export function ConstellationLabel({ name }){
                     </button>
                     <button 
                         onPointerUp={() => {
-                            setTriggerWarp(true)
+                            setTriggerWarp(prev => ({...prev, active: true, accDuration: 1000, deaccDuration: 1000, constAccDuration: 1000}))
                         }}
                         style={{
                             border: '2px solid green',

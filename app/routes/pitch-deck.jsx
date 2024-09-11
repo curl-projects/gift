@@ -29,7 +29,7 @@ export default function PitchDeck(){
             }}>
                 <WorldCanvas />
             </div>
-            <div style={{
+            {/* <div style={{
             height: '100vh',
             width: '100vw',
             position: 'fixed',
@@ -39,7 +39,7 @@ export default function PitchDeck(){
             overflow: 'hidden',
             }}>
             <PitchScene/>
-            </div>
+            </div> */}
         </StarFireSync>
 
        

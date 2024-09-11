@@ -178,6 +178,12 @@ export default function WorldCanvas() {
                         editor.root.children.select.children.idle.handleDoubleClickOnCanvas = function(info) {
                             handleDoubleClickOnCanvas.call(this, info)
                           }.bind({ editor, parent: editor.root.children.select.children.idle.parent });  
+
+                        // hack so that we can use zoomIn for constellation transitions
+                        // controls max and min zoom with trackpad and with zoomIn and zoomOut
+                        editor.setCameraOptions({
+                            zoomSteps: [0.1, 500]
+                        })
                     }}
                 >
                     {editor && (

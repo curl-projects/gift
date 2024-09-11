@@ -12,3 +12,9 @@ const englishToLepchaMap = {
 export function transliterateToLepcha(text) {
     return text.split('').map(char => englishToLepchaMap[char] || char).join('');
 }
+
+export function getRandomLepchaCharacter() {
+    const lepchaCharacters = Object.values(englishToLepchaMap);
+    const randomIndex = Math.floor(Math.random() * lepchaCharacters.length);
+    return lepchaCharacters[randomIndex];
+}

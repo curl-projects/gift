@@ -70,17 +70,17 @@ export function WarpStars({
 
   useEffect(()=>{
     const easeInOutQuad = (t) => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-    if(triggerWarp){
+    if(triggerWarp.active){
 
-        animateParams({speed: 4, warpEffectLength: 5}, 500, easeInOutQuad).then(()=>{
+        animateParams({speed: 4, warpEffectLength: 5}, triggerWarp.accDuration, easeInOutQuad).then(()=>{
             setTimeout(()=>{
-                animateParams({speed: 0.05, warpEffectLength: 1}, 500, easeInOutQuad).then(()=>{
+                animateParams({speed: 0.05, warpEffectLength: 1}, triggerWarp.deaccDuration, easeInOutQuad).then(()=>{
                     setTriggerWarp(false)
                 })
-            }, 1000)
+            }, triggerWarp.constAccDuration)
         })
     }
-  }, [triggerWarp])
+  }, [triggerWarp.active])
 
   useEffect(() => {
     const canvas = canvasRef.current;
