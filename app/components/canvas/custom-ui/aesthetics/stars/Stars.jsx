@@ -23,7 +23,7 @@ function applyOffset(boxShadow, offsetX, offsetY, color) {
 
 export const Stars = track(() => {
   const editor = useEditor();
-  const { starsVisible } = useConstellationMode();
+  const { starControls } = useConstellationMode();
 
   const [shadowsSmall, setShadowsSmall] = useState('');
   const [shadowsMedium, setShadowsMedium] = useState('');
@@ -63,32 +63,32 @@ export const Stars = track(() => {
         className={`${styles.stars}`}
         style={{ boxShadow: shadowsSmall }}
         initial={{ opacity: 0 }}
-        animate={{ opacity: starsVisible ? 1 : 0 }}
-        transition={{ duration: introDuration }}
+        animate={{ opacity: starControls.visible ? 1 : 0 }}
+        transition={{ duration: starControls.immediate ? 0 : introDuration }}
       ></motion.div>
       <motion.div
         id="stars2"
         className={`${styles.stars2}`}
         style={{ boxShadow: shadowsMedium }}
         initial={{ opacity: 0 }}
-        animate={{ opacity: starsVisible ? 1 : 0 }}
-        transition={{ duration: introDuration }}
+        animate={{ opacity: starControls.visible ? 1 : 0 }}
+        transition={{ duration: starControls.immediate ? 0 : introDuration }}
       ></motion.div>
       <motion.div
         id="stars3"
         className={`${styles.stars3}`}
         style={{ boxShadow: shadowsBig }}
         initial={{ opacity: 0 }}
-        animate={{ opacity: starsVisible ? 4 : 0 }}
-        transition={{ duration: introDuration }}
+        animate={{ opacity: starControls.visible ? 4 : 0 }}
+        transition={{ duration: starControls.immediate ? 0 : introDuration }}
       ></motion.div>
       <motion.div
         id="offsetStars"
         className={`${styles.offsetStars}`}
         style={{ boxShadow: shadowsBigOffset }}
         initial={{ opacity: 0 }}
-        animate={{ opacity: starsVisible ? 1 : 0 }}
-        transition={{ duration: introDuration }}
+        animate={{ opacity: starControls.visible ? 1 : 0 }}
+        transition={{ duration: starControls.immediate ? 0 : introDuration }}
       ></motion.div>
     </>
   );

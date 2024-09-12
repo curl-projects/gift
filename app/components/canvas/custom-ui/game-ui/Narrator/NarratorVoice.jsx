@@ -9,15 +9,17 @@ import SystemComponent from "./components/SystemComponent";
 
 export function NarratorVoice() {
     const editor = useEditor();
-    const { narratorEvent, setNarratorEvent, setDrifting, overlayMode, setOverlayMode, setStarsVisible } = useConstellationMode();
+    const { narratorEvent, setNarratorEvent, 
+        setDrifting, overlayMode, setOverlayMode, 
+        setStarsVisible, setCloudsVisible } = useConstellationMode();
 
     const [narratorState, setNarratorState] = useState({ visible: false, text: '', requiresInteraction: false });
     const [systemState, setSystemState] = useState({ visible: false, text: '', requiresInteraction: false });
     const [commands, setCommands] = useState([]);
 
-    useEffect(() => {
-        setNarratorEvent('pitch');
-    }, [setNarratorEvent]);
+    // useEffect(() => {
+    //     setNarratorEvent('pitch');
+    // }, [setNarratorEvent]);
 
     const narratorOrchestration = {
         'welcome': [
@@ -51,10 +53,10 @@ export function NarratorVoice() {
             // },
         ],
         'pitch': [
-            {
-                type: "callback",
-                callback: () => setOverlayMode(true)
-            },
+            // {
+            //     type: "callback",
+            //     callback: () => setOverlayMode(true)
+            // },
             {
                 type: "narrator",
                 text: "This can be a cold and desolate place.",
@@ -81,7 +83,7 @@ export function NarratorVoice() {
             },
             {
                 type: 'callback',
-                callback: () => setStarsVisible(true)
+                callback: () => setStarControls({ visible: true, immediate: false})
             },
             {
                 type: "narrator",
@@ -92,7 +94,10 @@ export function NarratorVoice() {
             
             { // transition from constellation to campfire
                 type: 'callback',
-                
+                callbackBack: () => {
+                    setStarControls({ visible: false, immediate: false})
+                    setCloudControls({ visible: false, immediate: false})
+                }
 
             }
         ],

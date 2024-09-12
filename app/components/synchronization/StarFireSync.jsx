@@ -20,7 +20,17 @@ const StarFireSyncProvider = ({ children }) => {
     }, []);
 
     return (
-        <StarFireSyncContext.Provider value={{ triggerEffect, activeEffect, triggerWarp, setTriggerWarp, restored, setRestored }}>
+        <StarFireSyncContext.Provider 
+            value={{ 
+                triggerEffect, 
+                activeEffect, 
+                triggerWarp, 
+                setTriggerWarp, 
+                restored, 
+                setRestored, 
+                campfireView, 
+                setCampfireView 
+            }}>
             {children}
         </StarFireSyncContext.Provider>
     );

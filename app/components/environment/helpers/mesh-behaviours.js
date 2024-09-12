@@ -14,25 +14,31 @@ export function createFadeBehaviour(scene){
 
 
 // custom fade behaviour
-export function customFadeOut(mesh, animationDuration){
-    const ease = new BABYLON.CubicEase();
-    ease.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEINOUT);
+export function customFadeOut(mesh, animationDuration = 1.5, immediate = false) {
+    if (immediate) {
+        // Directly set the scaling properties of the mesh
+        mesh.scaling.x *= 0.3;
+        mesh.scaling.y *= 0.01;
+        mesh.scaling.z *= 0.3; // Assuming you want to scale z as well, similar to x
+    } else {
+        const ease = new BABYLON.CubicEase();
+        ease.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEINOUT);
 
-    const fadeOutGroup = new BABYLON.AnimationGroup("fadeOutGroup");
+        const fadeOutGroup = new BABYLON.AnimationGroup("fadeOutGroup");
 
-    const fadeOutOne = new BABYLON.Animation('fadeOut', 'scaling', framerate, BABYLON.Animation.ANIMATIONTYPE_VECTOR3, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT, ease);
-    console.log("MESH SCALING:", mesh.scaling)
-    fadeOutOne.setKeys([{ frame: 0, value: new BABYLON.Vector3(mesh.scaling.x, mesh.scaling.y, mesh.scaling.z) }, 
-                        { frame: animationDuration * framerate, value: new BABYLON.Vector3(mesh.scaling.x * 0.3, mesh.scaling.y * 0.01, mesh.scaling.z) }]);
-    fadeOutOne.setEasingFunction(ease);
+        const fadeOutOne = new BABYLON.Animation('fadeOut', 'scaling', framerate, BABYLON.Animation.ANIMATIONTYPE_VECTOR3, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT, ease);
+        fadeOutOne.setKeys([
+            { frame: 0, value: new BABYLON.Vector3(mesh.scaling.x, mesh.scaling.y, mesh.scaling.z) },
+            { frame: animationDuration * framerate, value: new BABYLON.Vector3(mesh.scaling.x * 0.3, mesh.scaling.y * 0.01, mesh.scaling.z) }
+        ]);
+        fadeOutOne.setEasingFunction(ease);
 
-    fadeOutGroup.addTargetedAnimation(fadeOutOne, mesh);
+        fadeOutGroup.addTargetedAnimation(fadeOutOne, mesh);
+        fadeOutGroup.play();
 
-    fadeOutGroup.play();
-
-    return fadeOutGroup;
+        return fadeOutGroup;
+    }
 }
-
 export function customFadeIn(mesh, animationDuration){
     const ease = new BABYLON.CubicEase();
     ease.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEINOUT);

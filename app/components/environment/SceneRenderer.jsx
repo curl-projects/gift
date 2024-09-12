@@ -9,6 +9,7 @@ export default function SceneRenderer({
     onRender,
     onSceneReady,
     canvasZoneRef,
+    setReactScene,
     ...rest
   }) {
     const canvasRef = useRef(null);

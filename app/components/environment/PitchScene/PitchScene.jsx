@@ -1,5 +1,5 @@
 import SceneRenderer from "../SceneRenderer";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { useStarFireSync } from '~/components/synchronization/StarFireSync';
 import * as BABYLON from '@babylonjs/core';
 import '@babylonjs/loaders';
@@ -18,14 +18,16 @@ import { addFog, addFireflyParticles } from "../helpers/forest-effects";
 import { createFadeBehaviour } from "../helpers/mesh-behaviours";
 import { createCharacter } from "../helpers/characters";
 import { CampfireSyncListener } from "~/components/synchronization/CampfireSyncListener";
+import { initializeLookingAtSky } from "../event-controllers/campfire-transition";
 
 export function PitchScene(){
     const canvasZoneRef = useRef();
+    const [reactScene, setReactScene] = useState(null); // Add state to hold the scene
     const { triggerEffect, activeEffect, setTriggerWarp, campfireView, setCampfireView } = useStarFireSync();
 
     useEffect(() => {
-        console.log("ACTIVE EFFECT", activeEffect)
-    }, [activeEffect])
+        console.log("ACTIVE EFFECT", reactScene)
+    }, [reactScene])
 
     async function onSceneReady(scene) {
        
@@ -45,6 +47,13 @@ export function PitchScene(){
         assetManager.useDefaultLoadingScreen = true;
     
         // addSkybox(scene, assetManager);
+
+
+        scene.onReadyObservable.addOnce(async () => {
+            addConstellationCanvas(scene, canvasZoneRef, RenderingGroups);
+            initializeLookingAtSky(scene, camera);    
+
+            });
 
 
         // Add mesh task
@@ -67,7 +76,6 @@ export function PitchScene(){
                     // mesh.visibility = 0.1;
                 }
             });
-
         };
 
         const skyboxTask = assetManager.addCubeTextureTask("skyboxTask", "/assets/night-sky.env");
@@ -78,6 +86,7 @@ export function PitchScene(){
             const skybox = scene.createDefaultSkybox(task.texture, true);
             skybox.renderingGroupId = RenderingGroups.skybox;
         };
+
 
 
         assetManager.onFinish = function (tasks) {
@@ -108,6 +117,8 @@ export function PitchScene(){
             enableFloatingPhysics(scene);
             addFog(scene);
 
+
+
             // TODO: use these to trigger motion blur on certain animations
             camera.detachPostProcess(motionBlur)
             camera.attachPostProcess(motionBlur)
@@ -120,14 +131,12 @@ export function PitchScene(){
             const textCamera = addGUICamera(scene, "text-camera", camera, 0x10000000);
             scene.activeCameras = [camera, textCamera];
 
-        scene.onReadyObservable.addOnce(async () => {
-                addConstellationCanvas(scene, canvasZoneRef, RenderingGroups);
-            });
-
+    
             const advancedTexture = createFullscreenUI();
             createFocusButton(scene, camera, advancedTexture, triggerEffect, setTriggerWarp);
             createCanvasControlsButton(scene, advancedTexture);
             createResetButton(scene, advancedTexture);
+            setReactScene(scene)
         };
 
 
@@ -145,10 +154,13 @@ export function PitchScene(){
                 onSceneReady={onSceneReady}
                 onRender={onRender}
                 canvasZoneRef={canvasZoneRef}
+                setReactScene={setReactScene}
             />
-            <CampfireSyncListener 
-                scene={scene}
-            />
+            {reactScene && (
+                <CampfireSyncListener 
+                    scene={reactScene}
+                />
+            )}
         </>
     )
 }
