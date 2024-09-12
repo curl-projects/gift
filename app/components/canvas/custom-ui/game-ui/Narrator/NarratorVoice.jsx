@@ -21,13 +21,13 @@ export function NarratorVoice() {
     const narratorOrchestration = {
         'welcome': [
             {
-                "type": "narrator",
+                "type": "system",
                 'text': 'Welcome',
                 'duration': 3000,
                 'requiresInteraction': true,
             },
             {
-                'type': "narrator",
+                'type': "system",
                 'text': 'This place is a simple simulation',
                 'duration': 3000,
                 'requiresInteraction': true,
