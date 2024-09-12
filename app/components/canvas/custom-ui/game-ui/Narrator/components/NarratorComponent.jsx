@@ -9,7 +9,7 @@ const NarratorComponent = ({ visible, text, requiresInteraction }) => {
     useEffect(() => {
         const updateNumParticles = () => {
             const containerWidth = window.innerWidth;
-            const particleDensity = 50 / 10; // 50 particles per 10em (original width)
+            const particleDensity = 100 / 10; // 100 particles per 10em (original width)
             const newNumParticles = Math.floor(containerWidth * particleDensity / 100);
             setNumParticles(newNumParticles);
         };
@@ -48,14 +48,14 @@ const NarratorComponent = ({ visible, text, requiresInteraction }) => {
                         </motion.p>
                         <div className={styles.fire}>
                             {parts.map((_, index) => (
-                                <motion.div 
+                                <div 
                                     key={index} 
                                     className={styles.particle}
                                     style={{
-                                        animationDelay: `${Math.random() * 4 }s`, // this has to be proportional to the speed of the rise animmation
-                                        left: `calc((100% - 5em) * ${index} / ${numParticles})`
+                                        animationDelay: `-${Math.random() * 4}s`, // Random delay up to 2s
+                                        left: `calc((100% - 5em) * ${index} / ${numParticles})`,
                                     }}
-                                ></motion.div>
+                                ></div>
                             ))}
                         </div>
                     </div>

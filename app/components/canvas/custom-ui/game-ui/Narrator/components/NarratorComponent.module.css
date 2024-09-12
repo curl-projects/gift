@@ -24,8 +24,8 @@
 }
 
 .narratorText {
-    font-size: 50px;
-    color: rgba(255, 255, 255, 0.4);
+    font-size: 80px;
+    color: rgba(255, 255, 255, 1);
     font-family: "Handjet", sans-serif;
     font-weight: 300;
     background: 
@@ -34,9 +34,9 @@
     -webkit-background-clip: text;
     background-clip: text;
     background-size: 100% 100%, 100% 100%;
-    animation: cloudLoop 40s linear infinite alternate !important,
-               cloudLoopReverse 40s linear infinite alternate !important;
-    z-index: 100;
+    animation: cloudLoop 40s linear infinite alternate, cloudLoopReverse 40s linear infinite alternate !important;
+    position: relative;
+    top: -40px;
 }
 
 .narratorContainerDarkening{
@@ -45,7 +45,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(to top, rgb(181, 52, 1), transparent);
+    background: linear-gradient(to top, rgba(180, 88, 57, 1), transparent);
 }
 
 @keyframes cloudLoop {
@@ -68,7 +68,7 @@
 
 .fire {
     font-size: 24px;
-    filter: blur(0.02em);
+    filter: blur(0.02em) opacity(0.3);
     -webkit-filter: blur(0.02em);
     position: absolute; /* Changed to absolute to cover the entire width */
     width: 100%; /* Cover the entire width of the container */
@@ -76,9 +76,11 @@
     bottom: -5vh;
     left: -3vw;
 
+
 }
 
 /* maybe opacity = 0.2 or 0.3 ? */
+/* contrast 0.5? */
 
 .particle {
     animation: rise 4s ease-in infinite;
@@ -89,8 +91,9 @@
     opacity: 0;
     position: absolute;
     bottom: 0;
-    width: 10em;
-    height: 10em;
+    width: 5em;
+    height: 5em;
+    filter: contrast(0.5);
 }
 
 @keyframes rise {
@@ -100,9 +103,10 @@
     }
     25% {
         opacity: 1;
+
     }
     to {
         opacity: 0;
-        transform: translateY(-15em) scale(0);
+        transform: translateY(-10em) scale(0);
     }
 }
