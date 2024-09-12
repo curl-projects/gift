@@ -2,7 +2,7 @@ import styles from './InkBleed.module.css'
 import { useState, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 
-export function InkBleed({ children, initialBlur = 4, delay = 0, duration=1, finalBlur=1, exitDuration=0.5, key=null }){
+export function InkBleed({ children, initialBlur = 4, delay = 0, duration=1, finalBlur=1, exitDuration=0.5, divKey=null }){
     const containerRef = useRef(null);
     const isInView = useInView(containerRef, { once: true });
 
@@ -12,7 +12,7 @@ export function InkBleed({ children, initialBlur = 4, delay = 0, duration=1, fin
             <div className={styles.overlayTwo} />
                 <div className={styles.main}>
                     <motion.div 
-                        key={key}
+                        key={divKey}
                         className={styles.design}
                         initial={{ filter: `blur(${initialBlur}px)` }}
                         animate={isInView ? { filter: `blur(${finalBlur}px)` } : {}}

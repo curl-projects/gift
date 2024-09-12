@@ -7,7 +7,7 @@ export function OverlayPainter(){
     useEffect(()=>{
         setTimeout(()=>{
             setOverlayMode(true)
-        }, 1000)
+        }, 500)
     }, [])
 
     useEffect(() => {

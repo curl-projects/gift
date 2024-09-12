@@ -8,7 +8,7 @@ export const ConstellationModeProvider = ({ children }) => {
     const [drifting, setDrifting] = useState(false);
     const [expandedShapeIds, setExpandedShapeIds] = useState([])
     const [narratorEvent, setNarratorEvent] = useState(null)
-    const [overlayMode, setOverlayMode] = useState(false);
+    const [overlayMode, setOverlayMode] = useState(true);
 
     return (
         <ConstellationModeContext.Provider 

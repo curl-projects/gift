@@ -2,9 +2,11 @@ import styles from "./ConstellationLabel.module.css"
 import { transliterateToLepcha } from "../../helpers/language-funcs"
 import { useStarFireSync } from "~/components/synchronization/StarFireSync"
 import { createShapeId, useEditor } from "tldraw"
+import { useConstellationMode } from "../utilities/ConstellationModeContext"
 
 export function ConstellationLabel({ name }){
     const { triggerWarp, setTriggerWarp } = useStarFireSync()
+    const { overlayMode, setOverlayMode } = useConstellationMode()
     const editor = useEditor()
 
     return(
@@ -51,6 +53,20 @@ export function ConstellationLabel({ name }){
                         }}
                     >
                         Move to next constellation
+                    </button>
+                    <button 
+                        onPointerUp={() => {
+                            setOverlayMode(prev => !prev)
+                        }}
+                        style={{
+                            border: '2px solid green',
+                            height: "40px",
+                            width: '200px',
+                            background: 'blue',
+                            color: "white",
+                        }}
+                    >
+                        Toggle overlay mode
                     </button>
                     <button 
                         onPointerUp={() => {
