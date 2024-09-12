@@ -14,9 +14,9 @@ export function NarratorVoice() {
     const [systemState, setSystemState] = useState({ visible: false, text: '', requiresInteraction: false });
     const [commands, setCommands] = useState([]);
 
-    // useEffect(() => {
-    //     setNarratorEvent('welcome');
-    // }, [setNarratorEvent]);
+    useEffect(() => {
+        setNarratorEvent('welcome');
+    }, [setNarratorEvent]);
 
     const narratorOrchestration = {
         'welcome': [

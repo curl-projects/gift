@@ -66,7 +66,7 @@ const NarratorComponent = ({ visible, text, requiresInteraction }) => {
                                 {text}
                             </motion.p>
                         </AnimatePresence>
-                        <FireAnimation />
+                        {/* <FireAnimation /> */}
                     </div>
                 </motion.div>
             )}

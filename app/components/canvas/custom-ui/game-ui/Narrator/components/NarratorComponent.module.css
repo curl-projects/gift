@@ -3,12 +3,13 @@
     position: fixed;
     left: 0;
     right: 0;
-    bottom: 0;
+    bottom: 60%;
     pointer-events: none;
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 1000000;
+    mix-blend-mode: overlay;
 }
 
 
@@ -16,7 +17,6 @@
     position: relative;
     height: 100%;
     width: 100%;
-    padding: 60px 140px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -24,6 +24,8 @@
 }
 
 .narratorText {
+    /* used to remove from stacking context */
+    position: relative;
     font-size: 80px;
     color: rgba(255, 255, 255, 1);
     font-family: "Handjet", sans-serif;
@@ -35,17 +37,21 @@
     background-clip: text;
     background-size: 100% 100%, 100% 100%;
     animation: cloudLoop 40s linear infinite alternate, cloudLoopReverse 40s linear infinite alternate !important;
-    position: relative;
-    top: -40px;
 }
 
 .narratorContainerDarkening{
     position: absolute;
-    top: -100%;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(to top, rgba(180, 88, 57, 1), transparent);
+    top: -400%;
+    bottom: -400%;
+    width: 100%;
+    background: 
+        linear-gradient(to top, transparent, rgba(178 56 0 / 50%) 50%, transparent), 
+        linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.5) 50%, transparent)
+        /* linear-gradient(to top, transparent, rgba(0 0 0 / 50%) 50%, transparent), 
+        linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.5) 50%, transparent) */
+        
+        ; /* Gradient on both sides */
+
 }
 
 @keyframes cloudLoop {

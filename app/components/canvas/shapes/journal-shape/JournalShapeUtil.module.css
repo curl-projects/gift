@@ -48,6 +48,7 @@
     background-image: url("/assets/old-paper.jpg");      
     background-size: cover;
     background-position: center;
+    filter: grayscale(0.5);
 
 }
 
