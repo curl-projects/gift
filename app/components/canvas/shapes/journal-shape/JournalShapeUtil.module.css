@@ -48,6 +48,7 @@
     background-image: url("/assets/old-paper.jpg");      
     background-size: cover;
     background-position: center;
+
 }
 
 .shapeContentBackground::before {
@@ -111,7 +112,7 @@
 
 .journalLargeText{
     font-family: "IM Fell DW Pica SC", serif;
-	color: rgba(80, 74, 68, 0.9);
+	color: rgba(84, 77, 71, 0.9);
 	font-size: 3.5rem;
 	margin: auto;
 	text-align: center;
@@ -129,7 +130,7 @@
     background-color: white; /* Adjust as needed */
     pointer-events: none;
     z-index: -100; /* Ensure it is above other content */
-    background-image: url('/assets/old-paper.jpg');
+    background-image: url('/assets/journal.jpg');
     background-size: cover;
     background-position: center;
 }

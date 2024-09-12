@@ -181,9 +181,10 @@ export class JournalShapeUtil extends BaseBoxShapeUtil<JournalShape> {
                             left: 0,
                             right: 0,
                             bottom: 0,
-                            backgroundImage: 'url("/assets/old-paper.jpg")',
-                            backgroundSize: 'cover',
-                            backgroundPosition: 'center',
+                            willChange: 'opacity', // Add will-change property
+                            // backgroundImage: 'url("/assets/old-paper.jpg")',
+                            // backgroundSize: 'cover',
+                            // backgroundPosition: 'center',
                             }}
                         />
 
