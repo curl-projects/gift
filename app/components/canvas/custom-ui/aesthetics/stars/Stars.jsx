@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 import styles from './Stars.module.css';
 import { useEditor, track } from 'tldraw';
+import { useConstellationMode } from '../../utilities/ConstellationModeContext';
 
 function generateBoxShadow(n, offsetX = 0, offsetY = 0, color = '#FFF') {
   let value = `${Math.random() * 2800 + offsetX}px ${Math.random() * 2800 + offsetY}px 0px 0px ${color}`; // No blur and spread, with offset
@@ -21,6 +23,7 @@ function applyOffset(boxShadow, offsetX, offsetY, color) {
 
 export const Stars = track(() => {
   const editor = useEditor();
+  const { starsVisible } = useConstellationMode();
 
   const [shadowsSmall, setShadowsSmall] = useState('');
   const [shadowsMedium, setShadowsMedium] = useState('');
@@ -45,51 +48,6 @@ export const Stars = track(() => {
     };
   }, []);
 
-//   useEffect(() => {
-//     if (selectedShapeId && ['excerpt', 'concept'].includes(editor.getShape(selectedShapeId).type)){
-//       const viewportCenter = editor.getViewportScreenCenter();
-//       const shapeCenter = editor.pageToScreen(editor.getShapePageBounds(selectedShapeId).center);
-
-//       const diffX = viewportCenter.x - shapeCenter.x;
-//       const diffY = viewportCenter.y - shapeCenter.y;
-
-//       setStartTransform(prevTransform => ({
-//         x: prevTransform.x,
-//         y: prevTransform.y
-//       }));
-//       setEndTransform(prevTransform => ({
-//         x: prevTransform.x + diffX,
-//         y: prevTransform.y + diffY
-//       }));
-
-//       // Update the style element content
-//       const styleElement = document.getElementById('stars-animation-styles');
-//       if (styleElement) {
-//         styleElement.textContent = `
-//           :root {
-//             --stars-translateX-start: ${startTransform.x}px;
-//             --stars-translateY-start: ${startTransform.y}px;
-//             --stars-translateX-end: ${endTransform.x + diffX}px;
-//             --stars-translateY-end: ${endTransform.y + diffY}px;
-//           }
-//         `;
-
-//         console.log("STARS STYLE ELEMENT:", styleElement.textContent);
-//       }
-
-//       // Toggle the animation class to restart the animation
-//       setAnimationToggle(prev => !prev);
-//     }
-//   }, [selectedShapeId]);
-
-//   useEffect(() => {
-//     if (selectedShapeId) {
-//       setIsTransitioning(true);
-//       const timer = setTimeout(() => setIsTransitioning(false), 1000);
-//       return () => clearTimeout(timer);
-//     }
-//   }, [selectedShapeId]);
-
   useEffect(() => {
     setShadowsSmall(generateBoxShadow(700));
     setShadowsMedium(generateBoxShadow(200));
@@ -97,12 +55,41 @@ export const Stars = track(() => {
     setShadowsBigOffset(generateBoxShadow(50, 0, 0, 'orange'));
   }, []);
 
+  const introDuration = 4
   return (
     <>
-      <div id="stars" className={`${styles.stars}`} style={{ boxShadow: shadowsSmall }}></div>
-      <div id="stars2" className={`${styles.stars2}`} style={{ boxShadow: shadowsMedium }}></div>
-      <div id="stars3" className={`${styles.stars3}`} style={{ boxShadow: shadowsBig }}></div>
-      <div id="offsetStars" className={`${styles.offsetStars}`} style={{ boxShadow: shadowsBigOffset }}></div>
+      <motion.div
+        id="stars"
+        className={`${styles.stars}`}
+        style={{ boxShadow: shadowsSmall }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: starsVisible ? 1 : 0 }}
+        transition={{ duration: introDuration }}
+      ></motion.div>
+      <motion.div
+        id="stars2"
+        className={`${styles.stars2}`}
+        style={{ boxShadow: shadowsMedium }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: starsVisible ? 1 : 0 }}
+        transition={{ duration: introDuration }}
+      ></motion.div>
+      <motion.div
+        id="stars3"
+        className={`${styles.stars3}`}
+        style={{ boxShadow: shadowsBig }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: starsVisible ? 4 : 0 }}
+        transition={{ duration: introDuration }}
+      ></motion.div>
+      <motion.div
+        id="offsetStars"
+        className={`${styles.offsetStars}`}
+        style={{ boxShadow: shadowsBigOffset }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: starsVisible ? 1 : 0 }}
+        transition={{ duration: introDuration }}
+      ></motion.div>
     </>
   );
 });

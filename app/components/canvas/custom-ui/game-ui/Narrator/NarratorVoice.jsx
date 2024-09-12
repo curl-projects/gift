@@ -9,13 +9,14 @@ import SystemComponent from "./components/SystemComponent";
 
 export function NarratorVoice() {
     const editor = useEditor();
-    const { narratorEvent, setNarratorEvent, setDrifting } = useConstellationMode();
+    const { narratorEvent, setNarratorEvent, setDrifting, overlayMode, setOverlayMode, setStarsVisible } = useConstellationMode();
+
     const [narratorState, setNarratorState] = useState({ visible: false, text: '', requiresInteraction: false });
     const [systemState, setSystemState] = useState({ visible: false, text: '', requiresInteraction: false });
     const [commands, setCommands] = useState([]);
 
     useEffect(() => {
-        setNarratorEvent('welcome');
+        setNarratorEvent('pitch');
     }, [setNarratorEvent]);
 
     const narratorOrchestration = {
@@ -49,6 +50,53 @@ export function NarratorVoice() {
             //     'callback': () => setDrifting(true)
             // },
         ],
+        'pitch': [
+            {
+                type: "callback",
+                callback: () => setOverlayMode(true)
+            },
+            {
+                type: "narrator",
+                text: "This can be a cold and desolate place.",
+                duration: 3000,
+                requiresInteraction: true
+            },
+            {
+                type: "narrator",
+                text: "I have spent much of my life here, and I can count on one hand the number of friends that I have made.",
+                duration: 3000,
+                requiresInteraction: true
+            },
+            {
+                type: "narrator",
+                text: "Much of that time I have spent in a stupor, adrift in a void,",
+                duration: 3000,
+                requiresInteraction: true
+            },
+            {
+                type: "narrator",
+                text: "flitting between cold ideas.",
+                duration: 3000,
+                requiresInteraction: true
+            },
+            {
+                type: 'callback',
+                callback: () => setStarsVisible(true)
+            },
+            {
+                type: "narrator",
+                text: "I want to try building something better.",
+                duration: 3000,
+                requiresInteraction: true,
+            },
+            
+            { // transition from constellation to campfire
+                type: 'callback',
+                
+
+            }
+        ],
+
         'leaveAnnotation': [
             {
                 'text': 'You must offer up something in return',

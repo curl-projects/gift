@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
 
 // Create the context
 const ConstellationModeContext = createContext();
@@ -9,6 +9,13 @@ export const ConstellationModeProvider = ({ children }) => {
     const [expandedShapeIds, setExpandedShapeIds] = useState([])
     const [narratorEvent, setNarratorEvent] = useState(null)
     const [overlayMode, setOverlayMode] = useState(true);
+    const [starsVisible, setStarsVisible] = useState(false)
+
+    // useEffect(()=>{
+    //     setTimeout(()=>{
+    //         setStarsVisible(true)
+    //     }, 4000)
+    // }, [])
 
     return (
         <ConstellationModeContext.Provider 
@@ -16,7 +23,8 @@ export const ConstellationModeProvider = ({ children }) => {
                 drifting, setDrifting, 
                 expandedShapeIds, setExpandedShapeIds, 
                 narratorEvent, setNarratorEvent, 
-                overlayMode, setOverlayMode
+                overlayMode, setOverlayMode,
+                starsVisible, setStarsVisible,
             }}>
             {children}
         </ConstellationModeContext.Provider>

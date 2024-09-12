@@ -175,95 +175,95 @@ function focusAndMoveToConstellationCanvas(scene, camera){
     }
 }
 
-function focusWithoutMovingToConstellationCanvas(scene, camera, triggerEffect, setTriggerWarp) {
-    const constellationCanvas = scene.getMeshByName('constellationCanvas');
-    if (constellationCanvas) {
-     
-        const target = constellationCanvas.position;
+export function focusWithoutMovingToConstellationCanvas(scene, camera, triggerEffect, setTriggerWarp) {
+    return new Promise((resolve) => {
+        const constellationCanvas = scene.getMeshByName('constellationCanvas');
+        if (constellationCanvas) {
+            const target = constellationCanvas.position;
 
-        const { targetRotationX, targetRotationY, targetRotationZ } = calculateNewTargetRotations(camera, target);
+            const { targetRotationX, targetRotationY, targetRotationZ } = calculateNewTargetRotations(camera, target);
 
-        console.log("targetRotationX", targetRotationX);
-        console.log("targetRotationY", targetRotationY);
-        console.log("targetRotationZ", targetRotationZ);
+            console.log("targetRotationX", targetRotationX);
+            console.log("targetRotationY", targetRotationY);
+            console.log("targetRotationZ", targetRotationZ);
 
-        const newFov = calculateNewFovWithoutPosition(camera, constellationCanvas);
+            const newFov = calculateNewFovWithoutPosition(camera, constellationCanvas);
 
-        const ease = new BABYLON.CubicEase();
-        ease.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEINOUT);
+            const ease = new BABYLON.CubicEase();
+            ease.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEINOUT);
 
-        // Create animations for rotation
-        const rotationXAnimation = new BABYLON.Animation("rotationXAnimation", "rotation.x", framerate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
-        const rotationYAnimation = new BABYLON.Animation("rotationYAnimation", "rotation.y", framerate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
-        const rotationZAnimation = new BABYLON.Animation("rotationZAnimation", "rotation.z", framerate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
+            // Create animations for rotation
+            const rotationXAnimation = new BABYLON.Animation("rotationXAnimation", "rotation.x", framerate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
+            const rotationYAnimation = new BABYLON.Animation("rotationYAnimation", "rotation.y", framerate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
+            const rotationZAnimation = new BABYLON.Animation("rotationZAnimation", "rotation.z", framerate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
 
-        // Create animation for FOV
-        const fovAnimation = new BABYLON.Animation("fovAnimation", "fov", framerate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
+            // Create animation for FOV
+            const fovAnimation = new BABYLON.Animation("fovAnimation", "fov", framerate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
 
+            const targetAnimationDuration = 2;
+            const fovAnimationDuration = 3;
 
-        const targetAnimationDuration = 2;
-        const fovAnimationDuration = 3;
+            // Set key frames for rotation
+            const keyFramesX = [
+                { frame: 0, value: camera.rotation.x },
+                { frame: targetAnimationDuration * framerate, value: targetRotationX }
+            ];
+            const keyFramesY = [
+                { frame: 0, value: camera.rotation.y },
+                { frame: targetAnimationDuration * framerate, value: targetRotationY }
+            ];
+            const keyFramesZ = [
+                { frame: 0, value: camera.rotation.z },
+                { frame: targetAnimationDuration * framerate, value: targetRotationZ }
+            ];
 
-        // Set key frames for rotation
-        const keyFramesX = [
-            { frame: 0, value: camera.rotation.x },
-            { frame: targetAnimationDuration * framerate, value: targetRotationX }
-        ];
-        const keyFramesY = [
-            { frame: 0, value: camera.rotation.y },
-            { frame: targetAnimationDuration * framerate, value: targetRotationY }
-        ];
-        const keyFramesZ = [
-            { frame: 0, value: camera.rotation.z },
-            { frame: targetAnimationDuration * framerate, value: targetRotationZ }
-        ];
+            // Set key frames for FOV
+            const fovKeyFrames = [
+                { frame: 0, value: camera.fov },
+                { frame: fovAnimationDuration * framerate, value: newFov }
+            ];
 
-        // Set key frames for FOV
-        const fovKeyFrames = [
-            { frame: 0, value: camera.fov },
-            { frame: fovAnimationDuration * framerate, value: newFov }
-        ];
+            rotationXAnimation.setKeys(keyFramesX);
+            rotationYAnimation.setKeys(keyFramesY);
+            rotationZAnimation.setKeys(keyFramesZ);
+            fovAnimation.setKeys(fovKeyFrames);
 
-        rotationXAnimation.setKeys(keyFramesX);
-        rotationYAnimation.setKeys(keyFramesY);
-        rotationZAnimation.setKeys(keyFramesZ);
-        fovAnimation.setKeys(fovKeyFrames);
+            rotationXAnimation.setEasingFunction(ease);
+            rotationYAnimation.setEasingFunction(ease);
+            rotationZAnimation.setEasingFunction(ease);
+            fovAnimation.setEasingFunction(ease);
 
-        rotationXAnimation.setEasingFunction(ease);
-        rotationYAnimation.setEasingFunction(ease);
-        rotationZAnimation.setEasingFunction(ease);
-        fovAnimation.setEasingFunction(ease);
+            // Add rotation animations to camera
+            camera.animations.push(rotationXAnimation);
+            camera.animations.push(rotationYAnimation);
+            camera.animations.push(rotationZAnimation);
 
-        // Add rotation animations to camera
-        camera.animations.push(rotationXAnimation);
-        camera.animations.push(rotationYAnimation);
-        camera.animations.push(rotationZAnimation);
+            console.log("SCENE MESHES:", scene.meshes);
 
-        console.log("SCENE MESHES:", scene.meshes)
-        
-        const redwoodMeshes = scene.meshes.filter(mesh => mesh.name && mesh.name.includes('redwood'));
+            const redwoodMeshes = scene.meshes.filter(mesh => mesh.name && mesh.name.includes('redwood'));
 
-        console.log("REDWOOD MESHES:", redwoodMeshes)
-        // Start the rotation animations
+            console.log("REDWOOD MESHES:", redwoodMeshes);
 
-        scene.beginDirectAnimation(camera, [rotationXAnimation, rotationYAnimation, rotationZAnimation], 0, targetAnimationDuration * framerate, false, 1, () => {
-            // wait for the star to trigger
+            // Start the rotation animations
+            scene.beginDirectAnimation(camera, [rotationXAnimation, rotationYAnimation, rotationZAnimation], 0, targetAnimationDuration * framerate, false, 1, () => {
+                // wait for the star to trigger
+                triggerEffect({domain: "canvas", selector: {type: "shape", id: createShapeId("andre-vacha")}, effect: "ripple", callback: () => {
+                    // start moving the redwoods out and widening the field of view
+                    redwoodMeshes.map(mesh => customFadeOut(mesh, 1.5));
 
-            triggerEffect({domain: "canvas", selector: {type: "shape", id: createShapeId("andre-vacha")}, effect: "ripple", callback: () => {
-                // start moving the redwoods out and widening the field of view
-                redwoodMeshes.map(mesh => customFadeOut(mesh, 1.5))
-                
-                camera.animations.push(fovAnimation);
+                    camera.animations.push(fovAnimation);
 
-                // Start the FOV animation after rotation animations complete
-                scene.beginDirectAnimation(camera, [fovAnimation], 0, fovAnimationDuration * framerate, false);
-
-                setTriggerWarp(prevState => ({...prevState, active: true, accDuration: 1000, deaccDuration: 1000}));
-                }
-            })
-
-        });
-    }
+                    // Start the FOV animation after rotation animations complete
+                    scene.beginDirectAnimation(camera, [fovAnimation], 0, fovAnimationDuration * framerate, false, 1, () => {
+                        setTriggerWarp(prevState => ({...prevState, active: true, accDuration: 1000, deaccDuration: 1000}));
+                        resolve(); // Resolve the promise when all animations are complete
+                    });
+                }});
+            });
+        } else {
+            resolve(); // Resolve immediately if constellationCanvas is not found
+        }
+    });
 }
 
 
@@ -290,6 +290,10 @@ export function createFocusButton(scene, camera, advancedTexture, triggerEffect,
     advancedTexture.addControl(button);
 }
 
+export function giveControlToCanvas() {
+    document.body.style.pointerEvents = 'none';
+}
+
 export function createCanvasControlsButton(scene, advancedTexture){
     let elementFocused = false;    
 
@@ -299,16 +303,14 @@ export function createCanvasControlsButton(scene, advancedTexture){
     toggleButton.color = "white";
     toggleButton.cornerRadius = 20;
     toggleButton.background = "blue";
-    toggleButton.onPointerUpObservable.add(() => toggleControl());
+    toggleButton.onPointerUpObservable.add(() => giveControlToCanvas());
     toggleButton.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
     toggleButton.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
     toggleButton.left = "160px"; // Adjust this value to position the button above the focus button
     toggleButton.pointerEvents = "auto";
     advancedTexture.addControl(toggleButton);
 
-    function toggleControl() {
-        document.body.style.pointerEvents = 'none';
-    }
+   
 
 }
 

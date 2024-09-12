@@ -4,7 +4,6 @@ import { useStarFireSync } from '~/components/synchronization/StarFireSync';
 import * as BABYLON from '@babylonjs/core';
 import '@babylonjs/loaders';
 
-
 import { addGUICamera, addMovableCamera, addArcCamera, addTargetCamera } from "../helpers/cameras";
 import { addCampfireParticles } from "../helpers/campfire";
 import { addCampfireLight } from "../helpers/lights";
@@ -18,10 +17,11 @@ import { addSkybox } from "../helpers/skybox";
 import { addFog, addFireflyParticles } from "../helpers/forest-effects";
 import { createFadeBehaviour } from "../helpers/mesh-behaviours";
 import { createCharacter } from "../helpers/characters";
+import { CampfireSyncListener } from "~/components/synchronization/CampfireSyncListener";
 
 export function PitchScene(){
     const canvasZoneRef = useRef();
-    const { triggerEffect, activeEffect, setTriggerWarp } = useStarFireSync();
+    const { triggerEffect, activeEffect, setTriggerWarp, campfireView, setCampfireView } = useStarFireSync();
 
     useEffect(() => {
         console.log("ACTIVE EFFECT", activeEffect)
@@ -33,7 +33,6 @@ export function PitchScene(){
         // const light = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(1, 1, 0), scene);
 
         const assetManager = new BABYLON.AssetsManager(scene);
-
 
         assetManager.onTaskErrorObservable.add(function (task) {
             console.error("Asset Manager Task Failed:", task.errorObject.message, task.errorObject.exception);
@@ -140,11 +139,16 @@ export function PitchScene(){
     function onRender(scene) { }
 
     return(
-        <SceneRenderer 
-            antialias
-            onSceneReady={onSceneReady}
-            onRender={onRender}
-            canvasZoneRef={canvasZoneRef}
-        />
+        <>
+            <SceneRenderer 
+                antialias
+                onSceneReady={onSceneReady}
+                onRender={onRender}
+                canvasZoneRef={canvasZoneRef}
+            />
+            <CampfireSyncListener 
+                scene={scene}
+            />
+        </>
     )
 }
