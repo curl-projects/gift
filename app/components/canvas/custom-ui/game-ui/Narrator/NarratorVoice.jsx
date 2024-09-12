@@ -32,6 +32,18 @@ export function NarratorVoice() {
                 'duration': 3000,
                 'requiresInteraction': true,
             },
+            {
+                'type': "system",
+                'text': 'an echo of something far greater',
+                'duration': 3000,
+                'requiresInteraction': true,
+            },
+            {
+                'type': "system",
+                'text': 'i hope you enjoy it',
+                'duration': 3000,
+                'requiresInteraction': true,
+            },
             // {   
             //     'type': 'callback',
             //     'callback': () => setDrifting(true)
@@ -69,6 +81,9 @@ export function NarratorVoice() {
 
         if (command.type === "system" || command.type === "narrator") {
             const setState = command.type === "system" ? setSystemState : setNarratorState;
+            const setOtherState = command.type === "system" ? setNarratorState : setSystemState;
+
+            setOtherState({ visible: false, text: '', requiresInteraction: false });
             setState({ visible: true, text: command.text, requiresInteraction: command.requiresInteraction });
 
             if (command.requiresInteraction) {
