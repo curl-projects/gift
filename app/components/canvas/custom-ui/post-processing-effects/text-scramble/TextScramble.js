@@ -1,6 +1,8 @@
+
 export class TextScramble {
-    constructor(el) {
+    constructor(el, dudClass = 'dud') {
         this.el = el;
+        this.dudClass = dudClass;
         this.chars = '!<>-_\\/[]{}—=+*^?#________';
         this.update = this.update.bind(this);
     }
@@ -34,7 +36,7 @@ export class TextScramble {
                     char = this.randomChar();
                     this.queue[i].char = char;
                 }
-                output += `<span class="dud">${char}</span>`;
+                output += `<span class="${this.dudClass}">${char}</span>`;
             } else {
                 output += from;
             }

@@ -1,40 +1,33 @@
 .narratorContainer {
     width: 100%;
     position: fixed;
-    height: fit-content;
-    bottom: 65%;
     left: 0;
     right: 0;
+    bottom: 0;
     pointer-events: none;
     display: flex;
     justify-content: center;
     align-items: center;
-    pointer-events: none;
-    mix-blend-mode: color;
+    z-index: 1000000;
 }
 
 
 .narratorContainerInner{
+    position: relative;
+    height: 100%;
     width: 100%;
-    position: fixed;
-    height: fit-content;
-    bottom: 65%;
-    left: 0;
-    right: 0;
+    padding: 60px 140px;
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
     flex-direction: column;
-    transform: translate(0%, 50%);
-    mix-blend-mode: multiply;
-
 }
 
 .narratorText {
-    font-size: 60px;
-    color: black;
-    font-family: "Handjet", serif;
-    font-weight: 500;
+    font-size: 50px;
+    color: rgba(255, 255, 255, 0.4);
+    font-family: "Handjet", sans-serif;
+    font-weight: 300;
     background: 
         url(/images/cloud-overlay.png) repeat-x center center / cover,
         url(/images/cloud-overlay.png) repeat-x center center / cover;
@@ -43,20 +36,16 @@
     background-size: 100% 100%, 100% 100%;
     animation: cloudLoop 40s linear infinite alternate !important,
                cloudLoopReverse 40s linear infinite alternate !important;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
+    z-index: 100;
 }
 
-.narratorTextRequiresInteraction {
-    font-family: "Handjet", serif;
-    font-weight: 500;
-    font-size: 34px;
-    text-transform: uppercase;
-    display: block;
-    color: rgba(0, 0, 0, 0.6);
-    margin: 0;
+.narratorContainerDarkening{
+    position: absolute;
+    top: -100%;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to top, rgb(181, 52, 1), transparent);
 }
 
 @keyframes cloudLoop {
@@ -77,20 +66,38 @@
     }
 }
 
-.darkeningWrapper{
-    height: 50vh;
-    width: 100%;
-    position: absolute;
-}
-
-.darkening {
-    filter: opacity(0.7);
+.fire {
+    font-size: 24px;
+    filter: blur(0.02em);
+    -webkit-filter: blur(0.02em);
+    margin: 3em auto 0 auto;
     position: relative;
-    height: 100%;
-    width: 100%;
-    background: 
-    linear-gradient(to top, transparent, rgba(179, 112, 64, 0.5) 50%, transparent), 
-    linear-gradient(to bottom, transparent, rgba(255, 140, 0, 0.5) 50%, transparent);
+    width: 10em;
+    height: 12em;
 }
 
+.particle {
+    animation: rise 1s ease-in infinite;
+    background-image: radial-gradient(rgb(255,80,0) 20%, rgba(255,80,0,0) 70%);
+    border-radius: 50%;
+    mix-blend-mode: screen;
+    opacity: 0;
+    position: absolute;
+    bottom: 0;
+    width: 5em;
+    height: 5em;
+}
 
+@keyframes rise {
+    from {
+        opacity: 0;
+        transform: translateY(0) scale(1);
+    }
+    25% {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-10em) scale(0);
+    }
+}

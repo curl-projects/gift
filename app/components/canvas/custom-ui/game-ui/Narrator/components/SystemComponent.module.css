@@ -12,6 +12,18 @@
 }
 
 
+.systemContainerInner {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    padding: 60px 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+
 
 .systemText {
     font-size: 50px;
@@ -29,17 +41,6 @@
     z-index: 100;
 }
 
-
-.systemContainerInner {
-    position: relative;
-    height: 100%;
-    width: 100%;
-    padding: 60px 140px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-}
 
 .systemContainerDarkening {
     position: absolute;
@@ -67,4 +68,8 @@
     100% {
         background-position: 0 0;
     }
+}
+
+.dud {
+    color: #757575;
 }

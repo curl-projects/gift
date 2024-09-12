@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import styles from "./SystemComponent.module.css";
 import { TextScramble } from "~/components/canvas/custom-ui/post-processing-effects/text-scramble/TextScramble";
 
-const SystemComponent = ({ visible, text }) => {
+const SystemComponent = ({ visible, text, delay = 0 }) => {
     const textRef = useRef(null);
     const [animationComplete, setAnimationComplete] = useState(false);
 
@@ -13,14 +13,16 @@ const SystemComponent = ({ visible, text }) => {
             const scrambledText = text.split('').map(() => '!<>-_\\/[]{}—=+*^?#________'[Math.floor(Math.random() * 20)]).join('');
             textRef.current.innerHTML = scrambledText;
         }
-    }, [visible, text]);
+    }, [visible]);
 
     useEffect(() => {
         if (visible && textRef.current && animationComplete) {
-            const fx = new TextScramble(textRef.current);
-            fx.setText(text);
+            const fx = new TextScramble(textRef.current, styles.dud);
+            setTimeout(() => {
+                fx.setText(text);
+            }, delay);
         }
-    }, [visible, text, animationComplete]);
+    }, [visible, text, animationComplete, delay]);
 
     return (
         <AnimatePresence>
@@ -32,15 +34,24 @@ const SystemComponent = ({ visible, text }) => {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 3 }}
-                    onAnimationComplete={() => setAnimationComplete(true)}
+                    onAnimationStart={() => {
+                        const textDelay = 1000 // text delay so the animation starts when it's partially visible
+                       
+                        setTimeout(() => {
+                            setAnimationComplete(true)
+                        }, textDelay)
+                    }}
                 >
                     <div className={styles.systemContainerInner}>
                         <div className={styles.systemContainerDarkening} />
-                        <p
+                        <motion.p 
                             className={styles.systemText}
-                        >
-                            <div ref={textRef}></div>
-                        </p>
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 2 }}
+                            >
+                            <span ref={textRef}></span>
+                        </motion.p>
                     </div>
                 </motion.div>
             )}
