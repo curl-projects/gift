@@ -12,7 +12,8 @@ import { enableFloatingPhysics } from "../helpers/physics";
 import { addCenteredPhysicsText } from "../helpers/text"; // Import the new function
 import { RenderingGroups } from "../helpers/constants"; // Import the RenderingGroups
 import { addConstellationCanvas } from "../helpers/constellations";
-import { createCanvasControlsButton, createFocusButton, createFullscreenUI, createResetButton } from "../helpers/gui";
+import { createCanvasControlsButton, 
+        createFocusButton, createFullscreenUI, createResetButton, createCampfireFocusButton } from "../helpers/gui";
 import { addSkybox } from "../helpers/skybox";
 import { addFog, addFireflyParticles } from "../helpers/forest-effects";
 import { createFadeBehaviour } from "../helpers/mesh-behaviours";
@@ -51,7 +52,7 @@ export function PitchScene(){
 
         scene.onReadyObservable.addOnce(async () => {
             addConstellationCanvas(scene, canvasZoneRef, RenderingGroups);
-            initializeLookingAtSky(scene, camera);    
+            // initializeLookingAtSky(scene, camera);    
 
             });
 
@@ -90,6 +91,18 @@ export function PitchScene(){
 
 
         assetManager.onFinish = function (tasks) {
+            void Promise.all([
+                import("@babylonjs/core/Debug/debugLayer"),
+                import("@babylonjs/inspector"),
+            ]).then((_values) => {
+                console.log(_values);
+                scene.debugLayer.show({
+                    handleResize: true,
+                    overlay: true,
+                    // globalRoot: document.getElementById("#root") || undefined,
+                });
+            });
+            
             scene.setRenderingAutoClearDepthStencil(RenderingGroups.skybox, false, false, false);
             scene.setRenderingAutoClearDepthStencil(RenderingGroups.environment, false, false, false);
             scene.setRenderingAutoClearDepthStencil(RenderingGroups.text, false, false, false);
@@ -136,6 +149,7 @@ export function PitchScene(){
             createFocusButton(scene, camera, advancedTexture, triggerEffect, setTriggerWarp);
             createCanvasControlsButton(scene, advancedTexture);
             createResetButton(scene, advancedTexture);
+            createCampfireFocusButton(scene, camera, advancedTexture, triggerEffect, setTriggerWarp);
             setReactScene(scene)
         };
 

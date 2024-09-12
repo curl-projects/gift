@@ -146,13 +146,13 @@ export function focusWithoutMovingToConstellationCanvas(scene, camera, triggerEf
                 // wait for the star to trigger
                 triggerEffect({domain: "canvas", selector: {type: "shape", id: createShapeId("andre-vacha")}, effect: "ripple", callback: () => {
                     // start moving the redwoods out and widening the field of view
-                    redwoodMeshes.map(mesh => customFadeOut(mesh, 1.5));
+                    redwoodMeshes.map(mesh => customFadeOut(mesh, scene, 1.5, false));
 
                     camera.animations.push(fovAnimation);
 
                     // Start the FOV animation after rotation animations complete
                     scene.beginDirectAnimation(camera, [fovAnimation], 0, fovAnimationDuration * framerate, false, 1, () => {
-                        resolve(); // Resolve the promise when all animations are complete
+                        // resolve(); // Resolve the promise when all animations are complete
                     });
                 }});
             });
@@ -162,6 +162,95 @@ export function focusWithoutMovingToConstellationCanvas(scene, camera, triggerEf
         }
     });
 }
+
+export function unfocusFromConstellationCanvas(scene, camera, triggerEffect, targetMeshName = 'campfire', targetFov = 0.8) {
+    return new Promise((resolve) => {
+        const targetMesh = scene.meshes.find(mesh => mesh.name && mesh.name === targetMeshName);
+
+        console.log("targetMesh", targetMesh);
+        if (targetMesh) {
+            const target = targetMesh.position;
+
+            const { targetRotationX, targetRotationY, targetRotationZ } = calculateNewTargetRotations(camera, target);
+
+            const newFov = targetFov;
+
+            const ease = new BABYLON.CubicEase();
+            ease.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEINOUT);
+
+            // Create animations for rotation
+            const rotationXAnimation = new BABYLON.Animation("rotationXAnimation", "rotation.x", framerate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
+            const rotationYAnimation = new BABYLON.Animation("rotationYAnimation", "rotation.y", framerate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
+            const rotationZAnimation = new BABYLON.Animation("rotationZAnimation", "rotation.z", framerate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
+
+            // Create animation for FOV
+            const fovAnimation = new BABYLON.Animation("fovAnimation", "fov", framerate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
+
+            const targetAnimationDuration = 2;
+            const fovAnimationDuration = 3;
+
+            // Set key frames for rotation
+            const keyFramesX = [
+                { frame: 0, value: camera.rotation.x },
+                { frame: targetAnimationDuration * framerate, value: targetRotationX }
+            ];
+            const keyFramesY = [
+                { frame: 0, value: camera.rotation.y },
+                { frame: targetAnimationDuration * framerate, value: targetRotationY }
+            ];
+            const keyFramesZ = [
+                { frame: 0, value: camera.rotation.z },
+                { frame: targetAnimationDuration * framerate, value: targetRotationZ }
+            ];
+
+            // Set key frames for FOV
+            const fovKeyFrames = [
+                { frame: 0, value: camera.fov },
+                { frame: fovAnimationDuration * framerate, value: newFov }
+            ];
+
+            rotationXAnimation.setKeys(keyFramesX);
+            rotationYAnimation.setKeys(keyFramesY);
+            rotationZAnimation.setKeys(keyFramesZ);
+            fovAnimation.setKeys(fovKeyFrames);
+
+            rotationXAnimation.setEasingFunction(ease);
+            rotationYAnimation.setEasingFunction(ease);
+            rotationZAnimation.setEasingFunction(ease);
+            fovAnimation.setEasingFunction(ease);
+
+            // Add rotation animations to camera
+            camera.animations.push(rotationXAnimation);
+            camera.animations.push(rotationYAnimation);
+            camera.animations.push(rotationZAnimation);
+
+            console.log("SCENE MESHES:", scene.meshes);
+
+            triggerEffect({domain: "canvas", selector: {type: "shape", id: createShapeId("andre-vacha")}, effect: "ripple", callback: () => {
+                const redwoodMeshes = scene.meshes.filter(mesh => mesh.name && mesh.name.includes('redwood'));
+
+                console.log("REDWOOD MESHES:", redwoodMeshes);
+    
+                redwoodMeshes.map(mesh => customFadeIn(mesh, scene, 1.5, false));
+    
+                scene.beginDirectAnimation(camera, [fovAnimation], 0, fovAnimationDuration * framerate, false, 1, () => {
+                    scene.beginDirectAnimation(camera, [rotationXAnimation, rotationYAnimation, rotationZAnimation], 0, targetAnimationDuration * framerate, false, 1, () => {
+                        
+                        resolve();
+                    });
+                });
+            }
+            })
+            resolve(); // Resolve immediately if targetMesh is not found
+        }
+        else{
+            console.error(`${targetMeshName} not found`);
+            resolve();
+        }
+    });
+}
+
+
 
 export function initializeLookingAtSky(scene, camera) {
     const constellationCanvas = scene.getMeshByName('constellationCanvas');
@@ -187,7 +276,7 @@ export function initializeLookingAtSky(scene, camera) {
         // Handle redwood meshes scaling
         const redwoodMeshes = scene.meshes.filter(mesh => mesh.name && mesh.name.includes('redwood'));
         console.log("REDWOOD MESHES:", redwoodMeshes);
-        redwoodMeshes.forEach(mesh => customFadeOut(mesh, 1, true)); // Directly apply the fade out effect
+        redwoodMeshes.forEach(mesh => customFadeOut(mesh, scene, 1.5, true)); // Directly apply the fade out effect
     } else {
         console.error("Constellation Canvas not found");
     }
@@ -196,6 +285,7 @@ export function initializeLookingAtSky(scene, camera) {
 export function giveControlToCanvas() {
     document.body.style.pointerEvents = 'none';
 }
+
 
 
 
