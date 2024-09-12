@@ -24,11 +24,13 @@ import { initializeLookingAtSky } from "../event-controllers/campfire-transition
 export function PitchScene(){
     const canvasZoneRef = useRef();
     const [reactScene, setReactScene] = useState(null); // Add state to hold the scene
-    const { triggerEffect, activeEffect, setTriggerWarp, campfireView, setCampfireView } = useStarFireSync();
+    const { triggerEffect, activeEffect, setTriggerWarp, campfireView, setCampfireView, setSceneLoaded } = useStarFireSync();
 
     useEffect(() => {
         console.log("ACTIVE EFFECT", reactScene)
     }, [reactScene])
+
+    function onRender(scene) { }
 
     async function onSceneReady(scene) {
        
@@ -52,6 +54,7 @@ export function PitchScene(){
 
         scene.onReadyObservable.addOnce(async () => {
             addConstellationCanvas(scene, canvasZoneRef, RenderingGroups);
+            setSceneLoaded(true)
             // initializeLookingAtSky(scene, camera);    
 
             });
@@ -138,8 +141,6 @@ export function PitchScene(){
 
             createCharacter(scene)
 
-
-
             const textCamera = addGUICamera(scene, "text-camera", camera, 0x10000000);
             scene.activeCameras = [camera, textCamera];
 
@@ -148,8 +149,9 @@ export function PitchScene(){
             createFocusButton(scene, camera, advancedTexture, triggerEffect, setTriggerWarp);
             createCanvasControlsButton(scene, advancedTexture);
             createResetButton(scene, advancedTexture);
-            createCampfireFocusButton(scene, camera, advancedTexture, triggerEffect, setTriggerWarp);
+            createCampfireFocusButton(scene, camera, advancedTexture, triggerEffect, setTriggerWarp, onRender);
             setReactScene(scene)
+
         };
 
 
@@ -158,7 +160,7 @@ export function PitchScene(){
         assetManager.load();
     }
 
-    function onRender(scene) { }
+
 
     return(
         <>
@@ -172,6 +174,7 @@ export function PitchScene(){
             {reactScene && (
                 <CampfireSyncListener 
                     scene={reactScene}
+                    onRender={onRender}
                 />
             )}
         </>

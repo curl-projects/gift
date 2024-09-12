@@ -37,7 +37,7 @@ export function createFocusButton(scene, camera, advancedTexture, triggerEffect,
 }
 
 
-export function createCampfireFocusButton(scene, camera, advancedTexture, triggerEffect, setTriggerWarp) {
+export function createCampfireFocusButton(scene, camera, advancedTexture, triggerEffect, setTriggerWarp, onRender) {
     function focusOnConstellationCanvas(scene, camera) {
         // focusAndMoveToConstellationCanvas(scene, camera);
         focusWithoutMovingToConstellationCanvas(scene, camera, triggerEffect, setTriggerWarp)
@@ -51,7 +51,7 @@ export function createCampfireFocusButton(scene, camera, advancedTexture, trigge
     button.cornerRadius = 20;
     button.left = "460px"; // Adjust this value to position the button above the focus button
     button.background = "pink";
-    button.onPointerUpObservable.add(() => unfocusFromConstellationCanvas(scene, camera, triggerEffect));
+    button.onPointerUpObservable.add(() => unfocusFromConstellationCanvas(scene, camera, triggerEffect, onRender));
     button.pointerEvents = "auto";
 
     // Position the button at the bottom center
@@ -99,15 +99,18 @@ export function createResetButton(scene, advancedTexture){
 
     function resetScene() {
 
-        const redwoodMeshes = scene.meshes.filter(mesh => mesh.name && mesh.name.includes('redwood'));
-        for(let redwood of redwoodMeshes){
-            customFadeOut(redwood, scene, 1.5, false);
+        const engine = scene.getEngine();
+        engine.stopRenderLoop();
+        // scene.freezeActiveMeshes();
+
+        // const redwoodMeshes = scene.meshes.filter(mesh => mesh.name && mesh.name.includes('redwood'));
+        // for(let redwood of redwoodMeshes){
+        //     customFadeOut(redwood, scene, 1.5, false);
         
-            setTimeout(() => {
-                customFadeIn(redwood, scene, 1.5, false);
-            }, 2500);
+        //     setTimeout(() => {
+        //         customFadeIn(redwood, scene, 1.5, false);
+        //     }, 2500);
     
-        }
        
 
 

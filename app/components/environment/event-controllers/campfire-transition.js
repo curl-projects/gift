@@ -5,7 +5,14 @@ import { framerate, Epsilon } from '~/components/environment/helpers/constants';
 // import { customFadeIn, customFadeOut } from '~/components/environment/helpers/mesh-behaviours';
 import { createShapeId } from "tldraw";
 
+export function giveControlToCanvas() {
+    document.body.style.pointerEvents = 'none';
+}
 
+export function giveControlToEnvironment(){
+    document.body.style.pointerEvents = 'auto';
+    document.body.style.overflow = 'unset';
+}
 
 function calculateNewFovWithoutPosition(camera, mesh){
     const boundingInfo = mesh.getBoundingInfo();
@@ -144,7 +151,6 @@ export function customFadeIn(mesh, scene, animationDuration = 1.5, immediate = f
 }
 
 
-
 export function focusWithoutMovingToConstellationCanvas(scene, camera, triggerEffect, setTriggerWarp) {
     return new Promise((resolve) => {
         const constellationCanvas = scene.getMeshByName('constellationCanvas');
@@ -154,7 +160,6 @@ export function focusWithoutMovingToConstellationCanvas(scene, camera, triggerEf
             const { targetQuaternion } = calculateNewTargetRotations(camera, target);
 
             console.log("targetQuaternion", targetQuaternion);
-
             const newFov = calculateNewFovWithoutPosition(camera, constellationCanvas);
 
             const ease = new BABYLON.CubicEase();
@@ -216,7 +221,13 @@ export function focusWithoutMovingToConstellationCanvas(scene, camera, triggerEf
 
                     // Start the FOV animation after rotation animations complete
                     scene.beginDirectAnimation(camera, [fovAnimation], 0, fovAnimationDuration * framerate, false, 1, () => {
-                        // resolve(); // Resolve the promise when all animations are complete
+                        giveControlToCanvas();
+
+                        const engine = scene.getEngine();
+                        engine.stopRenderLoop();
+
+                      
+                        resolve(); // Resolve the promise when all animations are complete
                     });
                 }});
             });
@@ -227,17 +238,17 @@ export function focusWithoutMovingToConstellationCanvas(scene, camera, triggerEf
     });
 }
 
-export function unfocusFromConstellationCanvas(scene, camera, triggerEffect, targetMeshName = 'campfire', targetFov = 0.8) {
+export function unfocusFromConstellationCanvas(scene, camera, triggerEffect, onRender, targetMeshName = 'campfire', targetFov = 0.8) {
     return new Promise((resolve) => {
         const targetMesh = scene.meshes.find(mesh => mesh.name && mesh.name === targetMeshName);
 
         console.log("targetMesh", targetMesh);
         if (targetMesh) {
             const target = targetMesh.position;
-
             const { targetQuaternion } = calculateNewTargetRotations(camera, target);
 
             const newFov = targetFov;
+            const engine = scene.getEngine();
 
             const ease = new BABYLON.CubicEase();
             ease.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEINOUT);
@@ -283,6 +294,12 @@ export function unfocusFromConstellationCanvas(scene, camera, triggerEffect, tar
 
             console.log("SCENE MESHES:", scene.meshes);
 
+            engine.runRenderLoop(() => {
+                if (typeof onRender === 'function') onRender(scene);
+                scene.render()
+            });
+
+        
             triggerEffect({domain: "canvas", selector: {type: "shape", id: createShapeId("andre-vacha")}, effect: "ripple", callback: () => {
                 const redwoodMeshes = scene.meshes.filter(mesh => mesh.name && mesh.name.includes('redwood'));
 
@@ -292,7 +309,7 @@ export function unfocusFromConstellationCanvas(scene, camera, triggerEffect, tar
     
                 scene.beginDirectAnimation(camera, [fovAnimation], 0, fovAnimationDuration * framerate, false, 1, () => {
                     scene.beginDirectAnimation(camera, [rotationQuaternionAnimation], 0, targetAnimationDuration * framerate, false, 1, () => {
-                        
+                        giveControlToEnvironment()
                         resolve();
                     });
                 });
@@ -330,13 +347,19 @@ export function initializeLookingAtSky(scene, camera) {
         const redwoodMeshes = scene.meshes.filter(mesh => mesh.name && mesh.name.includes('redwood'));
         console.log("REDWOOD MESHES:", redwoodMeshes);
         redwoodMeshes.forEach(mesh => customFadeOut(mesh, scene, 1.5, true)); // Directly apply the fade out effect
+
+        giveControlToCanvas();
+
+        // after all effect have finished, freeze the canvas
+        setTimeout(()=>{
+        const engine = scene.getEngine();
+        engine.stopRenderLoop();
+        
+        }, 2000)
+
     } else {
         console.error("Constellation Canvas not found");
     }
-}
-
-export function giveControlToCanvas() {
-    document.body.style.pointerEvents = 'none';
 }
 
 

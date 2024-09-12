@@ -6,7 +6,10 @@ const StarFireSyncProvider = ({ children }) => {
     const [activeEffect, setActiveEffect] = useState(null);
     const [triggerWarp, setTriggerWarp] = useState({active: false, accDuration: 500, deaccDuration: 500, constAccDuration: 500});
     const [restored, setRestored] = useState(false);
-    const [campfireView, setCampfireView] = useState(false);
+    const [campfireView, setCampfireView] = useState(null);
+    const [sceneLoaded, setSceneLoaded] = useState(false);
+
+    // {active: false, immediate: false }
 
     const triggerEffect = useCallback(({domain, selector, effect, callback}) => {
         console.log("HELLO")
@@ -29,7 +32,9 @@ const StarFireSyncProvider = ({ children }) => {
                 restored, 
                 setRestored, 
                 campfireView, 
-                setCampfireView 
+                setCampfireView,
+                sceneLoaded,
+                setSceneLoaded,
             }}>
             {children}
         </StarFireSyncContext.Provider>
