@@ -71,10 +71,10 @@
     filter: blur(0.02em) opacity(0.3);
     -webkit-filter: blur(0.02em);
     position: absolute; /* Changed to absolute to cover the entire width */
-    width: 100%; /* Cover the entire width of the container */
+    width: 110%; /* Cover the entire width of the container */
     height: 20vh;
     bottom: -5vh;
-    left: -3vw;
+    left: 0vw;
 
 
 }
