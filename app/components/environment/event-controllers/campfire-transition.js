@@ -2,7 +2,7 @@ import * as GUI from '@babylonjs/gui';
 import * as BABYLON from '@babylonjs/core';
 import { Matrix } from '@babylonjs/core';
 import { framerate, Epsilon } from '~/components/environment/helpers/constants';
-import { customFadeIn, customFadeOut } from '~/components/environment/helpers/mesh-behaviours';
+// import { customFadeIn, customFadeOut } from '~/components/environment/helpers/mesh-behaviours';
 import { createShapeId } from "tldraw";
 
 
@@ -64,13 +64,86 @@ function calculateNewTargetRotations(camera, target){
         targetRotationZ = 0;
     }
 
-     // if (camera.rotationQuaternion) {
-            //     Quaternion.RotationYawPitchRollToRef(targetRotationY, targetRotationX, targetRotationZ, camera.rotationQuaternion);
-            // }
+    const targetQuaternion = BABYLON.Quaternion.RotationYawPitchRoll(targetRotationY, targetRotationX, targetRotationZ);
 
-
-    return { targetRotationX, targetRotationY, targetRotationZ };
+    return { targetQuaternion };
 }
+
+
+// custom fade behaviour
+export function customFadeOut(mesh, scene, animationDuration = 3, immediate = false) {
+    if (immediate) {
+        // Directly set the scaling properties of the mesh
+        mesh.scaling.x *= 0.3;
+        mesh.scaling.y *= 0.01;
+    } else {
+
+        const initialScaling = { x: mesh.scaling.x, y: mesh.scaling.y, z: mesh.scaling.z };
+        const finalScaling = { x: mesh.scaling.x * 0.3, y: mesh.scaling.y * 0.01, z: mesh.scaling.z };
+
+        console.log("INITIAL SCALING:", initialScaling)
+        console.log("FINAL SCALING:", finalScaling)
+        const ease = new BABYLON.CubicEase();
+        // ease.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEINOUT);
+        const fade = new BABYLON.Animation('fade', 'scaling', framerate, BABYLON.Animation.ANIMATIONTYPE_VECTOR3, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
+        
+        // Set key frames based on the reverse parameter
+        const keyFrames = [
+            { frame: 0, value: new BABYLON.Vector3(initialScaling.x, initialScaling.y, initialScaling.z) },
+            { frame: animationDuration * framerate, value: new BABYLON.Vector3(finalScaling.x, finalScaling.y, finalScaling.z) }
+        ];
+
+        fade.setKeys(keyFrames);
+        fade.setEasingFunction(ease);
+
+        mesh.animations.push(fade);
+
+
+        console.log("TRIGGERING ANIMATION")
+
+        scene.beginDirectAnimation(mesh, [fade], 0, animationDuration * framerate, false, 1, () => {
+            console.log("ANIMATION FINISHED")
+        });
+
+        return fade;
+    }
+}
+
+export function customFadeIn(mesh, scene, animationDuration = 1.5, immediate = false) {
+    if (immediate) {
+        // Directly set the scaling properties of the mesh
+        mesh.scaling.x /= 0.3;
+        mesh.scaling.y /= 0.01;
+    } else {
+
+        const initialScaling = { x: mesh.scaling.x, y: mesh.scaling.y, z: mesh.scaling.z };
+        const finalScaling = { x: mesh.scaling.x / 0.3, y: mesh.scaling.y / 0.01, z: mesh.scaling.z };
+        const ease = new BABYLON.CubicEase();
+        ease.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEINOUT);
+
+        const fade = new BABYLON.Animation('fade', 'scaling', framerate, BABYLON.Animation.ANIMATIONTYPE_VECTOR3, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
+        
+        // Set key frames based on the reverse parameter
+        const keyFrames = [
+            { frame: 0, value: new BABYLON.Vector3(initialScaling.x, initialScaling.y, initialScaling.z) },
+            { frame: animationDuration * framerate, value: new BABYLON.Vector3(finalScaling.x, finalScaling.y, finalScaling.z) }
+        ];
+
+        fade.setKeys(keyFrames);
+        fade.setEasingFunction(ease);
+
+        mesh.animations.push(fade);
+
+
+        console.log("TRIGGERING ANIMATION")
+
+        scene.beginDirectAnimation(mesh, [fade], 0, animationDuration * framerate, false);
+
+        return fade;
+    }
+}
+
+
 
 export function focusWithoutMovingToConstellationCanvas(scene, camera, triggerEffect, setTriggerWarp) {
     return new Promise((resolve) => {
@@ -78,21 +151,17 @@ export function focusWithoutMovingToConstellationCanvas(scene, camera, triggerEf
         if (constellationCanvas) {
             const target = constellationCanvas.position;
 
-            const { targetRotationX, targetRotationY, targetRotationZ } = calculateNewTargetRotations(camera, target);
+            const { targetQuaternion } = calculateNewTargetRotations(camera, target);
 
-            console.log("targetRotationX", targetRotationX);
-            console.log("targetRotationY", targetRotationY);
-            console.log("targetRotationZ", targetRotationZ);
+            console.log("targetQuaternion", targetQuaternion);
 
             const newFov = calculateNewFovWithoutPosition(camera, constellationCanvas);
 
             const ease = new BABYLON.CubicEase();
             ease.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEINOUT);
 
-            // Create animations for rotation
-            const rotationXAnimation = new BABYLON.Animation("rotationXAnimation", "rotation.x", framerate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
-            const rotationYAnimation = new BABYLON.Animation("rotationYAnimation", "rotation.y", framerate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
-            const rotationZAnimation = new BABYLON.Animation("rotationZAnimation", "rotation.z", framerate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
+            // Create animation for rotation quaternion
+            const rotationQuaternionAnimation = new BABYLON.Animation("rotationQuaternionAnimation", "rotationQuaternion", framerate, BABYLON.Animation.ANIMATIONTYPE_QUATERNION, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
 
             // Create animation for FOV
             const fovAnimation = new BABYLON.Animation("fovAnimation", "fov", framerate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
@@ -100,18 +169,10 @@ export function focusWithoutMovingToConstellationCanvas(scene, camera, triggerEf
             const targetAnimationDuration = 2;
             const fovAnimationDuration = 3;
 
-            // Set key frames for rotation
-            const keyFramesX = [
-                { frame: 0, value: camera.rotation.x },
-                { frame: targetAnimationDuration * framerate, value: targetRotationX }
-            ];
-            const keyFramesY = [
-                { frame: 0, value: camera.rotation.y },
-                { frame: targetAnimationDuration * framerate, value: targetRotationY }
-            ];
-            const keyFramesZ = [
-                { frame: 0, value: camera.rotation.z },
-                { frame: targetAnimationDuration * framerate, value: targetRotationZ }
+            // Set key frames for rotation quaternion
+            const keyFramesQuaternion = [
+                { frame: 0, value: camera.rotationQuaternion.clone() },
+                { frame: targetAnimationDuration * framerate, value: targetQuaternion }
             ];
 
             // Set key frames for FOV
@@ -120,20 +181,14 @@ export function focusWithoutMovingToConstellationCanvas(scene, camera, triggerEf
                 { frame: fovAnimationDuration * framerate, value: newFov }
             ];
 
-            rotationXAnimation.setKeys(keyFramesX);
-            rotationYAnimation.setKeys(keyFramesY);
-            rotationZAnimation.setKeys(keyFramesZ);
+            rotationQuaternionAnimation.setKeys(keyFramesQuaternion);
             fovAnimation.setKeys(fovKeyFrames);
 
-            rotationXAnimation.setEasingFunction(ease);
-            rotationYAnimation.setEasingFunction(ease);
-            rotationZAnimation.setEasingFunction(ease);
+            rotationQuaternionAnimation.setEasingFunction(ease);
             fovAnimation.setEasingFunction(ease);
 
-            // Add rotation animations to camera
-            camera.animations.push(rotationXAnimation);
-            camera.animations.push(rotationYAnimation);
-            camera.animations.push(rotationZAnimation);
+            // Add rotation quaternion animation to camera
+            camera.animations.push(rotationQuaternionAnimation);
 
             console.log("SCENE MESHES:", scene.meshes);
 
@@ -141,8 +196,8 @@ export function focusWithoutMovingToConstellationCanvas(scene, camera, triggerEf
 
             console.log("REDWOOD MESHES:", redwoodMeshes);
 
-            // Start the rotation animations
-            scene.beginDirectAnimation(camera, [rotationXAnimation, rotationYAnimation, rotationZAnimation], 0, targetAnimationDuration * framerate, false, 1, () => {
+            // Start the rotation quaternion animation
+            scene.beginDirectAnimation(camera, [rotationQuaternionAnimation], 0, targetAnimationDuration * framerate, false, 1, () => {
                 // wait for the star to trigger
                 triggerEffect({domain: "canvas", selector: {type: "shape", id: createShapeId("andre-vacha")}, effect: "ripple", callback: () => {
                     // start moving the redwoods out and widening the field of view
@@ -171,17 +226,15 @@ export function unfocusFromConstellationCanvas(scene, camera, triggerEffect, tar
         if (targetMesh) {
             const target = targetMesh.position;
 
-            const { targetRotationX, targetRotationY, targetRotationZ } = calculateNewTargetRotations(camera, target);
+            const { targetQuaternion } = calculateNewTargetRotations(camera, target);
 
             const newFov = targetFov;
 
             const ease = new BABYLON.CubicEase();
             ease.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEINOUT);
 
-            // Create animations for rotation
-            const rotationXAnimation = new BABYLON.Animation("rotationXAnimation", "rotation.x", framerate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
-            const rotationYAnimation = new BABYLON.Animation("rotationYAnimation", "rotation.y", framerate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
-            const rotationZAnimation = new BABYLON.Animation("rotationZAnimation", "rotation.z", framerate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
+            // Create animation for rotation quaternion
+            const rotationQuaternionAnimation = new BABYLON.Animation("rotationQuaternionAnimation", "rotationQuaternion", framerate, BABYLON.Animation.ANIMATIONTYPE_QUATERNION, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
 
             // Create animation for FOV
             const fovAnimation = new BABYLON.Animation("fovAnimation", "fov", framerate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
@@ -189,18 +242,10 @@ export function unfocusFromConstellationCanvas(scene, camera, triggerEffect, tar
             const targetAnimationDuration = 2;
             const fovAnimationDuration = 3;
 
-            // Set key frames for rotation
-            const keyFramesX = [
-                { frame: 0, value: camera.rotation.x },
-                { frame: targetAnimationDuration * framerate, value: targetRotationX }
-            ];
-            const keyFramesY = [
-                { frame: 0, value: camera.rotation.y },
-                { frame: targetAnimationDuration * framerate, value: targetRotationY }
-            ];
-            const keyFramesZ = [
-                { frame: 0, value: camera.rotation.z },
-                { frame: targetAnimationDuration * framerate, value: targetRotationZ }
+            // Set key frames for rotation quaternion
+            const keyFramesQuaternion = [
+                { frame: 0, value: camera.rotationQuaternion.clone() },
+                { frame: targetAnimationDuration * framerate, value: targetQuaternion }
             ];
 
             // Set key frames for FOV
@@ -209,20 +254,14 @@ export function unfocusFromConstellationCanvas(scene, camera, triggerEffect, tar
                 { frame: fovAnimationDuration * framerate, value: newFov }
             ];
 
-            rotationXAnimation.setKeys(keyFramesX);
-            rotationYAnimation.setKeys(keyFramesY);
-            rotationZAnimation.setKeys(keyFramesZ);
+            rotationQuaternionAnimation.setKeys(keyFramesQuaternion);
             fovAnimation.setKeys(fovKeyFrames);
 
-            rotationXAnimation.setEasingFunction(ease);
-            rotationYAnimation.setEasingFunction(ease);
-            rotationZAnimation.setEasingFunction(ease);
+            rotationQuaternionAnimation.setEasingFunction(ease);
             fovAnimation.setEasingFunction(ease);
 
-            // Add rotation animations to camera
-            camera.animations.push(rotationXAnimation);
-            camera.animations.push(rotationYAnimation);
-            camera.animations.push(rotationZAnimation);
+            // Add rotation quaternion animation to camera
+            camera.animations.push(rotationQuaternionAnimation);
 
             console.log("SCENE MESHES:", scene.meshes);
 
@@ -231,10 +270,10 @@ export function unfocusFromConstellationCanvas(scene, camera, triggerEffect, tar
 
                 console.log("REDWOOD MESHES:", redwoodMeshes);
     
-                redwoodMeshes.map(mesh => customFadeIn(mesh, scene, 1.5, false));
+                redwoodMeshes.map(mesh => customFadeIn(mesh, scene, 3, false));
     
                 scene.beginDirectAnimation(camera, [fovAnimation], 0, fovAnimationDuration * framerate, false, 1, () => {
-                    scene.beginDirectAnimation(camera, [rotationXAnimation, rotationYAnimation, rotationZAnimation], 0, targetAnimationDuration * framerate, false, 1, () => {
+                    scene.beginDirectAnimation(camera, [rotationQuaternionAnimation], 0, targetAnimationDuration * framerate, false, 1, () => {
                         
                         resolve();
                     });
@@ -257,18 +296,14 @@ export function initializeLookingAtSky(scene, camera) {
     if (constellationCanvas) {
         const target = constellationCanvas.position;
 
-        const { targetRotationX, targetRotationY, targetRotationZ } = calculateNewTargetRotations(camera, target);
+        const { targetQuaternion } = calculateNewTargetRotations(camera, target);
 
-        console.log("targetRotationX", targetRotationX);
-        console.log("targetRotationY", targetRotationY);
-        console.log("targetRotationZ", targetRotationZ);
+        console.log("targetQuaternion", targetQuaternion);
 
         const newFov = calculateNewFovWithoutPosition(camera, constellationCanvas);
 
         // Directly set the camera's rotation and FOV
-        camera.rotation.x = targetRotationX;
-        camera.rotation.y = targetRotationY;
-        camera.rotation.z = targetRotationZ;
+        camera.rotationQuaternion = targetQuaternion;
         camera.fov = newFov;
 
         console.log("Camera initialized to look at the sky without animation.");
@@ -340,11 +375,9 @@ function focusAndMoveToConstellationCanvas(scene, camera){
         
         const target = constellationCanvas.position;
 
-        const { targetRotationX, targetRotationY, targetRotationZ } = calculateNewTargetRotations(camera, target);
+        const { targetQuaternion } = calculateNewTargetRotations(camera, target);
 
-        console.log("targetRotationX", targetRotationX)
-        console.log("targetRotationY", targetRotationY)
-        console.log("targetRotationZ", targetRotationZ)
+        console.log("targetQuaternion", targetQuaternion)
        
        
         const { newPosition, newFov } = calculateNewPositionAndFov(camera, constellationCanvas);
@@ -352,27 +385,17 @@ function focusAndMoveToConstellationCanvas(scene, camera){
         const ease = new BABYLON.CubicEase();
         ease.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEINOUT);
 
-        // Create animations for rotation
-        const rotationXAnimation = new BABYLON.Animation("rotationXAnimation", "rotation.x", framerate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
-        const rotationYAnimation = new BABYLON.Animation("rotationYAnimation", "rotation.y", framerate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
-        const rotationZAnimation = new BABYLON.Animation("rotationZAnimation", "rotation.z", framerate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
+        // Create animation for rotation quaternion
+        const rotationQuaternionAnimation = new BABYLON.Animation("rotationQuaternionAnimation", "rotationQuaternion", framerate, BABYLON.Animation.ANIMATIONTYPE_QUATERNION, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
         
         // // Create animations for position and fov
         const positionAnimation = new BABYLON.Animation("positionAnimation", "position", framerate, BABYLON.Animation.ANIMATIONTYPE_VECTOR3, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
         const fovAnimation = new BABYLON.Animation("fovAnimation", "fov", framerate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
 
-        // Set key frames for tation
-        const keyFramesX = [
-            { frame: 0, value: camera.rotation.x },
-            { frame: 1 * framerate, value: targetRotationX }
-        ];
-        const keyFramesY = [
-            { frame: 0, value: camera.rotation.y },
-            { frame: 1 * framerate, value: targetRotationY }
-        ];
-        const keyFramesZ = [
-            { frame: 0, value: camera.rotation.z },
-            { frame: 1 * framerate, value: targetRotationZ }
+        // Set key frames for rotation quaternion
+        const keyFramesQuaternion = [
+            { frame: 0, value: camera.rotationQuaternion.clone() },
+            { frame: 1 * framerate, value: targetQuaternion }
         ];
 
          // Set key frames for position
@@ -388,29 +411,23 @@ function focusAndMoveToConstellationCanvas(scene, camera){
         ];
 
 
-        rotationXAnimation.setKeys(keyFramesX);
-        rotationYAnimation.setKeys(keyFramesY);
-        rotationZAnimation.setKeys(keyFramesZ);
+        rotationQuaternionAnimation.setKeys(keyFramesQuaternion);
         positionAnimation.setKeys(positionKeyFrames);
         fovAnimation.setKeys(fovKeyFrames);
 
-        rotationXAnimation.setEasingFunction(ease);
-        rotationYAnimation.setEasingFunction(ease);
-        rotationZAnimation.setEasingFunction(ease);
+        rotationQuaternionAnimation.setEasingFunction(ease);
         positionAnimation.setEasingFunction(ease);
         fovAnimation.setEasingFunction(ease);
 
 
         // Add animations to camera
-        camera.animations.push(rotationXAnimation);
-        camera.animations.push(rotationYAnimation);
-        camera.animations.push(rotationZAnimation);
+        camera.animations.push(rotationQuaternionAnimation);
         camera.animations.push(positionAnimation);
         camera.animations.push(fovAnimation);
 
 
         // Start the animation
-        scene.beginDirectAnimation(camera, [rotationXAnimation, rotationYAnimation, rotationZAnimation, positionAnimation, fovAnimation], 0, 1 * framerate, false);
+        scene.beginDirectAnimation(camera, [rotationQuaternionAnimation, positionAnimation, fovAnimation], 0, 1 * framerate, false);
     }
 }
 

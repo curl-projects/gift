@@ -340,6 +340,7 @@ export function addConstellationCanvas(scene, canvasZoneRef, RenderingGroups) {
       plane.alwaysSelectAsActiveMesh = true
       // plane.rotationQuaternion = null;
       plane.checkCollisions = true;
+      plane.rotationQuaternion = null;
 
      // Setup the CSS renderer and Youtube object
      let existingRenderer = document.getElementById("css-container");

@@ -102,7 +102,6 @@ export function PitchScene(){
                     // globalRoot: document.getElementById("#root") || undefined,
                 });
             });
-            
             scene.setRenderingAutoClearDepthStencil(RenderingGroups.skybox, false, false, false);
             scene.setRenderingAutoClearDepthStencil(RenderingGroups.environment, false, false, false);
             scene.setRenderingAutoClearDepthStencil(RenderingGroups.text, false, false, false);
