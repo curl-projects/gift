@@ -6,7 +6,7 @@ export function addMovableCamera(scene, name) {
 
     // // Enable quaternion rotation
     camera.useQuaternion = true;
-    camera.rotationQuaternion = BABYLON.Quaternion.Identity();
+    // camera.rotationQuaternion = BABYLON.Quaternion.Identity();
 
     camera.setTarget(new BABYLON.Vector3(0, 0, 0));
     // camera.rotation.y += Math.PI;

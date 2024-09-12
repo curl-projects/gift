@@ -160,6 +160,15 @@ export function focusWithoutMovingToConstellationCanvas(scene, camera, triggerEf
             const ease = new BABYLON.CubicEase();
             ease.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEINOUT);
 
+            // Ensure the camera has a valid initial rotation quaternion
+            if (!camera.rotationQuaternion) {
+                camera.rotationQuaternion = BABYLON.Quaternion.FromEulerAngles(camera.rotation.x, camera.rotation.y, camera.rotation.z);
+            }
+
+            // Normalize the quaternions
+            camera.rotationQuaternion.normalize();
+            targetQuaternion.normalize();
+
             // Create animation for rotation quaternion
             const rotationQuaternionAnimation = new BABYLON.Animation("rotationQuaternionAnimation", "rotationQuaternion", framerate, BABYLON.Animation.ANIMATIONTYPE_QUATERNION, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
 
@@ -232,6 +241,15 @@ export function unfocusFromConstellationCanvas(scene, camera, triggerEffect, tar
 
             const ease = new BABYLON.CubicEase();
             ease.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEINOUT);
+
+            // Ensure the camera has a valid initial rotation quaternion
+            if (!camera.rotationQuaternion) {
+                camera.rotationQuaternion = BABYLON.Quaternion.FromEulerAngles(camera.rotation.x, camera.rotation.y, camera.rotation.z);
+            }
+
+            // Normalize the quaternions
+            camera.rotationQuaternion.normalize();
+            targetQuaternion.normalize();
 
             // Create animation for rotation quaternion
             const rotationQuaternionAnimation = new BABYLON.Animation("rotationQuaternionAnimation", "rotationQuaternion", framerate, BABYLON.Animation.ANIMATIONTYPE_QUATERNION, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
