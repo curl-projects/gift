@@ -23,7 +23,7 @@ function applyOffset(boxShadow, offsetX, offsetY, color) {
 
 export const Stars = track(() => {
   const editor = useEditor();
-  const { starControls } = useConstellationMode();
+  const { starControls, setStarControls } = useConstellationMode();
 
   const [shadowsSmall, setShadowsSmall] = useState('');
   const [shadowsMedium, setShadowsMedium] = useState('');
@@ -55,7 +55,7 @@ export const Stars = track(() => {
     setShadowsBigOffset(generateBoxShadow(50, 0, 0, 'orange'));
   }, []);
 
-  const introDuration = 4
+  const introDuration = 10
   return (
     <>
       <motion.div
@@ -65,6 +65,9 @@ export const Stars = track(() => {
         initial={{ opacity: 0 }}
         animate={{ opacity: starControls.visible ? 1 : 0 }}
         transition={{ duration: starControls.immediate ? 0 : introDuration }}
+        onAnimationComplete={(animation) => {
+          starControls.onComplete && starControls.onComplete();
+        }}
       ></motion.div>
       <motion.div
         id="stars2"

@@ -9,9 +9,31 @@ export const ConstellationModeProvider = ({ children }) => {
     const [expandedShapeIds, setExpandedShapeIds] = useState([]);
     const [narratorEvent, setNarratorEvent] = useState(null);
     
-    const [starControls, setStarControls] = useState({ visible: true, immediate: true });
-    const [cloudControls, setCloudControls] = useState({ visible: true, immediate: true });
+    const [starControls, _setStarControls] = useState({ visible: true, immediate: true });
+    const [cloudControls, _setCloudControls] = useState({ visible: true, immediate: true });
     const [overlayControls, setOverlayControls] = useState({ dark: false, immediate: true, duration: 2 }); // Consolidated state
+
+    const setStarControls = (controls) => {
+        return new Promise((resolve) => {
+            _setStarControls({
+                ...controls,
+                onComplete: () => {
+                    resolve();
+                }
+            });
+        });
+    }
+
+    const setCloudControls = (controls) => {
+        return new Promise((resolve) => {
+            _setCloudControls({
+                ...controls,
+                onComplete: () => {
+                    resolve();
+                }
+            });
+        });
+    }
 
     return (
         <ConstellationModeContext.Provider 

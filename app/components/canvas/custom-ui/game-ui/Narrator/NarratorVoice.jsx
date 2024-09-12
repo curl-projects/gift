@@ -12,7 +12,8 @@ export function NarratorVoice() {
     const { narratorEvent, setNarratorEvent, 
         setDrifting, overlayMode, setOverlayMode, 
         setStarsVisible, setCloudsVisible,
-        setStarControls, setCloudControls,
+        starControls, setStarControls, 
+        cloudControls, setCloudControls,
         overlayControls, setOverlayControls,
     } = useConstellationMode();
 
@@ -67,7 +68,7 @@ export function NarratorVoice() {
                 callback: () => {
                     setCampfireView({ active: false, immediate: true })
                     setOverlayControls({ dark: true, immediate: true })
-                    setStarControls({ visible: false, immediate: true })
+                    setStarControls({ visible: true, immediate: true })
                     setCloudControls({ visible: true, immediate: true })
                 }
             },
@@ -77,10 +78,20 @@ export function NarratorVoice() {
                 duration: 3000,
                 requiresInteraction: true
             },
-            // {
-            //     type: "callback",
-            //     callback: () => setCampfireView({ active: true, immediate: false })
-            // },
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setStarControls({ visible: false, immediate: false }),
+                        setCloudControls({ visible: false, immediate: false})
+                    ])
+                },
+                waitForCallback: true
+            },
+            {
+                type: "callback",
+                callback: () => setCampfireView({ active: true, immediate: false })
+            },
             // {
             //     type: "narrator",
             //     text: "I have spent much of my life here, and I can count on one hand the number of friends that I have made.",
@@ -151,6 +162,8 @@ export function NarratorVoice() {
         const command = commands[index];
 
         if (command.type === "system" || command.type === "narrator") {
+
+            // to do: fix this, not generalizable to many actors
             const setState = command.type === "system" ? setSystemState : setNarratorState;
             const setOtherState = command.type === "system" ? setNarratorState : setSystemState;
 
@@ -180,8 +193,15 @@ export function NarratorVoice() {
                 console.error("Command was incorrectly specified: no interaction, wait condition or duration provided");
             }
         } else if (command.type === "callback") {
-            command.callback();
-            executeCommands(commands, index + 1);
+            if (command.waitForCallback) {
+            // check if the callback is a promise; otherwise throw an error, because we need it to resolve
+                command.callback().then(() => {
+                    executeCommands(commands, index + 1);
+                });
+            } else {
+                command.callback()
+                executeCommands(commands, index + 1);
+            }
         } else {
             console.error("Unknown command type:", command.type);
         }

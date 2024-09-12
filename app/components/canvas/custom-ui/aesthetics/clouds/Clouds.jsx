@@ -13,6 +13,9 @@ export function Clouds() {
                 initial={{ opacity: 0, visibility: 'hidden' }}
                 animate={{ opacity: cloudControls.visible ? 1 : 0, visibility: cloudControls.visible ? 'visible' : 'hidden' }}
                 transition={{ duration: cloudControls.immediate ? 0 : 1 }}
+                onAnimationComplete={() => {
+                    cloudControls.onComplete && cloudControls.onComplete();
+                }}
             ></motion.div>
             <motion.div
                 className={`${styles.cloudsOverlay} ${styles.cloudsOverlayReverse}`}
