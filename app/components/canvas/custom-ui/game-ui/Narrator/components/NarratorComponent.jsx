@@ -68,7 +68,14 @@ const NarratorComponent = ({ visible, text, requiresInteraction }) => {
                     </div>    
                 </motion.div>
                 {/*actual text -- the other one controls the spacing of the border */}
-                <div className={styles.narratorTextAbsoluteContainer}>
+                <motion.div 
+                    key='narrator-text-absolute-container'
+                    className={styles.narratorTextAbsoluteContainer}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 2 }}
+                >
                     <AnimatePresence mode="wait">
                        
                         <motion.p 
@@ -83,7 +90,7 @@ const NarratorComponent = ({ visible, text, requiresInteraction }) => {
                             </motion.p>
                        
                     </AnimatePresence>
-                    </div>
+                    </motion.div>
                 </>
             )}
         </AnimatePresence>

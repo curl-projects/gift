@@ -6,9 +6,19 @@ const StarFireSyncProvider = ({ children }) => {
     const [activeEffect, setActiveEffect] = useState(null);
     const [triggerWarp, setTriggerWarp] = useState({active: false, accDuration: 500, deaccDuration: 500, constAccDuration: 500});
     const [restored, setRestored] = useState(false);
-    const [campfireView, setCampfireView] = useState(null);
+    const [campfireView, _setCampfireView] = useState(null);
     const [sceneLoaded, setSceneLoaded] = useState(false);
 
+    const setCampfireView = (view) => {
+        return new Promise((resolve) => {
+            _setCampfireView({
+                ...view,
+                onComplete: () => {
+                    resolve();
+                }
+            });
+        });
+    }
     // {active: false, immediate: false }
 
     const triggerEffect = useCallback(({domain, selector, effect, callback}) => {

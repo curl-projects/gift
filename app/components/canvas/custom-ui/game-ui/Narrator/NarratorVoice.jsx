@@ -80,23 +80,56 @@ export function NarratorVoice() {
                 requiresInteraction: true
             },
             {
-                type: 'callback',
-                callback: () => {
-                    // the stars slowly fade to black
-                    return Promise.all([
-                        setStarControls({ visible: false, immediate: false }),
-                        setCloudControls({ visible: false, immediate: false})
-                    ])
-                },
-                waitForCallback: true
+                type: "narrator",
+                text: "I really hate it here",
+                duration: 3000,
+                requiresInteraction: true
             },
-            {
-                type: "callback",
-                callback: () => {
-                    // the campfire fades into view
-                    setCampfireView({ active: true, immediate: false })
-                }
-            },
+            // {
+            //     type: "callback",
+            //     callback: () => {
+            //         setOverlayControls({ trueOverlay: true })
+            //         console.log("HI!")
+            //         // setCampfireView({ active: true, immediate: true })
+            //     }
+            // },
+            // {
+            //     type: "callback",
+            //     callback: () => {
+            //         return Promise.all([
+            //         // it's a dark and stormy night
+            //             setCampfireView({ active: false, immediate: true }),
+            //             setStarControls({ visible: true, immediate: true }),
+            //             setCloudControls({ visible: true, immediate: true }),
+            //         ])
+            //     },
+            //     waitForCallback: true
+            // },
+            // {
+            //     type: "callback",
+            //     callback: () => {
+            //         setOverlayControls({ trueOverlay: true })
+            //         // setCampfireView({ active: true, immediate: true })
+            //     },
+            // },
+            // {
+            //     type: 'callback',
+            //     callback: () => {
+            //         // the stars slowly fade to black
+            //         return Promise.all([
+            //             setStarControls({ visible: false, immediate: false }),
+            //             setCloudControls({ visible: false, immediate: false})
+            //         ])
+            //     },
+            //     waitForCallback: true
+            // },
+            // {
+            //     type: "callback",
+            //     callback: () => {
+            //         // the campfire fades into view
+            //         setCampfireView({ active: true, immediate: false })
+            //     }
+            // },
             // {
             //     type: "narrator",
             //     text: "I have spent much of my life here, and I can count on one hand the number of friends that I have made.",
@@ -150,6 +183,7 @@ export function NarratorVoice() {
 
     const executeCommands = useCallback((commands, index) => {
         const handleKeyDown = (event) => {
+            console.log("EVENT!", event)
             if (event.key === ' ') {
                 event.preventDefault();
                 executeCommands(commands, index + 1);

@@ -244,6 +244,12 @@ export function unfocusFromConstellationCanvas(scene, camera, triggerEffect, onR
 
         console.log("targetMesh", targetMesh);
         if (targetMesh) {
+
+            engine.runRenderLoop(() => {
+                if (typeof onRender === 'function') onRender(scene);
+                scene.render()
+            });
+
             const target = targetMesh.position;
             const { targetQuaternion } = calculateNewTargetRotations(camera, target);
 
@@ -293,12 +299,6 @@ export function unfocusFromConstellationCanvas(scene, camera, triggerEffect, onR
             camera.animations.push(rotationQuaternionAnimation);
 
             console.log("SCENE MESHES:", scene.meshes);
-
-            engine.runRenderLoop(() => {
-                if (typeof onRender === 'function') onRender(scene);
-                scene.render()
-            });
-
         
             triggerEffect({domain: "canvas", selector: {type: "shape", id: createShapeId("andre-vacha")}, effect: "ripple", callback: () => {
                 const redwoodMeshes = scene.meshes.filter(mesh => mesh.name && mesh.name.includes('redwood'));
@@ -324,42 +324,81 @@ export function unfocusFromConstellationCanvas(scene, camera, triggerEffect, onR
     });
 }
 
+export function unfocusFromConstellationCanvasImmediately(scene, camera, triggerEffect, onRender, targetMeshName = 'campfire', targetFov = 0.8) {
+    return new Promise((resolve) => {
+        console.log("IMMEDIATELY UNFOCUSING")
+        engine.runRenderLoop(() => {
+            if (typeof onRender === 'function') onRender(scene);
+            scene.render();
+        });
 
+        const targetMesh = scene.meshes.find(mesh => mesh.name && mesh.name === targetMeshName);
+
+        console.log("targetMesh", targetMesh);
+        if (targetMesh) {
+            const target = targetMesh.position;
+            const { targetQuaternion } = calculateNewTargetRotations(camera, target);
+
+            const newFov = targetFov;
+            const engine = scene.getEngine();
+
+            // Directly set the camera's rotation and FOV
+            camera.rotationQuaternion = targetQuaternion;
+            camera.fov = newFov;
+
+            console.log("Camera unfocused from constellation canvas immediately.");
+
+            // Handle redwood meshes scaling
+            const redwoodMeshes = scene.meshes.filter(mesh => mesh.name && mesh.name.includes('redwood'));
+            console.log("REDWOOD MESHES:", redwoodMeshes);
+            redwoodMeshes.forEach(mesh => customFadeIn(mesh, scene, 3, true)); // Directly apply the fade in effect
+
+            giveControlToEnvironment();
+
+            resolve();
+        } else {
+            console.error(`${targetMeshName} not found`);
+            resolve();
+        }
+    });
+}
 
 export function initializeLookingAtSky(scene, camera) {
-    const constellationCanvas = scene.getMeshByName('constellationCanvas');
-    if (constellationCanvas) {
-        const target = constellationCanvas.position;
+    return new Promise((resolve, reject) => {
+        const constellationCanvas = scene.getMeshByName('constellationCanvas');
+        if (constellationCanvas) {
+            const target = constellationCanvas.position;
 
-        const { targetQuaternion } = calculateNewTargetRotations(camera, target);
+            const { targetQuaternion } = calculateNewTargetRotations(camera, target);
 
-        console.log("targetQuaternion", targetQuaternion);
+            console.log("targetQuaternion", targetQuaternion);
 
-        const newFov = calculateNewFovWithoutPosition(camera, constellationCanvas);
+            const newFov = calculateNewFovWithoutPosition(camera, constellationCanvas);
 
-        // Directly set the camera's rotation and FOV
-        camera.rotationQuaternion = targetQuaternion;
-        camera.fov = newFov;
+            // Directly set the camera's rotation and FOV
+            camera.rotationQuaternion = targetQuaternion;
+            camera.fov = newFov;
 
-        console.log("Camera initialized to look at the sky without animation.");
+            console.log("Camera initialized to look at the sky without animation.");
 
-        // Handle redwood meshes scaling
-        const redwoodMeshes = scene.meshes.filter(mesh => mesh.name && mesh.name.includes('redwood'));
-        console.log("REDWOOD MESHES:", redwoodMeshes);
-        redwoodMeshes.forEach(mesh => customFadeOut(mesh, scene, 1.5, true)); // Directly apply the fade out effect
+            // Handle redwood meshes scaling
+            const redwoodMeshes = scene.meshes.filter(mesh => mesh.name && mesh.name.includes('redwood'));
+            console.log("REDWOOD MESHES:", redwoodMeshes);
+            redwoodMeshes.forEach(mesh => customFadeOut(mesh, scene, 1.5, true)); // Directly apply the fade out effect
 
-        giveControlToCanvas();
+            giveControlToCanvas();
 
-        // after all effect have finished, freeze the canvas
-        setTimeout(()=>{
-        const engine = scene.getEngine();
-        engine.stopRenderLoop();
-        
-        }, 2000)
-
-    } else {
-        console.error("Constellation Canvas not found");
-    }
+            // after all effect have finished, freeze the canvas
+            setTimeout(() => {
+                const engine = scene.getEngine();
+                engine.stopRenderLoop();
+                resolve(); // Resolve the promise when all operations are complete
+            }, 2000);
+        } else {
+            console.error("Constellation Canvas not found");
+            reject("Constellation Canvas not found"); // Reject the promise if constellationCanvas is not found
+        }
+    });
 }
 
 
