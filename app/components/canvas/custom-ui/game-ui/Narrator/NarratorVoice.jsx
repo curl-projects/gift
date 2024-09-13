@@ -101,7 +101,7 @@ export function NarratorVoice() {
                 type: "callback",
                 callback: () => {
                     return Promise.all([
-                        setCampfireView({ active: true, immediate: true }),
+                        setCampfireView({ active: true, immediate: true, treeScale: false, targetMeshName: 'constellationCanvas' }),
                     ])
                 },
                 waitForCallback: true,

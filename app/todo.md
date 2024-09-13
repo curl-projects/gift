@@ -1,4 +1,5 @@
 Orchestration New Functionality:
+- [] change targeting to allow for position
 - [] generate floating text on ray intersection of character
 - [] system text in the overlay component
 - [] hook up constellation expansion

@@ -11,19 +11,25 @@ import { focusWithoutMovingToConstellationCanvas,
 export function CampfireSyncListener({ scene, onRender }){
     const { triggerEffect, activeEffect, setTriggerWarp, campfireView, setCampfireView, sceneLoaded } = useStarFireSync();
 
+
+
     useEffect(() => {
-        console.log("CAMPFIRE VIEW", campfireView)
-        const camera = scene.cameras.find(camera => camera.name === "babylon-camera")
+
+        const camera = scene.getCameraByName("babylon-camera")
+        const treeScale = campfireView?.treeScale || true
+        const targetMeshName = campfireView?.targetMeshName || 'campfire'
+
+
         if(sceneLoaded && campfireView){
             if(campfireView?.active){
                 if(campfireView.immediate){
-                    unfocusFromConstellationCanvasImmediately(scene, camera, triggerEffect, setTriggerWarp).then(()=>{
+                    unfocusFromConstellationCanvasImmediately(scene, camera, onRender, treeScale, targetMeshName).then(()=>{
                         campfireView.onComplete && campfireView.onComplete()
                         })
                     
                 }
                 else{
-                    unfocusFromConstellationCanvas(scene, camera, triggerEffect, setTriggerWarp).then(()=>
+                    unfocusFromConstellationCanvas(scene, camera, triggerEffect, onRender, treeScale, targetMeshName).then(()=>
                         campfireView.onComplete && campfireView.onComplete()
                     )
                 }
@@ -31,12 +37,12 @@ export function CampfireSyncListener({ scene, onRender }){
             }
             else {
                 if(campfireView.immediate){
-                    initializeLookingAtSky(scene, camera).then(()=>
+                    initializeLookingAtSky(scene, camera, treeScale).then(()=>
                         campfireView.onComplete && campfireView.onComplete()
                     )
                 }
                 else{
-                    focusWithoutMovingToConstellationCanvas(scene, camera, triggerEffect, setTriggerWarp).then(()=>
+                    focusWithoutMovingToConstellationCanvas(scene, camera, triggerEffect, treeScale).then(()=>
                         campfireView.onComplete && campfireView.onComplete()
                     )
                 }   

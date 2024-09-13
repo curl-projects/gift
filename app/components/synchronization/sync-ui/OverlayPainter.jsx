@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useStarFireSync } from "~/components/synchronization/StarFireSync";
 import { motion } from "framer-motion";
+import SystemComponent from "~/components/canvas/custom-ui/game-ui/Narrator/components/SystemComponent";
 
 export function OverlayPainter(){
     const { overlayControls, trueOverlayControls } = useStarFireSync(); // Destructure overlayControls
@@ -33,6 +34,7 @@ export function OverlayPainter(){
         console.log("TRUE OVERLAY", trueOverlayControls)
     }, [trueOverlayControls])
     return (
+        <>
         <motion.div
         layout
         id='true-overlay'
@@ -56,5 +58,7 @@ export function OverlayPainter(){
         }}>
 
         </motion.div>
+        {/* <SystemComponent visible={systemState.visible} text={systemState.text} requiresInteraction={systemState.requiresInteraction} /> */}
+        </>
     );
 }
