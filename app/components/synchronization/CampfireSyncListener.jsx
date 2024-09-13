@@ -16,12 +16,16 @@ export function CampfireSyncListener({ scene, onRender }){
     useEffect(() => {
 
         const camera = scene.getCameraByName("babylon-camera")
-        const treeScale = campfireView?.treeScale || true
-        const targetMeshName = campfireView?.targetMeshName || 'campfire'
-
-
+        
+      
         if(sceneLoaded && campfireView){
-            if(campfireView?.active){
+            console.log("CAMPFIRE VIEW", campfireView)
+
+            const treeScale = campfireView?.treeScale !== undefined ? campfireView.treeScale : true;
+            const targetMeshName = campfireView?.targetMeshName !== undefined ? campfireView.targetMeshName : 'campfire';
+
+
+            if(campfireView.active){
                 if(campfireView.immediate){
                     unfocusFromConstellationCanvasImmediately(scene, camera, onRender, treeScale, targetMeshName).then(()=>{
                         campfireView.onComplete && campfireView.onComplete()

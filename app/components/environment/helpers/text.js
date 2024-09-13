@@ -2,9 +2,37 @@ import * as BABYLON from "@babylonjs/core"
 import * as GUI from "@babylonjs/gui"
 import { RenderingGroups } from "./constants"; // Import the RenderingGroups
 
-export function addPhysicsText(scene, text, startPosition, appearanceDelay, sweepDelay, disposeDelay, maxLineLength, layerMask) {
+
+const physicsOffsets = {
+    'narrator': null
+}
+
+export function addPhysicsText(scene, text, parentMesh, startPosition, startRotation, animationControls = {
+        appearanceDelay: 50,
+        sweepDelay: 3000,
+        disposeDelay: 4000,
+        maxLineLength: 20,
+        layerMask: undefined,
+        rotation: { x: 0, y: Math.PI, z: 0 }, // Add rotation parameter
+        letterSpacing: 0.3, // Add letterSpacing parameter
+        textFontSize: 3,
+        textLineHeight: 0.5,
+        
+    }) {
+
+    const { appearanceDelay, sweepDelay, disposeDelay, maxLineLength, layerMask, rotation, letterSpacing, textFontSize, textLineHeight } = animationControls;
+
     const glowLayer = new BABYLON.GlowLayer('glow', scene);
     glowLayer.intensity = 0.5;
+
+    const textGroup = new BABYLON.TransformNode("textGroup", scene);
+    if (parentMesh) {
+        textGroup.parent = parentMesh;
+    }
+
+    // Apply the start position offset to the textGroup
+    textGroup.position = startPosition;
+    textGroup.rotation = startRotation;
 
     function splitTextIntoLines(text, maxLineLength) {
         const words = text.split(' ');
@@ -101,25 +129,26 @@ export function addPhysicsText(scene, text, startPosition, appearanceDelay, swee
     }
 
     const letters = [];
-    const fontSize = 4;
-    const lineHeight = fontSize / 8;
-    const letterSpacing = fontSize / 6;
+    const fontSize = textFontSize;
+    const lineHeight = textLineHeight;
 
     const lines = splitTextIntoLines(text, maxLineLength);
 
-    let currentYPosition = startPosition.y;
+    let currentYPosition = 0; // Start from 0 since textGroup has the offset
     lines.forEach((line, lineIndex) => {
         const lineLength = line.length * letterSpacing;
-        const startXPosition = startPosition.x - lineLength / 2;
+        const startXPosition = -lineLength / 2; // Center the line
 
         const lineLetters = [];
         for (let i = line.length - 1; i >= 0; i--) {
             const letter = line[i];
 
-            const letterMesh = BABYLON.MeshBuilder.CreatePlane(`letter_${lineIndex}_${i}`, { width: 1.5, height: 2 }, scene);
-            letterMesh.position = new BABYLON.Vector3(startXPosition + (line.length - 1 - i) * letterSpacing, currentYPosition, startPosition.z);
+            const letterMesh = BABYLON.MeshBuilder.CreatePlane(`letter_${lineIndex}_${i}`, { width: 1.5, height: 2, sideOrientation: BABYLON.Mesh.DOUBLESIDE }, scene);
+            letterMesh.position = new BABYLON.Vector3(startXPosition + (line.length - 1 - i) * letterSpacing, currentYPosition, 0);
             letterMesh.isVisible = false;
-            letterMesh.billboardMode = BABYLON.Mesh.BILLBOARDMODE_ALL;
+
+            // Apply the rotation from animationControls
+            letterMesh.rotation = new BABYLON.Vector3(rotation.x, rotation.y, rotation.z);
 
             // Set the rendering group to the text group
             letterMesh.renderingGroupId = RenderingGroups.text;
@@ -133,7 +162,7 @@ export function addPhysicsText(scene, text, startPosition, appearanceDelay, swee
 
             const advancedTexture = GUI.AdvancedDynamicTexture.CreateForMesh(letterMesh);
             createGlow(letter, {
-                family: "Indie Flower",
+                family: "Handjet",
                 color: "#FDAA48",
                 backgroundGlow: "#FFA500",
                 glowIntensity: 1.3,
@@ -141,6 +170,8 @@ export function addPhysicsText(scene, text, startPosition, appearanceDelay, swee
                 y_axis: "0px",
                 x_axis: "0px"
             }, advancedTexture);
+
+            letterMesh.parent = textGroup; // Parent the letter mesh to the text group
 
             lineLetters.push(letterMesh);
         }
@@ -208,7 +239,18 @@ export function addCenteredPhysicsText(scene, text, camera, layerMask) {
     const startPosition = camera.position.add(cameraDirection.scale(distanceFromCamera));
 
     const appearanceDelay = 50;
-    const sweepDelay = 3000;
+    const sweepDelay = 100000;
+    const disposeDelay = 4000;
+    const maxLineLength = 20;
+
+    addPhysicsText(scene, text, startPosition, appearanceDelay, sweepDelay, disposeDelay, maxLineLength, layerMask);
+}
+
+export function addAnchoredPhysicsText(scene, text, anchor, offsetPosition, layerMask) {
+    const startPosition = anchor.position.add(offsetPosition);
+
+    const appearanceDelay = 50;
+    const sweepDelay = 100000;
     const disposeDelay = 4000;
     const maxLineLength = 20;
 

@@ -9,7 +9,7 @@ import { addCampfireParticles } from "../helpers/campfire";
 import { addCampfireLight } from "../helpers/lights";
 import { addLensEffects, addMotionBlur, fadeInScene } from "../helpers/post-processing";
 import { enableFloatingPhysics } from "../helpers/physics";
-import { addCenteredPhysicsText } from "../helpers/text"; // Import the new function
+import { addPhysicsText } from "../helpers/text"; // Import the new function
 import { RenderingGroups } from "../helpers/constants"; // Import the RenderingGroups
 import { addConstellationCanvas } from "../helpers/constellations";
 import { createCanvasControlsButton, 
@@ -62,7 +62,9 @@ export function PitchScene(){
 
         scene.onReadyObservable.addOnce(async () => {
             addConstellationCanvas(scene, canvasZoneRef, RenderingGroups);
+            addPhysicsText(scene, 'Hello there', scene.getMeshByName('campfire'), new BABYLON.Vector3(0, 4, 0), new BABYLON.Vector3(0, Math.PI, 0))
             setSceneLoaded(true)
+    
             });
 
 
@@ -142,13 +144,14 @@ export function PitchScene(){
 
             // TODO: use these to trigger motion blur on certain animations
             camera.detachPostProcess(motionBlur)
-            camera.attachPostProcess(motionBlur)
+            // camera.attachPostProcess(motionBlur)
 
 
-            createCharacter(scene)
+            const characterMesh = createCharacter(scene)
 
-            const textCamera = addGUICamera(scene, "text-camera", camera, 0x10000000);
-            scene.activeCameras = [camera, textCamera];
+            // const textCamera = addGUICamera(scene, "text-camera", camera, 0x10000000);
+            // scene.activeCameras = [camera, textCamera];
+
 
     
             const advancedTexture = createFullscreenUI();
@@ -157,6 +160,8 @@ export function PitchScene(){
             createResetButton(scene, advancedTexture);
             createCampfireFocusButton(scene, camera, advancedTexture, triggerEffect, setTriggerWarp, onRender);
             setReactScene(scene)
+
+    
 
         };
 

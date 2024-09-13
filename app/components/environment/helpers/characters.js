@@ -26,6 +26,8 @@ export function createCharacter(scene) {
         // }).catch(error => {
         //     console.error("Error creating smoke shader:", error);
         // });
+
+        return characterMesh
     });
 }
 

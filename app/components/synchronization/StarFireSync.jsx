@@ -13,7 +13,18 @@ const StarFireSyncProvider = ({ children }) => {
     const [overlayControls, _setOverlayControls] = useState({ dark: false, immediate: true, duration: 2, }); // Consolidated state
     const [trueOverlayControls, _setTrueOverlayControls] = useState({ visible: false, immediate: true, duration: 2, }); // Consolidated state
 
+    const [narratorText, _setNarratorText] = useState(null);
 
+    const setNarratorText = (text) => {
+        return new Promise((resolve) => {
+            _setNarratorText({
+                ...text,
+                onComplete: () => {
+                    resolve();
+                }
+            });
+        });
+    }
     const setCampfireView = (view) => {
         return new Promise((resolve) => {
             _setCampfireView({
@@ -84,6 +95,7 @@ const StarFireSyncProvider = ({ children }) => {
                 overlayControls, setOverlayControls,
                 trueOverlayControls, setTrueOverlayControls,
                 commandEvent, setCommandEvent,
+                narratorText, setNarratorText,
             }}>
             {children}
         </StarFireSyncContext.Provider>

@@ -24,6 +24,7 @@ export function NarratorVoice() {
         overlayControls, setOverlayControls,
         trueOverlayControls, setTrueOverlayControls,
         commandEvent, setCommandEvent,
+        narratorText, setNarratorText,
     } = useStarFireSync();
 
     const [narratorState, setNarratorState] = useState({ visible: false, text: '', requiresInteraction: false });
@@ -110,7 +111,7 @@ export function NarratorVoice() {
                 type: "callback",
                 callback: () => {
                     return Promise.all([
-                        setTrueOverlayControls({ visible: false, immediate: false, duration: 2, delay: 0})
+                        setTrueOverlayControls({ visible: false, immediate: false, duration: 1, delay: 0})
                     ])
                 },
                 waitForCallback: true,
@@ -128,12 +129,12 @@ export function NarratorVoice() {
                     ])
                 },
                 waitForCallback: true,
-                // waitForCondition: () => {
-                    
-                //     // add an event handler 
-                //     // this function will be checked every 200 ms
-                //     // wait until the character is visible in the viewport before continuing
-                // }
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    setNarratorText({ text: "Hello" })
+                }
             }
             // {
             //     type: "callback",
