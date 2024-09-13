@@ -9,7 +9,7 @@ const physicsOffsets = {
 
 export function addPhysicsText(scene, text, parentMesh, startPosition, startRotation, animationControls = {
         appearanceDelay: 50,
-        sweepDelay: 3000,
+        sweepDelay: 100000,
         disposeDelay: 4000,
         maxLineLength: 20,
         layerMask: undefined,

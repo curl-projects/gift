@@ -366,7 +366,7 @@ export function unfocusFromConstellationCanvasImmediately(scene, camera, onRende
     });
 }
 
-export function initializeLookingAtSky(scene, camera, treeScale=true) {
+export function initializeLookingAtSky(scene, camera, treeScale=true){
     return new Promise((resolve, reject) => {
         const constellationCanvas = scene.getMeshByName('constellationCanvas');
         if (constellationCanvas) {
@@ -376,7 +376,7 @@ export function initializeLookingAtSky(scene, camera, treeScale=true) {
 
             console.log("targetQuaternion", targetQuaternion);
 
-            const newFov = calculateNewFovWithoutPosition(camera, targetMesh);
+            const newFov = calculateNewFovWithoutPosition(camera, constellationCanvas);
 
             // Directly set the camera's rotation and FOV
             camera.rotationQuaternion = targetQuaternion;

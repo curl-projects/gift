@@ -44,7 +44,9 @@ export const Stars = track(() => {
 
     return () => {
       // Clean up the style element when the component unmounts
-      document.head.removeChild(styleElement);
+      if (document.head.contains(styleElement)) {
+        document.head.removeChild(styleElement);
+      }
     };
   }, []);
 

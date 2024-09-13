@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import styles from "./SystemComponent.module.css";
 import { TextScramble } from "~/components/canvas/custom-ui/post-processing-effects/text-scramble/TextScramble";
 
-const SystemComponent = ({ visible, text, delay = 0 }) => {
+const SystemComponent = ({ visible, text, delay = 0, onComplete = null}) => {
     const textRef = useRef(null);
     const [animationComplete, setAnimationComplete] = useState(false);
 
@@ -24,6 +24,10 @@ const SystemComponent = ({ visible, text, delay = 0 }) => {
         }
     }, [visible, text, animationComplete, delay]);
 
+    useEffect(()=>{
+        console.log("visible", visible)
+    }, [visible])
+
     return (
         <AnimatePresence>
             {visible && (
@@ -38,6 +42,7 @@ const SystemComponent = ({ visible, text, delay = 0 }) => {
                         const textDelay = 1000 // text delay so the animation starts when it's partially visible
                        
                         setTimeout(() => {
+                             onComplete && onComplete();
                             setAnimationComplete(true)
                         }, textDelay)
                     }}

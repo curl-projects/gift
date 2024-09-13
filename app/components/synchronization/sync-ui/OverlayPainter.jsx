@@ -2,12 +2,13 @@ import { useEffect } from "react";
 import { useStarFireSync } from "~/components/synchronization/StarFireSync";
 import { motion } from "framer-motion";
 import SystemComponent from "~/components/canvas/custom-ui/game-ui/Narrator/components/SystemComponent";
+import NarratorComponent from "~/components/canvas/custom-ui/game-ui/Narrator/components/NarratorComponent"
 
 export function OverlayPainter(){
-    const { overlayControls, trueOverlayControls } = useStarFireSync(); // Destructure overlayControls
+    const { overlayControls, trueOverlayControls, gameSystemText, gameNarratorText } = useStarFireSync(); // Destructure overlayControls
+
 
     useEffect(() => {
-        console.log("OVERLAY PAINTER", overlayControls)
         const tlContainer = document.querySelector('.tl-container');
         const tlBackground = document.querySelector('.tl-background');
             // rip down overlay if it exists
@@ -31,8 +32,16 @@ export function OverlayPainter(){
     }, [overlayControls]);
 
     useEffect(()=>{
-        console.log("TRUE OVERLAY", trueOverlayControls)
+        console.log("TRUEOVERLAY", trueOverlayControls)
+        if(trueOverlayControls.duration > 500){
+            console.error("You accidentally set overlay duration in ms instead of seconds.")
+        }
     }, [trueOverlayControls])
+
+    useEffect(()=>{
+        console.log("GAMESYSTEM", gameSystemText)
+    }, [gameSystemText])
+
     return (
         <>
         <motion.div
@@ -58,7 +67,30 @@ export function OverlayPainter(){
         }}>
 
         </motion.div>
-        {/* <SystemComponent visible={systemState.visible} text={systemState.text} requiresInteraction={systemState.requiresInteraction} /> */}
+        <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            pointerEvents: 'none',
+            zIndex: 9999,
+        }}>
+        <SystemComponent 
+                visible={gameSystemText.visible} 
+                text={gameSystemText.text} 
+                requiresInteraction={gameSystemText.requiresInteraction}
+                exitDuration={gameSystemText.exitDuration}
+                onComplete={gameSystemText.onComplete}
+                />
+        <NarratorComponent 
+                visible={gameNarratorText.visible} 
+                text={gameNarratorText.text} 
+                requiresInteraction={gameNarratorText.requiresInteraction}
+                exitDuration={gameNarratorText.exitDuration}
+                onComplete={gameNarratorText.onComplete}
+                />
+        </div>
         </>
     );
 }

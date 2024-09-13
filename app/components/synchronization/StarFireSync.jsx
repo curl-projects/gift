@@ -13,61 +13,27 @@ const StarFireSyncProvider = ({ children }) => {
     const [overlayControls, _setOverlayControls] = useState({ dark: false, immediate: true, duration: 2, }); // Consolidated state
     const [trueOverlayControls, _setTrueOverlayControls] = useState({ visible: false, immediate: true, duration: 2, }); // Consolidated state
 
-    const [narratorText, _setNarratorText] = useState(null);
+    const [gameSystemText, _setGameSystemText] = useState({ visible: false, text: '', requiresInteraction: false });
+    const [gameNarratorText, _setGameNarratorText] = useState({ visible: false, text: '', requiresInteraction: false });
 
-    const setNarratorText = (text) => {
+    const useStateWithPromise = (setter) => (value) => {
         return new Promise((resolve) => {
-            _setNarratorText({
-                ...text,
+            setter({
+                ...value,
                 onComplete: () => {
                     resolve();
                 }
             });
         });
-    }
-    const setCampfireView = (view) => {
-        return new Promise((resolve) => {
-            _setCampfireView({
-                ...view,
-                onComplete: () => {
-                    resolve();
-                }
-            });
-        });
-    }
+    };
 
-    const setOverlayControls = (controls) => {
-        return new Promise((resolve) => {
-            _setOverlayControls({
-                ...controls,
-                onComplete: () => {
-                    resolve();
-                }
-            });
-        });
-    }
+    const setGameNarratorText = useStateWithPromise(_setGameNarratorText);
+    const setGameSystemText = useStateWithPromise(_setGameSystemText);
+    const setCampfireView = useStateWithPromise(_setCampfireView);
+    const setOverlayControls = useStateWithPromise(_setOverlayControls);
+    const setTrueOverlayControls = useStateWithPromise(_setTrueOverlayControls);
+    const setCommandEvent = useStateWithPromise(_setCommandEvent);
 
-    const setTrueOverlayControls = (controls) => {
-        return new Promise((resolve) => {
-            _setTrueOverlayControls({
-                ...controls,
-                onComplete: () => {
-                    resolve();
-                }
-            });
-        });
-    }
-
-    const setCommandEvent = (event) => {
-        return new Promise((resolve) => {
-            _setCommandEvent({
-                ...event,
-                onComplete: () => {
-                    resolve();
-                }
-            });
-        });
-    }
     const triggerEffect = useCallback(({domain, selector, effect, callback}) => {
         console.log("HELLO")
         setActiveEffect({
@@ -95,7 +61,8 @@ const StarFireSyncProvider = ({ children }) => {
                 overlayControls, setOverlayControls,
                 trueOverlayControls, setTrueOverlayControls,
                 commandEvent, setCommandEvent,
-                narratorText, setNarratorText,
+                gameSystemText, setGameSystemText,
+                gameNarratorText, setGameNarratorText,
             }}>
             {children}
         </StarFireSyncContext.Provider>

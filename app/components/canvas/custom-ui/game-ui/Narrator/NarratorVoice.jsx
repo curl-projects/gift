@@ -24,7 +24,8 @@ export function NarratorVoice() {
         overlayControls, setOverlayControls,
         trueOverlayControls, setTrueOverlayControls,
         commandEvent, setCommandEvent,
-        narratorText, setNarratorText,
+        gameSystemText, setGameSystemText,
+        gameNarratorText, setGameNarratorText,
     } = useStarFireSync();
 
     const [narratorState, setNarratorState] = useState({ visible: false, text: '', requiresInteraction: false });
@@ -78,8 +79,64 @@ export function NarratorVoice() {
             //     }
             // },
             // {
-            //     type: "narrator",
+            //     type: "system",
             //     text: "This can be a cold and desolate place.",
+            //     requiresInteraction: true,   
+            // },
+
+
+
+
+
+
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setTrueOverlayControls({ visible: true, immediate: true })
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setTrueOverlayControls({ visible: false, immediate: false, duration: 2 })
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: "narrator",
+                text: "This can be a cold and desolate place.",
+                requiresInteraction: true,
+                overlay: true,
+            },
+
+
+
+
+
+
+
+
+
+            // {   
+            //     type: "callback",
+            //     callback: () => {
+            //         setCampfireView({ active: true, immediate: true, treeScale: false, targetMeshName: 'constellationCanvas' })
+            //     }
+            // },
+            // {
+            //     type: "system",
+            //     text: "This can be a cold and desolate place.",
+            //     requiresInteraction: true,
+            //     overlay: true,
+            // },
+            // {
+            //     type: "system",
+            //     text: "I hate it here.",
             //     requiresInteraction: true
             // },
             // {
@@ -88,54 +145,68 @@ export function NarratorVoice() {
             //     requiresInteraction: true,
             //     waitForCompletion: true,
             // },
-            {
-                type: "callback",
-                callback: () => {
-                    return Promise.all([
-                        setTrueOverlayControls({ visible: true, immediate: true }),
-                        // setCampfireView({ active: true, immediate: true })
-                    ])
-                },
-                waitForCallback: true,
-            },
-            {  
-                type: "callback",
-                callback: () => {
-                    return Promise.all([
-                        setCampfireView({ active: true, immediate: true, treeScale: false, targetMeshName: 'constellationCanvas' }),
-                    ])
-                },
-                waitForCallback: true,
-            },
-            {
-                type: "callback",
-                callback: () => {
-                    return Promise.all([
-                        setTrueOverlayControls({ visible: false, immediate: false, duration: 1, delay: 0})
-                    ])
-                },
-                waitForCallback: true,
-            },
-            {
-                type: 'callback',
-                callback: () => {
-                    return Promise.all([
-                        setCommandEvent({
-                            eventType: 'mesh-visible', 
-                            props: {
-                                meshName: 'narrator'
-                            }
-                         })
-                    ])
-                },
-                waitForCallback: true,
-            },
-            {
-                type: 'callback',
-                callback: () => {
-                    setNarratorText({ text: "Hello" })
-                }
-            }
+            // {
+            //     type: "callback",
+            //     callback: () => {
+            //         return Promise.all([
+            //             setTrueOverlayControls({ visible: true, immediate: true }),
+            //             // setCampfireView({ active: true, immediate: true })
+            //         ])
+            //     },
+            //     waitForCallback: true,
+            // },
+            // {  
+            //     type: "callback",
+            //     callback: () => {
+            //         return Promise.all([
+            //             setCampfireView({ active: true, immediate: true, treeScale: false, targetMeshName: 'constellationCanvas' }),
+            //         ])
+            //     },
+            //     waitForCallback: true,
+            // },
+            // {
+            //     type: "callback",
+            //     callback: () => {
+            //         return Promise.all([
+            //             setTrueOverlayControls({ visible: false, immediate: false, duration: 1, delay: 0})
+            //         ])
+            //     },
+            //     waitForCallback: true,
+            // },
+            // {
+            //     type: "system",
+            //     overlay: true,
+            //     text: "Welcome",
+            //     requiresInteraction: true,
+            // },
+            // {
+            //     type: 'callback',
+            //     callback: () => {
+            //         return Promise.all([
+            //             setGameSystemText({ text: "Hello" })
+            //         ])
+            //     }
+            // },
+            // {
+            //     type: 'callback',
+            //     callback: () => {
+            //         return Promise.all([
+            //             setCommandEvent({
+            //                 eventType: 'mesh-visible', 
+            //                 props: {
+            //                     meshName: 'narrator'
+            //                 }
+            //              })
+            //         ])
+            //     },
+            //     waitForCallback: true,
+            // },
+            // {
+            //     type: 'callback',
+            //     callback: () => {
+            //         setGameSystemText({ text: "Hello" })
+            //     }
+            // }
             // {
             //     type: "callback",
             //     callback: () => {
@@ -245,6 +316,8 @@ export function NarratorVoice() {
         if (index >= commands.length) {
             setNarratorState({ visible: false, text: '', requiresInteraction: false });
             setSystemState({ visible: false, text: '', requiresInteraction: false });
+            setGameNarratorText({ visible: false, text: '', requiresInteraction: false });
+            setGameSystemText({ visible: false, text: '', requiresInteraction: false });
             setNarratorEvent(null);
             return;
         }
@@ -252,10 +325,13 @@ export function NarratorVoice() {
         const command = commands[index];
 
         if (command.type === "system" || command.type === "narrator") {
-
             // to do: fix this, not generalizable to many actors
-            const setState = command.type === "system" ? setSystemState : setNarratorState;
-            const setOtherState = command.type === "system" ? setNarratorState : setSystemState;
+            const setState = command.type === "system" 
+                ? (command.overlay ? setGameSystemText : setSystemState) 
+                : (command.overlay ? setGameNarratorText : setNarratorState);
+            const setOtherState = command.type === "system" 
+                ? (command.overlay ? setGameNarratorText : setNarratorState) 
+                : (command.overlay ? setGameSystemText : setSystemState);
 
             setOtherState({ visible: false, text: '', requiresInteraction: false });
             setState({ visible: true, text: command.text, requiresInteraction: command.requiresInteraction });
@@ -334,7 +410,12 @@ export function NarratorVoice() {
                 requiresInteraction={narratorState.requiresInteraction}
                 exitDuration={narratorState.exitDuration}
                 />
-            <SystemComponent visible={systemState.visible} text={systemState.text} requiresInteraction={systemState.requiresInteraction} />
+            <SystemComponent 
+                visible={systemState.visible} 
+                text={systemState.text} 
+                requiresInteraction={systemState.requiresInteraction}
+                onComplete={systemState.onComplete}
+                />
         </>
     );
 }
