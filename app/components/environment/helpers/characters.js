@@ -9,6 +9,7 @@ export function createCharacter(scene) {
         characterMesh.parent = campfireMesh;
         characterMesh.position = new BABYLON.Vector3(0, 0, -3);
         characterMesh.scaling = new BABYLON.Vector3(3, 3, 3);
+        characterMesh.name = "narrator"
         const directionToCampfire = campfireMesh.position.subtract(characterMesh.position).normalize();
         const angle = Math.atan2(directionToCampfire.z, directionToCampfire.x);  // Note the order of parameters
         characterMesh.rotation = new BABYLON.Vector3(0, angle + Math.PI / 2, 0);  // Adjust the angle to face the campfire

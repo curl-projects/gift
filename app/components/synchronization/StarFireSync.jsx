@@ -8,6 +8,7 @@ const StarFireSyncProvider = ({ children }) => {
     const [restored, setRestored] = useState(false);
     const [campfireView, _setCampfireView] = useState(null);
     const [sceneLoaded, setSceneLoaded] = useState(false);
+    const [commandEvent, _setCommandEvent] = useState(null);
 
     const [overlayControls, _setOverlayControls] = useState({ dark: false, immediate: true, duration: 2, }); // Consolidated state
     const [trueOverlayControls, _setTrueOverlayControls] = useState({ visible: false, immediate: true, duration: 2, }); // Consolidated state
@@ -46,6 +47,16 @@ const StarFireSyncProvider = ({ children }) => {
         });
     }
 
+    const setCommandEvent = (event) => {
+        return new Promise((resolve) => {
+            _setCommandEvent({
+                ...event,
+                onComplete: () => {
+                    resolve();
+                }
+            });
+        });
+    }
     const triggerEffect = useCallback(({domain, selector, effect, callback}) => {
         console.log("HELLO")
         setActiveEffect({
@@ -72,6 +83,7 @@ const StarFireSyncProvider = ({ children }) => {
                 setSceneLoaded,
                 overlayControls, setOverlayControls,
                 trueOverlayControls, setTrueOverlayControls,
+                commandEvent, setCommandEvent,
             }}>
             {children}
         </StarFireSyncContext.Provider>

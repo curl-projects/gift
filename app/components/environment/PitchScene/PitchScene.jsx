@@ -20,15 +20,23 @@ import { createFadeBehaviour } from "../helpers/mesh-behaviours";
 import { createCharacter } from "../helpers/characters";
 import { CampfireSyncListener } from "~/components/synchronization/CampfireSyncListener";
 import { initializeLookingAtSky } from "../event-controllers/campfire-transition";
+import { addCommandEventListener } from "../helpers/event-handlers";
 
 export function PitchScene(){
     const canvasZoneRef = useRef();
     const [reactScene, setReactScene] = useState(null); // Add state to hold the scene
-    const { triggerEffect, activeEffect, setTriggerWarp, campfireView, setCampfireView, setSceneLoaded } = useStarFireSync();
+    const { triggerEffect, activeEffect, setTriggerWarp, 
+            campfireView, setCampfireView, setSceneLoaded,
+            commandEvent
+        } = useStarFireSync();
 
     useEffect(() => {
         console.log("ACTIVE EFFECT", reactScene)
-    }, [reactScene])
+        if(reactScene && commandEvent){
+            addCommandEventListener(reactScene, commandEvent)
+        }
+        // add event handler to check if the narrator is looking at the sky
+    }, [reactScene, commandEvent])
 
     function onRender(scene) { }
 
@@ -55,8 +63,6 @@ export function PitchScene(){
         scene.onReadyObservable.addOnce(async () => {
             addConstellationCanvas(scene, canvasZoneRef, RenderingGroups);
             setSceneLoaded(true)
-            // initializeLookingAtSky(scene, camera);    
-
             });
 
 
@@ -131,7 +137,7 @@ export function PitchScene(){
 
             enableFloatingPhysics(scene);
             addFog(scene);
-
+    
 
 
             // TODO: use these to trigger motion blur on certain animations

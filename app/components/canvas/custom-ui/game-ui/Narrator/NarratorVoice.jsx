@@ -23,6 +23,7 @@ export function NarratorVoice() {
         setCampfireView,
         overlayControls, setOverlayControls,
         trueOverlayControls, setTrueOverlayControls,
+        commandEvent, setCommandEvent,
     } = useStarFireSync();
 
     const [narratorState, setNarratorState] = useState({ visible: false, text: '', requiresInteraction: false });
@@ -109,11 +110,31 @@ export function NarratorVoice() {
                 type: "callback",
                 callback: () => {
                     return Promise.all([
-                        setTrueOverlayControls({ visible: false, immediate: false, duration: 6, delay: 0})
+                        setTrueOverlayControls({ visible: false, immediate: false, duration: 2, delay: 0})
                     ])
                 },
                 waitForCallback: true,
             },
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setCommandEvent({
+                            eventType: 'mesh-visible', 
+                            props: {
+                                meshName: 'narrator'
+                            }
+                         })
+                    ])
+                },
+                waitForCallback: true,
+                // waitForCondition: () => {
+                    
+                //     // add an event handler 
+                //     // this function will be checked every 200 ms
+                //     // wait until the character is visible in the viewport before continuing
+                // }
+            }
             // {
             //     type: "callback",
             //     callback: () => {
@@ -261,18 +282,40 @@ export function NarratorVoice() {
                 console.error("Command was incorrectly specified: no interaction, wait condition or duration provided");
             }
         } else if (command.type === "callback") {
-            if (command.waitForCallback) {
-            // check if the callback is a promise; otherwise throw an error, because we need it to resolve
-                command.callback().then(() => {
-                    executeCommands(commands, index + 1);
-                });
-            } else {
-                command.callback()
-                executeCommands(commands, index + 1);
+            if(command.waitForCondition){
+                const checkCondition = () => {
+                    if (command.waitForCondition()) {
+                        if(command.waitForCallback){
+                            command.callback().then(() => {
+                                executeCommands(commands, index + 1);
+                            });
+                        } else {
+                            executeCommands(commands, index + 1);
+                        }
+                    } else {
+                        setTimeout(checkCondition, 200);
+                    }
+                };
+                checkCondition();
             }
-        } else {
-            console.error("Unknown command type:", command.type);
-        }
+            else {
+                if (command.waitForCallback) {
+                    command.callback().then(() => {
+                        executeCommands(commands, index + 1);
+                    });
+                } else {
+                    command.callback()
+                    executeCommands(commands, index + 1);
+                }
+            } 
+            }
+            else {
+                console.error("Unknown command type:", command.type);
+            }
+
+
+
+          
     }, []);
 
     useEffect(() => {
