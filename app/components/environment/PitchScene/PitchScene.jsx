@@ -94,17 +94,17 @@ export function PitchScene(){
 
 
         assetManager.onFinish = function (tasks) {
-            // void Promise.all([
-            //     import("@babylonjs/core/Debug/debugLayer"),
-            //     import("@babylonjs/inspector"),
-            // ]).then((_values) => {
-            //     console.log(_values);
-            //     scene.debugLayer.show({
-            //         handleResize: true,
-            //         overlay: true,
-            //         // globalRoot: document.getElementById("#root") || undefined,
-            //     });
-            // });
+            void Promise.all([
+                import("@babylonjs/core/Debug/debugLayer"),
+                import("@babylonjs/inspector"),
+            ]).then((_values) => {
+                console.log(_values);
+                scene.debugLayer.show({
+                    handleResize: true,
+                    overlay: true,
+                    // globalRoot: document.getElementById("#root") || undefined,
+                });
+            });
             scene.setRenderingAutoClearDepthStencil(RenderingGroups.skybox, false, false, false);
             scene.setRenderingAutoClearDepthStencil(RenderingGroups.environment, false, false, false);
             scene.setRenderingAutoClearDepthStencil(RenderingGroups.text, false, false, false);

@@ -14,20 +14,21 @@ export function createCharacter(scene) {
         characterMesh.rotation = new BABYLON.Vector3(0, angle + Math.PI / 2, 0);  // Adjust the angle to face the campfire
         
         // Create the smoke shader
-        createSmokeShader(scene).then(smokeShader => {
-            // Apply the shader to the character mesh
-            // characterMesh.material = smokeShader
-            // characterMesh.skeleton = skeletons[0]
-            characterMesh.getChildMeshes().forEach((subMesh) => {
-                console.log("Applying smoke shader to sub-mesh:", subMesh.name);
-                subMesh.material = smokeShader;
-            });
-        }).catch(error => {
-            console.error("Error creating smoke shader:", error);
-        });
+        // createSmokeShader(scene).then(smokeShader => {
+        //     // Apply the shader to the character mesh
+        //     // characterMesh.material = smokeShader
+        //     // characterMesh.skeleton = skeletons[0]
+        //     // characterMesh.getChildMeshes().forEach((subMesh) => {
+        //     //     console.log("Applying smoke shader to sub-mesh:", subMesh.name);
+        //     //     subMesh.material = smokeShader;
+        //     // });
+        // }).catch(error => {
+        //     console.error("Error creating smoke shader:", error);
+        // });
     });
 }
 
+// to do -- replace with asset class
 export function createSmokeShader(scene) {
     return new Promise((resolve, reject) => {
         // Define vertex shader

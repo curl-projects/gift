@@ -5,6 +5,7 @@ import { focusWithoutMovingToConstellationCanvas,
          unfocusFromConstellationCanvas,
          unfocusFromConstellationCanvasImmediately,
          initializeLookingAtSky,
+         giveControlToEnvironment,
         } from '~/components/environment/event-controllers/campfire-transition';
 
 export function CampfireSyncListener({ scene, onRender }){
@@ -16,9 +17,9 @@ export function CampfireSyncListener({ scene, onRender }){
         if(sceneLoaded && campfireView){
             if(campfireView?.active){
                 if(campfireView.immediate){
-                    unfocusFromConstellationCanvasImmediately(scene, camera, triggerEffect, setTriggerWarp).then(()=>
+                    unfocusFromConstellationCanvasImmediately(scene, camera, triggerEffect, setTriggerWarp).then(()=>{
                         campfireView.onComplete && campfireView.onComplete()
-                    )
+                        })
                     
                 }
                 else{

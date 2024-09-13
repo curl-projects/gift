@@ -3,6 +3,7 @@ import WorldCanvas from "~/components/canvas/WorldCanvas";
 import { getWorldContent } from "~/models/world-model.server";
 import { json } from "@remix-run/node";
 import { StarFireSync } from "~/components/synchronization/StarFireSync";
+import { OverlayPainter } from "~/components/synchronization/sync-ui/OverlayPainter";
 
 export async function loader() {
 
@@ -18,6 +19,7 @@ export default function PitchDeck(){
     return(
         <>
         <StarFireSync>
+            <OverlayPainter />
             <div id='constellation-canvas' style={{
             height: '100vh',
             width: '100vw',

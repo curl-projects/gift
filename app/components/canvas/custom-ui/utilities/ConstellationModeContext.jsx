@@ -11,8 +11,7 @@ export const ConstellationModeProvider = ({ children }) => {
     
     const [starControls, _setStarControls] = useState({ visible: true, immediate: true });
     const [cloudControls, _setCloudControls] = useState({ visible: true, immediate: true });
-    const [overlayControls, _setOverlayControls] = useState({ dark: false, immediate: true, duration: 2, }); // Consolidated state
-
+    
     const setStarControls = (controls) => {
         return new Promise((resolve) => {
             _setStarControls({
@@ -35,16 +34,6 @@ export const ConstellationModeProvider = ({ children }) => {
         });
     }
 
-    const setOverlayControls = (controls) => {
-        return new Promise((resolve) => {
-            _setOverlayControls({
-                ...controls,
-                onComplete: () => {
-                    resolve();
-                }
-            });
-        });
-    }
 
     return (
         <ConstellationModeContext.Provider 
@@ -54,7 +43,6 @@ export const ConstellationModeProvider = ({ children }) => {
                 narratorEvent, setNarratorEvent, 
                 starControls, setStarControls,
                 cloudControls, setCloudControls,
-                overlayControls, setOverlayControls // Provide the consolidated state
             }}>
             {children}
         </ConstellationModeContext.Provider>

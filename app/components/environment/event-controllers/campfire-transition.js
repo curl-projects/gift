@@ -245,6 +245,8 @@ export function unfocusFromConstellationCanvas(scene, camera, triggerEffect, onR
         console.log("targetMesh", targetMesh);
         if (targetMesh) {
 
+            const engine = scene.getEngine();
+
             engine.runRenderLoop(() => {
                 if (typeof onRender === 'function') onRender(scene);
                 scene.render()
@@ -254,7 +256,7 @@ export function unfocusFromConstellationCanvas(scene, camera, triggerEffect, onR
             const { targetQuaternion } = calculateNewTargetRotations(camera, target);
 
             const newFov = targetFov;
-            const engine = scene.getEngine();
+        
 
             const ease = new BABYLON.CubicEase();
             ease.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEINOUT);
@@ -327,6 +329,7 @@ export function unfocusFromConstellationCanvas(scene, camera, triggerEffect, onR
 export function unfocusFromConstellationCanvasImmediately(scene, camera, triggerEffect, onRender, targetMeshName = 'campfire', targetFov = 0.8) {
     return new Promise((resolve) => {
         console.log("IMMEDIATELY UNFOCUSING")
+        const engine = scene.getEngine();
         engine.runRenderLoop(() => {
             if (typeof onRender === 'function') onRender(scene);
             scene.render();
@@ -340,7 +343,7 @@ export function unfocusFromConstellationCanvasImmediately(scene, camera, trigger
             const { targetQuaternion } = calculateNewTargetRotations(camera, target);
 
             const newFov = targetFov;
-            const engine = scene.getEngine();
+       
 
             // Directly set the camera's rotation and FOV
             camera.rotationQuaternion = targetQuaternion;
@@ -353,6 +356,7 @@ export function unfocusFromConstellationCanvasImmediately(scene, camera, trigger
             console.log("REDWOOD MESHES:", redwoodMeshes);
             redwoodMeshes.forEach(mesh => customFadeIn(mesh, scene, 3, true)); // Directly apply the fade in effect
 
+            
             giveControlToEnvironment();
 
             resolve();

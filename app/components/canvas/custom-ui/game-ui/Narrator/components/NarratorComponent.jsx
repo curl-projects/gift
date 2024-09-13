@@ -40,7 +40,7 @@ const FireAnimation = memo(() => {
     );
 });
 
-const NarratorComponent = ({ visible, text, requiresInteraction }) => {
+const NarratorComponent = ({ visible, text, requiresInteraction, exitDuration }) => {
     return (
         <AnimatePresence>
             {visible && (
@@ -74,7 +74,7 @@ const NarratorComponent = ({ visible, text, requiresInteraction }) => {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    transition={{ duration: 2 }}
+                    transition={{ duration: exitDuration / 1000 || 2 }} // there's hardcoded stuff in handleKeyDown 
                 >
                     <AnimatePresence mode="wait">
                        

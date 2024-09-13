@@ -14,13 +14,15 @@ export function NarratorVoice() {
         setStarsVisible, setCloudsVisible,
         starControls, setStarControls, 
         cloudControls, setCloudControls,
-        overlayControls, setOverlayControls,
+
     } = useConstellationMode();
 
 
     const { 
         campfireView,
         setCampfireView,
+        overlayControls, setOverlayControls,
+        trueOverlayControls, setTrueOverlayControls,
     } = useStarFireSync();
 
     const [narratorState, setNarratorState] = useState({ visible: false, text: '', requiresInteraction: false });
@@ -63,36 +65,55 @@ export function NarratorVoice() {
             // },
         ],
         'pitch': [
-            {
-                type: "callback",
-                callback: () => {
-                    // it's a dark and stormy night
-                    setCampfireView({ active: false, immediate: true })
-                    setOverlayControls({ dark: true, immediate: true })
-                    setStarControls({ visible: true, immediate: true })
-                    setCloudControls({ visible: true, immediate: true })
-                }
-            },
-            {
-                type: "narrator",
-                text: "This can be a cold and desolate place.",
-                duration: 3000,
-                requiresInteraction: true
-            },
-            {
-                type: "narrator",
-                text: "I really hate it here",
-                duration: 3000,
-                requiresInteraction: true
-            },
             // {
             //     type: "callback",
             //     callback: () => {
-            //         setOverlayControls({ trueOverlay: true })
-            //         console.log("HI!")
-            //         // setCampfireView({ active: true, immediate: true })
+            //         // it's a dark and stormy night
+            //         setCampfireView({ active: false, immediate: true })
+            //         setOverlayControls({ dark: true, immediate: true })
+            //         setStarControls({ visible: true, immediate: true })
+            //         setCloudControls({ visible: true, immediate: true })
             //     }
             // },
+            // {
+            //     type: "narrator",
+            //     text: "This can be a cold and desolate place.",
+            //     requiresInteraction: true
+            // },
+            // {
+            //     type: "narrator",
+            //     text: "I really hate it here",
+            //     requiresInteraction: true,
+            //     waitForCompletion: true,
+            // },
+            {
+                type: "callback",
+                callback: () => {
+                    return Promise.all([
+                        setTrueOverlayControls({ visible: true, immediate: true }),
+                        // setCampfireView({ active: true, immediate: true })
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {  
+                type: "callback",
+                callback: () => {
+                    return Promise.all([
+                        setCampfireView({ active: true, immediate: true }),
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: "callback",
+                callback: () => {
+                    return Promise.all([
+                        setTrueOverlayControls({ visible: false, immediate: false, duration: 6, delay: 0})
+                    ])
+                },
+                waitForCallback: true,
+            },
             // {
             //     type: "callback",
             //     callback: () => {
@@ -182,11 +203,19 @@ export function NarratorVoice() {
 
 
     const executeCommands = useCallback((commands, index) => {
-        const handleKeyDown = (event) => {
+        const handleKeyDown = (event, setState) => {
             console.log("EVENT!", event)
             if (event.key === ' ') {
                 event.preventDefault();
-                executeCommands(commands, index + 1);
+
+                if(commands[index].waitForCompletion) {
+                    setState({ visible: false, text: "", requiresInteraction: false })
+                    setTimeout(() => {
+                        executeCommands(commands, index + 1);
+                    }, commands[index].exitDuration || 2000) // currently hard-coded, but can change this
+                } else {
+                    executeCommands(commands, index + 1);
+                }
                 window.removeEventListener('keydown', handleKeyDown);
             }
         };
@@ -210,7 +239,7 @@ export function NarratorVoice() {
             setState({ visible: true, text: command.text, requiresInteraction: command.requiresInteraction });
 
             if (command.requiresInteraction) {
-                window.addEventListener('keydown', handleKeyDown);
+                window.addEventListener('keydown', (event) => handleKeyDown(event, setState));
             } else if (command.waitForCondition) {
                 const checkCondition = () => {
                     if (command.waitForCondition()) {
@@ -255,7 +284,12 @@ export function NarratorVoice() {
 
     return (
         <>
-            <NarratorComponent visible={narratorState.visible} text={narratorState.text} requiresInteraction={narratorState.requiresInteraction} />
+            <NarratorComponent 
+                visible={narratorState.visible} 
+                text={narratorState.text} 
+                requiresInteraction={narratorState.requiresInteraction}
+                exitDuration={narratorState.exitDuration}
+                />
             <SystemComponent visible={systemState.visible} text={systemState.text} requiresInteraction={systemState.requiresInteraction} />
         </>
     );
