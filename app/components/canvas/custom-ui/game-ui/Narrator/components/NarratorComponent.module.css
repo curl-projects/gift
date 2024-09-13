@@ -28,7 +28,7 @@
     /* used to remove from stacking context */
     position: relative;
     font-size: 80px;
-    color: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.08);
     font-family: "Handjet", sans-serif;
     font-weight: 300;
     background: 
