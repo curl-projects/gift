@@ -44,6 +44,7 @@ const NarratorComponent = ({ visible, text, requiresInteraction }) => {
     return (
         <AnimatePresence>
             {visible && (
+                <>
                 <motion.div
                     key='narrator-component'
                     className={styles.narratorContainer}
@@ -54,21 +55,36 @@ const NarratorComponent = ({ visible, text, requiresInteraction }) => {
                 >
                     <div className={styles.narratorContainerInner}>
                         <div className={styles.narratorContainerDarkening} />
-                        <AnimatePresence mode="wait">
                             <motion.p 
                                 key={text} // Use text as key to trigger re-animation
                                 className={styles.narratorText}
                                 initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
+                                animate={{ opacity: 0 }}
                                 exit={{ opacity: 0 }}
-                                transition={{ duration: 2 }}
                             >
                                 {text}
                             </motion.p>
-                        </AnimatePresence>
                         {/* <FireAnimation /> */}
-                    </div>
+                    </div>    
                 </motion.div>
+                {/*actual text -- the other one controls the spacing of the border */}
+                <div className={styles.narratorTextAbsoluteContainer}>
+                    <AnimatePresence mode="wait">
+                       
+                        <motion.p 
+                            key={text} // Use text as key to trigger re-animation
+                            className={styles.narratorText}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 2 }}
+                        >
+                                {text}
+                            </motion.p>
+                       
+                    </AnimatePresence>
+                    </div>
+                </>
             )}
         </AnimatePresence>
     );

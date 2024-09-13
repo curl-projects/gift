@@ -3,12 +3,13 @@
     position: fixed;
     left: 0;
     right: 0;
-    bottom: 60%;
+    bottom: 65%;
     pointer-events: none;
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000000;
+    z-index: 1000;
+    transform: translateY(50%); 
     mix-blend-mode: overlay;
 }
 
@@ -27,7 +28,7 @@
     /* used to remove from stacking context */
     position: relative;
     font-size: 80px;
-    color: rgba(255, 255, 255, 1);
+    color: rgba(255, 255, 255, 0.1);
     font-family: "Handjet", sans-serif;
     font-weight: 300;
     background: 
@@ -35,8 +36,24 @@
         url(/images/cloud-overlay.png) repeat-x center center / cover;
     -webkit-background-clip: text;
     background-clip: text;
-    background-size: 100% 100%, 100% 100%;
-    animation: cloudLoop 40s linear infinite alternate, cloudLoopReverse 40s linear infinite alternate !important;
+    background-size: 200% 100%, 200% 100%; /* Adjusted background-size */
+    animation: cloudLoop 40s linear infinite, cloudLoopReverse 40s linear infinite !important;
+}
+
+.narratorTextAbsoluteContainer{
+    position: fixed;
+    bottom: 65%;
+    left: 0;
+    right: 0;
+    z-index: 10000;
+    transform: translateY(50%); /* Add this line */
+    /* width: 80vw; */
+    padding-left: 10vw 0vw;
+    /* padding-right: 10vw; */
+    height: fit-content;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .narratorContainerDarkening{
@@ -56,19 +73,19 @@
 
 @keyframes cloudLoop {
     0% {
-        background-position: 0 0;
+        background-position: 0 0, 0 0;
     }
     100% {
-        background-position: -50% 0;
+        background-position: -100% 0, 100% 0;
     }
 }
 
 @keyframes cloudLoopReverse {
     0% {
-        background-position: -50% 0;
+        background-position: 0 0, 0 0;
     }
     100% {
-        background-position: 0 0;
+        background-position: -100% 0, 100% 0;
     }
 }
 

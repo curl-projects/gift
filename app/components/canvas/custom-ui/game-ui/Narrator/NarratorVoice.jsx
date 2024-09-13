@@ -66,6 +66,7 @@ export function NarratorVoice() {
             {
                 type: "callback",
                 callback: () => {
+                    // it's a dark and stormy night
                     setCampfireView({ active: false, immediate: true })
                     setOverlayControls({ dark: true, immediate: true })
                     setStarControls({ visible: true, immediate: true })
@@ -81,6 +82,7 @@ export function NarratorVoice() {
             {
                 type: 'callback',
                 callback: () => {
+                    // the stars slowly fade to black
                     return Promise.all([
                         setStarControls({ visible: false, immediate: false }),
                         setCloudControls({ visible: false, immediate: false})
@@ -90,7 +92,10 @@ export function NarratorVoice() {
             },
             {
                 type: "callback",
-                callback: () => setCampfireView({ active: true, immediate: false })
+                callback: () => {
+                    // the campfire fades into view
+                    setCampfireView({ active: true, immediate: false })
+                }
             },
             // {
             //     type: "narrator",

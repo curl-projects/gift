@@ -1,0 +1,1 @@
+- [] Fix the narrator text so it's more visible  
