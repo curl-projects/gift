@@ -41,9 +41,11 @@ export function CampfireSyncListener({ scene, onRender }){
             }
             else {
                 if(campfireView.immediate){
-                    initializeLookingAtSky(scene, camera, treeScale).then(()=>
+                    initializeLookingAtSky(scene, camera, treeScale).then(()=>{
+
+                        console.log("INITIALIZING LOOKING AT SKY")
                         campfireView.onComplete && campfireView.onComplete()
-                    )
+                    })
                 }
                 else{
                     focusWithoutMovingToConstellationCanvas(scene, camera, triggerEffect, treeScale).then(()=>

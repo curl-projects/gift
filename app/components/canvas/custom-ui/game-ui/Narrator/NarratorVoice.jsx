@@ -11,9 +11,9 @@ export function NarratorVoice() {
     const editor = useEditor();
     const { narratorEvent, setNarratorEvent, 
         setDrifting, overlayMode, setOverlayMode, 
-        setStarsVisible, setCloudsVisible,
         starControls, setStarControls, 
         cloudControls, setCloudControls,
+        expandConstellation, setExpandConstellation,
 
     } = useConstellationMode();
 
@@ -71,48 +71,125 @@ export function NarratorVoice() {
             // {
             //     type: "callback",
             //     callback: () => {
-            //         // it's a dark and stormy night
-            //         setCampfireView({ active: false, immediate: true })
-            //         setOverlayControls({ dark: true, immediate: true })
-            //         setStarControls({ visible: true, immediate: true })
-            //         setCloudControls({ visible: true, immediate: true })
-            //     }
+            //         return Promise.all([
+            //             setCampfireView({ active: false, immediate: true }),
+            //             setStarControls({ visible: true, immediate: false, duration: 1 }),
+            //         ])
+            //     },,
             // },
             // {
             //     type: "system",
             //     text: "This can be a cold and desolate place.",
             //     requiresInteraction: true,   
             // },
-
-
-
-
-
-
             {
-                type: 'callback',
+                type: "callback",
                 callback: () => {
+                    const promiseStatuses = {
+                        // setCampfireView: false,
+                        // setOverlayControls: false,
+                        // setStarControls: false,
+                        // setCloudControls: false,
+                    };
+
+                    // const promises = [
+                    //     setStarControls({ visible: true, immediate: true }).then(() => {
+                    //         promiseStatuses.setStarControls = true;
+                    //         console.log('setStarControls completed');
+                    //     }),
+                    //     setCampfireView({ active: false, immediate: true }).then(() => {
+                    //         promiseStatuses.setCampfireView = true;
+                    //         console.log('setCampfireView completed');
+                    //     }),
+                    //     setOverlayControls({ dark: true, immediate: true }).then(() => {
+                    //         promiseStatuses.setOverlayControls = true;
+                    //         console.log('setOverlayControls completed');
+                    //     }),
+                     
+                    //     setCloudControls({ visible: true, immediate: true }).then(() => {
+                    //         promiseStatuses.setCloudControls = true;
+                    //         console.log('setCloudControls completed');
+                    //     }),
+                    // ];
+
                     return Promise.all([
-                        setTrueOverlayControls({ visible: true, immediate: true })
+                        setCampfireView({ active: false, immediate: true }),
+                        setOverlayControls({ dark: true, immediate: true }),
+                        setStarControls({ visible: true, immediate: true }),
+                        setCloudControls({ visible: true, immediate: true }),
                     ])
+
+                    // return Promise.race([
+                    //     Promise.all([
+                    //         setCampfireView({ active: false, immediate: true }),
+                    //         setOverlayControls({ dark: true, immediate: true })
+                    //     ]).then(() => {
+                    //         console.log('All promises resolved:', promiseStatuses);
+                    //     }),
+                    //     new Promise((_, reject) => 
+                    //         setTimeout(() => {
+                    //             console.log("PROMISE STATUS", promiseStatuses)
+                    //             const unresolvedPromises = Object.keys(promiseStatuses).filter(key => !promiseStatuses[key]);
+                    //             console.error('Operation timed out. Unresolved promises:', unresolvedPromises);
+                    //             reject(new Error(`Operation timed out. Unresolved promises: ${unresolvedPromises.join(', ')}`));
+                    //         }, 10000)
+                    //     )
+                    // ]).catch(error => {
+                    //     console.error('Error:', error);
+                    //     throw error;
+                    // });
                 },
                 waitForCallback: true,
             },
+            // {
+            //     type: "callback",
+            //     callback: () => {
+            //       setCampfireView({ active: false, immediate: true })
+            //     },
+            // },
+            // {
+            //     type: "callback",
+            //     callback: () => {
+            //         console.log("HIIIII!")
+            //         setExpandConstellation({ concepts: true, excerpts: true })
+            //     }
+            // },
             {
-                type: 'callback',
-                callback: () => {
-                    return Promise.all([
-                        setTrueOverlayControls({ visible: false, immediate: false, duration: 2 })
-                    ])
-                },
-                waitForCallback: true,
-            },
-            {
-                type: "narrator",
-                text: "This can be a cold and desolate place.",
-                requiresInteraction: true,
+                type: "system",
                 overlay: true,
+                text: "This can be a cold and desolate place.",
+                requiresInteraction: true,   
             },
+
+
+
+
+
+
+            // {
+            //     type: 'callback',
+            //     callback: () => {
+            //         return Promise.all([
+            //             setTrueOverlayControls({ visible: true, immediate: true })
+            //         ])
+            //     },
+            //     waitForCallback: true,
+            // },
+            // {
+            //     type: 'callback',
+            //     callback: () => {
+            //         return Promise.all([
+            //             setTrueOverlayControls({ visible: false, immediate: false, duration: 2 })
+            //         ])
+            //     },
+            //     waitForCallback: true,
+            // },
+            // {
+            //     type: "narrator",
+            //     text: "This can be a cold and desolate place.",
+            //     requiresInteraction: true,
+            //     overlay: true,
+            // },
 
 
 
@@ -299,6 +376,7 @@ export function NarratorVoice() {
         const handleKeyDown = (event, setState) => {
             console.log("EVENT!", event)
             if (event.key === ' ') {
+                window.removeEventListener('keydown', handleKeyDown);
                 event.preventDefault();
 
                 if(commands[index].waitForCompletion) {
@@ -309,7 +387,7 @@ export function NarratorVoice() {
                 } else {
                     executeCommands(commands, index + 1);
                 }
-                window.removeEventListener('keydown', handleKeyDown);
+               
             }
         };
 

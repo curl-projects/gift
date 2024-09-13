@@ -9,31 +9,26 @@ export const ConstellationModeProvider = ({ children }) => {
     const [expandedShapeIds, setExpandedShapeIds] = useState([]);
     const [narratorEvent, setNarratorEvent] = useState(null);
     
-    const [starControls, _setStarControls] = useState({ visible: true, immediate: true });
-    const [cloudControls, _setCloudControls] = useState({ visible: true, immediate: true });
-    
-    const setStarControls = (controls) => {
+    const [starControls, _setStarControls] = useState({ visible: false, immediate: true });
+    const [cloudControls, _setCloudControls] = useState({ visible: false, immediate: true });
+    const [expandConstellation, _setExpandConstellation] = useState({ concepts: false, excerpts: false });
+
+
+    const useStateWithPromise = (setter) => (value) => {
         return new Promise((resolve) => {
-            _setStarControls({
-                ...controls,
+            const newValue = {
+                ...value,
                 onComplete: () => {
                     resolve();
                 }
-            });
+            };
+            setter(newValue); // Immediately call the setter with the new state
         });
-    }
+    };
 
-    const setCloudControls = (controls) => {
-        return new Promise((resolve) => {
-            _setCloudControls({
-                ...controls,
-                onComplete: () => {
-                    resolve();
-                }
-            });
-        });
-    }
-
+    const setExpandConstellation = useStateWithPromise(_setExpandConstellation);
+    const setStarControls = useStateWithPromise(_setStarControls);
+    const setCloudControls = useStateWithPromise(_setCloudControls);
 
     return (
         <ConstellationModeContext.Provider 
@@ -43,6 +38,7 @@ export const ConstellationModeProvider = ({ children }) => {
                 narratorEvent, setNarratorEvent, 
                 starControls, setStarControls,
                 cloudControls, setCloudControls,
+                expandConstellation, setExpandConstellation,
             }}>
             {children}
         </ConstellationModeContext.Provider>
