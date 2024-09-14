@@ -45,7 +45,7 @@ export function NarratorVoice() {
                 type: 'callback',
                 callback: () => {
                     setCampfireView({ active: false, immediate: true })
-                    setOverlayControls({ dark: true, immediate: true })
+                    setOverlayControls({ dark: false, immediate: true })
                     setStarControls({ visible: false, immediate: true })
                     setCloudControls({ visible: true, immediate: true })
                 }
@@ -55,8 +55,15 @@ export function NarratorVoice() {
                 callback: () => {
                     return Promise.all([
                         setTrueOverlayControls({ visible: true, immediate: true }),
-                        setCampfireView({ active: true, immediate: true })
+                        // setCampfireView({ active: true, immediate: true })
                     ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    return new Promise(resolve => setTimeout(resolve, 60000));
                 },
                 waitForCallback: true,
             },

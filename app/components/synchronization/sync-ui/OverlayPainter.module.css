@@ -1,0 +1,35 @@
+.textContainer{
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;  
+    bottom: 0;
+    pointer-events: none;
+    z-index: 9999;
+}
+
+.eyelid {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: black;
+    clip-path: path('M30,25 L80,25 Q50,100 80,175 L30,175 Q60,100 30,25');
+    /* Add any necessary transitions or animations */
+    transition: clip-path var(--overlay-transition-duration) ease;
+    z-index: 10000;
+    /* need this for upscaling clip path */
+    transform-origin: top left;
+    transform: scale(40vw);
+
+}
+
+@keyframes blink {
+    0%, 100% {
+        transform: scaleY(1);
+    }
+    50% {
+        transform: scaleY(0);
+    }
+}

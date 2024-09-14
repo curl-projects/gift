@@ -66,3 +66,5 @@ Flow Notes:
 - [x] narrator text needs to be centered
 - [x] narrator text needs to be highlighted
 - [x] narrator text needs to have better padding
+- [x] better transition effect
+- [] play with depth of field at the beginning

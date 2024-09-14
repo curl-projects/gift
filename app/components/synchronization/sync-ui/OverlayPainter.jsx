@@ -3,6 +3,7 @@ import { useStarFireSync } from "~/components/synchronization/StarFireSync";
 import { motion } from "framer-motion";
 import SystemComponent from "~/components/canvas/custom-ui/game-ui/Narrator/components/SystemComponent";
 import GameNarratorComponent from "~/components/canvas/custom-ui/game-ui/Narrator/components/GameNarratorComponent"
+import styles from './OverlayPainter.module.css';
 
 export function OverlayPainter(){
     const { overlayControls, trueOverlayControls, gameSystemText, gameNarratorText } = useStarFireSync(); // Destructure overlayControls
@@ -44,7 +45,20 @@ export function OverlayPainter(){
 
     return (
         <>
-        <motion.div
+        {/* <div className={styles.eyelid}></div> */}
+         
+          {/* <svg className={styles.eyelid} viewBox="0 0 100 50" preserveAspectRatio="none">
+          <path d="M 30,25
+         L 80,25
+         Q 50,100 80,175
+         L 30,175
+         Q 60,100 30,25" 
+         fill="black"
+         />
+
+
+        </svg> */}
+        {/* <motion.div
         layout
         id='true-overlay'
         initial={{ opacity: 0 }}
@@ -66,7 +80,11 @@ export function OverlayPainter(){
             backgroundColor: 'black',
         }}>
 
-        </motion.div>
+        </motion.div> */}
+
+
+
+
         <div style={{
             position: 'absolute',
             top: 0,
@@ -91,6 +109,23 @@ export function OverlayPainter(){
                 onComplete={gameNarratorText.onComplete}
                 />
         </div>
+
+        {/* New SVG with concave side */}
+        <svg style={{
+            zIndex: 10000,
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+        }} width="200" height="200" viewBox="0 0 200 200">
+            <defs>
+                <clipPath id="concaveClip">
+                    <path d="M 0,0 L 200,0 L 200,200 Q 100,150 0,200 Z" />
+                </clipPath>
+            </defs>
+            <rect width="200" height="200" style={{ fill: 'lightblue', clipPath: 'url(#concaveClip)' }} />
+        </svg>
         </>
     );
 }
