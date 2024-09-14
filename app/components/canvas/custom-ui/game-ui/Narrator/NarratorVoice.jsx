@@ -61,40 +61,95 @@ export function NarratorVoice() {
                     return new Promise(resolve => setTimeout(resolve, 4000));
                 },
                 waitForCallback: true,
-            },      
-            // {
-            //     type: "narrator",
-            //     text: "This can be a cold and desolate place.",
-            //     darkeningVisible: false,
-            //     requiresInteraction: true,
-            // },
-            // {
-            //     type: 'narrator',
-            //     text: "I have spent much of my life here, lost in a stupor, adrift in a void,",
-            //     darkeningVisible: false,
-            //     requiresInteraction: true,
-            // },
-            // {
-            //     type: 'narrator',
-            //     text: "flitting between cold ideas",
-            //     darkeningVisible: false,
-            //     requiresInteraction: true,
-            // },
-            // {
-            //     type: 'callback',
-            //     callback: () => {
-            //         setStarControls({ visible: true, immediate: false, duration: 4 })
-            //     }
-            // },
-            // {
-            //     type: 'narrator',
-            //     text: "Now that you have returned to me, I wish to try building something better.",
-            //     darkeningVisible: true,
-            //     requiresInteraction: true,
-            //     darkeningDuration: 6,
-            // },
+            },     
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setTextEvent({ 
+                            type: 'narrator',
+                            visible: true,
+                            overlay: false,
+                            text: "This can be a cold and desolate place.", 
+                            requiresInteraction: true, 
+                            darkeningVisible: false, 
+                        })
+                    ])
+                },
+                waitForCallback: true,
+            }, 
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setTextEvent({ 
+                            type: 'narrator',
+                            visible: true,
+                            overlay: false,
+                            text: "I have spent much of my life here, lost in a stupor, adrift in a void,", 
+                            requiresInteraction: true, 
+                            darkeningVisible: false
+                        })
+                    ])
+                },
+                waitForCallback: true,
+            }, 
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setTextEvent({ 
+                            type: 'narrator',
+                            visible: true,
+                            overlay: false,
+                            text: "flitting between cold ideas.", 
+                            requiresInteraction: true, 
+                            darkeningVisible: false, 
+                        })
+                    ])
+                },
+                waitForCallback: true,
+            }, 
+            {
+                type: 'callback',
+                callback: () => {
+                    setStarControls({ visible: true, immediate: false, duration: 4 })
+                }
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setTextEvent({ 
+                            type: 'narrator',
+                            visible: true,
+                            overlay: false,
+                            text: "flitting between cold ideas.", 
+                            requiresInteraction: true, 
+                            darkeningVisible: false, 
+                        })
+                    ])
+                },
+                waitForCallback: true,
+            }, 
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setTextEvent({ 
+                            type: 'narrator',
+                            visible: true,
+                            overlay: false,
 
-            // the words should fade out, except for the word "awake"
+                            text: "Now that you have returned to me, I wish to try building something better.", 
+                            requiresInteraction: true, 
+                            darkeningVisible: true,
+                            darkeningDuration: 2, 
+                        })
+                    ])
+                },
+                waitForCallback: true,
+            }, 
             {
                 type: 'callback',
                 callback: () => {
@@ -107,8 +162,8 @@ export function NarratorVoice() {
                             requiresInteraction: true, 
                             waitUntilVisible: false,
                             darkeningVisible: true, 
-                            waitForCompletion: true,
-                            darkeningDuration: 2 })
+                            waitForCompletion: false
+                        })
                     ])
                 },
                 waitForCallback: true,
