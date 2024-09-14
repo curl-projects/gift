@@ -9,7 +9,7 @@ function cameraMoved(scene, props){
 
     return new Promise((resolve) => {
         const observer = camera.onViewMatrixChangedObservable.add(() => {
-            console.log("Camera moved");
+            console.log("inside camera moved");
             camera.onViewMatrixChangedObservable.remove(observer);
             resolve(true);
         });
@@ -34,14 +34,11 @@ export function addCommandEventListener(scene, commandEvent, canvasProps={}) {
             return false;
         }
 
-        if(eventMap[eventType](scene, eventProps)){
-            console.log("Event Triggered")
+        cameraMoved(scene, eventProps).then(()=>{
             scene.onBeforeRenderObservable.remove(eventHandler);
             commandEvent.onComplete && commandEvent.onComplete();
             return true;
-        }
-
-        return false;
+        })
     })
 }
 
