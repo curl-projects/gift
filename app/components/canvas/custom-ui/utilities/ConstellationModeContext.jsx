@@ -10,7 +10,7 @@ export const ConstellationModeProvider = ({ children }) => {
     const [narratorEvent, setNarratorEvent] = useState(null);
     
     const [starControls, _setStarControls] = useState({ visible: false, immediate: true });
-    const [cloudControls, _setCloudControls] = useState({ visible: false, immediate: true });
+    const [cloudControls, _setCloudControls] = useState({ visible: true, immediate: true });
     
     const [expandConcepts, _setExpandConcepts] = useState({ expanded: false });
     const [expandExcerpts, _setExpandExcerpts] = useState({ expanded: false });

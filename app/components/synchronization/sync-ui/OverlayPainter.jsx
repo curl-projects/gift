@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useStarFireSync } from "~/components/synchronization/StarFireSync";
 import { motion } from "framer-motion";
 import SystemComponent from "~/components/canvas/custom-ui/game-ui/Narrator/components/SystemComponent";
-import NarratorComponent from "~/components/canvas/custom-ui/game-ui/Narrator/components/NarratorComponent"
+import GameNarratorComponent from "~/components/canvas/custom-ui/game-ui/Narrator/components/GameNarratorComponent"
 
 export function OverlayPainter(){
     const { overlayControls, trueOverlayControls, gameSystemText, gameNarratorText } = useStarFireSync(); // Destructure overlayControls
@@ -63,7 +63,7 @@ export function OverlayPainter(){
             height: '100%',
             zIndex: 9999,
             pointerEvents: 'none',
-            backgroundColor: 'pink',
+            backgroundColor: 'black',
         }}>
 
         </motion.div>
@@ -83,7 +83,7 @@ export function OverlayPainter(){
                 exitDuration={gameSystemText.exitDuration}
                 onComplete={gameSystemText.onComplete}
                 />
-        <NarratorComponent 
+        <GameNarratorComponent 
                 visible={gameNarratorText.visible} 
                 text={gameNarratorText.text} 
                 requiresInteraction={gameNarratorText.requiresInteraction}

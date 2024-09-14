@@ -27,7 +27,7 @@ export function PitchScene(){
     const [reactScene, setReactScene] = useState(null); // Add state to hold the scene
     const { triggerEffect, activeEffect, setTriggerWarp, 
             campfireView, setCampfireView, setSceneLoaded,
-            commandEvent
+            commandEvent,
         } = useStarFireSync();
 
     useEffect(() => {
@@ -59,14 +59,12 @@ export function PitchScene(){
     
         // addSkybox(scene, assetManager);
 
-
         scene.onReadyObservable.addOnce(async () => {
             addConstellationCanvas(scene, canvasZoneRef, RenderingGroups);
-            addPhysicsText(scene, 'Hello there', scene.getMeshByName('campfire'), new BABYLON.Vector3(0, 4, 0), new BABYLON.Vector3(0, Math.PI, 0))
+            // addPhysicsText(scene, 'Hello there', scene.getMeshByName('campfire'), new BABYLON.Vector3(0, 4, 0), new BABYLON.Vector3(0, Math.PI, 0))
             setSceneLoaded(true)
     
             });
-
 
         // Add mesh task
         const meshTask = assetManager.addMeshTask("meshTask", "", "/assets/", "redwoods-landscape.glb");
