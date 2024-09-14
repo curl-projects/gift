@@ -56,20 +56,6 @@ export function ConstellationLabel({ name }){
                     </button>
                     <button 
                         onPointerUp={() => {
-                            setOverlayMode(prev => !prev)
-                        }}
-                        style={{
-                            border: '2px solid green',
-                            height: "40px",
-                            width: '200px',
-                            background: 'blue',
-                            color: "white",
-                        }}
-                    >
-                        Toggle overlay mode
-                    </button>
-                    <button 
-                        onPointerUp={() => {
                             const journal = editor.getShape({type: 'journal', id: createShapeId('journal')})
 
 

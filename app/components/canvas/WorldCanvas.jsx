@@ -11,6 +11,7 @@ import { ConstellationModeProvider } from "~/components/canvas/custom-ui/utiliti
 import { ConstellationPainter } from "~/components/canvas/custom-ui/utilities/ConstellationPainter"
 import { ConstellationExpander } from "~/components/canvas/custom-ui/utilities/ConstellationExpander"
 import { DriftPainter } from "~/components/canvas/custom-ui/utilities/DriftPainter"
+import { JournalPainter } from "~/components/canvas/custom-ui/utilities/JournalPainter"
 import { GameController } from "~/components/canvas/custom-ui/game-ui/GameControls/GameController"
 import CustomToolbar from "~/components/canvas/custom-ui/custom-toolbar/CustomToolbar"
 import { CollectionProvider } from "~/components/canvas/custom-ui/collections";
@@ -196,6 +197,7 @@ export default function WorldCanvas() {
                             <ConstellationPainter 
                                 user={data.user} 
                             />
+                            <JournalPainter />
                             {/* <ConstellationFinder /> */}
                             <CustomToolbar />
                             <ConstellationLabel 

@@ -27,6 +27,7 @@ export function NarratorVoice() {
         gameSystemText, setGameSystemText,
         gameNarratorText, setGameNarratorText,
         triggerWarp, setTriggerWarp,
+        journalMode, setJournalMode,
     } = useStarFireSync();
 
     const [narratorState, setNarratorState] = useState({ visible: false, text: '', requiresInteraction: false });
@@ -163,6 +164,21 @@ export function NarratorVoice() {
             //         setExpandConstellation({ concepts: true, excerpts: true })
             //     }
             // },
+            {
+                type: "system",
+                overlay: true,
+                text: "This can be a cold and desolate place.",
+                requiresInteraction: true,   
+            },
+            {
+                type: "callback",
+                callback: () => {
+                    return Promise.all([
+                        setJournalMode({ active: true, page: 'cover' })
+                    ])
+                },
+                waitForCallback: true,
+            },
             {
                 type: "system",
                 overlay: true,

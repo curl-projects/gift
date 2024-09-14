@@ -21,6 +21,7 @@ import { InkBleed } from "~/components/canvas/custom-ui/post-processing-effects/
 import { JournalThread } from './journal-thread/JournalThread';
 import { JournalBorder } from './journal-border/JournalBorder';
 import { JournalMenu } from './journal-menu/JournalMenu';
+import { useStarFireSync } from "~/components/synchronization/StarFireSync"
 
 // pages
 import {Cover} from './journal-pages/cover/Cover';
@@ -30,6 +31,7 @@ const journalShapeProps = {
 	w: T.number,
 	h: T.number,
     expanded: T.boolean,
+    page: T.string,
 }
 
 type JournalShape = TLBaseShape<
@@ -38,6 +40,7 @@ type JournalShape = TLBaseShape<
 		w: number,
 		h: number,
         expanded: boolean,
+        page: string,
 	}
 >
 
@@ -56,6 +59,7 @@ export class JournalShapeUtil extends BaseBoxShapeUtil<JournalShape> {
 			w: window.innerWidth * 0.4,
 			h: window.innerHeight * 0.8,
             expanded: false,
+            page: 'cover',
 		}
 	}
 
@@ -72,7 +76,8 @@ export class JournalShapeUtil extends BaseBoxShapeUtil<JournalShape> {
 		const bounds = this.editor.getShapeGeometry(shape).bounds
 		const data: any = useLoaderData();
         const contentRef = useRef<HTMLDivElement>(null);
-        const [page, setPage] = useState('cover');
+        const [page, setPage] = useState(shape.props.page);
+        const { journalMode } = useStarFireSync()
 
         const [inkVisible, setInkVisible] = useState(false);
         const [outerBorderVisibility, setOuterBorderVisibility] = useState({
@@ -144,7 +149,7 @@ export class JournalShapeUtil extends BaseBoxShapeUtil<JournalShape> {
                     transition={{ duration: 1, ease: 'easeInOut'}}
                     onAnimationComplete={(animation) => {
                         if(animation?.opacity === 0){
-                            this.editor.deleteShape(shape.id)
+                            this.editor.deleteShape(shape.id) // dispose of shape after completion
                         }
                     }}
                     key='journal'
@@ -173,6 +178,10 @@ export class JournalShapeUtil extends BaseBoxShapeUtil<JournalShape> {
                                 console.log("BACKGROUND COMPLETED")
                                 if(animation?.opacity === 1){
                                     setInkVisible(true)
+
+                                    setTimeout(()=>{
+                                        journalMode.onComplete && journalMode.onComplete()
+                                    }, 1000)
                                 }
                             }}
                             style={{

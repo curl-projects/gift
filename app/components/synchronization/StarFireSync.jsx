@@ -16,6 +16,8 @@ const StarFireSyncProvider = ({ children }) => {
     const [gameSystemText, _setGameSystemText] = useState({ visible: false, text: '', requiresInteraction: false });
     const [gameNarratorText, _setGameNarratorText] = useState({ visible: false, text: '', requiresInteraction: false });
 
+    const [journalMode, _setJournalMode] = useState({ active: false, page: ""});
+
     const useStateWithPromise = (setter) => (value) => {
         return new Promise((resolve) => {
             setter({
@@ -34,6 +36,7 @@ const StarFireSyncProvider = ({ children }) => {
     const setOverlayControls = useStateWithPromise(_setOverlayControls);
     const setTrueOverlayControls = useStateWithPromise(_setTrueOverlayControls);
     const setCommandEvent = useStateWithPromise(_setCommandEvent);
+    const setJournalMode = useStateWithPromise(_setJournalMode);
 
     const triggerEffect = useCallback(({domain, selector, effect, callback}) => {
         console.log("HELLO")
@@ -64,7 +67,8 @@ const StarFireSyncProvider = ({ children }) => {
                 commandEvent, setCommandEvent,
                 gameSystemText, setGameSystemText,
                 gameNarratorText, setGameNarratorText,
-                
+                journalMode, setJournalMode,
+
             }}>
             {children}
         </StarFireSyncContext.Provider>
