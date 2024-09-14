@@ -60,15 +60,16 @@ export function NarrationPainter(){
                 console.log("TEXT EVENT REQUIRES INTERACTION")
 
                 if(textEvent.waitUntilVisible){
-                    setState({ visible: true, text: textEvent.text, requiresInteraction: textEvent.requiresInteraction, 
+                    setState({ visible: true,  text: textEvent.text, requiresInteraction: textEvent.requiresInteraction, 
                             darkeningVisible: textEvent.darkeningVisible, darkeningDuration: textEvent.darkeningDuration }).then(()=>{
                         console.log("adding listener once visible")
+                        // setState(prevState => ({ ...prevState, nextButtonVisible: true }))
                         window.addEventListener('keydown', (event) => handleKeyDown(event, setState));
                     })
                 }
                 else{
                     setState({ visible: true, text: textEvent.text, requiresInteraction: textEvent.requiresInteraction, 
-                        darkeningVisible: textEvent.darkeningVisible, darkeningDuration: textEvent.darkeningDuration })
+                        darkeningVisible: textEvent.darkeningVisible, darkeningDuration: textEvent.darkeningDuration, nextButtonVisible: true })
                     console.log("adding listener immediately")
                     window.addEventListener('keydown', (event) => handleKeyDown(event, setState));
                 }
@@ -109,12 +110,14 @@ export function NarrationPainter(){
                 darkeningVisible={narratorText.darkeningVisible}
                 darkeningDuration={narratorText.darkeningDuration}
                 onComplete={narratorText.onComplete}
+                nextButtonVisible={narratorText.nextButtonVisible}
                 />
             <SystemComponent 
                 visible={systemText.visible} 
                 text={systemText.text} 
                 requiresInteraction={systemText.requiresInteraction}
                 onComplete={systemText.onComplete}
+                nextButtonVisible={systemText.nextButtonVisible}
                 />
         </>
     );

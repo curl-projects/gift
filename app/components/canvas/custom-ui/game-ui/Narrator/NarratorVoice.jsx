@@ -105,7 +105,7 @@ export function NarratorVoice() {
                             overlay: false,
                             text: "It has been so very long since you were \n awake", 
                             requiresInteraction: true, 
-                            waitUntilVisible: true,
+                            waitUntilVisible: false,
                             darkeningVisible: true, 
                             waitForCompletion: true,
                             darkeningDuration: 2 })
@@ -123,7 +123,7 @@ export function NarratorVoice() {
                             text: "I am a sexy narrator", 
                             overlay: false,
                             requiresInteraction: true, 
-                            waitUntilVisible: true,
+                            waitUntilVisible: false,
                             darkeningVisible: true, 
                             waitForCompletion: true
                         })
