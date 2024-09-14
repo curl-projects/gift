@@ -26,6 +26,7 @@ export function NarratorVoice() {
         commandEvent, setCommandEvent,
         gameSystemText, setGameSystemText,
         gameNarratorText, setGameNarratorText,
+
     } = useStarFireSync();
 
     const [narratorState, setNarratorState] = useState({ visible: false, text: '', requiresInteraction: false });
@@ -163,8 +164,16 @@ export function NarratorVoice() {
             {
                 type: "callback",
                 callback: () => {
-                    setExpandConstellation({ concepts: { expanded: true }, excerpts: { expanded: true } })
+                    return Promise.all([
+                        setExpandConstellation({ expanded: true })
+                    ])
                 },
+                waitForCallback: true,
+            },
+            {
+                type: "system",
+                text: "This can be a cold and desolate place.",
+                requiresInteraction: true,   
             },
 
             // {
@@ -438,6 +447,12 @@ export function NarratorVoice() {
                 console.error("Command was incorrectly specified: no interaction, wait condition or duration provided");
             }
         } else if (command.type === "callback") {
+            setNarratorState({ visible: false, text: '', requiresInteraction: false });
+            setSystemState({ visible: false, text: '', requiresInteraction: false });
+            setGameNarratorText({ visible: false, text: '', requiresInteraction: false });
+            setGameSystemText({ visible: false, text: '', requiresInteraction: false });
+
+
             if(command.waitForCondition){
                 const checkCondition = () => {
                     if (command.waitForCondition()) {

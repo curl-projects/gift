@@ -74,7 +74,7 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
         const [isHovered, setIsHovered] = useState(false);
         const data = useLoaderData();
         const { collection, size } = useCollection('graph')
-        const { drifting, setDrifting, triggerWarp, expandConstellation } = useConstellationMode();
+        const { drifting, setDrifting, triggerWarp, expandConcepts } = useConstellationMode();
         const { triggerEffect, activeEffect } = useStarFireSync();
         
 
@@ -210,6 +210,8 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
                     setTimeout(() => {
                         // Do something else here after waiting for 0.5 seconds
                         // generateConceptLinks(this.editor, data.user.concepts)
+                        console.log("FINISHED CONCEPT ANIMATING")
+                        expandConcepts?.onComplete && expandConcepts.onComplete()
 
                     }, 2000);
                 })
@@ -265,7 +267,7 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
             collection.startSimulation();
             
             console.log("EXPAND CONSTELLATION NAME TRIGGER")
-            expandConstellation?.concepts?.onComplete && expandConstellation.concepts.onComplete()
+        
 
 
             

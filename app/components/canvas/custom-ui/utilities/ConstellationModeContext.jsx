@@ -10,12 +10,14 @@ export const ConstellationModeProvider = ({ children }) => {
     const [narratorEvent, setNarratorEvent] = useState(null);
     
     const [starControls, _setStarControls] = useState({ visible: false, immediate: true });
+
+
+
     const [cloudControls, _setCloudControls] = useState({ visible: false, immediate: true });
     
-    const [expandConstellation, _setExpandConstellation] = useState({ 
-        concepts: {expanded: false}, 
-        excerpts: {expanded: false} 
-    });
+    const [expandConcepts, _setExpandConcepts] = useState({ expanded: false });
+    const [expandExcerpts, _setExpandExcerpts] = useState({ expanded: false });
+    const [expandConstellation, _setExpandConstellation] = useState({ expanded: false});
 
     const useStateWithPromise = (setter) => (value) => {
         return new Promise((resolve) => {
@@ -29,38 +31,15 @@ export const ConstellationModeProvider = ({ children }) => {
         });
     };
 
-    const useStateWithSubsectionPromises = (setter) => (value) => {
-        return new Promise((resolve) => {
-            const subsectionPromises = {};
-    
-            Object.keys(value).forEach(key => {
-                subsectionPromises[key] = new Promise((subResolve) => {
-                    value[key] = {
-                        ...value[key],
-                        onComplete: () => {
-                            subResolve(key); // Resolve with the key of the completed subsection
-                        }
-                    };
-                });
-            });
-    
-            const newValue = {
-                ...value,
-                onComplete: () => {
-                    Promise.all(Object.values(subsectionPromises)).then(() => {
-                        resolve(); // Resolve the main promise when all subsections are resolved
-                    });
-                }
-            };
-    
-            setter(newValue); // Immediately call the setter with the new state
-        });
-    }
-
-    const setExpandConstellation = useStateWithSubsectionPromises(_setExpandConstellation);
 
     const setStarControls = useStateWithPromise(_setStarControls);
     const setCloudControls = useStateWithPromise(_setCloudControls);
+
+    // SHAPE MANIPULATION
+    const setExpandConstellation = useStateWithPromise(_setExpandConstellation);
+
+    const setExpandConcepts = useStateWithPromise(_setExpandConcepts);
+    const setExpandExcerpts = useStateWithPromise(_setExpandExcerpts);
 
     return (
         <ConstellationModeContext.Provider 
@@ -70,7 +49,9 @@ export const ConstellationModeProvider = ({ children }) => {
                 narratorEvent, setNarratorEvent, 
                 starControls, setStarControls,
                 cloudControls, setCloudControls,
-                expandConstellation, setExpandConstellation,
+                expandConcepts, setExpandConcepts,
+                expandExcerpts, setExpandExcerpts,
+                expandConstellation, setExpandConstellation
 
             }}>
             {children}
