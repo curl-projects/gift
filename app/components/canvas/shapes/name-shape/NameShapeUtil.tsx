@@ -209,11 +209,15 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
                     collection.startSimulation();
                     setTimeout(() => {
                         // Do something else here after waiting for 0.5 seconds
-                        // generateConceptLinks(this.editor, data.user.concepts)
-                        console.log("FINISHED CONCEPT ANIMATING")
-                        expandConcepts?.onComplete && expandConcepts.onComplete()
+                        generateConceptLinks(this.editor, data.user.concepts)
 
-                    }, 2000);
+                        setTimeout(()=>{
+                            expandConcepts?.onComplete && expandConcepts.onComplete()
+                        }, 2000)
+                        console.log("FINISHED CONCEPT ANIMATING", expandConcepts)
+                        
+
+                    }, 3000);
                 })
                 setDrifting(false);
 

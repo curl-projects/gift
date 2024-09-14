@@ -165,7 +165,7 @@ export function NarratorVoice() {
                 type: "callback",
                 callback: () => {
                     return Promise.all([
-                        setExpandConstellation({ expanded: true })
+                        setExpandConstellation({ concepts: true, excerpts: true })
                     ])
                 },
                 waitForCallback: true,

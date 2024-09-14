@@ -19,13 +19,17 @@ export function ConstellationExpander(){
 
     // trigger resolution if all constitution components are resolved
     useEffect(()=>{
-        if(expandConstellation?.expanded){
-            Promise.all([
-                setExpandConcepts({ expanded: true }),
-                // setExpandExcerpts({ expanded: true })
-            ]).then(()=>{
-                console.log("EXPAND CONSTELLATION COMPLETE")
-                expandConstellation.onComplete && expandConstellation.onComplete()
+        if(expandConstellation?.concepts){
+            setExpandConcepts({ expanded: true }).then(()=>{
+                console.log("HELLO!")
+                if(expandConstellation?.excerpts){
+                    setExpandExcerpts({ expanded: true }).then(() => {
+                        expandConstellation.onComplete && expandConstellation.onComplete()
+                    })
+                }
+                else{
+                    expandConstellation.onComplete && expandConstellation.onComplete()
+                }
             })
         }
     }, [expandConstellation])
@@ -50,11 +54,32 @@ export function ConstellationExpander(){
                 
             }
         }        
-    }, [expandConcepts, expandExcerpts])
+    }, [expandConcepts])
 
 
+    useEffect(()=>{
+        if(expandExcerpts.expanded){
+            const conceptShapes = editor.getCurrentPageShapes().filter(shape => shape.type === 'concept')
 
-    return null
+            const allExpanded = conceptShapes.every(concept => concept.props.expanded);
+            if (!allExpanded) {
+                for (let concept of conceptShapes) {
+                    if (!concept.props.expanded) {
+                        editor.updateShape({
+                            id: concept.id,
+                            type: concept.type,
+                            props: {
+                                expanded: true
+                            }
+                        });
+                    }
+                }
+            }
+            else{
+                expandExcerpts.onComplete && expandExcerpts.onComplete()
+            }
+        }
+    }, [expandExcerpts])
 }
 
 // if(expandConstellation.concepts.expanded){

@@ -17,7 +17,7 @@ export const ConstellationModeProvider = ({ children }) => {
     
     const [expandConcepts, _setExpandConcepts] = useState({ expanded: false });
     const [expandExcerpts, _setExpandExcerpts] = useState({ expanded: false });
-    const [expandConstellation, _setExpandConstellation] = useState({ expanded: false});
+    const [expandConstellation, _setExpandConstellation] = useState({ concepts: false, excerpts: false});
 
     const useStateWithPromise = (setter) => (value) => {
         return new Promise((resolve) => {

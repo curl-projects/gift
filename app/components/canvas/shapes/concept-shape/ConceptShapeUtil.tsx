@@ -20,6 +20,7 @@ import { motion, useAnimate, AnimatePresence } from 'framer-motion';
 import { generateExcerpts, tearDownExcerpts, excerptsExist } from "~/components/canvas/helpers/thread-funcs"
 import { applyProgressiveBlur, removeProgressiveBlur } from '~/components/canvas/helpers/distribution-funcs';
 import { updateThreadBindingProps } from '~/components/canvas/bindings/thread-binding/ThreadBindingUtil';
+import { useConstellationMode } from '~/components/canvas/custom-ui/utilities/ConstellationModeContext';
 
 const conceptShapeProps = {
 	w: T.number,
@@ -78,6 +79,7 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
         const [scope, animate] = useAnimate();
 		const bounds = this.editor.getShapeGeometry(shape).bounds
 		const data: any = useLoaderData();
+        const { expandExcerpts } = useConstellationMode();
 
 		const shapeRef = useRef<HTMLDivElement>(null);
 
@@ -234,6 +236,10 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
                     generateExcerpts(this.editor, concept);
                     // removeProgressiveBlur(this.editor, shape, excerptIds);
                     applyProgressiveBlur(this.editor, shape, [...excerptIds, createShapeId(data.user.uniqueName)]);
+
+                    setTimeout(()=>{
+                        expandExcerpts?.onComplete && expandExcerpts.onComplete()
+                    }, 2000)
                 }
                 else{
                     // do nothing, was clicked again
