@@ -3,7 +3,7 @@ import styles from "./NarratorComponent.module.css";
 import { InkBleed } from "~/components/canvas/custom-ui/post-processing-effects/InkBleed"
 import { useEffect, useState, memo } from "react";
 
-const NarratorComponent = ({ visible, text, requiresInteraction, exitDuration, onComplete,darkeningVisible=true, darkeningDuration=4 }) => {
+const NarratorComponent = ({ visible, text, requiresInteraction, exitDuration, onComplete,darkeningVisible=true, darkeningDuration=2 }) => {
 
     useEffect(() => {
         console.log("darkeningVisible", darkeningVisible);
@@ -48,7 +48,7 @@ const NarratorComponent = ({ visible, text, requiresInteraction, exitDuration, o
                     initial={{ opacity:  0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    transition={{ duration: exitDuration / 1000 || 2 }} // there's hardcoded stuff in handleKeyDown 
+                    transition={{ duration: 2 }} // there's hardcoded stuff in handleKeyDown 
                 >
                     <AnimatePresence mode="wait">
                        
@@ -59,6 +59,9 @@ const NarratorComponent = ({ visible, text, requiresInteraction, exitDuration, o
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             transition={{ duration: 2 }}
+                            onAnimationComplete={() => {
+                                onComplete && onComplete();
+                            }}
                         >
                                 {text}
                             </motion.p>

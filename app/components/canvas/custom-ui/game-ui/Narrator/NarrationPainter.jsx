@@ -1,64 +1,85 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useStarFireSync } from "~/components/synchronization/StarFireSync"
 import { useConstellationMode } from "~/components/canvas/custom-ui/utilities/ConstellationModeContext"
 import NarratorComponent from "~/components/canvas/custom-ui/game-ui/Narrator/components/NarratorComponent.jsx"
 import SystemComponent from "~/components/canvas/custom-ui/game-ui/Narrator/components/SystemComponent.jsx"
 
 export function NarrationPainter(){
-    const { textEvent, setTextEvent, gameSystemText, gameNarratorText, setGameSystemText, setGameNarratorText } = useStarFireSync();
-    const [narratorText, setNarratorText] = useState({ visible: false, text: '', requiresInteraction: false });
-    const [systemText, setSystemText] = useState({ visible: false, text: '', requiresInteraction: false });
-
-    const handleKeyDown = (event, setState) => {
-        console.log("HANDLING KEYDOWN")
+    const { textEvent, setTextEvent, gameSystemText, gameNarratorText, 
+            setGameSystemText, setGameNarratorText, narratorText, systemText, 
+            setNarratorText, setSystemText } = useStarFireSync();
+    
+    const handleKeyDown = useCallback((event, setState) => {
         if (event.key === ' ') {
+            console.log('triggering listener!')
             window.removeEventListener('keydown', handleKeyDown);
             event.preventDefault();
-
-            if(textEvent.waitForCompletion) {
-                setState({ visible: false, text: "", requiresInteraction: false })
-                setTimeout(() => {
-                    textEvent.onComplete && textEvent.onComplete();
-                }, textEvent.exitDuration || 2000) // currently hard-coded, but can change this
-            } else {
-                setState({ visible: false, text: "", requiresInteraction: false })
-                textEvent.onComplete && textEvent.onComplete();
-            }  
+            textEvent.onComplete && textEvent.onComplete();
+        
+            // console.log("textEvent in listener", textEvent)
+            // if(textEvent.waitForCompletion) {
+            //     setTimeout(() => {
+            //         console.log('text event completing', textEvent.onComplete)
+            //         textEvent.onComplete && textEvent.onComplete();
+            //     }, 2000) // currently hard-coded, but can change this
+            // } else {
+            //     textEvent.onComplete && textEvent.onComplete();
+            // }  
         }
-    };
+    }, [textEvent]);
 
     useEffect(()=>{
         if(textEvent){
+            console.log("TEXT EVENT", textEvent)
 
+            // Check if textEvent has required keys
+            if (!textEvent.hasOwnProperty('type') || 
+                !textEvent.hasOwnProperty('overlay') || 
+                !textEvent.hasOwnProperty('visible') || 
+                !textEvent.hasOwnProperty('onComplete')) {
+                console.error("textEvent is missing required keys");
+                return;
+            }
+            
             // determine what state to work with
             const setState = textEvent.type === "system" 
                 ? (textEvent.overlay ? setGameSystemText : setSystemText) 
                 : (textEvent.overlay ? setGameNarratorText : setNarratorText);
 
-            const setOtherState = textEvent.type === "system" 
-                ? (textEvent.overlay ? setGameNarratorText : setNarratorText) 
-                : (textEvent.overlay ? setGameSystemText : setSystemText);
+            // const setOtherState = textEvent.type === "system" 
+            //     ? (textEvent.overlay ? setGameNarratorText : setNarratorText) 
+            //     : (textEvent.overlay ? setGameSystemText : setSystemText);
 
-            if(textEvent.requiresInteraction){
+
+            if(!textEvent.visible){
+                setState({ visible: false, text: "", requiresInteraction: false })
+            }
+
+            else if(textEvent.requiresInteraction){
                 // trigger state change
-                Promise.all([
-                    setOtherState({ visible: false, text: '', requiresInteraction: false }),
+                console.log("TEXT EVENT REQUIRES INTERACTION")
+
+                if(textEvent.waitUntilVisible){
                     setState({ visible: true, text: textEvent.text, requiresInteraction: textEvent.requiresInteraction, 
-                                darkeningVisible: textEvent.darkeningVisible, darkeningDuration: textEvent.darkeningDuration })
-                ]).then(()=>{
-                    // once the animation has resolved, resolve the text event
+                            darkeningVisible: textEvent.darkeningVisible, darkeningDuration: textEvent.darkeningDuration }).then(()=>{
+                        console.log("adding listener once visible")
+                        window.addEventListener('keydown', (event) => handleKeyDown(event, setState));
+                    })
+                }
+                else{
+                    setState({ visible: true, text: textEvent.text, requiresInteraction: textEvent.requiresInteraction, 
+                        darkeningVisible: textEvent.darkeningVisible, darkeningDuration: textEvent.darkeningDuration })
+                    console.log("adding listener immediately")
                     window.addEventListener('keydown', (event) => handleKeyDown(event, setState));
-                })
+                }
 
-                // attach event handler
-
-                // resolve the text event when the event is triggered
+               
 
             }
             else if(textEvent.duration){
                 // trigger state change
                 Promise.all([
-                    setOtherState({ visible: false, text: '', requiresInteraction: false }),
+                    // setOtherState({ visible: false, text: '', requiresInteraction: false }),
                     setState({ visible: true, text: textEvent.text, requiresInteraction: textEvent.requiresInteraction, 
                                 darkeningVisible: textEvent.darkeningVisible, darkeningDuration: textEvent.darkeningDuration })
                 ]).then(()=>{
@@ -85,7 +106,6 @@ export function NarrationPainter(){
                 visible={narratorText.visible} 
                 text={narratorText.text} 
                 requiresInteraction={narratorText.requiresInteraction}
-                exitDuration={narratorText.exitDuration}
                 darkeningVisible={narratorText.darkeningVisible}
                 darkeningDuration={narratorText.darkeningDuration}
                 onComplete={narratorText.onComplete}

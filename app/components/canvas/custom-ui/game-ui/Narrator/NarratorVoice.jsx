@@ -35,7 +35,7 @@ export function NarratorVoice() {
 
     const [narratorState, setNarratorState] = useState({ visible: false, text: '', requiresInteraction: false });
     const [systemState, setSystemState] = useState({ visible: false, text: '', requiresInteraction: false });
-    const [commands, setCommands] = useState([]);
+    // const [commands, setCommands] = useState([]);
 
     useEffect(() => {
         setNarratorEvent('pitch');
@@ -54,14 +54,14 @@ export function NarratorVoice() {
                     setCloudControls({ visible: true, immediate: true })
                 }
             },
-            // {
-            //     // hardcoded jank because the promise logic isn't working for the components above
-            //     type: 'callback',
-            //     callback: () => {
-            //         return new Promise(resolve => setTimeout(resolve, 4000));
-            //     },
-            //     waitForCallback: true,
-            // },      
+            {
+                // hardcoded jank because the promise logic isn't working for the components above
+                type: 'callback',
+                callback: () => {
+                    return new Promise(resolve => setTimeout(resolve, 4000));
+                },
+                waitForCallback: true,
+            },      
             // {
             //     type: "narrator",
             //     text: "This can be a cold and desolate place.",
@@ -101,47 +101,14 @@ export function NarratorVoice() {
                     return Promise.all([
                         setTextEvent({ 
                             type: 'narrator',
+                            visible: true,
                             overlay: false,
                             text: "It has been so very long since you were \n awake", 
                             requiresInteraction: true, 
+                            waitUntilVisible: true,
                             darkeningVisible: true, 
-                            darkeningDuration: 4 })
-                    ])
-                },
-                waitForCallback: true,
-            },
-            {
-                type: 'callback',
-                callback: () => {
-                    return new Promise((resolve) => {
-                        setTimeout(() => {
-                            Promise.all([
-                                setTextEvent({ 
-                                    type: 'narrator',
-                                    overlay: false,
-                                    text: "It has been so very long since you were \n awake", 
-                                    requiresInteraction: true, 
-                                    darkeningVisible: true, 
-                                    darkeningDuration: 4 
-                                })
-                            ]).then(resolve);
-                        }, 20000); // Resolves after 20 seconds
-                    });
-                },
-                waitForCallback: true,
-            },
-            // START HERE
-            {
-                type: 'narrator',
-                text: "It has been so very long since you were \n awake",
-                darkeningVisible: true,
-                requiresInteraction: true,
-            },
-            {
-                type: 'callback',
-                callback: () => {
-                    return Promise.all([
-                        setTrueOverlayControls({ visible: true, immediate: false, duration: 4 }),
+                            waitForCompletion: true,
+                            darkeningDuration: 2 })
                     ])
                 },
                 waitForCallback: true,
@@ -150,104 +117,160 @@ export function NarratorVoice() {
                 type: 'callback',
                 callback: () => {
                     return Promise.all([
-                        setCampfireView({ active: true, immediate: true, targetMeshName: 'constellationCanvas' })
-                    ])
+                        setTextEvent({ 
+                            type: 'narrator',
+                            visible: true,
+                            text: "I am a sexy narrator", 
+                            overlay: false,
+                            requiresInteraction: true, 
+                            waitUntilVisible: true,
+                            darkeningVisible: true, 
+                            waitForCompletion: true
+                        })
+                    ]).then(()=>{
+                        console.log("all done!")
+                    })
                 },
                 waitForCallback: true,
             },
             {
                 type: 'callback',
                 callback: () => {
+                    console.log("setting textEvent to false")
                     return Promise.all([
-                        setTrueOverlayControls({ visible: false, immediate: false, duration: 4 }),
-                    ])
-                },
-                waitForCallback: true,
-            },
-            {
-                type: 'system',
-                text: "Move around",
-                overlay: true,
-                waitForCondition: () => {
-                    return Promise.all([
-                        setCommandEvent({
-                            eventType: 'camera-moved',
-                            props: {}
+                        setTextEvent({ 
+                            type: 'narrator',
+                            overlay: false,
+                            visible: false,
+                            
+                           
                         })
                     ])
-                }
-            },
-            // trigger the proper text once you're looking at the narrator
-            {
-                type: 'callback',
-                callback: () => {
-                    return Promise.all([
-                        setCommandEvent({
-                            eventType: 'mesh-visible', 
-                            props: {
-                                meshName: 'narrator'
-                            }
-                            })
-                    ])
                 },
                 waitForCallback: true,
             },
-            {
-                type: 'narrator',
-                text: "So long spent in the dark sky -- do you even remember what the stars look like?",
-                requiresInteraction: true,
-                overlay: true,
-            },
-            {
-                type: 'callback',
-                callback: () => {
-                    return Promise.all([
-                        setCampfireView({ active: false, immediate: false })
-                    ])
-                },
-                waitForCallback: true,
-            },
-            {
-                type: 'system',
-                text: "create constellations to explore your work",
-                duration: 8,
 
-            },
-            {
-                type: "callback",
-                callback: () => {
-                    console.log("HIIIII!")
-                    setExpandConstellation({ concepts: true, excerpts: true })
-                }
-            },
-            {
-                type: 'system',
-                text: "traverse the stars to discover new ideas",
-                duration: 8, // todo this will clear when the new one retriggers -- refactor to use the callback system
-            },
-             {
-                type: "callback",
-                callback: () => {
-                    return Promise.all([
-                        setTriggerWarp({ active: true, accDuration: 1000, deaccDuration: 1000, constAccDuration: 1000 })
-                    ])
-                },
-                waitForCallback: true,
-            },
-            {
-                type: 'system',
-                text: "collect glyphs to forge new friendships",
-                duration: 8,
-            },
-            {
-                type: "callback",
-                callback: () => {
-                    return Promise.all([
-                        setJournalMode({ active: true, page: 'cover' })
-                    ])
-                },
-                waitForCallback: true,
-            },
+
+        
+
+            // // START HERE
+            // {
+            //     type: 'narrator',
+            //     text: "It has been so very long since you were \n awake",
+            //     darkeningVisible: true,
+            //     requiresInteraction: true,
+            // },
+            // {
+            //     type: 'callback',
+            //     callback: () => {
+            //         return Promise.all([
+            //             setTrueOverlayControls({ visible: true, immediate: false, duration: 4 }),
+            //         ])
+            //     },
+            //     waitForCallback: true,
+            // },
+            // {
+            //     type: 'callback',
+            //     callback: () => {
+            //         return Promise.all([
+            //             setCampfireView({ active: true, immediate: true, targetMeshName: 'constellationCanvas' })
+            //         ])
+            //     },
+            //     waitForCallback: true,
+            // },
+            // {
+            //     type: 'callback',
+            //     callback: () => {
+            //         return Promise.all([
+            //             setTrueOverlayControls({ visible: false, immediate: false, duration: 4 }),
+            //         ])
+            //     },
+            //     waitForCallback: true,
+            // },
+            // {
+            //     type: 'system',
+            //     text: "Move around",
+            //     overlay: true,
+            //     waitForCondition: () => {
+            //         return Promise.all([
+            //             setCommandEvent({
+            //                 eventType: 'camera-moved',
+            //                 props: {}
+            //             })
+            //         ])
+            //     }
+            // },
+            // // trigger the proper text once you're looking at the narrator
+            // {
+            //     type: 'callback',
+            //     callback: () => {
+            //         return Promise.all([
+            //             setCommandEvent({
+            //                 eventType: 'mesh-visible', 
+            //                 props: {
+            //                     meshName: 'narrator'
+            //                 }
+            //                 })
+            //         ])
+            //     },
+            //     waitForCallback: true,
+            // },
+            // {
+            //     type: 'narrator',
+            //     text: "So long spent in the dark sky -- do you even remember what the stars look like?",
+            //     requiresInteraction: true,
+            //     overlay: true,
+            // },
+            // {
+            //     type: 'callback',
+            //     callback: () => {
+            //         return Promise.all([
+            //             setCampfireView({ active: false, immediate: false })
+            //         ])
+            //     },
+            //     waitForCallback: true,
+            // },
+            // {
+            //     type: 'system',
+            //     text: "create constellations to explore your work",
+            //     duration: 8,
+
+            // },
+            // {
+            //     type: "callback",
+            //     callback: () => {
+            //         console.log("HIIIII!")
+            //         setExpandConstellation({ concepts: true, excerpts: true })
+            //     }
+            // },
+            // {
+            //     type: 'system',
+            //     text: "traverse the stars to discover new ideas",
+            //     duration: 8, // todo this will clear when the new one retriggers -- refactor to use the callback system
+            // },
+            //  {
+            //     type: "callback",
+            //     callback: () => {
+            //         return Promise.all([
+            //             setTriggerWarp({ active: true, accDuration: 1000, deaccDuration: 1000, constAccDuration: 1000 })
+            //         ])
+            //     },
+            //     waitForCallback: true,
+            // },
+            // {
+            //     type: 'system',
+            //     text: "collect glyphs to forge new friendships",
+            //     duration: 8,
+            // },
+            // {
+            //     type: "callback",
+            //     callback: () => {
+            //         return Promise.all([
+            //             setJournalMode({ active: true, page: 'cover' })
+            //         ])
+            //     },
+            //     waitForCallback: true,
+            // },
         ],
         
         
@@ -676,6 +699,10 @@ export function NarratorVoice() {
         //     return;
         // }
 
+        if(index >= commands.length){
+            return;
+        }
+
         const command = commands[index];
 
         // if (command.type === "system" || command.type === "narrator") {
@@ -717,6 +744,10 @@ export function NarratorVoice() {
         //         console.error("Command was incorrectly specified: no interaction, wait condition or duration provided");
         //     }
         // }
+
+        console.log("COMMANDS", commands)
+        console.log("COMMAND", command)
+        console.log("COMMAND INDEX:", index)
     
         if (command.type === "callback") {
             setNarratorState({ visible: false, text: '', requiresInteraction: false });
@@ -725,7 +756,7 @@ export function NarratorVoice() {
             setGameSystemText({ visible: false, text: '', requiresInteraction: false });
 
 
-            if(command.waitForCondition){
+            if(false && command.waitForCondition){
                 const checkCondition = () => {
                     if (command.waitForCondition()) {
                         if(command.waitForCallback){
@@ -744,6 +775,7 @@ export function NarratorVoice() {
             else {
                 if (command.waitForCallback) {
                     command.callback().then(() => {
+                        console.log('executing next command')
                         executeCommands(commands, index + 1);
                     });
                 } else {
@@ -759,7 +791,7 @@ export function NarratorVoice() {
 
     useEffect(() => {
         if (narratorEvent && narratorOrchestration[narratorEvent]) {
-            setCommands(narratorOrchestration[narratorEvent]);
+            // setCommands(narratorOrchestration[narratorEvent]);
             executeCommands(narratorOrchestration[narratorEvent], 0);
         }
     }, [narratorEvent]);

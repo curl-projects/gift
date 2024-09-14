@@ -11,13 +11,20 @@ const StarFireSyncProvider = ({ children }) => {
     const [commandEvent, _setCommandEvent] = useState(null);
 
 
-    const [textEvent, setTextEvent] = useState(null);
+    // TEXT STUFF
+    const [textEvent, _setTextEvent] = useState(null);
+    const [gameSystemText, _setGameSystemText] = useState({ visible: false, text: '', requiresInteraction: false });
+    const [gameNarratorText, _setGameNarratorText] = useState({ visible: false, text: '', requiresInteraction: false });
+    const [narratorText, _setNarratorText] = useState({ visible: false, text: '', requiresInteraction: false });
+    const [systemText, _setSystemText] = useState({ visible: false, text: '', requiresInteraction: false });
+
+
+
+
 
     const [overlayControls, _setOverlayControls] = useState({ dark: false, immediate: true, duration: 2, }); // Consolidated state
     const [trueOverlayControls, _setTrueOverlayControls] = useState({ visible: false, immediate: true, duration: 2, }); // Consolidated state
 
-    const [gameSystemText, _setGameSystemText] = useState({ visible: false, text: '', requiresInteraction: false });
-    const [gameNarratorText, _setGameNarratorText] = useState({ visible: false, text: '', requiresInteraction: false });
 
     const [journalMode, _setJournalMode] = useState({ active: false, page: ""});
 
@@ -32,9 +39,17 @@ const StarFireSyncProvider = ({ children }) => {
         });
     };
 
-    const setTriggerWarp = useStateWithPromise(_setTriggerWarp);
+    // TEXT STUFF
+    const setTextEvent = useStateWithPromise(_setTextEvent);
+    const setNarratorText = useStateWithPromise(_setNarratorText);
+    const setSystemText = useStateWithPromise(_setSystemText);
     const setGameNarratorText = useStateWithPromise(_setGameNarratorText);
     const setGameSystemText = useStateWithPromise(_setGameSystemText);
+
+
+
+
+    const setTriggerWarp = useStateWithPromise(_setTriggerWarp);
     const setCampfireView = useStateWithPromise(_setCampfireView);
     const setOverlayControls = useStateWithPromise(_setOverlayControls);
     const setTrueOverlayControls = useStateWithPromise(_setTrueOverlayControls);
@@ -68,10 +83,14 @@ const StarFireSyncProvider = ({ children }) => {
                 overlayControls, setOverlayControls,
                 trueOverlayControls, setTrueOverlayControls,
                 commandEvent, setCommandEvent,
+                journalMode, setJournalMode,
+
+
+                textEvent, setTextEvent,
                 gameSystemText, setGameSystemText,
                 gameNarratorText, setGameNarratorText,
-                journalMode, setJournalMode,
-                textEvent, setTextEvent,
+                narratorText, setNarratorText,
+                systemText, setSystemText,
 
             }}>
             {children}
