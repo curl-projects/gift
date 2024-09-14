@@ -31,6 +31,7 @@ Narrator Voice Bugs:
 - [] space event handler isn't being removed
 - [] janky timing with narrator and system because they're being manually reset at the beginning of new commands
 - [] system component is not registering as done after pressing space when it's last in the chain
+- [] remove progressive blur when constellation expansion is triggered by the narrator voice system
 
 Tech Debt:
 - [] animation timings for name and concept shapes are currently handled with timeouts
