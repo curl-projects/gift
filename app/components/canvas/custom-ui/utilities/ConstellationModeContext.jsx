@@ -21,6 +21,7 @@ export const ConstellationModeProvider = ({ children }) => {
             const newValue = {
                 ...value,
                 onComplete: () => {
+                    console.log(value, "COMPLETE")
                     resolve();
                 }
             };

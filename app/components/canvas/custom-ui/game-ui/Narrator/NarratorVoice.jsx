@@ -28,6 +28,7 @@ export function NarratorVoice() {
         gameNarratorText, setGameNarratorText,
         triggerWarp, setTriggerWarp,
         journalMode, setJournalMode,
+        triggerEffect,
     } = useStarFireSync();
 
     const [narratorState, setNarratorState] = useState({ visible: false, text: '', requiresInteraction: false });
@@ -49,88 +50,72 @@ export function NarratorVoice() {
                     setStarControls({ visible: false, immediate: true })
                     setCloudControls({ visible: true, immediate: true })
                 }
-            },  
-            {
-                type: 'callback',
-                callback: () => {
-                    return Promise.all([
-                        setTrueOverlayControls({ visible: true, immediate: true }),
-                        // setCampfireView({ active: true, immediate: true })
-                    ])
-                },
-                waitForCallback: true,
             },
             {
+                // hardcoded jank because the promise logic isn't working for the components above
                 type: 'callback',
                 callback: () => {
-                    return new Promise(resolve => setTimeout(resolve, 60000));
-                },
-                waitForCallback: true,
-            },
-            {
-                type: 'callback',
-                callback: () => {
-                    return Promise.all([
-                        setTrueOverlayControls({ visible: false, immediate: false, duration: 2 }),
-                    ])
+                    return new Promise(resolve => setTimeout(resolve, 4000));
                 },
                 waitForCallback: true,
             },      
             {
                 type: "narrator",
                 text: "This can be a cold and desolate place.",
+                darkeningVisible: false,
                 requiresInteraction: true,
             },
-            {
-                type: 'narrator',
-                text: "I have spent much of my life here, lost in a stupor, adrift in a void,",
-                requiresInteraction: true,
-            },
-            {
-                type: 'narrator',
-                text: "flitting between cold ideas",
-                requiresInteraction: true,
-            },
+            // {
+            //     type: 'narrator',
+            //     text: "I have spent much of my life here, lost in a stupor, adrift in a void,",
+            //     darkeningVisible: false,
+            //     requiresInteraction: true,
+            // },
+            // {
+            //     type: 'narrator',
+            //     text: "flitting between cold ideas",
+            //     darkeningVisible: false,
+            //     requiresInteraction: true,
+            // },f
             {
                 type: 'callback',
                 callback: () => {
-                    setStarControls({ visible: true, immediate: false, duration: 2 })
+                    setStarControls({ visible: true, immediate: false, duration: 4 })
                 }
             },
             {
                 type: 'narrator',
-                text: "Now that you have returned to me, I want to try building something better.",
+                text: "Now that you have returned to me, I wish to try building something better.",
+                darkeningVisible: true,
                 requiresInteraction: true,
+                darkeningDuration: 6,
             },
-            
+            {
+                type: 'callback',
+                callback: () => {
+                    triggerEffect({domain: "canvas", selector: {type: "shape", id: createShapeId("andre-vacha")}, effect: "ripple", callback: () => {}})
+                },
+            },
             // the words should fade out, except for the word "awake"
             {
                 type: 'narrator',
-                text: "It has been so very long since you were awake",
+                text: "It has been so very long since you were \n awake",
                 requiresInteraction: true,
             },
             {
                 type: 'callback',
                 callback: () => {
                     return Promise.all([
-                        setStarControls({ visible: false, immediate: false, duration: 2 }),
-                        setCloudControls({ visible: false, immediate: false, duration: 2 })
+                        setTrueOverlayControls({ visible: true, immediate: false, duration: 4 }),
                     ])
                 },
                 waitForCallback: true,
-            },
-            {
-                type: 'callback',
-                callback: () => {
-                    setTrueOverlayControls({ visible: true, immediate: true })
-                    setCampfireView({ active: true, immediate: true })
-                }
             },
             {
                 type: 'callback',
                 callback: () => {
                     return Promise.all([
-                        setTrueOverlayControls({ visible: false, immediate: false, duration: 2 }),
+                        setCampfireView({ active: true, immediate: true, targetMeshName: 'constellationCanvas' })
                     ])
                 },
                 waitForCallback: true,
@@ -138,8 +123,17 @@ export function NarratorVoice() {
             {
                 type: 'callback',
                 callback: () => {
-                    setGameSystemText({ text: "Move around" })
-                }
+                    return Promise.all([
+                        setTrueOverlayControls({ visible: false, immediate: false, duration: 4 }),
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'system',
+                text: "Move around",
+                requiresInteraction: true,
+                overlay: true,
             }
         ],
         
@@ -310,6 +304,32 @@ export function NarratorVoice() {
 
 
 
+            // {
+            //     type: 'callback',
+            //     callback: () => {
+            //         return Promise.all([
+            //             setTrueOverlayControls({ visible: true, immediate: true }),
+            //             // setCampfireView({ active: true, immediate: true })
+            //         ])
+            //     },
+            //     waitForCallback: true,
+            // },
+            // {
+            //     type: 'callback',
+            //     callback: () => {
+            //         return new Promise(resolve => setTimeout(resolve, 60000));
+            //     },
+            //     waitForCallback: true,
+            // },
+            // {
+            //     type: 'callback',
+            //     callback: () => {
+            //         return Promise.all([
+            //             setTrueOverlayControls({ visible: false, immediate: false, duration: 2 }),
+            //         ])
+            //     },
+            //     waitForCallback: true,
+            // },
 
 
 
@@ -550,15 +570,19 @@ export function NarratorVoice() {
             const setState = command.type === "system" 
                 ? (command.overlay ? setGameSystemText : setSystemState) 
                 : (command.overlay ? setGameNarratorText : setNarratorState);
+
             const setOtherState = command.type === "system" 
                 ? (command.overlay ? setGameNarratorText : setNarratorState) 
                 : (command.overlay ? setGameSystemText : setSystemState);
 
             setOtherState({ visible: false, text: '', requiresInteraction: false });
-            setState({ visible: true, text: command.text, requiresInteraction: command.requiresInteraction });
+            setState({ visible: true, text: command.text, requiresInteraction: command.requiresInteraction, 
+                        darkeningVisible: command.darkeningVisible, 
+                        darkeningDuration: command.darkeningDuration });
 
             if (command.requiresInteraction) {
                 window.addEventListener('keydown', (event) => handleKeyDown(event, setState));
+            
             } else if (command.waitForCondition) {
                 const checkCondition = () => {
                     if (command.waitForCondition()) {
@@ -632,6 +656,8 @@ export function NarratorVoice() {
                 text={narratorState.text} 
                 requiresInteraction={narratorState.requiresInteraction}
                 exitDuration={narratorState.exitDuration}
+                darkeningVisible={narratorState.darkeningVisible}
+                darkeningDuration={narratorState.darkeningDuration}
                 />
             <SystemComponent 
                 visible={systemState.visible} 

@@ -28,7 +28,7 @@
     -webkit-background-clip: text; /* Clip the background to the text */
     background-clip: text;
     background-size: 100% 100%, 100% 100%; 
-    animation: cloudLoop 40s linear infinite alternate !important, /* Apply the forward-moving cloud animation */
+    animation: cloudLoop 40s linear infinite alternate, /* Apply the forward-moving cloud animation */
                cloudLoopReverse 40s linear infinite alternate !important; /* Apply the reverse-moving cloud animation */
 }
 /* 

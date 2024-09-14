@@ -1,6 +1,6 @@
 .narratorContainer {
     width: 100%;
-    position: fixed;
+    position: absolute;
     left: 0;
     right: 0;
     bottom: 65%;
@@ -11,6 +11,7 @@
     z-index: 1000;
     transform: translateY(50%); 
     mix-blend-mode: overlay;
+    height: 8vh;
 }
 
 
