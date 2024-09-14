@@ -7,9 +7,6 @@ function timeStamp(){
 	if(window.performance.now)return window.performance.now(); else return Date.now();
 }
 
-
-
-
 export function WarpStars({ 
     depth = 1000,
     speed = 0.05,
@@ -75,7 +72,8 @@ export function WarpStars({
         animateParams({speed: 4, warpEffectLength: 5}, triggerWarp.accDuration, easeInOutQuad).then(()=>{
             setTimeout(()=>{
                 animateParams({speed: 0.05, warpEffectLength: 1}, triggerWarp.deaccDuration, easeInOutQuad).then(()=>{
-                    setTriggerWarp(false)
+                    triggerWarp.onComplete && triggerWarp.onComplete()
+                    setTriggerWarp({active: false})
                 })
             }, triggerWarp.constAccDuration)
         })

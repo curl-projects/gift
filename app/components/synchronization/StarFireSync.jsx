@@ -4,7 +4,7 @@ const StarFireSyncContext = createContext();
 
 const StarFireSyncProvider = ({ children }) => {
     const [activeEffect, setActiveEffect] = useState(null);
-    const [triggerWarp, setTriggerWarp] = useState({active: false, accDuration: 500, deaccDuration: 500, constAccDuration: 500});
+    const [triggerWarp, _setTriggerWarp] = useState({active: false, accDuration: 500, deaccDuration: 500, constAccDuration: 500});
     const [restored, setRestored] = useState(false);
     const [campfireView, _setCampfireView] = useState(null);
     const [sceneLoaded, setSceneLoaded] = useState(false);
@@ -27,6 +27,7 @@ const StarFireSyncProvider = ({ children }) => {
         });
     };
 
+    const setTriggerWarp = useStateWithPromise(_setTriggerWarp);
     const setGameNarratorText = useStateWithPromise(_setGameNarratorText);
     const setGameSystemText = useStateWithPromise(_setGameSystemText);
     const setCampfireView = useStateWithPromise(_setCampfireView);
@@ -63,6 +64,7 @@ const StarFireSyncProvider = ({ children }) => {
                 commandEvent, setCommandEvent,
                 gameSystemText, setGameSystemText,
                 gameNarratorText, setGameNarratorText,
+                
             }}>
             {children}
         </StarFireSyncContext.Provider>

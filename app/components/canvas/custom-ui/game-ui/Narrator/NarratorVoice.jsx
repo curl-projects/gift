@@ -26,7 +26,7 @@ export function NarratorVoice() {
         commandEvent, setCommandEvent,
         gameSystemText, setGameSystemText,
         gameNarratorText, setGameNarratorText,
-
+        triggerWarp, setTriggerWarp,
     } = useStarFireSync();
 
     const [narratorState, setNarratorState] = useState({ visible: false, text: '', requiresInteraction: false });
@@ -141,6 +141,14 @@ export function NarratorVoice() {
                     // });
                 },
                 waitForCallback: true,
+            },{
+                type: "callback",
+                callback: () => {
+                    return Promise.all([
+                        setTriggerWarp({ active: true, accDuration: 1000, deaccDuration: 1000, constAccDuration: 1000 })
+                    ])
+                },
+                waitForCallback: true,
             },
             // {
             //     type: "callback",
@@ -161,20 +169,20 @@ export function NarratorVoice() {
                 text: "This can be a cold and desolate place.",
                 requiresInteraction: true,   
             },
-            {
-                type: "callback",
-                callback: () => {
-                    return Promise.all([
-                        setExpandConstellation({ concepts: true, excerpts: true })
-                    ])
-                },
-                waitForCallback: true,
-            },
-            {
-                type: "system",
-                text: "This can be a cold and desolate place.",
-                requiresInteraction: true,   
-            },
+            // {
+            //     type: "callback",
+            //     callback: () => {
+            //         return Promise.all([
+            //             setExpandConstellation({ concepts: true, excerpts: true })
+            //         ])
+            //     },
+            //     waitForCallback: true,
+            // },
+            // {
+            //     type: "system",
+            //     text: "This can be a cold and desolate place.",
+            //     requiresInteraction: true,   
+            // },
 
             // {
             //     type: 'callback',
