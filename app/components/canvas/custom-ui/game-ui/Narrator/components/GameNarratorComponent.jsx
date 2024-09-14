@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import styles from "./GameNarratorComponent.module.css";
 import { useEffect, useState, memo } from "react";
 
-const GameNarratorComponent = ({ visible, text, requiresInteraction, exitDuration }) => {
+const GameNarratorComponent = ({ visible, text, requiresInteraction, exitDuration, onComplete }) => {
     return (
         <AnimatePresence>
             {visible && (
@@ -14,6 +14,9 @@ const GameNarratorComponent = ({ visible, text, requiresInteraction, exitDuratio
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 4 }}
+                    onAnimationComplete={() => {
+                        onComplete && onComplete();
+                    }}
                 >
                     <div className={styles.narratorContainerInner}>
                         <div className={styles.narratorContainerDarkening} />

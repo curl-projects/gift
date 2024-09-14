@@ -10,6 +10,9 @@ const StarFireSyncProvider = ({ children }) => {
     const [sceneLoaded, setSceneLoaded] = useState(false);
     const [commandEvent, _setCommandEvent] = useState(null);
 
+
+    const [textEvent, setTextEvent] = useState(null);
+
     const [overlayControls, _setOverlayControls] = useState({ dark: false, immediate: true, duration: 2, }); // Consolidated state
     const [trueOverlayControls, _setTrueOverlayControls] = useState({ visible: false, immediate: true, duration: 2, }); // Consolidated state
 
@@ -68,6 +71,7 @@ const StarFireSyncProvider = ({ children }) => {
                 gameSystemText, setGameSystemText,
                 gameNarratorText, setGameNarratorText,
                 journalMode, setJournalMode,
+                textEvent, setTextEvent,
 
             }}>
             {children}

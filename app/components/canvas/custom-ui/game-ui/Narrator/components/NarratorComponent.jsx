@@ -3,13 +3,13 @@ import styles from "./NarratorComponent.module.css";
 import { InkBleed } from "~/components/canvas/custom-ui/post-processing-effects/InkBleed"
 import { useEffect, useState, memo } from "react";
 
-const NarratorComponent = ({ visible, text, requiresInteraction, exitDuration, darkeningVisible=true, darkeningDuration=4 }) => {
+const NarratorComponent = ({ visible, text, requiresInteraction, exitDuration, onComplete,darkeningVisible=true, darkeningDuration=4 }) => {
 
     useEffect(() => {
         console.log("darkeningVisible", darkeningVisible);
         console.log("darkeningDuration", darkeningDuration);
     }, [darkeningVisible, darkeningDuration]);
-    
+
     return (
         <AnimatePresence>
             {visible && (
@@ -21,6 +21,9 @@ const NarratorComponent = ({ visible, text, requiresInteraction, exitDuration, d
                     animate={{ opacity: darkeningVisible ? 1 : 0 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: darkeningDuration }}
+                    onAnimationComplete={() => {
+                        onComplete && onComplete();
+                    }}
                 >
                     <div className={styles.narratorContainerInner}>
                         <div  className={styles.narratorContainerDarkening}

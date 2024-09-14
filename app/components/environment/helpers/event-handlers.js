@@ -4,8 +4,21 @@ function meshIsVisible(scene, props){
     return camera.isInFrustum(mesh)
 }
 
+function cameraMoved(scene, props){
+    const camera = scene.getCameraByName("babylon-camera")
+
+    const observer = camera.onViewMatrixChangedObservable.add(() => {
+
+        console.log("Camera moved");
+        camera.onViewMatrixChangedObservable.remove(observer);
+        return true;
+    });    
+
+}
+
 const eventMap = {
-    "mesh-visible": meshIsVisible
+    "mesh-visible": meshIsVisible,
+    "camera-moved": cameraMoved
 }
 
 export function addCommandEventListener(scene, commandEvent, canvasProps={}) {

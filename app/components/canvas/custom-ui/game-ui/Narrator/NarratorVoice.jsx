@@ -14,6 +14,7 @@ export function NarratorVoice() {
         starControls, setStarControls, 
         cloudControls, setCloudControls,
         expandConstellation, setExpandConstellation,
+        constellationLabel, setConstellationLabel
 
     } = useConstellationMode();
 
@@ -29,6 +30,7 @@ export function NarratorVoice() {
         triggerWarp, setTriggerWarp,
         journalMode, setJournalMode,
         triggerEffect,
+        textEvent, setTextEvent,
     } = useStarFireSync();
 
     const [narratorState, setNarratorState] = useState({ visible: false, text: '', requiresInteraction: false });
@@ -45,26 +47,27 @@ export function NarratorVoice() {
             {
                 type: 'callback',
                 callback: () => {
+                    setConstellationLabel({ visible: false, immediate: true })
                     setCampfireView({ active: false, immediate: true })
-                    setOverlayControls({ dark: false, immediate: true })
+                    setOverlayControls({ dark: true, immediate: true })
                     setStarControls({ visible: false, immediate: true })
                     setCloudControls({ visible: true, immediate: true })
                 }
             },
-            {
-                // hardcoded jank because the promise logic isn't working for the components above
-                type: 'callback',
-                callback: () => {
-                    return new Promise(resolve => setTimeout(resolve, 4000));
-                },
-                waitForCallback: true,
-            },      
-            {
-                type: "narrator",
-                text: "This can be a cold and desolate place.",
-                darkeningVisible: false,
-                requiresInteraction: true,
-            },
+            // {
+            //     // hardcoded jank because the promise logic isn't working for the components above
+            //     type: 'callback',
+            //     callback: () => {
+            //         return new Promise(resolve => setTimeout(resolve, 4000));
+            //     },
+            //     waitForCallback: true,
+            // },      
+            // {
+            //     type: "narrator",
+            //     text: "This can be a cold and desolate place.",
+            //     darkeningVisible: false,
+            //     requiresInteraction: true,
+            // },
             // {
             //     type: 'narrator',
             //     text: "I have spent much of my life here, lost in a stupor, adrift in a void,",
@@ -76,30 +79,62 @@ export function NarratorVoice() {
             //     text: "flitting between cold ideas",
             //     darkeningVisible: false,
             //     requiresInteraction: true,
-            // },f
-            {
-                type: 'callback',
-                callback: () => {
-                    setStarControls({ visible: true, immediate: false, duration: 4 })
-                }
-            },
-            {
-                type: 'narrator',
-                text: "Now that you have returned to me, I wish to try building something better.",
-                darkeningVisible: true,
-                requiresInteraction: true,
-                darkeningDuration: 6,
-            },
-            {
-                type: 'callback',
-                callback: () => {
-                    triggerEffect({domain: "canvas", selector: {type: "shape", id: createShapeId("andre-vacha")}, effect: "ripple", callback: () => {}})
-                },
-            },
+            // },
+            // {
+            //     type: 'callback',
+            //     callback: () => {
+            //         setStarControls({ visible: true, immediate: false, duration: 4 })
+            //     }
+            // },
+            // {
+            //     type: 'narrator',
+            //     text: "Now that you have returned to me, I wish to try building something better.",
+            //     darkeningVisible: true,
+            //     requiresInteraction: true,
+            //     darkeningDuration: 6,
+            // },
+
             // the words should fade out, except for the word "awake"
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setTextEvent({ 
+                            type: 'narrator',
+                            overlay: false,
+                            text: "It has been so very long since you were \n awake", 
+                            requiresInteraction: true, 
+                            darkeningVisible: true, 
+                            darkeningDuration: 4 })
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    return new Promise((resolve) => {
+                        setTimeout(() => {
+                            Promise.all([
+                                setTextEvent({ 
+                                    type: 'narrator',
+                                    overlay: false,
+                                    text: "It has been so very long since you were \n awake", 
+                                    requiresInteraction: true, 
+                                    darkeningVisible: true, 
+                                    darkeningDuration: 4 
+                                })
+                            ]).then(resolve);
+                        }, 20000); // Resolves after 20 seconds
+                    });
+                },
+                waitForCallback: true,
+            },
+            // START HERE
             {
                 type: 'narrator',
                 text: "It has been so very long since you were \n awake",
+                darkeningVisible: true,
                 requiresInteraction: true,
             },
             {
@@ -132,9 +167,87 @@ export function NarratorVoice() {
             {
                 type: 'system',
                 text: "Move around",
+                overlay: true,
+                waitForCondition: () => {
+                    return Promise.all([
+                        setCommandEvent({
+                            eventType: 'camera-moved',
+                            props: {}
+                        })
+                    ])
+                }
+            },
+            // trigger the proper text once you're looking at the narrator
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setCommandEvent({
+                            eventType: 'mesh-visible', 
+                            props: {
+                                meshName: 'narrator'
+                            }
+                            })
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'narrator',
+                text: "So long spent in the dark sky -- do you even remember what the stars look like?",
                 requiresInteraction: true,
                 overlay: true,
-            }
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setCampfireView({ active: false, immediate: false })
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'system',
+                text: "create constellations to explore your work",
+                duration: 8,
+
+            },
+            {
+                type: "callback",
+                callback: () => {
+                    console.log("HIIIII!")
+                    setExpandConstellation({ concepts: true, excerpts: true })
+                }
+            },
+            {
+                type: 'system',
+                text: "traverse the stars to discover new ideas",
+                duration: 8, // todo this will clear when the new one retriggers -- refactor to use the callback system
+            },
+             {
+                type: "callback",
+                callback: () => {
+                    return Promise.all([
+                        setTriggerWarp({ active: true, accDuration: 1000, deaccDuration: 1000, constAccDuration: 1000 })
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'system',
+                text: "collect glyphs to forge new friendships",
+                duration: 8,
+            },
+            {
+                type: "callback",
+                callback: () => {
+                    return Promise.all([
+                        setJournalMode({ active: true, page: 'cover' })
+                    ])
+                },
+                waitForCallback: true,
+            },
         ],
         
         
@@ -536,74 +649,76 @@ export function NarratorVoice() {
 
 
     const executeCommands = useCallback((commands, index) => {
-        const handleKeyDown = (event, setState) => {
-            console.log("EVENT!", event)
-            if (event.key === ' ') {
-                window.removeEventListener('keydown', handleKeyDown);
-                event.preventDefault();
+        // const handleKeyDown = (event, setState) => {
+        //     console.log("HANDLING KEYDOWN")
+        //     console.log("EVENT!", event)
+        //     if (event.key === ' ') {
+        //         window.removeEventListener('keydown', handleKeyDown);
+        //         event.preventDefault();
 
-                if(commands[index].waitForCompletion) {
-                    setState({ visible: false, text: "", requiresInteraction: false })
-                    setTimeout(() => {
-                        executeCommands(commands, index + 1);
-                    }, commands[index].exitDuration || 2000) // currently hard-coded, but can change this
-                } else {
-                    executeCommands(commands, index + 1);
-                }
-               
-            }
-        };
+        //         if(commands[index].waitForCompletion) {
+        //             setState({ visible: false, text: "", requiresInteraction: false })
+        //             setTimeout(() => {
+        //                 executeCommands(commands, index + 1);
+        //             }, commands[index].exitDuration || 2000) // currently hard-coded, but can change this
+        //         } else {
+        //             executeCommands(commands, index + 1);
+        //         }  
+        //     }
+        // };
 
-        if (index >= commands.length) {
-            setNarratorState({ visible: false, text: '', requiresInteraction: false });
-            setSystemState({ visible: false, text: '', requiresInteraction: false });
-            setGameNarratorText({ visible: false, text: '', requiresInteraction: false });
-            setGameSystemText({ visible: false, text: '', requiresInteraction: false });
-            setNarratorEvent(null);
-            return;
-        }
+        // if (index >= commands.length) {
+        //     setNarratorState({ visible: false, text: '', requiresInteraction: false });
+        //     setSystemState({ visible: false, text: '', requiresInteraction: false });
+        //     setGameNarratorText({ visible: false, text: '', requiresInteraction: false });
+        //     setGameSystemText({ visible: false, text: '', requiresInteraction: false });
+        //     setNarratorEvent(null);
+        //     return;
+        // }
 
         const command = commands[index];
 
-        if (command.type === "system" || command.type === "narrator") {
-            // to do: fix this, not generalizable to many actors
-            const setState = command.type === "system" 
-                ? (command.overlay ? setGameSystemText : setSystemState) 
-                : (command.overlay ? setGameNarratorText : setNarratorState);
+        // if (command.type === "system" || command.type === "narrator") {
+        //     // to do: fix this, not generalizable to many actors
+        //     const setState = command.type === "system" 
+        //         ? (command.overlay ? setGameSystemText : setSystemState) 
+        //         : (command.overlay ? setGameNarratorText : setNarratorState);
 
-            const setOtherState = command.type === "system" 
-                ? (command.overlay ? setGameNarratorText : setNarratorState) 
-                : (command.overlay ? setGameSystemText : setSystemState);
+        //     const setOtherState = command.type === "system" 
+        //         ? (command.overlay ? setGameNarratorText : setNarratorState) 
+        //         : (command.overlay ? setGameSystemText : setSystemState);
 
-            setOtherState({ visible: false, text: '', requiresInteraction: false });
-            setState({ visible: true, text: command.text, requiresInteraction: command.requiresInteraction, 
-                        darkeningVisible: command.darkeningVisible, 
-                        darkeningDuration: command.darkeningDuration });
+        //     setOtherState({ visible: false, text: '', requiresInteraction: false });
+        //     setState({ visible: true, text: command.text, requiresInteraction: command.requiresInteraction, 
+        //                 darkeningVisible: command.darkeningVisible, 
+        //                 darkeningDuration: command.darkeningDuration });
 
-            if (command.requiresInteraction) {
-                window.addEventListener('keydown', (event) => handleKeyDown(event, setState));
+        //     if (command.requiresInteraction) {
+        //         window.addEventListener('keydown', (event) => handleKeyDown(event, setState));
             
-            } else if (command.waitForCondition) {
-                const checkCondition = () => {
-                    if (command.waitForCondition()) {
-                        setState({ visible: false, text: '', requiresInteraction: false });
-                        setTimeout(() => {
-                            executeCommands(commands, index + 1);
-                        }, command.waitConditionTime || 1000);
-                    } else {
-                        setTimeout(checkCondition, 200);
-                    }
-                };
-                checkCondition();
-            } else if (command.duration) {
-                setTimeout(() => {
-                    setState({ visible: false, text: '', requiresInteraction: false });
-                    executeCommands(commands, index + 1);
-                }, command.duration);
-            } else {
-                console.error("Command was incorrectly specified: no interaction, wait condition or duration provided");
-            }
-        } else if (command.type === "callback") {
+        //     } else if (command.waitForCondition) {
+        //         const checkCondition = () => {
+        //             if (command.waitForCondition()) {
+        //                 setState({ visible: false, text: '', requiresInteraction: false });
+        //                 setTimeout(() => {
+        //                     executeCommands(commands, index + 1);
+        //                 }, command.waitConditionTime || 1000);
+        //             } else {
+        //                 setTimeout(checkCondition, 200);
+        //             }
+        //         };
+        //         checkCondition();
+        //     } else if (command.duration) {
+        //         setTimeout(() => {
+        //             setState({ visible: false, text: '', requiresInteraction: false });
+        //             executeCommands(commands, index + 1);
+        //         }, command.duration);
+        //     } else {
+        //         console.error("Command was incorrectly specified: no interaction, wait condition or duration provided");
+        //     }
+        // }
+    
+        if (command.type === "callback") {
             setNarratorState({ visible: false, text: '', requiresInteraction: false });
             setSystemState({ visible: false, text: '', requiresInteraction: false });
             setGameNarratorText({ visible: false, text: '', requiresInteraction: false });

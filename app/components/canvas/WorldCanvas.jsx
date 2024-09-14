@@ -13,6 +13,7 @@ import { ConstellationExpander } from "~/components/canvas/custom-ui/utilities/C
 import { DriftPainter } from "~/components/canvas/custom-ui/utilities/DriftPainter"
 import { JournalPainter } from "~/components/canvas/custom-ui/utilities/JournalPainter"
 import { CovenantPainter } from "~/components/canvas/custom-ui/utilities/CovenantPainter"
+import { NarrationPainter } from "~/components/canvas/custom-ui/game-ui/Narrator/NarrationPainter"
 import { GameController } from "~/components/canvas/custom-ui/game-ui/GameControls/GameController"
 import CustomToolbar from "~/components/canvas/custom-ui/custom-toolbar/CustomToolbar"
 import { CollectionProvider } from "~/components/canvas/custom-ui/collections";
@@ -200,6 +201,7 @@ export default function WorldCanvas() {
                             />
                             <JournalPainter />
                             <CovenantPainter />
+                            <NarrationPainter />
                             {/* <ConstellationFinder /> */}
                             <CustomToolbar />
                             <ConstellationLabel 

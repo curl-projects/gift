@@ -11,10 +11,13 @@ export const ConstellationModeProvider = ({ children }) => {
     
     const [starControls, _setStarControls] = useState({ visible: false, immediate: true });
     const [cloudControls, _setCloudControls] = useState({ visible: true, immediate: true });
+
+    const [constellationLabel, _setConstellationLabel] = useState({ visible: false, immediate: true });
     
     const [expandConcepts, _setExpandConcepts] = useState({ expanded: false });
     const [expandExcerpts, _setExpandExcerpts] = useState({ expanded: false });
     const [expandConstellation, _setExpandConstellation] = useState({ concepts: false, excerpts: false});
+
 
     const useStateWithPromise = (setter) => (value) => {
         return new Promise((resolve) => {
@@ -32,6 +35,8 @@ export const ConstellationModeProvider = ({ children }) => {
 
     const setStarControls = useStateWithPromise(_setStarControls);
     const setCloudControls = useStateWithPromise(_setCloudControls);
+    const setConstellationLabel = useStateWithPromise(_setConstellationLabel);
+
 
     // SHAPE MANIPULATION
     const setExpandConstellation = useStateWithPromise(_setExpandConstellation);
@@ -49,7 +54,8 @@ export const ConstellationModeProvider = ({ children }) => {
                 cloudControls, setCloudControls,
                 expandConcepts, setExpandConcepts,
                 expandExcerpts, setExpandExcerpts,
-                expandConstellation, setExpandConstellation
+                expandConstellation, setExpandConstellation,
+                constellationLabel, setConstellationLabel
 
             }}>
             {children}

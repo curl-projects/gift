@@ -56,19 +56,5 @@ export function CampfireSyncListener({ scene, onRender }){
         }
     }, [sceneLoaded, campfireView])
 
-
-    // useEffect(() => {
-    //     if(scene){
-    //         setTimeout(() => {
-    //             console.log("TRIGGERED!")
-    //             const camera = scene.cameras.find(camera => camera.name === "babylon-camera")
-    //             focusWithoutMovingToConstellationCanvas(scene, camera, triggerEffect, setTriggerWarp).then(() => {
-    //             // giveControlToCanvas()
-    //             setCampfireView(true)
-    //         })
-    //     }, 2000)
-    //     }  
-    // }, [])
-
     return null
 }

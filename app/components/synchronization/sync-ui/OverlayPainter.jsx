@@ -39,6 +39,9 @@ export function OverlayPainter(){
         }
     }, [trueOverlayControls])
 
+
+
+    // game system text is set in the general controller (NarrationPainter)
     useEffect(()=>{
         console.log("GAMESYSTEM", gameSystemText)
     }, [gameSystemText])

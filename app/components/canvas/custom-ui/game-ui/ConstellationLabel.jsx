@@ -3,17 +3,24 @@ import { transliterateToLepcha } from "../../helpers/language-funcs"
 import { useStarFireSync } from "~/components/synchronization/StarFireSync"
 import { createShapeId, useEditor } from "tldraw"
 import { useConstellationMode } from "../utilities/ConstellationModeContext"
+import { motion } from "framer-motion"
 
 export function ConstellationLabel({ name }){
     const { triggerWarp, setTriggerWarp } = useStarFireSync()
-    const { overlayMode, setOverlayMode } = useConstellationMode()
+    const { overlayMode, setOverlayMode, constellationLabel } = useConstellationMode()
     const editor = useEditor()
 
     return(
-        <div className={styles.labelWrapper}>
+        <motion.div 
+            className={styles.labelWrapper}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: constellationLabel.visible ? 1 : 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: constellationLabel.immediate ? 0 : 1 }}
+            >
             <p className={styles.constellationName}>
                 <span className={styles.constellationGlyph}>
-                    [{transliterateToLepcha(name.split(' ').map(word => word[0]).join(''))}]
+                    [{transliterateToLepcha(name.split(' ').map(word => word[0]).join(''))}] The first star
                 </span>
             </p>
             <div className={styles.metadataRow}>
@@ -110,6 +117,6 @@ export function ConstellationLabel({ name }){
                     </button>
                 </div>
             </div>
-        </div>
+        </motion.div>
     )
 }
