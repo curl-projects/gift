@@ -30,8 +30,9 @@ const NarratorComponent = ({
                     animate={{ opacity: darkeningVisible ? 1 : 0 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: darkeningDuration }}
-                    onAnimationComplete={() => {
-                        console.log("animation complete (darkening)")
+                    onAnimationComplete={(animation) => {
+                        console.log("animation complete (darkening)", animation)
+                        console.log("onComplete", onComplete)
                         onComplete && onComplete();
                     }}
                 >
@@ -72,7 +73,7 @@ const NarratorComponent = ({
                             onAnimationComplete={() => {
                                 console.log("animation complete (text)")
                                 onComplete && onComplete();
-                            }}
+                            }} 
                         >
                                 {text}
                             </motion.p>

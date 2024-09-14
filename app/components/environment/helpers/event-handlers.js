@@ -5,15 +5,15 @@ function meshIsVisible(scene, props){
 }
 
 function cameraMoved(scene, props){
-    const camera = scene.getCameraByName("babylon-camera")
+    const camera = scene.getCameraByName("babylon-camera");
 
-    const observer = camera.onViewMatrixChangedObservable.add(() => {
-
-        console.log("Camera moved");
-        camera.onViewMatrixChangedObservable.remove(observer);
-        return true;
-    });    
-
+    return new Promise((resolve) => {
+        const observer = camera.onViewMatrixChangedObservable.add(() => {
+            console.log("Camera moved");
+            camera.onViewMatrixChangedObservable.remove(observer);
+            resolve(true);
+        });
+    });
 }
 
 const eventMap = {

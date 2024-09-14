@@ -62,94 +62,78 @@ export function NarratorVoice() {
                 },
                 waitForCallback: true,
             },     
-            {
-                type: 'callback',
-                callback: () => {
-                    return Promise.all([
-                        setTextEvent({ 
-                            type: 'narrator',
-                            visible: true,
-                            overlay: false,
-                            text: "This can be a cold and desolate place.", 
-                            requiresInteraction: true, 
-                            darkeningVisible: false, 
-                        })
-                    ])
-                },
-                waitForCallback: true,
-            }, 
-            {
-                type: 'callback',
-                callback: () => {
-                    return Promise.all([
-                        setTextEvent({ 
-                            type: 'narrator',
-                            visible: true,
-                            overlay: false,
-                            text: "I have spent much of my life here, lost in a stupor, adrift in a void,", 
-                            requiresInteraction: true, 
-                            darkeningVisible: false
-                        })
-                    ])
-                },
-                waitForCallback: true,
-            }, 
-            {
-                type: 'callback',
-                callback: () => {
-                    return Promise.all([
-                        setTextEvent({ 
-                            type: 'narrator',
-                            visible: true,
-                            overlay: false,
-                            text: "flitting between cold ideas.", 
-                            requiresInteraction: true, 
-                            darkeningVisible: false, 
-                        })
-                    ])
-                },
-                waitForCallback: true,
-            }, 
-            {
-                type: 'callback',
-                callback: () => {
-                    setStarControls({ visible: true, immediate: false, duration: 4 })
-                }
-            },
-            {
-                type: 'callback',
-                callback: () => {
-                    return Promise.all([
-                        setTextEvent({ 
-                            type: 'narrator',
-                            visible: true,
-                            overlay: false,
-                            text: "flitting between cold ideas.", 
-                            requiresInteraction: true, 
-                            darkeningVisible: false, 
-                        })
-                    ])
-                },
-                waitForCallback: true,
-            }, 
-            {
-                type: 'callback',
-                callback: () => {
-                    return Promise.all([
-                        setTextEvent({ 
-                            type: 'narrator',
-                            visible: true,
-                            overlay: false,
+            // {
+            //     type: 'callback',
+            //     callback: () => {
+            //         return Promise.all([
+            //             setTextEvent({ 
+            //                 type: 'narrator',
+            //                 visible: true,
+            //                 overlay: false,
+            //                 text: "This can be a cold and desolate place.", 
+            //                 requiresInteraction: true, 
+            //                 darkeningVisible: false, 
+            //             })
+            //         ])
+            //     },
+            //     waitForCallback: true,
+            // }, 
+            // {
+            //     type: 'callback',
+            //     callback: () => {
+            //         return Promise.all([
+            //             setTextEvent({ 
+            //                 type: 'narrator',
+            //                 visible: true,
+            //                 overlay: false,
+            //                 text: "I have spent much of my life here, lost in a stupor, adrift in a void,", 
+            //                 requiresInteraction: true, 
+            //                 darkeningVisible: false
+            //             })
+            //         ])
+            //     },
+            //     waitForCallback: true,
+            // }, 
+            // {
+            //     type: 'callback',
+            //     callback: () => {
+            //         return Promise.all([
+            //             setTextEvent({ 
+            //                 type: 'narrator',
+            //                 visible: true,
+            //                 overlay: false,
+            //                 text: "flitting between cold ideas.", 
+            //                 requiresInteraction: true, 
+            //                 darkeningVisible: false, 
+            //             })
+            //         ])
+            //     },
+            //     waitForCallback: true,
+            // }, 
+            // {
+            //     type: 'callback',
+            //     callback: () => {
+            //         setStarControls({ visible: true, immediate: false, duration: 4 })
+            //     }
+            // },
+            // {
+            //     type: 'callback',
+            //     callback: () => {
+            //         return Promise.all([
+            //             setTextEvent({ 
+            //                 type: 'narrator',
+            //                 visible: true,
+            //                 overlay: false,
 
-                            text: "Now that you have returned to me, I wish to try building something better.", 
-                            requiresInteraction: true, 
-                            darkeningVisible: true,
-                            darkeningDuration: 2, 
-                        })
-                    ])
-                },
-                waitForCallback: true,
-            }, 
+            //                 text: "Now that you have returned to me, I wish to try building something better.", 
+            //                 requiresInteraction: true, 
+            //                 darkeningVisible: true,
+            //                 darkeningDuration: 2, 
+            //             })
+            //         ])
+            //     },
+            //     waitForCallback: true,
+            // }, 
             {
                 type: 'callback',
                 callback: () => {
@@ -162,7 +146,6 @@ export function NarratorVoice() {
                             requiresInteraction: true, 
                             waitUntilVisible: false,
                             darkeningVisible: true, 
-                            waitForCompletion: false
                         })
                     ])
                 },
@@ -171,6 +154,7 @@ export function NarratorVoice() {
             {
                 type: 'callback',
                 callback: () => {
+                    console.log('fade narrator event')
                     return Promise.all([
                         setTextEvent({ 
                             type: 'narrator',
@@ -186,6 +170,7 @@ export function NarratorVoice() {
             {
                 type: 'callback',
                 callback: () => {
+                    console.log('fade overlay event')
                     return Promise.all([
                         setTrueOverlayControls({ visible: true, immediate: false, duration: 4 }),
                     ])
@@ -218,14 +203,17 @@ export function NarratorVoice() {
                             type: 'system',
                             visible: true,
                             overlay: true,
-                            text: "This can be a cold and desolate place.", 
-                            requiresInteraction: false, 
+                            text: "Move around", 
+                            waitUntilVisible: true,
                             darkeningVisible: true, 
-                        }).then(() => {
-                            setCommandEvent({
-                                eventType: 'camera-moved',
-                                props: {}
-                            })
+                            waitCondition: () => {
+                                return Promise.all([
+                                    setCommandEvent({
+                                        eventType: 'camera-moved',
+                                        props: {}
+                                    })
+                                ])
+                            }
                         })
                     ])
                 },
@@ -234,10 +222,11 @@ export function NarratorVoice() {
             {
                 type: 'callback',
                 callback: () => {
+                    console.log('triggered')
                     return Promise.all([
                         setTextEvent({ 
-                            type: 'narrator',
-                            overlay: false,
+                            type: 'system',
+                            overlay: true,
                             visible: false,
                             
                            
@@ -246,46 +235,46 @@ export function NarratorVoice() {
                 },
                 waitForCallback: false,
             },
-            {
-                type: 'callback',
-                callback: () => {
-                    return Promise.all([
-                        setCommandEvent({
-                            eventType: 'mesh-visible', 
-                            props: {
-                                meshName: 'narrator'
-                            }
-                            })
-                    ])
-                },
-                waitForCallback: true,
-            },
-            {
-                type: 'callback',
-                callback: () => {
-                    return Promise.all([
-                        setTextEvent({ 
-                            type: 'narrator',
-                            visible: true,
-                            overlay: true,
-                            text: "So long spent in the dark sky -- do you even remember what the stars look like?", 
-                            requiresInteraction: false, 
-                            darkeningVisible: true, 
-                            waitForCompletion: true,
-                        })
-                    ])
-                },
-                waitForCallback: true,
-            }, 
-            {
-                type: 'callback',
-                callback: () => {
-                    return Promise.all([
-                        setCampfireView({ active: false, immediate: false })
-                    ])
-                },
-                waitForCallback: true,
-            },
+            // {
+            //     type: 'callback',
+            //     callback: () => {
+            //         return Promise.all([
+            //             setCommandEvent({
+            //                 eventType: 'mesh-visible', 
+            //                 props: {
+            //                     meshName: 'narrator'
+            //                 }
+            //                 })
+            //         ])
+            //     },
+            //     waitForCallback: true,
+            // },
+            // {
+            //     type: 'callback',
+            //     callback: () => {
+            //         return Promise.all([
+            //             setTextEvent({ 
+            //                 type: 'narrator',
+            //                 visible: true,
+            //                 overlay: true,
+            //                 text: "So long spent in the dark sky -- do you even remember what the stars look like?", 
+            //                 requiresInteraction: false, 
+            //                 darkeningVisible: true, 
+            //                 waitForCompletion: true,
+            //             })
+            //         ])
+            //     },
+            //     waitForCallback: true,
+            // }, 
+            // {
+            //     type: 'callback',
+            //     callback: () => {
+            //         return Promise.all([
+            //             setCampfireView({ active: false, immediate: false })
+            //         ])
+            //     },
+            //     waitForCallback: true,
+            // },
             // {
             //     type: 'system',
             //     text: "Move around",

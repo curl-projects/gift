@@ -48,10 +48,13 @@ export function NarrationPainter(){
 
 
             if(!textEvent.visible){
-                
-                setState({ visible: false, text: "", requiresInteraction: false }).then(()=>{
+                console.log("text event is not visible:", textEvent)
+                setState({ visible: false, text: "", requiresInteraction: false })
+                // todo: this should be promise chained, but i can't figure out why it's not resolving
+                // .then(()=>{
+                    console.log("text event complete")
                     textEvent.onComplete && textEvent.onComplete();
-                })
+                // })
             }
 
             else if(textEvent.requiresInteraction){
@@ -86,6 +89,34 @@ export function NarrationPainter(){
                         textEvent.onComplete && textEvent.onComplete();    
                     }, textEvent.duration);
                 })
+            }
+            else if(textEvent.waitCondition){
+                // set the state
+
+                if(textEvent.waitUntilVisible){
+                    console.log("wait until visible")
+                    setState({ visible: true, text: textEvent.text, requiresInteraction: textEvent.requiresInteraction, 
+                        darkeningVisible: textEvent.darkeningVisible, darkeningDuration: textEvent.darkeningDuration }).then(()=>{
+                            console.log("wait condition activated")
+                            textEvent.waitCondition().then(()=>{
+                                console.log('waiting')
+                                textEvent.onComplete && textEvent.onComplete();
+                            })
+                        })    
+                }
+                else{
+                    setState({ visible: true, text: textEvent.text, requiresInteraction: textEvent.requiresInteraction, 
+                        darkeningVisible: textEvent.darkeningVisible, darkeningDuration: textEvent.darkeningDuration })
+                    
+                         // resolve when the wait condition is met
+                        textEvent.waitCondition().then(()=>{
+                                console.log('waiting')
+                        textEvent.onComplete && textEvent.onComplete();
+                    })
+                }
+              
+               
+
             }
             else{
                 console.error("Narration event was incorrectly specified: no duration or interaction requirement provided")
