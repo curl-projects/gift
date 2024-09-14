@@ -31,6 +31,7 @@ const NarratorComponent = ({
                     exit={{ opacity: 0 }}
                     transition={{ duration: darkeningDuration }}
                     onAnimationComplete={() => {
+                        console.log("animation complete (darkening)")
                         onComplete && onComplete();
                     }}
                 >
@@ -49,7 +50,7 @@ const NarratorComponent = ({
                         {/* <FireAnimation /> */}
                     </div>    
                 </motion.div>
-                {/*actual text -- the other one controls the spacing of the border */}
+              
                 
                 <motion.div 
                     key='narrator-text-absolute-container'
@@ -69,23 +70,25 @@ const NarratorComponent = ({
                             exit={{ opacity: 0 }}
                             transition={{ duration: 2 }}
                             onAnimationComplete={() => {
+                                console.log("animation complete (text)")
                                 onComplete && onComplete();
                             }}
                         >
                                 {text}
-                                <motion.span 
-                                    className={styles.nextButtonContainer}
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    exit={{ opacity: 0 }}
-                                    transition={{ duration: 2, delay: 2 }}
-                                >
-                                    press space to continue
-                                </motion.span>
                             </motion.p>
                        
                     </AnimatePresence>
                     </motion.div>
+                    <motion.p 
+                        key={text}
+                        className={styles.nextButtonContainer}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: requiresInteraction ? 1 : 0 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 4, delay: 0.5 }}
+                    >
+                        press space to continue
+                    </motion.p>
                 </>
             )}
         </AnimatePresence>

@@ -174,24 +174,66 @@ export function NarratorVoice() {
                     return Promise.all([
                         setTextEvent({ 
                             type: 'narrator',
-                            visible: true,
-                            text: "I am a sexy narrator", 
                             overlay: false,
-                            requiresInteraction: true, 
-                            waitUntilVisible: false,
-                            darkeningVisible: true, 
-                            waitForCompletion: true
+                            visible: false,
+                            
+                           
                         })
-                    ]).then(()=>{
-                        console.log("all done!")
-                    })
+                    ])
                 },
                 waitForCallback: true,
             },
             {
                 type: 'callback',
                 callback: () => {
-                    console.log("setting textEvent to false")
+                    return Promise.all([
+                        setTrueOverlayControls({ visible: true, immediate: false, duration: 4 }),
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setCampfireView({ active: true, immediate: true, targetMeshName: 'constellationCanvas' })
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setTrueOverlayControls({ visible: false, immediate: false, duration: 4 }),
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setTextEvent({ 
+                            type: 'system',
+                            visible: true,
+                            overlay: true,
+                            text: "This can be a cold and desolate place.", 
+                            requiresInteraction: false, 
+                            darkeningVisible: true, 
+                        }).then(() => {
+                            setCommandEvent({
+                                eventType: 'camera-moved',
+                                props: {}
+                            })
+                        })
+                    ])
+                },
+                waitForCallback: true,
+            }, 
+            {
+                type: 'callback',
+                callback: () => {
                     return Promise.all([
                         setTextEvent({ 
                             type: 'narrator',
@@ -202,46 +244,48 @@ export function NarratorVoice() {
                         })
                     ])
                 },
+                waitForCallback: false,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setCommandEvent({
+                            eventType: 'mesh-visible', 
+                            props: {
+                                meshName: 'narrator'
+                            }
+                            })
+                    ])
+                },
                 waitForCallback: true,
             },
-
-
-        
-
-            // // START HERE
-            // {
-            //     type: 'narrator',
-            //     text: "It has been so very long since you were \n awake",
-            //     darkeningVisible: true,
-            //     requiresInteraction: true,
-            // },
-            // {
-            //     type: 'callback',
-            //     callback: () => {
-            //         return Promise.all([
-            //             setTrueOverlayControls({ visible: true, immediate: false, duration: 4 }),
-            //         ])
-            //     },
-            //     waitForCallback: true,
-            // },
-            // {
-            //     type: 'callback',
-            //     callback: () => {
-            //         return Promise.all([
-            //             setCampfireView({ active: true, immediate: true, targetMeshName: 'constellationCanvas' })
-            //         ])
-            //     },
-            //     waitForCallback: true,
-            // },
-            // {
-            //     type: 'callback',
-            //     callback: () => {
-            //         return Promise.all([
-            //             setTrueOverlayControls({ visible: false, immediate: false, duration: 4 }),
-            //         ])
-            //     },
-            //     waitForCallback: true,
-            // },
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setTextEvent({ 
+                            type: 'narrator',
+                            visible: true,
+                            overlay: true,
+                            text: "So long spent in the dark sky -- do you even remember what the stars look like?", 
+                            requiresInteraction: false, 
+                            darkeningVisible: true, 
+                            waitForCompletion: true,
+                        })
+                    ])
+                },
+                waitForCallback: true,
+            }, 
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setCampfireView({ active: false, immediate: false })
+                    ])
+                },
+                waitForCallback: true,
+            },
             // {
             //     type: 'system',
             //     text: "Move around",

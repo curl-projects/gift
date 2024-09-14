@@ -73,7 +73,7 @@ export default function WorldCanvas() {
         Toolbar: null,
         MainMenu: null,
         DebugMenu: null,
-        // DebugPanel: null,
+        DebugPanel: null,
         Minimap: null,
         PageMenu: null,
         ActionsMenu: null,
@@ -192,7 +192,7 @@ export default function WorldCanvas() {
                 >
                     {editor && (
                         <>
-                            <GraphUi />
+                            {/* <GraphUi /> */}
                             <DriftPainter 
                                 user={data.user}
                             />
@@ -203,7 +203,7 @@ export default function WorldCanvas() {
                             <CovenantPainter />
                             <NarrationPainter />
                             {/* <ConstellationFinder /> */}
-                            <CustomToolbar />
+                            {/* <CustomToolbar /> */}
                             <ConstellationLabel 
                                 name={data.user.name}
                             />

@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import styles from "./SystemComponent.module.css";
 import { TextScramble } from "~/components/canvas/custom-ui/post-processing-effects/text-scramble/TextScramble";
 
-const SystemComponent = ({ visible, text, delay = 0, onComplete = null}) => {
+const SystemComponent = ({ visible, text, requiresInteraction, delay = 0, onComplete = null}) => {
     const textRef = useRef(null);
     const [animationComplete, setAnimationComplete] = useState(false);
 
@@ -31,6 +31,7 @@ const SystemComponent = ({ visible, text, delay = 0, onComplete = null}) => {
     return (
         <AnimatePresence>
             {visible && (
+                <>
                 <motion.div
                     key='system-component'
                     className={styles.systemContainer}
@@ -59,6 +60,20 @@ const SystemComponent = ({ visible, text, delay = 0, onComplete = null}) => {
                         </motion.p>
                     </div>
                 </motion.div>
+                <AnimatePresence mode="wait">
+                    <motion.p 
+                        key={text}
+                        className={styles.nextButtonContainer}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: requiresInteraction ? 1 : 0 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 2, delay: 1 }}
+                    >
+                        press space to continue
+                    </motion.p>
+                </AnimatePresence>
+                </>
+                
             )}
         </AnimatePresence>
     );

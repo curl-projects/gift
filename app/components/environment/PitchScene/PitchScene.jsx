@@ -153,11 +153,11 @@ export function PitchScene(){
 
 
     
-            const advancedTexture = createFullscreenUI();
-            createFocusButton(scene, camera, advancedTexture, triggerEffect, setTriggerWarp);
-            createCanvasControlsButton(scene, advancedTexture);
-            createResetButton(scene, advancedTexture);
-            createCampfireFocusButton(scene, camera, advancedTexture, triggerEffect, setTriggerWarp, onRender);
+            // const advancedTexture = createFullscreenUI();
+            // createFocusButton(scene, camera, advancedTexture, triggerEffect, setTriggerWarp);
+            // createCanvasControlsButton(scene, advancedTexture);
+            // createResetButton(scene, advancedTexture);
+            // createCampfireFocusButton(scene, camera, advancedTexture, triggerEffect, setTriggerWarp, onRender);
             setReactScene(scene)
 
     

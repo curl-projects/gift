@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { useStarFireSync } from "~/components/synchronization/StarFireSync"
 import { useConstellationMode } from "~/components/canvas/custom-ui/utilities/ConstellationModeContext"
 import NarratorComponent from "~/components/canvas/custom-ui/game-ui/Narrator/components/NarratorComponent.jsx"
@@ -9,24 +9,20 @@ export function NarrationPainter(){
             setGameSystemText, setGameNarratorText, narratorText, systemText, 
             setNarratorText, setSystemText } = useStarFireSync();
     
-    const handleKeyDown = useCallback((event, setState) => {
+    const handleKeyDownRef = useRef();
+
+    const handleKeyDown = useCallback((event) => {
         if (event.key === ' ') {
             console.log('triggering listener!')
-            window.removeEventListener('keydown', handleKeyDown);
+            window.removeEventListener('keydown', handleKeyDownRef.current);
             event.preventDefault();
             textEvent.onComplete && textEvent.onComplete();
-        
-            // console.log("textEvent in listener", textEvent)
-            // if(textEvent.waitForCompletion) {
-            //     setTimeout(() => {
-            //         console.log('text event completing', textEvent.onComplete)
-            //         textEvent.onComplete && textEvent.onComplete();
-            //     }, 2000) // currently hard-coded, but can change this
-            // } else {
-            //     textEvent.onComplete && textEvent.onComplete();
-            // }  
         }
     }, [textEvent]);
+
+    useEffect(() => {
+        handleKeyDownRef.current = handleKeyDown;
+    }, [handleKeyDown]);
 
     useEffect(()=>{
         if(textEvent){
@@ -52,7 +48,10 @@ export function NarrationPainter(){
 
 
             if(!textEvent.visible){
-                setState({ visible: false, text: "", requiresInteraction: false })
+                
+                setState({ visible: false, text: "", requiresInteraction: false }).then(()=>{
+                    textEvent.onComplete && textEvent.onComplete();
+                })
             }
 
             else if(textEvent.requiresInteraction){
@@ -60,22 +59,19 @@ export function NarrationPainter(){
                 console.log("TEXT EVENT REQUIRES INTERACTION")
 
                 if(textEvent.waitUntilVisible){
-                    setState({ visible: true,  text: textEvent.text, requiresInteraction: textEvent.requiresInteraction, 
+                    setState({ visible: true, text: textEvent.text, requiresInteraction: textEvent.requiresInteraction, 
                             darkeningVisible: textEvent.darkeningVisible, darkeningDuration: textEvent.darkeningDuration }).then(()=>{
                         console.log("adding listener once visible")
                         // setState(prevState => ({ ...prevState, nextButtonVisible: true }))
-                        window.addEventListener('keydown', (event) => handleKeyDown(event, setState));
+                        window.addEventListener('keydown', handleKeyDownRef.current);
                     })
                 }
                 else{
                     setState({ visible: true, text: textEvent.text, requiresInteraction: textEvent.requiresInteraction, 
-                        darkeningVisible: textEvent.darkeningVisible, darkeningDuration: textEvent.darkeningDuration, nextButtonVisible: true })
+                        darkeningVisible: textEvent.darkeningVisible, darkeningDuration: textEvent.darkeningDuration })
                     console.log("adding listener immediately")
-                    window.addEventListener('keydown', (event) => handleKeyDown(event, setState));
+                    window.addEventListener('keydown', handleKeyDownRef.current);
                 }
-
-               
-
             }
             else if(textEvent.duration){
                 // trigger state change
@@ -110,14 +106,12 @@ export function NarrationPainter(){
                 darkeningVisible={narratorText.darkeningVisible}
                 darkeningDuration={narratorText.darkeningDuration}
                 onComplete={narratorText.onComplete}
-                nextButtonVisible={narratorText.nextButtonVisible}
                 />
             <SystemComponent 
                 visible={systemText.visible} 
-                text={systemText.text} 
+                text={systemText.text}  
                 requiresInteraction={systemText.requiresInteraction}
                 onComplete={systemText.onComplete}
-                nextButtonVisible={systemText.nextButtonVisible}
                 />
         </>
     );
