@@ -160,11 +160,12 @@ export function NarratorVoice() {
                 text: "This can be a cold and desolate place.",
                 requiresInteraction: true,   
             },
-
-
-
-
-
+            {
+                type: "callback",
+                callback: () => {
+                    setExpandConstellation({ concepts: { expanded: true }, excerpts: { expanded: true } })
+                },
+            },
 
             // {
             //     type: 'callback',
@@ -466,11 +467,7 @@ export function NarratorVoice() {
             }
             else {
                 console.error("Unknown command type:", command.type);
-            }
-
-
-
-          
+            }   
     }, []);
 
     useEffect(() => {

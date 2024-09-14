@@ -74,7 +74,7 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
         const [isHovered, setIsHovered] = useState(false);
         const data = useLoaderData();
         const { collection, size } = useCollection('graph')
-        const { drifting, setDrifting, triggerWarp } = useConstellationMode();
+        const { drifting, setDrifting, triggerWarp, expandConstellation } = useConstellationMode();
         const { triggerEffect, activeEffect } = useStarFireSync();
         
 
@@ -263,6 +263,11 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
             }
 
             collection.startSimulation();
+            
+            console.log("EXPAND CONSTELLATION NAME TRIGGER")
+            expandConstellation?.concepts?.onComplete && expandConstellation.concepts.onComplete()
+
+
             
         // needs to be in a time out because the canvas position doesn't update while all of these changes are happening
             // setTimeout(() => {

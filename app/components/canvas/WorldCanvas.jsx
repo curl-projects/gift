@@ -7,8 +7,9 @@ import { ClientOnly } from 'remix-utils/client-only';
 
 // CUSTOM UI
 import { ConstellationModeProvider } from "~/components/canvas/custom-ui/utilities/ConstellationModeContext"
-import { ConstellationFinder } from "~/components/canvas/custom-ui/utilities/ConstellationFinder"
+// import { ConstellationFinder } from "~/components/canvas/custom-ui/utilities/ConstellationFinder"
 import { ConstellationPainter } from "~/components/canvas/custom-ui/utilities/ConstellationPainter"
+import { ConstellationExpander } from "~/components/canvas/custom-ui/utilities/ConstellationExpander"
 import { DriftPainter } from "~/components/canvas/custom-ui/utilities/DriftPainter"
 import { GameController } from "~/components/canvas/custom-ui/game-ui/GameControls/GameController"
 import CustomToolbar from "~/components/canvas/custom-ui/custom-toolbar/CustomToolbar"
@@ -195,7 +196,7 @@ export default function WorldCanvas() {
                             <ConstellationPainter 
                                 user={data.user} 
                             />
-                            <ConstellationFinder />
+                            {/* <ConstellationFinder /> */}
                             <CustomToolbar />
                             <ConstellationLabel 
                                 name={data.user.name}
@@ -204,6 +205,7 @@ export default function WorldCanvas() {
                             <SelectionListener 
                                 user={data.user}
                             />
+                            <ConstellationExpander />
                             <Stars />
                             <WarpStars />
                             <Clouds />
