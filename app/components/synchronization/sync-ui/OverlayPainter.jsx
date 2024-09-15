@@ -14,21 +14,29 @@ export function OverlayPainter(){
         const tlBackground = document.querySelector('.tl-background');
             // rip down overlay if it exists
     
-        if (overlayControls.dark) {
-            tlContainer?.classList.add('overlay-active');
-            tlBackground?.classList.add('overlay-active');
-        } else {
-            tlContainer?.classList.remove('overlay-active');
-            tlBackground?.classList.remove('overlay-active');
-        }
-
         // Apply transition duration
-        const duration = overlayControls.immediate ? 0 : overlayControls.duration;
-        tlContainer?.style.setProperty('--overlay-transition-duration', `${duration}s`);
-        tlBackground?.style.setProperty('--overlay-transition-duration', `${duration}s`);
+        const duration = overlayControls.immediate ? 0 : (overlayControls.duration || 2);
+
+        console.log("overlayControls", overlayControls)
+
         setTimeout(()=>{
-            overlayControls.onComplete && overlayControls.onComplete();
-        }, duration)
+            console.log("setting delay")
+
+            if (overlayControls.dark) {
+                tlContainer?.classList.add('overlay-active');
+                tlBackground?.classList.add('overlay-active');
+            } else {
+                tlContainer?.classList.remove('overlay-active');
+                tlBackground?.classList.remove('overlay-active');
+            }
+            tlContainer?.style.setProperty('--overlay-transition-duration', `${duration}s`);
+            tlBackground?.style.setProperty('--overlay-transition-duration', `${duration}s`);
+            setTimeout(()=>{
+                overlayControls.onComplete && overlayControls.onComplete();
+            }, duration)
+        }, overlayControls.delay * 1000 || 0)
+        
+       
       
     }, [overlayControls]);
 

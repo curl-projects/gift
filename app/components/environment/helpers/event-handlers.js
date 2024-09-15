@@ -1,7 +1,15 @@
 function meshIsVisible(scene, props){
-    const camera = scene.cameras.find(cam => cam.name === "babylon-camera");
-    const mesh = scene.meshes.find(mesh => mesh.name === props.meshName);
-    return camera.isInFrustum(mesh)
+    return new Promise((resolve) => {
+        const camera = scene.cameras.find(cam => cam.name === "babylon-camera");
+        const mesh = scene.meshes.find(mesh => mesh.name === props.meshName);
+        
+        const observer = scene.onBeforeRenderObservable.add(() => {
+            if(camera.isInFrustum(mesh)){
+                scene.onBeforeRenderObservable.remove(observer);
+                resolve(true);
+            }
+        });
+    })
 }
 
 function cameraMoved(scene, props){
@@ -34,7 +42,7 @@ export function addCommandEventListener(scene, commandEvent, canvasProps={}) {
             return false;
         }
 
-        cameraMoved(scene, eventProps).then(()=>{
+        eventMap[eventType](scene, eventProps).then(()=>{
             scene.onBeforeRenderObservable.remove(eventHandler);
             commandEvent.onComplete && commandEvent.onComplete();
             return true;

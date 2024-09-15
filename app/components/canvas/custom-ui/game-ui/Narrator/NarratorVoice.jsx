@@ -181,7 +181,9 @@ export function NarratorVoice() {
                 type: 'callback',
                 callback: () => {
                     return Promise.all([
-                        setCampfireView({ active: true, immediate: true, targetMeshName: 'constellationCanvas' })
+                        setCampfireView({ active: true, immediate: true, targetMeshName: 'constellationCanvas' }),
+                        setStarControls({ visible: true, immediate: true })
+                        
                     ])
                 },
                 waitForCallback: true,
@@ -191,6 +193,7 @@ export function NarratorVoice() {
                 callback: () => {
                     return Promise.all([
                         setTrueOverlayControls({ visible: false, immediate: false, duration: 4 }),
+                        setOverlayControls({ dark: false, immediate: false, duration: 2, delay: 4 }),
                     ])
                 },
                 waitForCallback: true,
@@ -199,6 +202,7 @@ export function NarratorVoice() {
                 type: 'callback',
                 callback: () => {
                     return Promise.all([
+                        
                         setTextEvent({ 
                             type: 'system',
                             visible: true,
@@ -209,7 +213,7 @@ export function NarratorVoice() {
                             waitCondition: () => {
                                 return Promise.all([
                                     setCommandEvent({
-                                        eventType: 'camera-moved',
+                                         eventType: 'camera-moved',
                                         props: {}
                                     })
                                 ])
@@ -235,46 +239,46 @@ export function NarratorVoice() {
                 },
                 waitForCallback: false,
             },
-            // {
-            //     type: 'callback',
-            //     callback: () => {
-            //         return Promise.all([
-            //             setCommandEvent({
-            //                 eventType: 'mesh-visible', 
-            //                 props: {
-            //                     meshName: 'narrator'
-            //                 }
-            //                 })
-            //         ])
-            //     },
-            //     waitForCallback: true,
-            // },
-            // {
-            //     type: 'callback',
-            //     callback: () => {
-            //         return Promise.all([
-            //             setTextEvent({ 
-            //                 type: 'narrator',
-            //                 visible: true,
-            //                 overlay: true,
-            //                 text: "So long spent in the dark sky -- do you even remember what the stars look like?", 
-            //                 requiresInteraction: false, 
-            //                 darkeningVisible: true, 
-            //                 waitForCompletion: true,
-            //             })
-            //         ])
-            //     },
-            //     waitForCallback: true,
-            // }, 
-            // {
-            //     type: 'callback',
-            //     callback: () => {
-            //         return Promise.all([
-            //             setCampfireView({ active: false, immediate: false })
-            //         ])
-            //     },
-            //     waitForCallback: true,
-            // },
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setCommandEvent({
+                            eventType: 'mesh-visible', 
+                            props: {
+                                meshName: 'narrator'
+                            }
+                            })
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setTextEvent({ 
+                            type: 'narrator',
+                            visible: true,
+                            overlay: true,
+                            text: "So long spent in the dark sky -- do you even remember what the stars look like?", 
+                            duration: 4,
+                            waitUntilVisible: true,
+                            darkeningVisible: true, 
+                        })
+                    ])
+                },
+                waitForCallback: true,
+            }, 
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setCampfireView({ active: false, immediate: false })
+                    ])
+                },
+                waitForCallback: true,
+            },
             // {
             //     type: 'system',
             //     text: "Move around",
