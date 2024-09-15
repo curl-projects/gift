@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import styles from './Stars.module.css';
 import { useEditor, track } from 'tldraw';
-import { useConstellationMode } from '../../utilities/ConstellationModeContext';
+import { useStarFireSync } from '~/components/synchronization/StarFireSync';
 
 function generateBoxShadow(n, offsetX = 0, offsetY = 0, color = '#FFF') {
   let value = `${Math.random() * 2800 + offsetX}px ${Math.random() * 2800 + offsetY}px 0px 0px ${color}`; // No blur and spread, with offset
@@ -22,8 +22,7 @@ function applyOffset(boxShadow, offsetX, offsetY, color) {
 }
 
 export const Stars = track(() => {
-  const editor = useEditor();
-  const { starControls } = useConstellationMode();
+  const { starControls } = useStarFireSync();
 
   const [shadowsSmall, setShadowsSmall] = useState('');
   const [shadowsMedium, setShadowsMedium] = useState('');
@@ -69,8 +68,8 @@ export const Stars = track(() => {
         className={`${styles.stars}`}
         style={{ boxShadow: shadowsSmall }}
         initial={{ opacity: 0 }}
-        animate={{ opacity: starControls.visible ? 1 : 0 }}
-        transition={{ duration: starControls.immediate ? 0 : introDuration }}
+        animate={{ opacity: starControls?.visible ? 1 : 0 }}
+        transition={{ duration: starControls?.immediate ? 0 : introDuration }}
         onAnimationComplete={(animation) => {
           console.log("STARS COMPLETED!")
           console.log("STAR CONTROLS", starControls)
@@ -82,24 +81,24 @@ export const Stars = track(() => {
         className={`${styles.stars2}`}
         style={{ boxShadow: shadowsMedium }}
         initial={{ opacity: 0 }}
-        animate={{ opacity: starControls.visible ? 1 : 0 }}
-        transition={{ duration: starControls.immediate ? 0 : introDuration }}
+        animate={{ opacity: starControls?.visible ? 1 : 0 }}
+        transition={{ duration: starControls?.immediate ? 0 : introDuration }}
       ></motion.div>
       <motion.div
         id="stars3"
         className={`${styles.stars3}`}
         style={{ boxShadow: shadowsBig }}
         initial={{ opacity: 0 }}
-        animate={{ opacity: starControls.visible ? 4 : 0 }}
-        transition={{ duration: starControls.immediate ? 0 : introDuration }}
+        animate={{ opacity: starControls?.visible ? 4 : 0 }}
+        transition={{ duration: starControls?.immediate ? 0 : introDuration }}
       ></motion.div>
       <motion.div
         id="offsetStars"
         className={`${styles.offsetStars}`}
         style={{ boxShadow: shadowsBigOffset }}
         initial={{ opacity: 0 }}
-        animate={{ opacity: starControls.visible ? 1 : 0 }}
-        transition={{ duration: starControls.immediate ? 0 : introDuration }}
+        animate={{ opacity: starControls?.visible ? 1 : 0 }}
+        transition={{ duration: starControls?.immediate ? 0 : introDuration }}
       ></motion.div>
     </>
   );

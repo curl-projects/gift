@@ -2,12 +2,10 @@ import styles from "./ConstellationLabel.module.css"
 import { transliterateToLepcha } from "../../helpers/language-funcs"
 import { useStarFireSync } from "~/components/synchronization/StarFireSync"
 import { createShapeId, useEditor } from "tldraw"
-import { useConstellationMode } from "../utilities/ConstellationModeContext"
 import { motion } from "framer-motion"
 
 export function ConstellationLabel({ name }){
-    const { triggerWarp, setTriggerWarp } = useStarFireSync()
-    const { overlayMode, setOverlayMode, constellationLabel } = useConstellationMode()
+    const { triggerWarp, setTriggerWarp, constellationLabel } = useStarFireSync()
     const editor = useEditor()
 
     return(
@@ -16,7 +14,13 @@ export function ConstellationLabel({ name }){
             initial={{ opacity: 0 }}
             animate={{ opacity: constellationLabel.visible ? 1 : 0 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: constellationLabel.immediate ? 0 : 1 }}
+            transition={{ 
+                duration: constellationLabel.immediate ? 0 : (constellationLabel.duration || 1),
+                delay: constellationLabel.delay || 0,
+            }}
+            onAnimationComplete={() => {
+                constellationLabel.onComplete && constellationLabel.onComplete()
+            }}
             >
             <p className={styles.constellationName}>
                 <span className={styles.constellationGlyph}>

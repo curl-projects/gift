@@ -9,8 +9,6 @@ export const ConstellationModeProvider = ({ children }) => {
     const [expandedShapeIds, setExpandedShapeIds] = useState([]);
     const [narratorEvent, setNarratorEvent] = useState(null);
     
-    const [starControls, _setStarControls] = useState({ visible: false, immediate: true });
-    const [cloudControls, _setCloudControls] = useState({ visible: true, immediate: true });
 
     const [constellationLabel, _setConstellationLabel] = useState({ visible: false, immediate: true });
     
@@ -33,8 +31,6 @@ export const ConstellationModeProvider = ({ children }) => {
     };
 
 
-    const setStarControls = useStateWithPromise(_setStarControls);
-    const setCloudControls = useStateWithPromise(_setCloudControls);
     const setConstellationLabel = useStateWithPromise(_setConstellationLabel);
 
 
@@ -50,8 +46,6 @@ export const ConstellationModeProvider = ({ children }) => {
                 drifting, setDrifting, 
                 expandedShapeIds, setExpandedShapeIds, 
                 narratorEvent, setNarratorEvent, 
-                starControls, setStarControls,
-                cloudControls, setCloudControls,
                 expandConcepts, setExpandConcepts,
                 expandExcerpts, setExpandExcerpts,
                 expandConstellation, setExpandConstellation,

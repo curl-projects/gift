@@ -10,7 +10,7 @@
     align-items: center;
     z-index: 1000;
     transform: translateY(50%); 
-    /* mix-blend-mode: overlay; */
+    mix-blend-mode: overlay;
 }
 
 
@@ -28,7 +28,7 @@
     /* used to remove from stacking context */
     position: relative;
     font-size: 80px;
-    color: rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.25);
     font-family: "Handjet", sans-serif;
     font-weight: 300;
     background: 
@@ -46,26 +46,36 @@
     left: 0;
     right: 0;
     z-index: 10000;
-    /* transform: translateY(50%); Add this line */
-    /* width: 80vw; */
-    padding-left: 10vw 0vw;
-    /* padding-right: 10vw; */
+    padding-left: 10vw ;
+    padding-right: 10vw;
+    text-align: center;
+    line-height: 5em;
     height: fit-content;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
+.narratorTextBackdrop{
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 1%, transparent);
+    position: fixed;
+    left: 0;
+    right: 0;
+    z-index: 1;
+    bottom: 0;
+    height: 20vh;
+    overflow: hidden;
+
+}
+
 .narratorContainerDarkening{
-    position: absolute;
-    top: -400%;
-    bottom: -400%;
+    position: fixed;
+    bottom: -5vh;
+    height: 30vh;
     width: 100%;
     background: 
-        linear-gradient(to top, transparent, rgba(178 56 0 / 50%) 50%, transparent), 
-        linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.5) 50%, transparent)
-        /* linear-gradient(to top, transparent, rgba(0 0 0 / 50%) 50%, transparent), 
-        linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.5) 50%, transparent) */
+    linear-gradient(to top, rgba(178 56 0 / 50%) 1%, transparent), 
+    linear-gradient(to top, rgba(0, 0, 0, 0.5) 1%, transparent)
         
         ; /* Gradient on both sides */
 

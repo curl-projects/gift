@@ -10,6 +10,8 @@ const StarFireSyncProvider = ({ children }) => {
     const [sceneLoaded, setSceneLoaded] = useState(false);
     const [commandEvent, _setCommandEvent] = useState(null);
 
+    const [cloudControls, _setCloudControls] = useState({ visible: true, immediate: true });
+    const [starControls, _setStarControls] = useState({ visible: true, immediate: true });
 
     // TEXT STUFF
     const [textEvent, _setTextEvent] = useState(null);
@@ -18,8 +20,7 @@ const StarFireSyncProvider = ({ children }) => {
     const [narratorText, _setNarratorText] = useState({ visible: false, text: '', requiresInteraction: false });
     const [systemText, _setSystemText] = useState({ visible: false, text: '', requiresInteraction: false });
 
-
-
+    const [constellationLabel, _setConstellationLabel] = useState({ visible: false, immediate: true });
 
 
     const [overlayControls, _setOverlayControls] = useState({ dark: false, immediate: true, duration: 2, }); // Consolidated state
@@ -46,7 +47,11 @@ const StarFireSyncProvider = ({ children }) => {
     const setGameNarratorText = useStateWithPromise(_setGameNarratorText);
     const setGameSystemText = useStateWithPromise(_setGameSystemText);
 
+    const setConstellationLabel = useStateWithPromise(_setConstellationLabel);
 
+    // AESTHETICS
+    const setCloudControls = useStateWithPromise(_setCloudControls);
+    const setStarControls = useStateWithPromise(_setStarControls);
 
 
     const setTriggerWarp = useStateWithPromise(_setTriggerWarp);
@@ -92,6 +97,10 @@ const StarFireSyncProvider = ({ children }) => {
                 narratorText, setNarratorText,
                 systemText, setSystemText,
 
+                constellationLabel, setConstellationLabel,
+                
+                cloudControls, setCloudControls,
+                starControls, setStarControls,
             }}>
             {children}
         </StarFireSyncContext.Provider>

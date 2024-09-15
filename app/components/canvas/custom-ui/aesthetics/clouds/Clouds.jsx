@@ -2,14 +2,17 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import styles from './Clouds.module.css';
 import { useConstellationMode } from '~/components/canvas/custom-ui/utilities/ConstellationModeContext';
-
-export function Clouds() {
-    const { cloudControls } = useConstellationMode();
+import { useStarFireSync } from '~/components/synchronization/StarFireSync';
+export function Clouds({ absoluteMode = false }) {
+    const { cloudControls } = useStarFireSync();
 
     return (
         <>
             <motion.div
                 className={styles.cloudsOverlay}
+                style={{
+                    position: absoluteMode ? 'absolute' : 'fixed',
+                }}
                 initial={{ opacity: 0, visibility: 'hidden' }}
                 animate={{ opacity: cloudControls?.visible ? 1 : 0, visibility: cloudControls?.visible ? 'visible' : 'hidden' }}
                 transition={{ duration: cloudControls?.immediate ? 0 : 1 }}
@@ -18,6 +21,9 @@ export function Clouds() {
                 }}
             ></motion.div>
             <motion.div
+                style={{
+                    position: absoluteMode ? 'absolute' : 'fixed',
+                }}
                 className={`${styles.cloudsOverlay} ${styles.cloudsOverlayReverse}`}
                 initial={{ opacity: 0, visibility: 'hidden' }}
                 animate={{ opacity: cloudControls?.visible ? 1 : 0, visibility: cloudControls?.visible ? 'visible' : 'hidden' }}
@@ -25,4 +31,4 @@ export function Clouds() {
             ></motion.div>
         </>
     );
-}
+} 

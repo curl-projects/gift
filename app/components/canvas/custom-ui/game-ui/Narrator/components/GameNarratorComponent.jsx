@@ -1,6 +1,8 @@
 import { motion, AnimatePresence } from "framer-motion";
 import styles from "./GameNarratorComponent.module.css";
 import { useEffect, useState, memo } from "react";
+import { Stars } from '~/components/canvas/custom-ui/aesthetics/stars/Stars';
+import { Clouds } from '~/components/canvas/custom-ui/aesthetics/clouds/Clouds';
 
 const GameNarratorComponent = ({ visible, text, requiresInteraction, exitDuration, onComplete }) => {
     return (
@@ -20,7 +22,7 @@ const GameNarratorComponent = ({ visible, text, requiresInteraction, exitDuratio
                 >
                     <div className={styles.narratorContainerInner}>
                         <div className={styles.narratorContainerDarkening} />
-                            <motion.p 
+                            {/* <motion.p 
                                 key={text} // Use text as key to trigger re-animation
                                 className={styles.narratorText}
                                 initial={{ opacity: 0 }}
@@ -28,7 +30,7 @@ const GameNarratorComponent = ({ visible, text, requiresInteraction, exitDuratio
                                 exit={{ opacity: 0 }}
                             >
                                 {text}
-                            </motion.p>
+                            </motion.p> */}
                         {/* <FireAnimation /> */}
                     </div>    
                 </motion.div>
@@ -56,6 +58,16 @@ const GameNarratorComponent = ({ visible, text, requiresInteraction, exitDuratio
                        
                     </AnimatePresence>
                     </motion.div>
+                <motion.div 
+                    className={styles.narratorTextBackdrop}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 2 }}
+                >
+                    <Stars />
+                    <Clouds absoluteMode />
+                </motion.div>
                 </>
             )}
         </AnimatePresence>
