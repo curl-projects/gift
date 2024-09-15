@@ -12,6 +12,7 @@ const StarFireSyncProvider = ({ children }) => {
 
     const [cloudControls, _setCloudControls] = useState({ visible: true, immediate: true });
     const [starControls, _setStarControls] = useState({ visible: true, immediate: true });
+    const [glyphControls, _setGlyphControls] = useState({ visible: false, immediate: false });
 
     // TEXT STUFF
     const [textEvent, _setTextEvent] = useState(null);
@@ -52,6 +53,7 @@ const StarFireSyncProvider = ({ children }) => {
     // AESTHETICS
     const setCloudControls = useStateWithPromise(_setCloudControls);
     const setStarControls = useStateWithPromise(_setStarControls);
+    const setGlyphControls = useStateWithPromise(_setGlyphControls);
 
 
     const setTriggerWarp = useStateWithPromise(_setTriggerWarp);
@@ -98,9 +100,10 @@ const StarFireSyncProvider = ({ children }) => {
                 systemText, setSystemText,
 
                 constellationLabel, setConstellationLabel,
-                
+
                 cloudControls, setCloudControls,
                 starControls, setStarControls,
+                glyphControls, setGlyphControls,
             }}>
             {children}
         </StarFireSyncContext.Provider>

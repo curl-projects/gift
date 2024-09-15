@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import styles from "./SystemComponent.module.css";
 import { TextScramble } from "~/components/canvas/custom-ui/post-processing-effects/text-scramble/TextScramble";
 
-const SystemComponent = ({ visible, text, requiresInteraction, delay = 0, onComplete = null}) => {
+const SystemComponent = ({ visible, text, requiresInteraction, delay, textDelay = 0, onComplete = null}) => {
     const textRef = useRef(null);
     const [animationComplete, setAnimationComplete] = useState(false);
 
@@ -20,9 +20,9 @@ const SystemComponent = ({ visible, text, requiresInteraction, delay = 0, onComp
             const fx = new TextScramble(textRef.current, styles.dud);
             setTimeout(() => {
                 fx.setText(text);
-            }, delay);
+            }, textDelay);
         }
-    }, [visible, text, animationComplete, delay]);
+    }, [visible, text, animationComplete, textDelay]);
 
     useEffect(()=>{
         console.log("visible", visible)
@@ -38,9 +38,9 @@ const SystemComponent = ({ visible, text, requiresInteraction, delay = 0, onComp
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    transition={{ duration: 3 }}
+                    transition={{ duration: 3, delay: delay || 0}}
                     onAnimationStart={() => {
-                        const textDelay = 1000 // text delay so the animation starts when it's partially visible
+                        const textDelay = 1000 + (delay || 0) // text delay so the animation starts when it's partially visible
                        
                         setTimeout(() => {
                              onComplete && onComplete();

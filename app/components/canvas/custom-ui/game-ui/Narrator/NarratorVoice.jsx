@@ -30,7 +30,8 @@ export function NarratorVoice() {
         journalMode, setJournalMode,
         triggerEffect,
         textEvent, setTextEvent,
-        constellationLabel, setConstellationLabel
+        constellationLabel, setConstellationLabel,
+        glyphControls, setGlyphControls
     } = useStarFireSync();
 
     const [narratorState, setNarratorState] = useState({ visible: false, text: '', requiresInteraction: false });
@@ -49,8 +50,8 @@ export function NarratorVoice() {
                 callback: () => {
                     setConstellationLabel({ visible: false, immediate: true })
                     setCampfireView({ active: false, immediate: true })
-                    setOverlayControls({ dark: true, immediate: true })
-                    setStarControls({ visible: false, immediate: true })
+                    setOverlayControls({ dark: false, immediate: true })
+                    setStarControls({ visible: true, immediate: true })
                     setCloudControls({ visible: true, immediate: true })
                 }
             },
@@ -305,14 +306,15 @@ export function NarratorVoice() {
                 type: 'callback',
                 callback: () => {
                     return Promise.all([
+                        setExpandConstellation({ concepts: true, excerpts: true }),
                         setTextEvent({ 
                             type: 'system',
                             visible: true,
                             overlay: false,
                             text: "create constellations to explore your work", 
                             requiresInteraction: true, 
+                            delay: 2,
                         }),
-                        setExpandConstellation({ concepts: true, excerpts: true })
                     ])
                 },
                 waitForCallback: true,
@@ -321,13 +323,6 @@ export function NarratorVoice() {
                 type: 'callback',
                 callback: () => {
                     return Promise.all([
-                        setTextEvent({ 
-                            type: 'system',
-                            visible: true,
-                            overlay: false,
-                            text: "traverse the stars to discover new ideas", 
-                            requiresInteraction: true, 
-                        }),
                         setTriggerWarp({ active: true, accDuration: 1000, deaccDuration: 1000, constAccDuration: 1000 }).then(()=>{
                             setConstellationLabel({ 
                                 visible: true, 
@@ -336,8 +331,15 @@ export function NarratorVoice() {
                                 delay: 2,
                                 text: "Finn's Cluster"
                             })
+                        }),
+                        setTextEvent({ 
+                            type: 'system',
+                            visible: true,
+                            overlay: false,
+                            text: "traverse the stars to discover new ideas", 
+                            requiresInteraction: true, 
+                            delay: 2,
                         })
-                 
                     ])
                 },
                 waitForCallback: true,
@@ -352,8 +354,10 @@ export function NarratorVoice() {
                             overlay: false,
                             text: "collect glyphs to forge new friendships", 
                             requiresInteraction: true, 
+                            delay: 2
                         }),
-                        setJournalMode({ active: true, page: 'cover' })
+                        setGlyphControls({ visible: true, immediate: false, duration: 4 })
+                        // setJournalMode({ active: true, page: 'cover' })
                     ])
                 },
                 waitForCallback: true,
@@ -362,19 +366,18 @@ export function NarratorVoice() {
                 type: 'callback',
                 callback: () => {
                     return Promise.all([
+                        setGlyphControls({ visible: false, immediate: false, duration: 4 }),
                         setTextEvent({ 
                             type: 'system',
                             visible: false,
                             overlay: false,
-                        })
+                        }),
+                        setJournalMode({ active: true, page: 'cover' })
+
                     ])
                 },
                 waitForCallback: true,
             }
-            
-            
-
-
 
             // {
             //     type: 'callback',

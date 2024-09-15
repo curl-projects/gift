@@ -1,0 +1,83 @@
+.glyphPainter{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 100000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    mix-blend-mode: overlay; 
+    /* color-dodge, soft-light,  */
+}
+
+.glyph{
+    font-family: "Mingzat", sans-serif;
+    font-weight: 400;
+    font-size: 200px;
+    position: relative;
+    top: 7vh;
+    left: 3vw;
+    color: transparent;
+    /* background: linear-gradient(to right, #FF9A8B, #FF6F61);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientAnimation 10s infinite; */
+
+}
+/* 
+@keyframes gradientAnimation {
+    0% {
+        background: linear-gradient(to right, #E7E5ED, #B7B7BD);
+    }
+    25% {
+        background: linear-gradient(to right, #FFD1DC, #FF9A8B);
+    }
+    50% {
+        background: linear-gradient(to right, #FF9A8B, #FF6F61);
+    }
+    75% {
+        background: linear-gradient(to right, #FF6F61, #FFD1DC);
+    }
+    100% {
+        background: linear-gradient(to right, #E7E5ED, #B7B7BD);
+    }
+} */
+
+.glyphContainer {
+    width: 100%;
+    position: fixed;
+    pointer-events: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    mix-blend-mode: overlay;
+    height: 100vh;
+}
+
+.glyphContainerInner{
+    position: relative;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+
+.glyphContainerDarkening{
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    background: 
+        linear-gradient(to right, #94DAF4, #69A9E6, #7F89D0);/* Gradient from left to right */
+        /* linear-gradient(to top, transparent, rgb(178 56 0) 50%, transparent), 
+        linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.5) 50%, transparent)        */
+        /* ; Gradient on both sides */
+
+}

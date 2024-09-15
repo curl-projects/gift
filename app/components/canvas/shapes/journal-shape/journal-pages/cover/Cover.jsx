@@ -10,7 +10,7 @@ export function Cover(){
                 initialBlur={4}
                 delay={0}
                 duration={0.5}>
-                    <h1 className={journalStyles.journalLargeText}>Cover</h1>
+                    <h1 className={journalStyles.journalLargeText}>Starlight</h1>
             </InkBleed>
         </div>
     )
