@@ -34,12 +34,19 @@ export function ConstellationLabel({ name }){
                 // manual text scramble delay
                 console.log("animation", animation)
                 if(animation && animation.opacity === 1){
+                    
+                }
+                if(constellationLabel.visible && animation.opacity === 1){
                     setTimeout(()=>{
                         setAnimationCommenced(true)
-                        constellationLabel.onComplete && constellationLabel.onComplete()
                     }, 1000)
+                    constellationLabel.onComplete && constellationLabel.onComplete()
                 }
-            }}
+                else if(!constellationLabel.visible && animation.opacity === 0){
+                    constellationLabel.onComplete && constellationLabel.onComplete()
+                }
+            }
+            }
             >
             <motion.p className={styles.constellationGlyph}>
                 <LabelTranslate 
