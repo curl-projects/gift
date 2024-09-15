@@ -288,14 +288,7 @@ export function NarratorVoice() {
                 type: 'callback',
                 callback: () => {
                     return Promise.all([
-                        // setTextEvent({ 
-                        //     type: 'system',
-                        //     visible: true,
-                        //     overlay: false,
-                        //     text: "create constellations to explore your work", 
-                        //     requiresInteraction: true, 
-                        //     darkeningVisible: true, 
-                        // }),
+                        
                         setConstellationLabel({ 
                             visible: true, 
                             immediate: false, 
@@ -308,6 +301,81 @@ export function NarratorVoice() {
                 },
                 waitForCallback: true,
             },
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setTextEvent({ 
+                            type: 'system',
+                            visible: true,
+                            overlay: false,
+                            text: "create constellations to explore your work", 
+                            requiresInteraction: true, 
+                        }),
+                        setExpandConstellation({ concepts: true, excerpts: true })
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setTextEvent({ 
+                            type: 'system',
+                            visible: true,
+                            overlay: false,
+                            text: "traverse the stars to discover new ideas", 
+                            requiresInteraction: true, 
+                        }),
+                        setTriggerWarp({ active: true, accDuration: 1000, deaccDuration: 1000, constAccDuration: 1000 }).then(()=>{
+                            setConstellationLabel({ 
+                                visible: true, 
+                                immediate: false, 
+                                duration: 2, 
+                                delay: 2,
+                                text: "Finn's Cluster"
+                            })
+                        })
+                 
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setTextEvent({ 
+                            type: 'system',
+                            visible: true,
+                            overlay: false,
+                            text: "collect glyphs to forge new friendships", 
+                            requiresInteraction: true, 
+                        }),
+                        setJournalMode({ active: true, page: 'cover' })
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setTextEvent({ 
+                            type: 'system',
+                            visible: false,
+                            overlay: false,
+                        })
+                    ])
+                },
+                waitForCallback: true,
+            }
+            
+            
+
+
+
             // {
             //     type: 'callback',
             //     callback: () => {

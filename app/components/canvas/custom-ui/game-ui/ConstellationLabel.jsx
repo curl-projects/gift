@@ -39,8 +39,12 @@ export function ConstellationLabel({ name }){
                 if(constellationLabel.visible && animation.opacity === 1){
                     setTimeout(()=>{
                         setAnimationCommenced(true)
+
+                        setTimeout(()=>{
+                            constellationLabel.onComplete && constellationLabel.onComplete()
+                        }, 3000)
                     }, 1000)
-                    constellationLabel.onComplete && constellationLabel.onComplete()
+                    
                 }
                 else if(!constellationLabel.visible && animation.opacity === 0){
                     constellationLabel.onComplete && constellationLabel.onComplete()
