@@ -9,24 +9,21 @@
     gap: 28px;
 }
 
-.constellationName{
-    font-family: "IBM Plex", sans-serif;
+.constellationGlyph{
+    font-family: "Mingzat", sans-serif;
+    font-weight: 400;
     font-size: 24px;
+    text-transform: uppercase;
+    letter-spacing: 0.4em;
+
     color: transparent;
     background: linear-gradient(to right, #E7E5ED, #B7B7BD);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     text-transform: uppercase;
-    font-weight: 700;
-    letter-spacing: 0.4em;
-    
-}
 
-.constellationGlyph{
-    font-family: "Mingzat", sans-serif;
-    font-weight: 400;
-    display: block;
-    font-size: 36px;
+    position: relative;
+    top: 16px;
 }
 
 .constellationMetadataWrapper{

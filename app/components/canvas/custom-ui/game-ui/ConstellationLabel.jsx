@@ -1,13 +1,19 @@
 import styles from "./ConstellationLabel.module.css"
+import { useRef, useState, useEffect } from "react"
 import { transliterateToLepcha } from "../../helpers/language-funcs"
 import { useStarFireSync } from "~/components/synchronization/StarFireSync"
 import { createShapeId, useEditor } from "tldraw"
 import { motion } from "framer-motion"
+import { TextScramble } from "~/components/canvas/custom-ui/post-processing-effects/text-scramble/TextScramble";
+import { englishToLepchaMap } from "~/components/canvas/helpers/language-funcs.js"
+import { LabelTranslate } from "~/components/canvas/custom-ui/game-ui/LabelTranslate.jsx"
 
 export function ConstellationLabel({ name }){
     const { triggerWarp, setTriggerWarp, constellationLabel } = useStarFireSync()
     const editor = useEditor()
-
+    const textRef = useRef(null);
+    const [animationCommenced, setAnimationCommenced] = useState(false)
+    
     return(
         <motion.div 
             className={styles.labelWrapper}
@@ -18,107 +24,68 @@ export function ConstellationLabel({ name }){
                 duration: constellationLabel.immediate ? 0 : (constellationLabel.duration || 1),
                 delay: constellationLabel.delay || 0,
             }}
-            onAnimationComplete={() => {
-                constellationLabel.onComplete && constellationLabel.onComplete()
+            // onAnimationStart = {() => {
+            //     console.log('started')
+            //     setTimeout(()=>{
+            //         setAnimationCommenced(true)
+            //     }, 7000)
+            // }}
+            onAnimationComplete={(animation) => {
+                // manual text scramble delay
+                console.log("animation", animation)
+                if(animation && animation.opacity === 1){
+                    setTimeout(()=>{
+                        setAnimationCommenced(true)
+                        constellationLabel.onComplete && constellationLabel.onComplete()
+                    }, 1000)
+                }
             }}
             >
-            <p className={styles.constellationName}>
-                <span className={styles.constellationGlyph}>
-                    [{transliterateToLepcha(name.split(' ').map(word => word[0]).join(''))}] The first star
-                </span>
-            </p>
+            <motion.p className={styles.constellationGlyph}>
+                <LabelTranslate 
+                    constellationLabel={constellationLabel} 
+                    animationCommenced={animationCommenced}
+                    text={constellationLabel.text}
+                />
+            </motion.p>
             <div className={styles.metadataRow}>
                 <div className={styles.constellationMetadataWrapper}>
-                    <p className={styles.constellationMetadataLabel}>Discoverer</p>
-                    <p className={styles.constellationMetadataValue}>{name}</p>
+                    <p className={styles.constellationMetadataLabel}>
+                        <LabelTranslate 
+                            constellationLabel={constellationLabel} 
+                            animationCommenced={animationCommenced} 
+                            text="Discoverer"
+                            delay={300}
+                        />
+                    </p>
+                    <p className={styles.constellationMetadataValue}>
+                        <LabelTranslate 
+                            constellationLabel={constellationLabel} 
+                            animationCommenced={animationCommenced} 
+                            text={name}
+                            delay={600}
+                            blocked={true}
+                        />
+                    </p>
                 </div>
                 <div className={styles.constellationMetadataWrapper}>
-                    <p className={styles.constellationMetadataLabel}>Exploration Status</p>
-                    <p className={styles.constellationMetadataValue}>3 Remaining</p>
-                    <button 
-                        onPointerUp={() => {
-                            document.body.style.pointerEvents = 'auto';
-                            document.body.style.overflow = 'unset';
-                            console.log("GIVING CONTROL BACK")
-                        }}
-                        style={{
-                            border: '2px solid green',
-                            height: "40px",
-                            width: '200px',
-                            background: 'green',
-                            color: "white",
-                        }}
-                    >
-                        Give Control to Campfire
-                    </button>
-                    <button 
-                        onPointerUp={() => {
-                            setTriggerWarp(prev => ({...prev, active: true, accDuration: 1000, deaccDuration: 1000, constAccDuration: 1000}))
-                        }}
-                        style={{
-                            border: '2px solid green',
-                            height: "40px",
-                            width: '200px',
-                            background: 'blue',
-                            color: "white",
-                        }}
-                    >
-                        Move to next constellation
-                    </button>
-                    <button 
-                        onPointerUp={() => {
-                            const journal = editor.getShape({type: 'journal', id: createShapeId('journal')})
-
-
-                            // animate the position of the central constellation
-                            // this.editor.updateShape({})
-
-                            if(journal && journal.props.expanded){
-                                editor.updateShape({
-                                    type: "journal",
-                                    id: createShapeId('journal'),
-                                    props: {
-                                        expanded: false,
-                                    }
-                                })
-                            }
-                            else if(journal && !journal.props.expanded){
-                                editor.updateShape({
-                                    type: "journal",
-                                    id: createShapeId('journal'),
-                                    props: {
-                                        expanded: true,
-                                    }
-                                })
-                            }
-                            else{
-                                const margin = window.innerHeight * 0.1;
-                            
-                                const { x, y } = editor.screenToPage({x: window.innerWidth * 0.6 - margin, y: margin})
-
-                                editor.createShape({
-                                    type: "journal",
-                                    id: createShapeId('journal'),
-                                    x: x,
-                                    y: y,
-                                    props: {
-                                        expanded: true,
-                                    }
-                                })
-                            }
-
-                        
-                        }}
-                        style={{
-                            border: '2px solid green',
-                            height: "40px",
-                            width: '200px',
-                            background: 'blue',
-                            color: "white",
-                        }}
-                    >
-                        Toggle Journal
-                    </button>
+                    <p className={styles.constellationMetadataLabel}>
+                        <LabelTranslate 
+                            constellationLabel={constellationLabel} 
+                            animationCommenced={animationCommenced} 
+                            text="Exploration Status"
+                            delay={300}
+                        />
+                    </p>
+                    <p className={styles.constellationMetadataValue}>
+                        <LabelTranslate 
+                            constellationLabel={constellationLabel} 
+                            animationCommenced={animationCommenced} 
+                            text="3 Remaining"
+                            delay={600}
+                            blocked={true}
+                        />
+                    </p>
                 </div>
             </div>
         </motion.div>

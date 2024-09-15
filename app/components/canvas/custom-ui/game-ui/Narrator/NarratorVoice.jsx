@@ -58,7 +58,7 @@ export function NarratorVoice() {
                 // hardcoded jank because the promise logic isn't working for the components above
                 type: 'callback',
                 callback: () => {
-                    return new Promise(resolve => setTimeout(resolve, 4000));
+                    return new Promise(resolve => setTimeout(resolve, 2000));
                 },
                 waitForCallback: true,
             },     
@@ -288,15 +288,21 @@ export function NarratorVoice() {
                 type: 'callback',
                 callback: () => {
                     return Promise.all([
-                        setTextEvent({ 
-                            type: 'system',
-                            visible: true,
-                            overlay: false,
-                            text: "create constellations to explore your work", 
-                            requiresInteraction: true, 
-                            darkeningVisible: true, 
+                        // setTextEvent({ 
+                        //     type: 'system',
+                        //     visible: true,
+                        //     overlay: false,
+                        //     text: "create constellations to explore your work", 
+                        //     requiresInteraction: true, 
+                        //     darkeningVisible: true, 
+                        // }),
+                        setConstellationLabel({ 
+                            visible: true, 
+                            immediate: false, 
+                            duration: 2, 
+                            delay: 2,
+                            text: "The First Star"
                         }),
-                        setConstellationLabel({ visible: true, immediate: false, duration: 2, delay: 2 }),
                         
                     ])
                 },

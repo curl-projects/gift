@@ -1,11 +1,14 @@
+import { englishToLepchaMap } from "~/components/canvas/helpers/language-funcs.js"
 
 export class TextScramble {
-    constructor(el, dudClass = 'dud') {
+    constructor(el, dudClass = 'dud', useLepcha = false) {
         this.el = el;
         this.dudClass = dudClass;
-        this.chars = '!<>-_\\/[]{}—=+*^?#________';
+        this.useLepcha = useLepcha;
+        this.chars = useLepcha ? Object.values(englishToLepchaMap).join('') : '!<>-_\\/[]{}—=+*^?#________';
         this.update = this.update.bind(this);
     }
+
     setText(newText) {
         const oldText = this.el.innerText;
         const length = Math.max(oldText.length, newText.length);
