@@ -4,7 +4,7 @@ import { useStarFireSync } from '~/components/synchronization/StarFireSync';
 import * as BABYLON from '@babylonjs/core';
 import '@babylonjs/loaders';
 
-import { addGUICamera, addMovableCamera, addArcCamera, addTargetCamera, addBloomEffect } from "../helpers/cameras";
+import { addGUICamera, addMovableCamera, addArcCamera, addTargetCamera, addBloomEffect, addDepthOfField } from "../helpers/cameras";
 import { addCampfireParticles } from "../helpers/campfire";
 import { addCampfireLight, addMoonLight } from "../helpers/lights";
 import { addLensEffects, addMotionBlur, fadeInScene } from "../helpers/post-processing";
@@ -22,13 +22,14 @@ import { CampfireSyncListener } from "~/components/synchronization/CampfireSyncL
 import { initializeLookingAtSky } from "../event-controllers/campfire-transition";
 import { addCommandEventListener } from "../helpers/event-handlers";
 import { addSmokeShader } from "../helpers/shaders";
+import { animateMesh } from "../helpers/animation-handlers";
 
 export function PitchScene(){
     const canvasZoneRef = useRef();
     const [reactScene, setReactScene] = useState(null); // Add state to hold the scene
     const { triggerEffect, activeEffect, setTriggerWarp, 
             campfireView, setCampfireView, setSceneLoaded,
-            commandEvent,
+            commandEvent, animationEvent,
         } = useStarFireSync();
 
     useEffect(() => {
@@ -38,6 +39,12 @@ export function PitchScene(){
         }
         // add event handler to check if the narrator is looking at the sky
     }, [reactScene, commandEvent])
+
+    useEffect(()=>{
+        if(reactScene && animationEvent){
+            animateMesh(reactScene, animationEvent)
+        }
+    }, [reactScene, animationEvent])
 
     function onRender(scene) { }
 
@@ -68,7 +75,7 @@ export function PitchScene(){
             });
 
         const meshTask = assetManager.addMeshTask("meshTask", "", "/assets/", "simple-landscape-improved.glb");
-        meshTask.onSuccess = function (task) {
+        meshTask.onSuccess = async function (task) {
             // fade in/out behaviour
 
             const campfire = task.loadedMeshes.find(mesh => mesh.name === 'campfire');
@@ -89,10 +96,13 @@ export function PitchScene(){
                 }
             });
 
-            addNarrator(scene, shadowGenerator)
-            addPlayer(scene, shadowGenerator)
+            const { meshes: narratorMeshes, animationGroups: narratorAnimationGroups } = await addNarrator(scene, shadowGenerator)
+            const { meshes: playerMeshes, animationGroups: playerAnimationGroups } = await addPlayer(scene, shadowGenerator)
 
+            console.warn("ANIMATION GROUPS", narratorAnimationGroups)
        
+
+            // narratorAnimationGroups.find(group => group.name === 'standing-up-two').start(true);
         };
 
 
@@ -133,6 +143,7 @@ export function PitchScene(){
             })
 
             addBloomEffect(scene)
+            // addDepthOfField(scene, camera)
             // const motionBlur = addMotionBlur(scene, camera)
 
             // TODO: use these to trigger motion blur on certain animations

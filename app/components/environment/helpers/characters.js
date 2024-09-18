@@ -1,74 +1,105 @@
 import * as BABYLON from "@babylonjs/core";
+import { RenderingGroups } from "./constants";
 
 export function addNarrator(scene, shadowGenerator) {
- BABYLON.SceneLoader.ImportMesh("", "/assets/", "animated-wizard.glb", scene, function (meshes, particleSystems, skeletons, animationGroups) {
-        const campfireMesh = scene.meshes.find(mesh => mesh.name === 'campfire');
-        const characterMesh = meshes[0]
-        console.warn("CHARACTER MESH:", meshes);
-        // characterMesh.parent = campfireMesh;
-        characterMesh.name = "narrator"
-        characterMesh.position = new BABYLON.Vector3(0, 0.6, -14);
-        characterMesh.scaling = new BABYLON.Vector3(0.7, 0.7, 0.7);
-        const directionToCampfire = campfireMesh.position.subtract(characterMesh.position).normalize();
-        const angle = Math.atan2(directionToCampfire.z, directionToCampfire.x);  // Note the order of parameters
-        characterMesh.rotation = new BABYLON.Vector3(0, angle - Math.PI / 2, 0);  // Adjust the angle to face the campfire
-        
-        if(shadowGenerator){
-            console.log("ADDING SHADOW CASTER TO NARRATOR")
-            characterMesh.receiveShadows = true
-            shadowGenerator.addShadowCaster(characterMesh)
-            const subMeshes = characterMesh.getChildMeshes()
-
-            for(let childMesh of subMeshes){
-                childMesh.receiveShadows = true
-            }
-        }
-        return characterMesh
-    });
-
-}
-
-export function addPlayer(scene, shadowGenerator){
-    BABYLON.SceneLoader.ImportMesh("", "/assets/", "animated-player.glb", scene, function (meshes, particleSystems, skeletons, animationGroups) {
-        const campfireMesh = scene.meshes.find(mesh => mesh.name === 'campfire');
-        const camera = scene.cameras.find(camera => camera.name === 'babylon-camera')
-        const characterMesh = meshes[0]
-        console.warn("PLAYER MESH:", meshes);
-        // characterMesh.parent = campfireMesh;
-        characterMesh.name = "player"
-        characterMesh.position = new BABYLON.Vector3(0, 0.6, 14);
-        characterMesh.scaling = new BABYLON.Vector3(0.7, 0.7, 0.7);
-        const directionToCampfire = campfireMesh.position.subtract(characterMesh.position).normalize();
-        const angle = Math.atan2(directionToCampfire.z, directionToCampfire.x);  // Note the order of parameters
-        characterMesh.rotation = new BABYLON.Vector3(0, angle - Math.PI / 2, 0);  // Adjust the angle to face the campfire
-
-        camera.position = characterMesh.position.add(new BABYLON.Vector3(-0.14, 10.6, -2));
-
-        if(shadowGenerator){
-            console.log("ADDING SHADOW CASTER TO PLAYER")
-            characterMesh.receiveShadows = true
-            shadowGenerator.addShadowCaster(characterMesh)
-            const subMeshes = characterMesh.getChildMeshes()
-
-            for(let childMesh of subMeshes){
-                childMesh.receiveShadows = true
-            }
+    return new Promise((resolve, reject) => {
+        BABYLON.SceneLoader.ImportMesh("", "/assets/", "animated-wizard.glb", scene, function (meshes, particleSystems, skeletons, animationGroups) {
+            const campfireMesh = scene.meshes.find(mesh => mesh.name === 'campfire');
+            const characterMesh = meshes[0]
+            console.warn("CHARACTER MESH:", meshes);
+            // characterMesh.parent = campfireMesh;
+            characterMesh.name = "narrator"
+            characterMesh.position = new BABYLON.Vector3(0, 0.6, -14);
+            characterMesh.scaling = new BABYLON.Vector3(0.7, 0.7, 0.7);
+            const directionToCampfire = campfireMesh.position.subtract(characterMesh.position).normalize();
+            const angle = Math.atan2(directionToCampfire.z, directionToCampfire.x);  // Note the order of parameters
+            characterMesh.rotation = new BABYLON.Vector3(0, angle - Math.PI / 2, 0);  // Adjust the angle to face the campfire
             
-        }
+            animationGroups[0].stop();
 
-        })
-        // Create the smoke shader
-        // createSmokeShader(scene).then(smokeShader => {
-            // Apply the shader to the character mesh
-            // characterMesh.material = smokeShader
-            // char acterMesh.skeleton = skeletons[0]
-            // characterMesh.getChildMeshes().forEach((subMesh) => {
-            //     console.log("Applying smoke shader to sub-mesh:", subMesh.name);
-            //     subMesh.material = smokeShader;
-            // });
-        // }).catch(error => {
-        //     console.error("Error creating smoke shader:", error);
-        // });
+
+            const lookingDownAnimationGroup = animationGroups.find(group => group.name === 'looking-down');
+            if (lookingDownAnimationGroup) {
+                console.log("LOOKING DOWN ANIMATION GROUP", lookingDownAnimationGroup)
+                lookingDownAnimationGroup.play();
+                lookingDownAnimationGroup.goToFrame(242);
+                lookingDownAnimationGroup.pause();
+            }
+
+            if(shadowGenerator){
+                console.log("ADDING SHADOW CASTER TO NARRATOR")
+                characterMesh.receiveShadows = true
+                characterMesh.renderingGroupId = RenderingGroups.environment
+                shadowGenerator.addShadowCaster(characterMesh)
+                const subMeshes = characterMesh.getChildMeshes()
+
+                for(let childMesh of subMeshes){
+                    if(!['wizard_primitive7'].includes(childMesh.name)){
+                        childMesh.renderOutline = true
+                        childMesh.outlineColor = new BABYLON.Color3(0, 0, 0)
+                        childMesh.outlineWidth = 0.1
+                    }
+                    childMesh.receiveShadows = true
+                    childMesh.renderingGroupId = RenderingGroups.environment
+                    // childMesh.renderOutline = true
+                    // childMesh.outlineColor = new BABYLON.Color3(0, 0, 0)
+                    // childMesh.outlineWidth = 0.1
+                    // if(['wizard_primitive1', 
+                    //     // 'wizard_primitive0', 
+                    //     'wizard_primitive2', 
+                    //     'wizard_primitive3', 'wizard_primitive4', 'wizard_primitive5'].includes(childMesh.name)){
+                    //     childMesh.renderOutline = true
+                    //     childMesh.outlineColor = new BABYLON.Color3(0, 0, 0)
+                    //     childMesh.outlineWidth = 0.1
+                    // }
+                }
+            }
+
+
+            // Resolve the promise with the meshes and animationGroups
+            resolve({ meshes, animationGroups });
+        }, null, (error) => {
+            console.error("Failed to load narrator mesh:", error);
+            reject(error);
+        });
+    });
+}
+export function addPlayer(scene, shadowGenerator) {
+    return new Promise((resolve, reject) => {
+        BABYLON.SceneLoader.ImportMesh("", "/assets/", "animated-player.glb", scene, function (meshes, animationGroups) {
+            const campfireMesh = scene.meshes.find(mesh => mesh.name === 'campfire');
+            const camera = scene.cameras.find(camera => camera.name === 'babylon-camera')
+            const characterMesh = meshes[0]
+            console.warn("PLAYER MESH:", meshes);
+            // characterMesh.parent = campfireMesh;
+            characterMesh.name = "player"
+            characterMesh.position = new BABYLON.Vector3(0, 0.6, 14);
+            characterMesh.scaling = new BABYLON.Vector3(0.7, 0.7, 0.7);
+            const directionToCampfire = campfireMesh.position.subtract(characterMesh.position).normalize();
+            const angle = Math.atan2(directionToCampfire.z, directionToCampfire.x);  // Note the order of parameters
+            characterMesh.rotation = new BABYLON.Vector3(0, angle - Math.PI / 2, 0);  // Adjust the angle to face the campfire
+
+            camera.position = characterMesh.position.add(new BABYLON.Vector3(-0.14, 10.6, -2));
+
+            if(shadowGenerator){
+                console.log("ADDING SHADOW CASTER TO PLAYER")
+                characterMesh.receiveShadows = true
+                shadowGenerator.addShadowCaster(characterMesh)
+                const subMeshes = characterMesh.getChildMeshes()
+
+                for(let childMesh of subMeshes){
+                    childMesh.receiveShadows = true
+                    childMesh.renderingGroupId = RenderingGroups.environment
+                }
+            }
+
+            // Resolve the promise with the meshes and animationGroups
+            resolve({ meshes, animationGroups });
+        }, null, (error) => {
+            console.error("Failed to load player mesh:", error);
+            reject(error);
+        });
+    });
 }
 
 export function createSmokeShader(scene) {

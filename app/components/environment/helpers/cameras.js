@@ -8,7 +8,8 @@ export function addMovableCamera(scene, name) {
     camera.useQuaternion = true;
     // camera.rotationQuaternion = BABYLON.Quaternion.Identity();
 
-    camera.setTarget(new BABYLON.Vector3(0, 5, -14));
+    camera.setTarget(new BABYLON.Vector3(0, 0, 14));
+    // camera.setTarget(new BABYLON.Vector3(0, 5, -14));
     // camera.rotation.y += Math.PI;
     // camera.rotation.x += BABYLON.Tools.ToRadians(10)
 
@@ -84,4 +85,21 @@ export function addBloomEffect(scene){
         mainTextureFixedSize: 1024,
         blurKernelSize: 64,       
     })
+}
+
+export function addDepthOfField(scene, camera) {
+    const pipeline = new BABYLON.DefaultRenderingPipeline('defaultPipeline', true, scene, [camera]);
+    pipeline.imageProcessingEnabled = false;
+
+    // Enable depth of field
+    pipeline.depthOfFieldEnabled = true;
+
+    pipeline.depthOfField.focusDistance = 1000; // Set focus distance to 28 units
+
+
+    // Adjust depth of field properties to widen the depth of field
+    // pipeline.depthOfField.focusDistance = 2000; // Adjust as needed
+    // pipeline.depthOfField.fStop = 1.4; // Lower values increase the depth of field
+    // pipeline.depthOfField.focalLength = 50; // Adjust as needed
+
 }

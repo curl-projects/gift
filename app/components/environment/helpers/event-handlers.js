@@ -3,10 +3,13 @@ function meshIsVisible(scene, props){
         const camera = scene.cameras.find(cam => cam.name === "babylon-camera");
         const mesh = scene.meshes.find(mesh => mesh.name === props.meshName);
         
-        const observer = scene.onBeforeRenderObservable.add(() => {
-            if(camera.isInFrustum(mesh)){
-                scene.onBeforeRenderObservable.remove(observer);
-                resolve(true);
+        const observer = scene.onAfterRenderObservable.addOnce(() => {
+            // console.log("camera", camera);
+            if(camera && mesh){
+                if(camera.isInFrustum(mesh)){
+                    scene.onAfterRenderObservable.remove(observer);
+                    resolve(true);
+                }
             }
         });
     })

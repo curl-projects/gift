@@ -9,6 +9,7 @@ const StarFireSyncProvider = ({ children }) => {
     const [campfireView, _setCampfireView] = useState(null);
     const [sceneLoaded, setSceneLoaded] = useState(false);
     const [commandEvent, _setCommandEvent] = useState(null);
+    const [animationEvent, _setAnimationEvent] = useState(null);
 
     const [cloudControls, _setCloudControls] = useState({ visible: true, immediate: true });
     const [starControls, _setStarControls] = useState({ visible: true, immediate: true });
@@ -61,6 +62,7 @@ const StarFireSyncProvider = ({ children }) => {
     const setOverlayControls = useStateWithPromise(_setOverlayControls);
     const setTrueOverlayControls = useStateWithPromise(_setTrueOverlayControls);
     const setCommandEvent = useStateWithPromise(_setCommandEvent);
+    const setAnimationEvent = useStateWithPromise(_setAnimationEvent);
     const setJournalMode = useStateWithPromise(_setJournalMode);
 
     const triggerEffect = useCallback(({domain, selector, effect, callback}) => {
@@ -90,6 +92,7 @@ const StarFireSyncProvider = ({ children }) => {
                 overlayControls, setOverlayControls,
                 trueOverlayControls, setTrueOverlayControls,
                 commandEvent, setCommandEvent,
+                animationEvent, setAnimationEvent,
                 journalMode, setJournalMode,
 
 

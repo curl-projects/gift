@@ -31,16 +31,17 @@ export function NarratorVoice() {
         triggerEffect,
         textEvent, setTextEvent,
         constellationLabel, setConstellationLabel,
-        glyphControls, setGlyphControls
+        glyphControls, setGlyphControls,
+        animationEvent, setAnimationEvent,
     } = useStarFireSync();
 
     const [narratorState, setNarratorState] = useState({ visible: false, text: '', requiresInteraction: false });
     const [systemState, setSystemState] = useState({ visible: false, text: '', requiresInteraction: false });
     // const [commands, setCommands] = useState([]);
 
-    // useEffect(() => {
-    //     setNarratorEvent('pitch');
-    // }, [setNarratorEvent]);
+    useEffect(() => {
+        setNarratorEvent('pitch');
+    }, [setNarratorEvent]);
 
     const narratorOrchestration = {
         'pitch': [
@@ -239,38 +240,46 @@ export function NarratorVoice() {
             //     },
             //     waitForCallback: false,
             // },
-            // {
-            //     type: 'callback',
-            //     callback: () => {
-            //         return Promise.all([
-            //             setCommandEvent({
-            //                 eventType: 'mesh-visible', 
-            //                 props: {
-            //                     meshName: 'narrator'
-            //                 }
-            //                 })
-            //         ])
-            //     },
-            //     waitForCallback: true,
-            // },
-            // {
-            //     type: 'callback',
-            //     callback: () => {
-            //         return Promise.all([
-            //             setTextEvent({ 
-            //                 type: 'narrator',
-            //                 visible: true,
-            //                 overlay: true,
-            //                 text: "So long spent in the dark sky - do you even remember what the stars look like?", 
-            //                 duration: 3,
-            //                 requiresInteraction: true,
-            //                 waitUntilVisible: true,
-            //                 darkeningVisible: true, 
-            //             })
-            //         ])
-            //     },
-            //     waitForCallback: true,
-            // }, 
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setCommandEvent({
+                            eventType: 'mesh-visible', 
+                            props: {
+                                meshName: 'narrator'
+                            }
+                            })
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setAnimationEvent({ 
+                            animationGroupName: 'looking-down',
+                            props: {
+                                reverse: true,
+                                startFrame: 300,  
+                                endFrame: 10,          
+                            }
+                        }),
+                        setTextEvent({ 
+                            type: 'narrator',
+                            visible: true,
+                            overlay: true,
+                            text: "So long spent in the dark sky - do you even remember what the stars look like?", 
+                            duration: 3,
+                            requiresInteraction: true,
+                            waitUntilVisible: true,
+                            darkeningVisible: true, 
+                        })
+                    ])
+                },
+                waitForCallback: true,
+            }, 
             // {
             //     type: 'callback',
             //     callback: () => {
@@ -386,363 +395,6 @@ export function NarratorVoice() {
             //     },
             //     waitForCallback: true,
             // },
-        ],
-        
-        
-        
-
-        
-        'old-pitch': [
-            // {
-            //     type: "callback",
-            //     callback: () => {
-            //         return Promise.all([
-            //             setCampfireView({ active: false, immediate: true }),
-            //             setStarControls({ visible: true, immediate: false, duration: 1 }),
-            //         ])
-            //     },,
-            // },
-            {
-                type: "narrator",
-                text: "This can be a cold and desolate place.",
-                overlay: true,
-                requiresInteraction: true,   
-            },
-            // {
-            //     type: "callback",
-            //     callback: () => {
-            //         const promiseStatuses = {
-            //             // setCampfireView: false,
-            //             // setOverlayControls: false,
-            //             // setStarControls: false,
-            //             // setCloudControls: false,
-            //         };
-
-            //         // const promises = [
-            //         //     setStarControls({ visible: true, immediate: true }).then(() => {
-            //         //         promiseStatuses.setStarControls = true;
-            //         //         console.log('setStarControls completed');
-            //         //     }),
-            //         //     setCampfireView({ active: false, immediate: true }).then(() => {
-            //         //         promiseStatuses.setCampfireView = true;
-            //         //         console.log('setCampfireView completed');
-            //         //     }),
-            //         //     setOverlayControls({ dark: true, immediate: true }).then(() => {
-            //         //         promiseStatuses.setOverlayControls = true;
-            //         //         console.log('setOverlayControls completed');
-            //         //     }),
-                     
-            //         //     setCloudControls({ visible: true, immediate: true }).then(() => {
-            //         //         promiseStatuses.setCloudControls = true;
-            //         //         console.log('setCloudControls completed');
-            //         //     }),
-            //         // ];
-
-            //         return Promise.all([
-            //             setCampfireView({ active: false, immediate: true }),
-            //             setOverlayControls({ dark: true, immediate: true }),
-            //             setStarControls({ visible: true, immediate: true }),
-            //             setCloudControls({ visible: true, immediate: true }),
-            //         ])
-
-            //         // return Promise.race([
-            //         //     Promise.all([
-            //         //         setCampfireView({ active: false, immediate: true }),
-            //         //         setOverlayControls({ dark: true, immediate: true })
-            //         //     ]).then(() => {
-            //         //         console.log('All promises resolved:', promiseStatuses);
-            //         //     }),
-            //         //     new Promise((_, reject) => 
-            //         //         setTimeout(() => {
-            //         //             console.log("PROMISE STATUS", promiseStatuses)
-            //         //             const unresolvedPromises = Object.keys(promiseStatuses).filter(key => !promiseStatuses[key]);
-            //         //             console.error('Operation timed out. Unresolved promises:', unresolvedPromises);
-            //         //             reject(new Error(`Operation timed out. Unresolved promises: ${unresolvedPromises.join(', ')}`));
-            //         //         }, 10000)
-            //         //     )
-            //         // ]).catch(error => {
-            //         //     console.error('Error:', error);
-            //         //     throw error;
-            //         // });
-            //     },
-            //     waitForCallback: true,
-            // },
-            // {
-            //     type: "callback",
-            //     callback: () => {
-            //         return Promise.all([
-            //             setTriggerWarp({ active: true, accDuration: 1000, deaccDuration: 1000, constAccDuration: 1000 })
-            //         ])
-            //     },
-            //     waitForCallback: true,
-            // },
-            // {
-            //     type: "callback",
-            //     callback: () => {
-            //       setCampfireView({ active: false, immediate: true })
-            //     },
-            // },
-            // {
-            //     type: "callback",
-            //     callback: () => {
-            //         console.log("HIIIII!")
-            //         setExpandConstellation({ concepts: true, excerpts: true })
-            //     }
-            // },
-            // {
-            //     type: "system",
-            //     overlay: true,
-            //     text: "This can be a cold and desolate place.",
-            //     requiresInteraction: true,   
-            // },
-            // {
-            //     type: "callback",
-            //     callback: () => {
-            //         return Promise.all([
-            //             setJournalMode({ active: true, page: 'cover' })
-            //         ])
-            //     },
-            //     waitForCallback: true,
-            // },
-            // {
-            //     type: "system",
-            //     overlay: true,
-            //     text: "This can be a cold and desolate place.",
-            //     requiresInteraction: true,   
-            // },
-            // {
-            //     type: "callback",
-            //     callback: () => {
-            //         return Promise.all([
-            //             setExpandConstellation({ concepts: true, excerpts: true })
-            //         ])
-            //     },
-            //     waitForCallback: true,
-            // },
-            // {
-            //     type: "system",
-            //     text: "This can be a cold and desolate place.",
-            //     requiresInteraction: true,   
-            // },
-
-            // {
-            //     type: 'callback',
-            //     callback: () => {
-            //         return Promise.all([
-            //             setTrueOverlayControls({ visible: true, immediate: true })
-            //         ])
-            //     },
-            //     waitForCallback: true,
-            // },
-            // {
-            //     type: 'callback',
-            //     callback: () => {
-            //         return Promise.all([
-            //             setTrueOverlayControls({ visible: false, immediate: false, duration: 2 })
-            //         ])
-            //     },
-            //     waitForCallback: true,
-            // },
-            // {
-            //     type: "narrator",
-            //     text: "This can be a cold and desolate place.",
-            //     requiresInteraction: true,
-            //     overlay: true,
-            // },
-
-
-
-
-
-
-            // {
-            //     type: 'callback',
-            //     callback: () => {
-            //         return Promise.all([
-            //             setTrueOverlayControls({ visible: true, immediate: true }),
-            //             // setCampfireView({ active: true, immediate: true })
-            //         ])
-            //     },
-            //     waitForCallback: true,
-            // },
-            // {
-            //     type: 'callback',
-            //     callback: () => {
-            //         return new Promise(resolve => setTimeout(resolve, 60000));
-            //     },
-            //     waitForCallback: true,
-            // },
-            // {
-            //     type: 'callback',
-            //     callback: () => {
-            //         return Promise.all([
-            //             setTrueOverlayControls({ visible: false, immediate: false, duration: 2 }),
-            //         ])
-            //     },
-            //     waitForCallback: true,
-            // },
-
-
-
-            // {   
-            //     type: "callback",
-            //     callback: () => {
-            //         setCampfireView({ active: true, immediate: true, treeScale: false, targetMeshName: 'constellationCanvas' })
-            //     }
-            // },
-            // {
-            //     type: "system",
-            //     text: "This can be a cold and desolate place.",
-            //     requiresInteraction: true,
-            //     overlay: true,
-            // },
-            // {
-            //     type: "system",
-            //     text: "I hate it here.",
-            //     requiresInteraction: true
-            // },
-            // {
-            //     type: "narrator",
-            //     text: "I really hate it here",
-            //     requiresInteraction: true,
-            //     waitForCompletion: true,
-            // },
-            // {
-            //     type: "callback",
-            //     callback: () => {
-            //         return Promise.all([
-            //             setTrueOverlayControls({ visible: true, immediate: true }),
-            //             // setCampfireView({ active: true, immediate: true })
-            //         ])
-            //     },
-            //     waitForCallback: true,
-            // },
-            // {  
-            //     type: "callback",
-            //     callback: () => {
-            //         return Promise.all([
-            //             setCampfireView({ active: true, immediate: true, treeScale: false, targetMeshName: 'constellationCanvas' }),
-            //         ])
-            //     },
-            //     waitForCallback: true,
-            // },
-            // {
-            //     type: "callback",
-            //     callback: () => {
-            //         return Promise.all([
-            //             setTrueOverlayControls({ visible: false, immediate: false, duration: 1, delay: 0})
-            //         ])
-            //     },
-            //     waitForCallback: true,
-            // },
-            // {
-            //     type: "system",
-            //     overlay: true,
-            //     text: "Welcome",
-            //     requiresInteraction: true,
-            // },
-            // {
-            //     type: 'callback',
-            //     callback: () => {
-            //         return Promise.all([
-            //             setGameSystemText({ text: "Hello" })
-            //         ])
-            //     }
-            // },
-            // {
-            //     type: 'callback',
-            //     callback: () => {
-            //         return Promise.all([
-            //             setCommandEvent({
-            //                 eventType: 'mesh-visible', 
-            //                 props: {
-            //                     meshName: 'narrator'
-            //                 }
-            //              })
-            //         ])
-            //     },
-            //     waitForCallback: true,
-            // },
-            // {
-            //     type: 'callback',
-            //     callback: () => {
-            //         setGameSystemText({ text: "Hello" })
-            //     }
-            // }
-            // {
-            //     type: "callback",
-            //     callback: () => {
-            //         return Promise.all([
-            //         // it's a dark and stormy night
-            //             setCampfireView({ active: false, immediate: true }),
-            //             setStarControls({ visible: true, immediate: true }),
-            //             setCloudControls({ visible: true, immediate: true }),
-            //         ])
-            //     },
-            //     waitForCallback: true
-            // },
-            // {
-            //     type: "callback",
-            //     callback: () => {
-            //         setOverlayControls({ trueOverlay: true })
-            //         // setCampfireView({ active: true, immediate: true })
-            //     },
-            // },
-            // {
-            //     type: 'callback',
-            //     callback: () => {
-            //         // the stars slowly fade to black
-            //         return Promise.all([
-            //             setStarControls({ visible: false, immediate: false }),
-            //             setCloudControls({ visible: false, immediate: false})
-            //         ])
-            //     },
-            //     waitForCallback: true
-            // },
-            // {
-            //     type: "callback",
-            //     callback: () => {
-            //         // the campfire fades into view
-            //         setCampfireView({ active: true, immediate: false })
-            //     }
-            // },
-            // {
-            //     type: "narrator",
-            //     text: "I have spent much of my life here, and I can count on one hand the number of friends that I have made.",
-            //     duration: 3000,
-            //     requiresInteraction: true
-            // },
-            // {
-            //     type: "narrator",
-            //     text: "Much of that time I have spent in a stupor, adrift in a void,",
-            //     duration: 3000,
-            //     requiresInteraction: true
-            // },
-            // {
-            //     type: "narrator",
-            //     text: "flitting between cold ideas.",
-            //     duration: 3000,
-            //     requiresInteraction: true
-            // },
-            // {
-            //     type: 'callback',
-            //     callback: () => setStarControls({ visible: true, immediate: false})
-            // },
-            // {
-            //     type: "narrator",
-            //     text: "I want to try building something better.",
-            //     duration: 3000,
-            //     requiresInteraction: true,
-            // },
-            
-            // { // transition from constellation to campfire
-            //     type: 'callback',
-            //     callbackBack: () => {
-            //         setStarControls({ visible: false, immediate: false})
-            //         setCloudControls({ visible: false, immediate: false})
-            //     }
-
-            // }
         ],
         'welcome': [
             {
