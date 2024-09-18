@@ -58,6 +58,11 @@ export function addNarrator(scene, shadowGenerator) {
             console.log("ADDING SHADOW CASTER TO NARRATOR")
             characterMesh.receiveShadows = true
             shadowGenerator.addShadowCaster(characterMesh)
+            const subMeshes = characterMesh.getChildMeshes()
+
+            for(let childMesh of subMeshes){
+                childMesh.receiveShadows = true
+            }
         }
         // Create the smoke shader
         // createSmokeShader(scene).then(smokeShader => {
@@ -97,6 +102,12 @@ export function addPlayer(scene, shadowGenerator){
             console.log("ADDING SHADOW CASTER TO PLAYER")
             characterMesh.receiveShadows = true
             shadowGenerator.addShadowCaster(characterMesh)
+            const subMeshes = characterMesh.getChildMeshes()
+
+            for(let childMesh of subMeshes){
+                childMesh.receiveShadows = true
+            }
+            
         }
 
         })
