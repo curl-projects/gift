@@ -67,12 +67,6 @@ export function PitchScene(){
     
             });
 
-        // Add mesh task
-        // const smokeShader = await addSmokeShader(scene);
-        // const customShader = addCustomShader(scene);
-        
-        // const nodeMaterial = await BABYLON.NodeMaterial.ParseFromSnippetAsync("81NNDY#126", scene)
-
         const meshTask = assetManager.addMeshTask("meshTask", "", "/assets/", "simple-landscape-improved.glb");
         meshTask.onSuccess = function (task) {
             // fade in/out behaviour
@@ -92,9 +86,6 @@ export function PitchScene(){
                 }
                 else if(mesh.name.includes('redwood')){
                     mesh.enableBackFaceCulling = true;
-                    // customShader.setTexture("tex0", mesh.material.diffuseTexture);
-                    // mesh.receiveShadows = true;
-                    // shadowGenerator.addShadowCaster(mesh);
                 }
             });
 
