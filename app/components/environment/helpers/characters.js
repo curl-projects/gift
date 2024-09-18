@@ -1,44 +1,3 @@
-// import * as BABYLON from "@babylonjs/core";
-// import importedSmokeTexture from "/assets/smoke.png";
-// import { addSmokeShader } from "./shaders";
-
-// export function addCharacter(scene) {
-//     BABYLON.SceneLoader.ImportMesh("", "/assets/", 'creepy-sitting.glb', scene, function (meshes, particleSystems, skeletons, animationGroups) {
-//         const campfireMesh = scene.meshes.find(mesh => mesh.name === 'campfire');
-//         const characterMesh = meshes[0];
-//         console.log("CHARACTER MESH:", characterMesh);
-//         characterMesh.parent = campfireMesh;
-
-
-
-//         characterMesh.position = new BABYLON.Vector3(0, 0, -3);
-//         characterMesh.scaling = new BABYLON.Vector3(1, 1, 1);
-//         characterMesh.name = "narrator"
-//         const directionToCampfire = campfireMesh.position.subtract(characterMesh.position).normalize();
-//         const angle = Math.atan2(directionToCampfire.z, directionToCampfire.x);  // Note the order of parameters
-//         characterMesh.rotation = new BABYLON.Vector3(0, 0, 0);  // Adjust the angle to face the campfire
-//         characterMesh.renderingGroupId = RenderingGroups.environment;
-        
-//         // Create the smoke shader
-//         // addSmokeShader(scene).then(smokeShader => {
-//         //     // Apply the shader to the character mesh
-//         //     // characterMesh.material = smokeShader
-//         //     characterMesh.skeleton = skeletons[0]
-//         //     characterMesh.getChildMeshes().forEach((subMesh) => {
-//         //         console.log("Applying smoke shader to sub-mesh:", subMesh.name);
-//         //         subMesh.material = smokeShader;
-//         //     });
-//         // }).catch(error => {
-//         //     console.error("Error creating smoke shader:", error);
-//         // });
-
-//         return characterMesh
-//     });
-// }
-
-// to do -- replace with asset class
-
-
 import * as BABYLON from "@babylonjs/core";
 
 export function addNarrator(scene, shadowGenerator) {
@@ -64,19 +23,6 @@ export function addNarrator(scene, shadowGenerator) {
                 childMesh.receiveShadows = true
             }
         }
-        // Create the smoke shader
-        // createSmokeShader(scene).then(smokeShader => {
-            // Apply the shader to the character mesh
-            // characterMesh.material = smokeShader
-            // char acterMesh.skeleton = skeletons[0]
-            // characterMesh.getChildMeshes().forEach((subMesh) => {
-            //     console.log("Applying smoke shader to sub-mesh:", subMesh.name);
-            //     subMesh.material = smokeShader;
-            // });
-        // }).catch(error => {
-        //     console.error("Error creating smoke shader:", error);
-        // });
-
         return characterMesh
     });
 

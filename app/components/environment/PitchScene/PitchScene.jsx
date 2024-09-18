@@ -4,7 +4,7 @@ import { useStarFireSync } from '~/components/synchronization/StarFireSync';
 import * as BABYLON from '@babylonjs/core';
 import '@babylonjs/loaders';
 
-import { addGUICamera, addMovableCamera, addArcCamera, addTargetCamera } from "../helpers/cameras";
+import { addGUICamera, addMovableCamera, addArcCamera, addTargetCamera, addBloomEffect } from "../helpers/cameras";
 import { addCampfireParticles } from "../helpers/campfire";
 import { addCampfireLight, addMoonLight } from "../helpers/lights";
 import { addLensEffects, addMotionBlur, fadeInScene } from "../helpers/post-processing";
@@ -131,6 +131,8 @@ export function PitchScene(){
                 // dof_threshold: 0.1,
                 // blur_noise: false,
             })
+
+            addBloomEffect(scene)
             // const motionBlur = addMotionBlur(scene, camera)
 
             // TODO: use these to trigger motion blur on certain animations

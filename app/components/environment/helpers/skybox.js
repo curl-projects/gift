@@ -26,7 +26,9 @@ export function altAddSkybox(scene) {
 export function addBoxSkybox(scene) {
     const skybox = BABYLON.MeshBuilder.CreateBox("skyBox", { size: 1000.0 }, scene);
     const skyboxMaterial = new BABYLON.StandardMaterial("skyBoxMaterial", scene);
-    skyboxMaterial.emissiveColor = new BABYLON.Color3(9 /255, 40 /255, 55 /255); // Set your desired color here
+    // skyboxMaterial.emissiveColor = new BABYLON.Color3(9 /255, 40 /255, 55 /255); // Set your desired color here
+    skyboxMaterial.emissiveColor = new BABYLON.Color3(1 / 255, 5 / 255, 11 / 255); // Set your desired color here
+    
     skyboxMaterial.backFaceCulling = false;
     skyboxMaterial.disableLighting = true;
     skybox.material = skyboxMaterial;

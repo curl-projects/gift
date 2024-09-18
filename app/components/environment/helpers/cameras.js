@@ -78,3 +78,10 @@ export function addGUICamera(scene, name, parentCamera, layerMask){
     camera.parent = parentCamera;
     return camera;
 }
+
+export function addBloomEffect(scene){
+    const gl = new BABYLON.GlowLayer("bloom", scene, {
+        mainTextureFixedSize: 1024,
+        blurKernelSize: 64,       
+    })
+}
