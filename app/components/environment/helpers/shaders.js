@@ -1,120 +1,6 @@
-// import * as BABYLON from "@babylonjs/core";
-// import importedSmokeTexture from "/assets/smoke.png";
-// import { addSmokeShader } from "./shaders";
-
-// export function addCharacter(scene) {
-//     BABYLON.SceneLoader.ImportMesh("", "/assets/", 'creepy-sitting.glb', scene, function (meshes, particleSystems, skeletons, animationGroups) {
-//         const campfireMesh = scene.meshes.find(mesh => mesh.name === 'campfire');
-//         const characterMesh = meshes[0];
-//         console.log("CHARACTER MESH:", characterMesh);
-//         characterMesh.parent = campfireMesh;
-
-
-
-//         characterMesh.position = new BABYLON.Vector3(0, 0, -3);
-//         characterMesh.scaling = new BABYLON.Vector3(1, 1, 1);
-//         characterMesh.name = "narrator"
-//         const directionToCampfire = campfireMesh.position.subtract(characterMesh.position).normalize();
-//         const angle = Math.atan2(directionToCampfire.z, directionToCampfire.x);  // Note the order of parameters
-//         characterMesh.rotation = new BABYLON.Vector3(0, 0, 0);  // Adjust the angle to face the campfire
-//         characterMesh.renderingGroupId = RenderingGroups.environment;
-        
-//         // Create the smoke shader
-//         // addSmokeShader(scene).then(smokeShader => {
-//         //     // Apply the shader to the character mesh
-//         //     // characterMesh.material = smokeShader
-//         //     characterMesh.skeleton = skeletons[0]
-//         //     characterMesh.getChildMeshes().forEach((subMesh) => {
-//         //         console.log("Applying smoke shader to sub-mesh:", subMesh.name);
-//         //         subMesh.material = smokeShader;
-//         //     });
-//         // }).catch(error => {
-//         //     console.error("Error creating smoke shader:", error);
-//         // });
-
-//         return characterMesh
-//     });
-// }
-
-// to do -- replace with asset class
-
-
 import * as BABYLON from "@babylonjs/core";
-
-export function addNarrator(scene, shadowGenerator) {
- BABYLON.SceneLoader.ImportMesh("", "/assets/", "animated-wizard.glb", scene, function (meshes, particleSystems, skeletons, animationGroups) {
-        const campfireMesh = scene.meshes.find(mesh => mesh.name === 'campfire');
-        const characterMesh = meshes[0]
-        console.warn("CHARACTER MESH:", meshes);
-        // characterMesh.parent = campfireMesh;
-        characterMesh.name = "narrator"
-        characterMesh.position = new BABYLON.Vector3(0, 0.6, -14);
-        characterMesh.scaling = new BABYLON.Vector3(0.7, 0.7, 0.7);
-        const directionToCampfire = campfireMesh.position.subtract(characterMesh.position).normalize();
-        const angle = Math.atan2(directionToCampfire.z, directionToCampfire.x);  // Note the order of parameters
-        characterMesh.rotation = new BABYLON.Vector3(0, angle - Math.PI / 2, 0);  // Adjust the angle to face the campfire
-        
-        if(shadowGenerator){
-            console.log("ADDING SHADOW CASTER TO NARRATOR")
-            characterMesh.receiveShadows = true
-            shadowGenerator.addShadowCaster(characterMesh)
-        }
-        // Create the smoke shader
-        // createSmokeShader(scene).then(smokeShader => {
-            // Apply the shader to the character mesh
-            // characterMesh.material = smokeShader
-            // char acterMesh.skeleton = skeletons[0]
-            // characterMesh.getChildMeshes().forEach((subMesh) => {
-            //     console.log("Applying smoke shader to sub-mesh:", subMesh.name);
-            //     subMesh.material = smokeShader;
-            // });
-        // }).catch(error => {
-        //     console.error("Error creating smoke shader:", error);
-        // });
-
-        return characterMesh
-    });
-
-}
-
-export function addPlayer(scene, shadowGenerator){
-    BABYLON.SceneLoader.ImportMesh("", "/assets/", "animated-player.glb", scene, function (meshes, particleSystems, skeletons, animationGroups) {
-        const campfireMesh = scene.meshes.find(mesh => mesh.name === 'campfire');
-        const camera = scene.cameras.find(camera => camera.name === 'babylon-camera')
-        const characterMesh = meshes[0]
-        console.warn("PLAYER MESH:", meshes);
-        // characterMesh.parent = campfireMesh;
-        characterMesh.name = "player"
-        characterMesh.position = new BABYLON.Vector3(0, 0.6, 14);
-        characterMesh.scaling = new BABYLON.Vector3(0.7, 0.7, 0.7);
-        const directionToCampfire = campfireMesh.position.subtract(characterMesh.position).normalize();
-        const angle = Math.atan2(directionToCampfire.z, directionToCampfire.x);  // Note the order of parameters
-        characterMesh.rotation = new BABYLON.Vector3(0, angle - Math.PI / 2, 0);  // Adjust the angle to face the campfire
-
-        camera.position = characterMesh.position.add(new BABYLON.Vector3(-0.14, 10.6, -2));
-
-        if(shadowGenerator){
-            console.log("ADDING SHADOW CASTER TO PLAYER")
-            characterMesh.receiveShadows = true
-            shadowGenerator.addShadowCaster(characterMesh)
-        }
-
-        })
-        // Create the smoke shader
-        // createSmokeShader(scene).then(smokeShader => {
-            // Apply the shader to the character mesh
-            // characterMesh.material = smokeShader
-            // char acterMesh.skeleton = skeletons[0]
-            // characterMesh.getChildMeshes().forEach((subMesh) => {
-            //     console.log("Applying smoke shader to sub-mesh:", subMesh.name);
-            //     subMesh.material = smokeShader;
-            // });
-        // }).catch(error => {
-        //     console.error("Error creating smoke shader:", error);
-        // });
-}
-
-export function createSmokeShader(scene) {
+// to do -- replace with asset class
+export function addSmokeShader(scene) {
     return new Promise((resolve, reject) => {
         // Define vertex shader
         const vertexShader = `
@@ -305,10 +191,10 @@ export function createSmokeShader(scene) {
             float n = snoise(pos);
             vec4 smoke = texture2D(smokeTexture, vUV + n);
 
-            // Discard fragments that are too close to black or white
-            if (smoke.r < 0.2 || smoke.r > 0.8) {
-                discard;
-            }
+            // Temporarily comment out discard logic for debugging
+            // if (smoke.r < 0.2 || smoke.r > 0.8) {
+            //     discard;
+            // }
 
             // Fading edges effect
             float fade = 1.0 - smoothstep(0.4, 0.5, length(vUV - 0.5));
@@ -354,3 +240,4 @@ export function createSmokeShader(scene) {
         });
     });
 }
+        

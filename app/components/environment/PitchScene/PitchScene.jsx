@@ -6,7 +6,7 @@ import '@babylonjs/loaders';
 
 import { addGUICamera, addMovableCamera, addArcCamera, addTargetCamera } from "../helpers/cameras";
 import { addCampfireParticles } from "../helpers/campfire";
-import { addCampfireLight } from "../helpers/lights";
+import { addCampfireLight, addMoonLight } from "../helpers/lights";
 import { addLensEffects, addMotionBlur, fadeInScene } from "../helpers/post-processing";
 import { enableFloatingPhysics } from "../helpers/physics";
 import { addPhysicsText } from "../helpers/text"; // Import the new function
@@ -14,13 +14,14 @@ import { RenderingGroups } from "../helpers/constants"; // Import the RenderingG
 import { addConstellationCanvas } from "../helpers/constellations";
 import { createCanvasControlsButton, 
         createFocusButton, createFullscreenUI, createResetButton, createCampfireFocusButton } from "../helpers/gui";
-import { addSkybox } from "../helpers/skybox";
-import { addFog, addFireflyParticles } from "../helpers/forest-effects";
+import { addSkybox, altAddSkybox, addBoxSkybox } from "../helpers/skybox";
+import { addFog, addFireflyParticles, addExponentialFog } from "../helpers/forest-effects";
 import { createFadeBehaviour } from "../helpers/mesh-behaviours";
-import { createCharacter } from "../helpers/characters";
+import { addNarrator, addPlayer } from "../helpers/characters";
 import { CampfireSyncListener } from "~/components/synchronization/CampfireSyncListener";
 import { initializeLookingAtSky } from "../event-controllers/campfire-transition";
 import { addCommandEventListener } from "../helpers/event-handlers";
+import { addSmokeShader } from "../helpers/shaders";
 
 export function PitchScene(){
     const canvasZoneRef = useRef();
@@ -43,6 +44,7 @@ export function PitchScene(){
     async function onSceneReady(scene) {
        
         const camera = addMovableCamera(scene, "babylon-camera");
+        // addMoonLight(scene);
         // const light = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(1, 1, 0), scene);
 
         const assetManager = new BABYLON.AssetsManager(scene);
@@ -55,67 +57,71 @@ export function PitchScene(){
             console.log("Task Completed Succesfully", task);
           });
 
+          
         assetManager.useDefaultLoadingScreen = true;
-    
-        // addSkybox(scene, assetManager);
 
         scene.onReadyObservable.addOnce(async () => {
+            console.warn('scene ready')
             addConstellationCanvas(scene, canvasZoneRef, RenderingGroups);
-            // addPhysicsText(scene, 'Hello there', scene.getMeshByName('campfire'), new BABYLON.Vector3(0, 4, 0), new BABYLON.Vector3(0, Math.PI, 0))
             setSceneLoaded(true)
     
             });
 
         // Add mesh task
-        const meshTask = assetManager.addMeshTask("meshTask", "", "/assets/", "redwoods-landscape.glb");
+        // const smokeShader = await addSmokeShader(scene);
+        // const customShader = addCustomShader(scene);
+        
+        // const nodeMaterial = await BABYLON.NodeMaterial.ParseFromSnippetAsync("81NNDY#126", scene)
+
+        const meshTask = assetManager.addMeshTask("meshTask", "", "/assets/", "simple-landscape-improved.glb");
         meshTask.onSuccess = function (task) {
             // fade in/out behaviour
 
+            const campfire = task.loadedMeshes.find(mesh => mesh.name === 'campfire');
+            const { fireSPS, fireBaseSPS, embersSPS, smokeSPS } = addCampfireParticles(scene, campfire);
+            const shadowGenerator = addCampfireLight(scene, campfire);
+        
             task.loadedMeshes.forEach(mesh => {
                 mesh.renderingGroupId = RenderingGroups.environment;
+                mesh.receiveShadows = true;
+                console.log("MESH:", mesh.name)
 
                 if (mesh.name === 'campfire') {
-                    const { fireSPS, fireBaseSPS, embersSPS, smokeSPS } = addCampfireParticles(scene, mesh);
-                    const shadowGenerator = addCampfireLight(scene, mesh);
-
                     let boxHeight = 10;
-                    addFireflyParticles(scene, 0.1, new BABYLON.Vector3(5, boxHeight / 2, -10), new BABYLON.Vector3(40, boxHeight, 40), 100);
+                    addFireflyParticles(scene, 0.01, new BABYLON.Vector3(5, boxHeight / 2, -10), new BABYLON.Vector3(40, boxHeight, 40), 100);
                 }
                 else if(mesh.name.includes('redwood')){
                     mesh.enableBackFaceCulling = true;
-                    // mesh.visibility = 0.1;
+                    // customShader.setTexture("tex0", mesh.material.diffuseTexture);
+                    // mesh.receiveShadows = true;
+                    // shadowGenerator.addShadowCaster(mesh);
                 }
             });
-        };
 
-        const skyboxTask = assetManager.addCubeTextureTask("skyboxTask", "/assets/night-sky.env");
-        skyboxTask.onSuccess = function (task) {
-            console.log("TASK TEXTURE:", task.texture)
-            scene.environmentTexture = task.texture;
-            scene.environmentIntensity = 0.1;
-            const skybox = scene.createDefaultSkybox(task.texture, true);
-            skybox.renderingGroupId = RenderingGroups.skybox;
+            addNarrator(scene, shadowGenerator)
+            addPlayer(scene, shadowGenerator)
+
+       
         };
 
 
+        addBoxSkybox(scene);
 
         assetManager.onFinish = function (tasks) {
-            // void Promise.all([
-            //     import("@babylonjs/core/Debug/debugLayer"),
-            //     import("@babylonjs/inspector"),
-            // ]).then((_values) => {
-            //     console.log(_values);
-            //     scene.debugLayer.show({
-            //         handleResize: true,
-            //         overlay: false,
-            //         // globalRoot: document.getElementById("#root") || undefined,
-            //     });
-            // });
+            void Promise.all([
+                import("@babylonjs/core/Debug/debugLayer"),
+                import("@babylonjs/inspector"),
+            ]).then((_values) => {
+                console.log(_values);
+                scene.debugLayer.show({
+                    handleResize: true,
+                    overlay: false,
+                    // globalRoot: document.getElementById("#root") || undefined,
+                });
+            }); 
 
-            scene.setRenderingAutoClearDepthStencil(RenderingGroups.skybox, false, false, false);
-            scene.setRenderingAutoClearDepthStencil(RenderingGroups.environment, false, false, false);
-            scene.setRenderingAutoClearDepthStencil(RenderingGroups.text, false, false, false);
-        
+            
+          
 
             const lensEffects = addLensEffects(scene, camera, {
                 // chromatic aberration
@@ -134,19 +140,29 @@ export function PitchScene(){
                 // dof_threshold: 0.1,
                 // blur_noise: false,
             })
-            const motionBlur = addMotionBlur(scene, camera)
-
-            enableFloatingPhysics(scene);
-            addFog(scene);
-    
-
+            // const motionBlur = addMotionBlur(scene, camera)
 
             // TODO: use these to trigger motion blur on certain animations
-            camera.detachPostProcess(motionBlur)
+            // camera.detachPostProcess(motionBlur)
             // camera.attachPostProcess(motionBlur)
 
+            // enableFloatingPhysics(scene);
+            // addFog(scene, new BABYLON.Color3(9 /255, 40 /255, 55 /255));
+            addExponentialFog(scene, new BABYLON.Color4(0, 0, 0, 0.5));
+            // addExponentialFog(scene, new BABYLON.Color3(9 /255, 40 /255, 55 /255));
+    
 
-            const characterMesh = createCharacter(scene)
+            // addNarrator(scene)
+            // addPlayer(scene)
+
+            // const char = scene.meshes.find(mesh => mesh.name === "WhiteClown")
+            // char.material = smokeShader;
+            // characterMesh.getChildMeshes().forEach((subMesh) => {
+            //     console.log("Applying smoke shader to sub-mesh:", subMesh.name);
+            //     subMesh.material = smokeShader;
+            // });
+
+
 
             // const textCamera = addGUICamera(scene, "text-camera", camera, 0x10000000);
             // scene.activeCameras = [camera, textCamera];
@@ -158,7 +174,13 @@ export function PitchScene(){
             // createCanvasControlsButton(scene, advancedTexture);
             // createResetButton(scene, advancedTexture);
             // createCampfireFocusButton(scene, camera, advancedTexture, triggerEffect, setTriggerWarp, onRender);
+            console.warn('asset manager finished')
             setReactScene(scene)
+
+            scene.setRenderingAutoClearDepthStencil(RenderingGroups.environment, false, false, false);
+            scene.setRenderingAutoClearDepthStencil(RenderingGroups.text, false, false, false);
+            scene.setRenderingAutoClearDepthStencil(RenderingGroups.skybox, false, false, false);
+        
 
     
 
@@ -175,7 +197,7 @@ export function PitchScene(){
     return(
         <>
             <SceneRenderer 
-                antialias
+                antialias={true}
                 onSceneReady={onSceneReady}
                 onRender={onRender}
                 canvasZoneRef={canvasZoneRef}

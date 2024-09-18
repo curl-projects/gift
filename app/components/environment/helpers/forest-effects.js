@@ -1,12 +1,28 @@
 import * as BABYLON from "@babylonjs/core";
 import { RenderingGroups } from "./constants";
 
-export function addFog(scene) {
-    scene.fogMode = BABYLON.Scene.FOGMODE_EXP2;
-    scene.fogDensity = 0.001;  // Adjust the density as needed
-    // scene.fogDensity = 0.000;  // Adjust the density as needed
-    scene.fogColor = new BABYLON.Color3(0.2, 0.2, 0.3);  // Adjust the fog color as needed
+export function addFog(scene, fogColor) {
+    scene.fogMode = BABYLON.Scene.FOGMODE_LINEAR;
+    scene.fogStart = 250.0;  // Start distance of the fog (increased for less intensity)
+    scene.fogEnd = 900.0;   // End distance of the fog (increased for less intensity)
+    scene.fogColor = fogColor;
+
+    // Update fog distances based on camera position
+    scene.registerBeforeRender(function () {
+        const camera = scene.activeCamera;
+        if (camera) {
+            scene.fogStart = camera.position.z - 50.0;
+            scene.fogEnd = camera.position.z + 100.0;
+        }
+    });
 }
+
+export function addExponentialFog(scene, fogColor) {
+    scene.fogMode = BABYLON.Scene.FOGMODE_EXP;
+    scene.fogDensity = 0.005;  // Density of the fog (adjust for desired intensity)
+    scene.fogColor = fogColor;
+}
+
 
 export function addFireflyParticles(scene, maxVelocity, boxCenter, boxDimensions, numFireflies) {
     // Create a base mesh for the particles (a tiny square)

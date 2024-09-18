@@ -2,13 +2,13 @@ import * as BABYLON from "@babylonjs/core";
 
 export function addMovableCamera(scene, name) {
     // Create a Universal Camera
-    const camera = new BABYLON.UniversalCamera(name, new BABYLON.Vector3(0, 5, 12), scene);
+    const camera = new BABYLON.UniversalCamera(name, new BABYLON.Vector3(0, 5, 14), scene);
 
     // // Enable quaternion rotation
     camera.useQuaternion = true;
     // camera.rotationQuaternion = BABYLON.Quaternion.Identity();
 
-    camera.setTarget(new BABYLON.Vector3(0, 0, 0));
+    camera.setTarget(new BABYLON.Vector3(0, 5, -14));
     // camera.rotation.y += Math.PI;
     // camera.rotation.x += BABYLON.Tools.ToRadians(10)
 

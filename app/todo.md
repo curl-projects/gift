@@ -29,7 +29,7 @@ Bug Fixes:
 
 
 Narrator Voice Bugs:
-- [] space event handler isn't being removed
+- [x] space event handler isn't being removed
 - [] janky timing with narrator and system because they're being manually reset at the beginning of new commands
 - [] system component is not registering as done after pressing space when it's last in the chain
 - [] remove progressive blur when constellation expansion is triggered by the narrator voice system
@@ -70,3 +70,17 @@ Flow Notes:
 - [x] better transition effect
 - [] play with depth of field at the beginning
 - [] multi-line components
+
+
+New Fixes:
+- [] make constellation unclickable at the beginning until the pitch starts
+- [] initial loading state and campfire smoke (same problem)
+- [] delay isn't working properly for system component (specifically during the first of the three pitches)
+- [] fix visibility of press space to continue
+- [] when the journal opens, the constellation should move to the left
+- [] fix narrator model and scene visibility
+- [] fix timing on the constellation label so it happens more immediately
+- Less Essential
+    - [] fix shaders for the scene
+- [] make sure it can't go down instead of up
+- [] make sure overlay fades out properly

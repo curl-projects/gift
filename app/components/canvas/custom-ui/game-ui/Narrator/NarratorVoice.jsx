@@ -38,31 +38,31 @@ export function NarratorVoice() {
     const [systemState, setSystemState] = useState({ visible: false, text: '', requiresInteraction: false });
     // const [commands, setCommands] = useState([]);
 
-    useEffect(() => {
-        setNarratorEvent('pitch');
-    }, [setNarratorEvent]);
+    // useEffect(() => {
+    //     setNarratorEvent('pitch');
+    // }, [setNarratorEvent]);
 
     const narratorOrchestration = {
         'pitch': [
             // setup -- it's a dark night with a faded sky
-            {
-                type: 'callback',
-                callback: () => {
-                    setConstellationLabel({ visible: false, immediate: true })
-                    setCampfireView({ active: false, immediate: true })
-                    setOverlayControls({ dark: false, immediate: true })
-                    setStarControls({ visible: true, immediate: true })
-                    setCloudControls({ visible: true, immediate: true })
-                }
-            },
-            {
-                // hardcoded jank because the promise logic isn't working for the components above
-                type: 'callback',
-                callback: () => {
-                    return new Promise(resolve => setTimeout(resolve, 2000));
-                },
-                waitForCallback: true,
-            },     
+            // {
+            //     type: 'callback',
+            //     callback: () => {
+            //         setConstellationLabel({ visible: false, immediate: true })
+            //         setCampfireView({ active: false, immediate: true })
+            //         setOverlayControls({ dark: true, immediate: true })
+            //         setStarControls({ visible: false, immediate: true })
+            //         setCloudControls({ visible: true, immediate: true })
+            //     }
+            // },
+            // {
+            //     // hardcoded jank because the promise logic isn't working for the components above
+            //     type: 'callback',
+            //     callback: () => {
+            //         return new Promise(resolve => setTimeout(resolve, 2000));
+            //     },
+            //     waitForCallback: true,
+            // },     
             // {
             //     type: 'callback',
             //     callback: () => {
@@ -87,7 +87,7 @@ export function NarratorVoice() {
             //                 type: 'narrator',
             //                 visible: true,
             //                 overlay: false,
-            //                 text: "I have spent much of my life here, lost in a stupor, adrift in a void,", 
+            //                 text: "We have spent much of our lives here, lost in a stupor, adrift in a void,", 
             //                 requiresInteraction: true, 
             //                 darkeningVisible: false
             //             })
@@ -171,7 +171,6 @@ export function NarratorVoice() {
             // {
             //     type: 'callback',
             //     callback: () => {
-            //         console.log('fade overlay event')
             //         return Promise.all([
             //             setTrueOverlayControls({ visible: true, immediate: false, duration: 4 }),
             //         ])
@@ -208,7 +207,7 @@ export function NarratorVoice() {
             //                 type: 'system',
             //                 visible: true,
             //                 overlay: true,
-            //                 text: "Move around", 
+            //                 text: "Try moving around", 
             //                 waitUntilVisible: true,
             //                 darkeningVisible: true, 
             //                 waitCondition: () => {
@@ -262,7 +261,7 @@ export function NarratorVoice() {
             //                 type: 'narrator',
             //                 visible: true,
             //                 overlay: true,
-            //                 text: "So long spent in the dark sky -- do you even remember what the stars look like?", 
+            //                 text: "So long spent in the dark sky - do you even remember what the stars look like?", 
             //                 duration: 3,
             //                 requiresInteraction: true,
             //                 waitUntilVisible: true,
@@ -276,6 +275,7 @@ export function NarratorVoice() {
             //     type: 'callback',
             //     callback: () => {
             //         return Promise.all([
+            //             setCampfireView({ active: false, immediate: false }),
             //             setTextEvent({ 
             //                 type: 'narrator',
             //                 visible: false,
@@ -285,189 +285,103 @@ export function NarratorVoice() {
             //     },
             //     waitForCallback: true,
             // }, 
-            {
-                type: 'callback',
-                callback: () => {
-                    return Promise.all([
-                        
-                        setConstellationLabel({ 
-                            visible: true, 
-                            immediate: false, 
-                            duration: 2, 
-                            delay: 2,
-                            text: "The First Star"
-                        }),
-                        
-                    ])
-                },
-                waitForCallback: true,
-            },
-            {
-                type: 'callback',
-                callback: () => {
-                    return Promise.all([
-                        setExpandConstellation({ concepts: true, excerpts: true }),
-                        setTextEvent({ 
-                            type: 'system',
-                            visible: true,
-                            overlay: false,
-                            text: "create constellations to explore your work", 
-                            requiresInteraction: true, 
-                            delay: 2,
-                        }),
-                    ])
-                },
-                waitForCallback: true,
-            },
-            {
-                type: 'callback',
-                callback: () => {
-                    return Promise.all([
-                        setTriggerWarp({ active: true, accDuration: 1000, deaccDuration: 1000, constAccDuration: 1000 }).then(()=>{
-                            setConstellationLabel({ 
-                                visible: true, 
-                                immediate: false, 
-                                duration: 2, 
-                                delay: 2,
-                                text: "Finn's Cluster"
-                            })
-                        }),
-                        setTextEvent({ 
-                            type: 'system',
-                            visible: true,
-                            overlay: false,
-                            text: "traverse the stars to discover new ideas", 
-                            requiresInteraction: true, 
-                            delay: 2,
-                        })
-                    ])
-                },
-                waitForCallback: true,
-            },
-            {
-                type: 'callback',
-                callback: () => {
-                    return Promise.all([
-                        setTextEvent({ 
-                            type: 'system',
-                            visible: true,
-                            overlay: false,
-                            text: "collect glyphs to forge new friendships", 
-                            requiresInteraction: true, 
-                            delay: 2
-                        }),
-                        setGlyphControls({ visible: true, immediate: false, duration: 4 })
-                        // setJournalMode({ active: true, page: 'cover' })
-                    ])
-                },
-                waitForCallback: true,
-            },
-            {
-                type: 'callback',
-                callback: () => {
-                    return Promise.all([
-                        setGlyphControls({ visible: false, immediate: false, duration: 4 }),
-                        setTextEvent({ 
-                            type: 'system',
-                            visible: false,
-                            overlay: false,
-                        }),
-                        setJournalMode({ active: true, page: 'cover' })
-
-                    ])
-                },
-                waitForCallback: true,
-            }
-
             // {
             //     type: 'callback',
             //     callback: () => {
             //         return Promise.all([
-            //             setCampfireView({ active: false, immediate: false })
+                        
+            //             setConstellationLabel({ 
+            //                 visible: true, 
+            //                 immediate: false, 
+            //                 duration: 2, 
+            //                 delay: 2,
+            //                 text: "The First Star"
+            //             }),
+                        
             //         ])
             //     },
             //     waitForCallback: true,
             // },
             // {
-            //     type: 'system',
-            //     text: "Move around",
-            //     overlay: true,
-            //     waitForCondition: () => {
+            //     type: 'callback',
+            //     callback: () => {
             //         return Promise.all([
-            //             setCommandEvent({
-            //                 eventType: 'camera-moved',
-            //                 props: {}
+            //             setExpandConstellation({ concepts: true, excerpts: true }),
+            //             setTextEvent({ 
+            //                 type: 'system',
+            //                 visible: true,
+            //                 overlay: false,
+            //                 text: "create constellations to explore your work", 
+            //                 requiresInteraction: true, 
+            //                 delay: 2,
+            //             }),
+            //         ])
+            //     },
+            //     waitForCallback: true,
+            // },
+            // {
+            //     type: 'callback',
+            //     callback: () => {
+            //         return Promise.all([
+            //             setTriggerWarp({ active: true, accDuration: 1000, deaccDuration: 1000, constAccDuration: 1000 }).then(()=>{
+            //                 setConstellationLabel({ 
+            //                     visible: true, 
+            //                     immediate: false, 
+            //                     duration: 2, 
+            //                     delay: 2,
+            //                     text: "Finn's Cluster"
+            //                 })
+            //             }),
+            //             setTextEvent({ 
+            //                 type: 'system',
+            //                 visible: true,
+            //                 overlay: false,
+            //                 text: "traverse the stars to discover new ideas", 
+            //                 requiresInteraction: true, 
+            //                 delay: 2,
             //             })
             //         ])
-            //     }
+            //     },
+            //     waitForCallback: true,
             // },
-            // // trigger the proper text once you're looking at the narrator
             // {
             //     type: 'callback',
             //     callback: () => {
             //         return Promise.all([
-            //             setCommandEvent({
-            //                 eventType: 'mesh-visible', 
-            //                 props: {
-            //                     meshName: 'narrator'
-            //                 }
-            //                 })
+            //             setTextEvent({ 
+            //                 type: 'system',
+            //                 visible: true,
+            //                 overlay: false,
+            //                 text: "collect glyphs to forge new friendships", 
+            //                 requiresInteraction: true, 
+            //                 delay: 2
+            //             }),
+            //             setGlyphControls({ visible: true, immediate: false, duration: 4 })
             //         ])
             //     },
             //     waitForCallback: true,
             // },
             // {
-            //     type: 'narrator',
-            //     text: "So long spent in the dark sky -- do you even remember what the stars look like?",
-            //     requiresInteraction: true,
-            //     overlay: true,
+            //     type: 'callback',
+            //     callback: () => {
+            //         return Promise.all([
+            //             setGlyphControls({ visible: false, immediate: false, duration: 4 }),
+            //             setTextEvent({ 
+            //                 type: 'system',
+            //                 visible: false,
+            //                 overlay: false,
+            //             }),
+            //             setJournalMode({ active: true, page: 'cover' })
+
+            //         ])
+            //     },
+            //     waitForCallback: true,
             // },
             // {
             //     type: 'callback',
             //     callback: () => {
             //         return Promise.all([
             //             setCampfireView({ active: false, immediate: false })
-            //         ])
-            //     },
-            //     waitForCallback: true,
-            // },
-            // {
-            //     type: 'system',
-            //     text: "create constellations to explore your work",
-            //     duration: 8,
-
-            // },
-            // {
-            //     type: "callback",
-            //     callback: () => {
-            //         console.log("HIIIII!")
-            //         setExpandConstellation({ concepts: true, excerpts: true })
-            //     }
-            // },
-            // {
-            //     type: 'system',
-            //     text: "traverse the stars to discover new ideas",
-            //     duration: 8, // todo this will clear when the new one retriggers -- refactor to use the callback system
-            // },
-            //  {
-            //     type: "callback",
-            //     callback: () => {
-            //         return Promise.all([
-            //             setTriggerWarp({ active: true, accDuration: 1000, deaccDuration: 1000, constAccDuration: 1000 })
-            //         ])
-            //     },
-            //     waitForCallback: true,
-            // },
-            // {
-            //     type: 'system',
-            //     text: "collect glyphs to forge new friendships",
-            //     duration: 8,
-            // },
-            // {
-            //     type: "callback",
-            //     callback: () => {
-            //         return Promise.all([
-            //             setJournalMode({ active: true, page: 'cover' })
             //         ])
             //     },
             //     waitForCallback: true,
