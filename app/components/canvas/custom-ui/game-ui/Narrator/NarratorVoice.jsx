@@ -6,6 +6,7 @@ import { useEditor, createShapeId } from "tldraw";
 import { useStarFireSync } from "~/components/synchronization/StarFireSync";
 import NarratorComponent from "./components/NarratorComponent";
 import SystemComponent from "./components/SystemComponent";
+import * as BABYLON from '@babylonjs/core';
 
 export function NarratorVoice() {
     const editor = useEditor();
@@ -49,8 +50,8 @@ export function NarratorVoice() {
             // {
             //     type: 'callback',
             //     callback: () => {
-            //         setConstellationLabel({ visible: false, immediate: true })
             //         setCampfireView({ active: false, immediate: true })
+            //         setConstellationLabel({ visible: false, immediate: true })
             //         setOverlayControls({ dark: true, immediate: true })
             //         setStarControls({ visible: false, immediate: true })
             //         setCloudControls({ visible: true, immediate: true })
@@ -182,13 +183,19 @@ export function NarratorVoice() {
             //     type: 'callback',
             //     callback: () => {
             //         return Promise.all([
-            //             setCampfireView({ active: true, immediate: true, targetMeshName: 'constellationCanvas' }),
+            //             setCampfireView({ 
+            //                 active: true, 
+            //                 immediate: true, 
+            //                 useTargetPosition: false,
+            //                 targetMeshName: 'ground',
+            //              }),
             //             setStarControls({ visible: true, immediate: true })
                         
             //         ])
             //     },
             //     waitForCallback: true,
             // },
+            
             // {
             //     type: 'callback',
             //     callback: () => {
@@ -240,60 +247,60 @@ export function NarratorVoice() {
             //     },
             //     waitForCallback: false,
             // },
-            {
-                type: 'callback',
-                callback: () => {
-                    return Promise.all([
-                        setCommandEvent({
-                            eventType: 'mesh-visible', 
-                            props: {
-                                meshName: 'narrator'
-                            }
-                            })
-                    ])
-                },
-                waitForCallback: true,
-            },
-            {
-                type: 'callback',
-                callback: () => {
-                    return Promise.all([
-                        setAnimationEvent({ 
-                            animationGroupName: 'looking-down',
-                            props: {
-                                reverse: true,
-                                startFrame: 300,  
-                                endFrame: 10,          
-                            }
-                        }),
-                        setTextEvent({ 
-                            type: 'narrator',
-                            visible: true,
-                            overlay: true,
-                            text: "So long spent in the dark sky - do you even remember what the stars look like?", 
-                            duration: 3,
-                            requiresInteraction: true,
-                            waitUntilVisible: true,
-                            darkeningVisible: true, 
-                        })
-                    ])
-                },
-                waitForCallback: true,
-            }, 
             // {
             //     type: 'callback',
             //     callback: () => {
             //         return Promise.all([
-            //             setCampfireView({ active: false, immediate: false }),
+            //             setCommandEvent({
+            //                 eventType: 'mesh-visible', 
+            //                 props: {
+            //                     meshName: 'narrator'
+            //                 }
+            //                 })
+            //         ])
+            //     },
+            //     waitForCallback: true,
+            // },
+            // {
+            //     type: 'callback',
+            //     callback: () => {
+            //         return Promise.all([
+            //             setAnimationEvent({ 
+            //                 animationGroupName: 'looking-down',
+            //                 props: {
+            //                     reverse: true,
+            //                     startFrame: 300,  
+            //                     endFrame: 10,          
+            //                 }
+            //             }),
             //             setTextEvent({ 
             //                 type: 'narrator',
-            //                 visible: false,
+            //                 visible: true,
             //                 overlay: true,
+            //                 text: "So long spent in the dark sky - do you even remember what the stars look like?", 
+            //                 duration: 3,
+            //                 requiresInteraction: true,
+            //                 waitUntilVisible: true,
+            //                 darkeningVisible: true, 
             //             })
             //         ])
             //     },
             //     waitForCallback: true,
             // }, 
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setCampfireView({ active: false, immediate: false }),
+                        setTextEvent({ 
+                            type: 'narrator',
+                            visible: false,
+                            overlay: true,
+                        })
+                    ])
+                },
+                waitForCallback: true,
+            }, 
             // {
             //     type: 'callback',
             //     callback: () => {

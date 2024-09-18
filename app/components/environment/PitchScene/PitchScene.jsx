@@ -74,6 +74,8 @@ export function PitchScene(){
     
             });
 
+        
+
         const meshTask = assetManager.addMeshTask("meshTask", "", "/assets/", "simple-landscape-improved.glb");
         meshTask.onSuccess = async function (task) {
             // fade in/out behaviour

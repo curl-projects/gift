@@ -44,7 +44,7 @@ function calculateNewTargetRotations(camera, target){
     camera._referencePoint.normalize().scaleInPlace(initialFocalDistance);
 
     Matrix.LookAtLHToRef(camera.position, target, camera.upVector, camera._camMatrix);
-    camera._camMatrix.invert();
+    // camera._camMatrix.invert();
 
     targetRotationX = Math.atan(camera._camMatrix.m[6] / camera._camMatrix.m[10]);
 
@@ -238,12 +238,21 @@ export function focusWithoutMovingToConstellationCanvas(scene, camera, triggerEf
     });
 }
 
-export function unfocusFromConstellationCanvas(scene, camera, triggerEffect, onRender, treeScale=true, targetMeshName = 'campfire', targetFov = 0.8) {
+export function unfocusFromConstellationCanvas(scene, camera, triggerEffect, onRender, treeScale=true, targetMeshName = 'campfire', targetPosition = null, targetFov = 0.8, useTargetPosition = false) {
     return new Promise((resolve) => {
-        const targetMesh = scene.getMeshByName(targetMeshName);
 
-        console.log("targetMesh", targetMesh);
-        if (targetMesh) {
+        var target;
+        
+        if(useTargetPosition){
+            target = targetPosition;
+        }
+        else{
+            const targetMesh = scene.getMeshByName(targetMeshName);
+            target = targetMesh.position;
+            console.warn("TARGET MESH POSITION:", target)
+        }
+
+        if (target) {
 
             const engine = scene.getEngine();
 
@@ -252,7 +261,6 @@ export function unfocusFromConstellationCanvas(scene, camera, triggerEffect, onR
                 scene.render()
             });
 
-            const target = targetMesh.position;
             const { targetQuaternion } = calculateNewTargetRotations(camera, target);
 
             const newFov = targetFov;
@@ -325,7 +333,7 @@ export function unfocusFromConstellationCanvas(scene, camera, triggerEffect, onR
     });
 }
 
-export function unfocusFromConstellationCanvasImmediately(scene, camera, onRender, treeScale=true, targetMeshName = 'campfire', targetFov = 0.8) {
+export function unfocusFromConstellationCanvasImmediately(scene, camera, onRender, treeScale=true, targetMeshName = 'campfire', targetPosition = null, targetFov = 0.8, useTargetPosition = true) {
     return new Promise((resolve) => {
         console.log("IMMEDIATELY UNFOCUSING")
         const engine = scene.getEngine();
@@ -334,21 +342,29 @@ export function unfocusFromConstellationCanvasImmediately(scene, camera, onRende
             scene.render();
         });
 
-        const targetMesh = scene.meshes.find(mesh => mesh.name && mesh.name === targetMeshName);
 
-        console.log("targetMesh", targetMesh);
-        if (targetMesh) {
-            const target = targetMesh.position;
+        var target;
+
+        if(useTargetPosition){
+            target = targetPosition;
+        }
+        else{
+            const targetMesh = scene.meshes.find(mesh => mesh.name && mesh.name === targetMeshName);
+            target = targetMesh.position;
+            console.warn("TARGET MESH POSITION:", target)
+        }
+
+        if (target) {
+            // for some reason you have to add the height into the calculation
             const { targetQuaternion } = calculateNewTargetRotations(camera, target);
 
             const newFov = targetFov;
        
 
-            // Directly set the camera's rotation and FOV
             camera.rotationQuaternion = targetQuaternion;
             camera.fov = newFov;
 
-            console.log("Camera unfocused from constellation canvas immediately.");
+            console.log("Camera unfocused from constellation canvas immediately."); 
 
             // Handle redwood meshes scaling
             const redwoodMeshes = scene.meshes.filter(mesh => mesh.name && mesh.name.includes('redwood'));
@@ -366,10 +382,24 @@ export function unfocusFromConstellationCanvasImmediately(scene, camera, onRende
     });
 }
 
+function setSPSOpacityToZero(scene) {
+    for(let mesh of scene.meshes){
+        if (mesh instanceof BABYLON.SolidParticleSystem) {
+            console.warn("MESH:", mesh)
+            if (mesh.material) {
+                console.warn("MATERIAL:", mesh.material)
+                mesh.material.alpha = 0;
+            }
+        }
+    }
+}
+
+
 export function initializeLookingAtSky(scene, camera, treeScale=true){
     return new Promise((resolve, reject) => {
         const constellationCanvas = scene.getMeshByName('constellationCanvas');
         if (constellationCanvas) {
+
             const target = constellationCanvas.position;
 
             const { targetQuaternion } = calculateNewTargetRotations(camera, target);
@@ -396,14 +426,13 @@ export function initializeLookingAtSky(scene, camera, treeScale=true){
                 const engine = scene.getEngine();
                 engine.stopRenderLoop();
                 resolve(); // Resolve the promise when all operations are complete
-            }, 2000);
+            }, 100);
         } else {
             console.error("Constellation Canvas not found");
             reject("Constellation Canvas not found"); // Reject the promise if constellationCanvas is not found
         }
     });
 }
-
 
 
 

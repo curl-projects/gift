@@ -8,7 +8,7 @@ export function addMovableCamera(scene, name) {
     camera.useQuaternion = true;
     // camera.rotationQuaternion = BABYLON.Quaternion.Identity();
 
-    camera.setTarget(new BABYLON.Vector3(0, 0, 14));
+    camera.setTarget(new BABYLON.Vector3(0, 5, -14));
     // camera.setTarget(new BABYLON.Vector3(0, 5, -14));
     // camera.rotation.y += Math.PI;
     // camera.rotation.x += BABYLON.Tools.ToRadians(10)

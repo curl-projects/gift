@@ -23,17 +23,23 @@ export function CampfireSyncListener({ scene, onRender }){
 
             const treeScale = campfireView?.treeScale !== undefined ? campfireView.treeScale : true;
             const targetMeshName = campfireView?.targetMeshName !== undefined ? campfireView.targetMeshName : 'campfire';
+            const targetPosition = campfireView?.targetPosition !== undefined ? campfireView.targetPosition : null;
+            const useTargetPosition = campfireView?.useTargetPosition !== undefined ? campfireView.useTargetPosition : true;
 
+
+            console.warn("TARGET POSITION:", targetPosition)
+            console.warn("TARGET MESH NAME:", targetMeshName)
+            console.warn("USE TARGET POSITION:", useTargetPosition)
 
             if(campfireView.active){
                 if(campfireView.immediate){
-                    unfocusFromConstellationCanvasImmediately(scene, camera, onRender, treeScale, targetMeshName).then(()=>{
+                    unfocusFromConstellationCanvasImmediately(scene, camera, onRender, treeScale, targetMeshName, targetPosition, 0.8, useTargetPosition).then(()=>{
                         campfireView.onComplete && campfireView.onComplete()
                         })
                     
                 }
                 else{
-                    unfocusFromConstellationCanvas(scene, camera, triggerEffect, onRender, treeScale, targetMeshName).then(()=>
+                    unfocusFromConstellationCanvas(scene, camera, triggerEffect, onRender, treeScale, targetMeshName, targetPosition, 0.8, useTargetPosition).then(()=>
                         campfireView.onComplete && campfireView.onComplete()
                     )
                 }
