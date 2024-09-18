@@ -1,9 +1,9 @@
 import * as BABYLON from "@babylonjs/core";
 
 
-export function addCampfireParticles(scene, campfire) {
+export function addCampfireParticles(scene, campfire, verticalOffset = -0.2) {
     var glowLayer = new BABYLON.GlowLayer("campfire-glow", scene);
-    glowLayer.intensity = 1.0;
+    glowLayer.intensity = 2;
 
     var spread = 0.5;
     var fireParticles = 200;
@@ -24,7 +24,7 @@ export function addCampfireParticles(scene, campfire) {
         mesh.alwaysSelectAsActiveMesh = true; // Disable frustum culling
         var fireMaterial = new BABYLON.StandardMaterial("fireMat", scene);
         fireMaterial.emissiveColor = new BABYLON.Color3(1, 0.5, 0);
-        fireMaterial.roughness = 0.2;
+        fireMaterial.roughness = 0.6;
         mesh.material = fireMaterial;
 
         glowLayer.addIncludedOnlyMesh(mesh);
@@ -50,7 +50,7 @@ export function addCampfireParticles(scene, campfire) {
             particle.scale.x = maxScale;
             particle.scale.y = maxScale;
             particle.scale.z = maxScale;
-            particle.life = (Math.random() * 50 + 50) / speed;
+            particle.life = (Math.random() * 30 + 30) / speed; // Reduced life
             particle.age = 0;
             particle.upwardSpeed = (Math.random() * 0.02 + 0.01) * speed;
             particle.horizontalSpeedX = (Math.random() - 0.5) * 0.02;
@@ -78,6 +78,7 @@ export function addCampfireParticles(scene, campfire) {
             sps.setParticles();
         });
 
+        mesh.position.y += verticalOffset; // Apply vertical offset
         return sps;
     }
 
@@ -116,7 +117,7 @@ export function addCampfireParticles(scene, campfire) {
             particle.scale.x = maxScale;
             particle.scale.y = maxScale;
             particle.scale.z = maxScale;
-            particle.life = (Math.random() * 50 + 50) / speed;
+            particle.life = (Math.random() * 30 + 30) / speed; // Reduced life
             particle.age = 0;
             particle.upwardSpeed = (Math.random() * 0.01 + 0.005) * speed;
             particle.horizontalSpeedX = (Math.random() - 0.5) * horizontalSpread;
@@ -144,6 +145,7 @@ export function addCampfireParticles(scene, campfire) {
             sps.setParticles();
         });
 
+        mesh.position.y += verticalOffset; // Apply vertical offset
         return sps;
     }
 
@@ -216,6 +218,7 @@ export function addCampfireParticles(scene, campfire) {
             sps.setParticles();
         });
 
+        mesh.position.y += verticalOffset; // Apply vertical offset
         return sps;
     }
 
@@ -283,6 +286,7 @@ export function addCampfireParticles(scene, campfire) {
             sps.setParticles();
         });
 
+        mesh.position.y += verticalOffset; // Apply vertical offset
         return sps;
     }
 
