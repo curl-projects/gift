@@ -11,13 +11,17 @@ const NarratorComponent = ({
     onComplete,
     darkeningVisible=true, 
     darkeningDuration=2,
-    nextButtonVisible=false
+    nextButtonVisible,
+    setNextButtonVisible
 }) => {
 
     useEffect(() => {
         console.log("darkeningVisible", darkeningVisible);
         console.log("darkeningDuration", darkeningDuration);
     }, [darkeningVisible, darkeningDuration]);
+
+
+    
 
     return (
         <AnimatePresence>
@@ -34,6 +38,8 @@ const NarratorComponent = ({
                         console.log("animation complete (darkening)", animation)
                         console.log("onComplete", onComplete)
                         onComplete && onComplete();
+
+        
                     }}
                 >
                     <div className={styles.narratorContainerInner}>
@@ -70,9 +76,15 @@ const NarratorComponent = ({
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             transition={{ duration: 2 }}
-                            onAnimationComplete={() => {
+                            onAnimationComplete={(animation) => {
+                                console.log("animation", animation)
+                                if(animation.opacity === 1){
+                                    setNextButtonVisible(true);
+                                }
                                 console.log("animation complete (text)")
                                 onComplete && onComplete();
+
+                                
                             }} 
                         >
                                 {text}
@@ -80,18 +92,22 @@ const NarratorComponent = ({
                        
                     </AnimatePresence>
                     </motion.div>
-                    <div className={styles.nextButtonContainerWrapper}>
-                        <motion.p 
-                            key={text}
-                            className={styles.nextButtonContainer}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: requiresInteraction ? 1 : 0 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ duration: 4, delay: 0.5 }}
-                        >
-                            press space to continue
-                        </motion.p>
-                    </div>
+                    <AnimatePresence>
+                    {nextButtonVisible && (
+                        <div className={styles.nextButtonContainerWrapper}>
+                            <motion.p 
+                                key="next-button-container"
+                                className={styles.nextButtonContainer}
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: requiresInteraction ? 1 : 0 }}
+                                exit={{ opacity: 0, transition: { duration: 0 } }}
+                                transition={{ duration: 1, delay: 0 }}
+                            >
+                                press space to continue
+                            </motion.p>
+                        </div>
+                        )}
+                    </AnimatePresence>
                 </>
             )}
         </AnimatePresence>

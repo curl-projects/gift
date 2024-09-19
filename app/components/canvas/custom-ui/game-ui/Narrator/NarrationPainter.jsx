@@ -11,10 +11,12 @@ export function NarrationPainter(){
             setNarratorText, setSystemText } = useStarFireSync();
     
     const handleKeyDownRef = useRef();
+    const [nextButtonVisible, setNextButtonVisible] = useState(false);
 
     const handleKeyDown = useCallback((event) => {
         if (event.key === ' ') {
             console.log('triggering listener!')
+            setNextButtonVisible(false);
             window.removeEventListener('keydown', handleKeyDownRef.current);
             event.preventDefault();
             textEvent.onComplete && textEvent.onComplete();
@@ -139,6 +141,8 @@ export function NarrationPainter(){
                 darkeningDuration={narratorText.darkeningDuration}
                 onComplete={narratorText.onComplete}
                 delay={narratorText.delay}
+                nextButtonVisible={nextButtonVisible}
+                setNextButtonVisible={setNextButtonVisible}
                 />
             <SystemComponent 
                 visible={systemText.visible} 
@@ -146,6 +150,8 @@ export function NarrationPainter(){
                 requiresInteraction={systemText.requiresInteraction}
                 onComplete={systemText.onComplete}
                 delay={systemText.delay}
+                nextButtonVisible={nextButtonVisible}
+                setNextButtonVisible={setNextButtonVisible}
                 />
         </>
     );
