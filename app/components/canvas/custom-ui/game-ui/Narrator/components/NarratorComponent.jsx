@@ -82,9 +82,7 @@ const NarratorComponent = ({
                                     setNextButtonVisible(true);
                                 }
                                 console.log("animation complete (text)")
-                                onComplete && onComplete();
-
-                                
+                                onComplete && onComplete();    
                             }} 
                         >
                                 {text}

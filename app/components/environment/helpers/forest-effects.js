@@ -19,7 +19,7 @@ export function addFog(scene, fogColor) {
 
 export function addExponentialFog(scene, fogColor) {
     scene.fogMode = BABYLON.Scene.FOGMODE_EXP;
-    scene.fogDensity = 0.0005;  // Density of the fog (adjust for desired intensity)
+    scene.fogDensity = 0.0009;  // Density of the fog (adjust for desired intensity)
     scene.fogColor = fogColor;
 }
 

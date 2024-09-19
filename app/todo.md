@@ -84,3 +84,8 @@ New Fixes:
     - [] fix shaders for the scene
 - [] make sure it can't go down instead of up
 - [] make sure overlay fades out properly
+
+New To Dos:
+- [] create subtitle for title screen 
+- [] narrator face blips out 
+- [] disable camera arrow keys

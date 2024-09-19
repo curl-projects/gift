@@ -112,17 +112,17 @@ export function PitchScene(){
         addBoxSkybox(scene);
 
         assetManager.onFinish = function (tasks) {
-            // void Promise.all([
-            //     import("@babylonjs/core/Debug/debugLayer"),
-            //     import("@babylonjs/inspector"),
-            // ]).then((_values) => {
-            //     console.log(_values);
-            //     scene.debugLayer.show({
-            //         handleResize: true,
-            //         overlay: false,
-            //         // globalRoot: document.getElementById("#root") || undefined,
-            //     });
-            // }); 
+            void Promise.all([
+                import("@babylonjs/core/Debug/debugLayer"),
+                import("@babylonjs/inspector"),
+            ]).then((_values) => {
+                console.log(_values);
+                scene.debugLayer.show({
+                    handleResize: true,
+                    overlay: false,
+                    // globalRoot: document.getElementById("#root") || undefined,
+                });
+            }); 
 
             
           
@@ -155,7 +155,7 @@ export function PitchScene(){
 
             // enableFloatingPhysics(scene);
             // addFog(scene, new BABYLON.Color3(9 /255, 40 /255, 55 /255));
-            addExponentialFog(scene, new BABYLON.Color4(0, 0, 0, 0.5));
+            addExponentialFog(scene, new BABYLON.Color4(0, 0, 0, 0.7));
             // addExponentialFog(scene, new BABYLON.Color3(9 /255, 40 /255, 55 /255));
     
 

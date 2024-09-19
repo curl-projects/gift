@@ -28,7 +28,8 @@
 .narratorText {
     /* used to remove from stacking context */
     position: relative;
-    font-size: 80px;
+    font-size: 40px;
+    line-height: 1em;
     color: rgba(255, 255, 255, 0.2);
     font-family: "Handjet", sans-serif;
     font-weight: 300;

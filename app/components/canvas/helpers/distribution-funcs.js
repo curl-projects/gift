@@ -62,12 +62,13 @@ export function applyProgressiveBlur(editor, centralShape, excludeIds = []){
         const distance = Math.sqrt(Math.pow(shapeCenter[0] - centralShapeCenter[0], 2) + Math.pow(shapeCenter[1] - centralShapeCenter[1], 2));
 
         const opacity = Math.min(0.3, (distance / maxDistance) * 0.5);
+        editor.run(() => {
             editor.updateShape({
                 id: shape.id,
                 type: shape.type,
                 opacity: 0.2
             })
-        
+        }, { ignoreShapeLock: true})
     }
 }
 
@@ -77,11 +78,14 @@ export function removeProgressiveBlur(editor, centralShape, excludeIds = []){
     // exclude those in excludeIds
     for(let shape of shapes){
         if(['concept', 'thread', 'excerpt', 'name'].includes(shape.type) ){
-            editor.updateShape({
-                id: shape.id,
-                type: shape.type,
-                opacity: 1
-            })
+            editor.run(() => {
+                editor.updateShape({
+                    id: shape.id,
+                    type: shape.type,
+                    opacity: 1
+                })
+            }, { ignoreShapeLock: true})
+           
         }
     }
     

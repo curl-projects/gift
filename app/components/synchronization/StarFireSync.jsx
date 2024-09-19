@@ -29,7 +29,7 @@ const StarFireSyncProvider = ({ children }) => {
     const [overlayControls, _setOverlayControls] = useState({ dark: false, immediate: true, duration: 2, }); // Consolidated state
     
     // set this true initially to cover everything
-    const [trueOverlayControls, _setTrueOverlayControls] = useState({ visible: false, immediate: true, duration: 2, }); // Consolidated state
+    const [trueOverlayControls, _setTrueOverlayControls] = useState({ visible: true, immediate: true, duration: 2, }); // Consolidated state
 
 
     const [journalMode, _setJournalMode] = useState({ active: false, page: ""});
