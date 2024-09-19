@@ -72,7 +72,7 @@ export function NarratorVoice() {
                 callback: () => {
                     return Promise.all([
                         setTrueOverlayControls({ visible: false, immediate: false, duration: 3}),
-                        setTitleControls({ visible: true, immediate: false, duration: 4, delay: 1 })
+                        setTitleControls({ visible: true, immediate: false, duration: 4, delay: 0.3 })
                     ])
                     
                 },

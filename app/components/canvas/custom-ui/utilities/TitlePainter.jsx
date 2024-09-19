@@ -22,6 +22,7 @@ export function TitlePainter(){
     const onCompleteRef = useRef(titleControls.onComplete);
     const handleKeyDownRef = useRef();
     const [groupBBox, setGroupBBox] = useState({ width: 0, height: 0 });
+    const [nextButtonVisible, setNextButtonVisible] = useState(false);
 
     const updateBBox = () => {
         if (titleRef.current) {
@@ -36,6 +37,7 @@ export function TitlePainter(){
     const handleKeyDown = useCallback((event) => {
         if (event.key === ' ') {
             console.log('triggering listener!')
+            setNextButtonVisible(false);
             window.removeEventListener('keydown', handleKeyDownRef.current);
             event.preventDefault();
             titleControls.onComplete && titleControls.onComplete();
@@ -132,6 +134,9 @@ export function TitlePainter(){
                                     console.log('triggering title onComplete', titleControls.onComplete)
                                     onCompleteRef.current && onCompleteRef.current()
                                 }
+                                else if(idx === (motionPaths.length - 1) && (animation.opacity?.length === 3)){
+                                    setNextButtonVisible(true)
+                                }
                              }}
                              d={path} 
                              id="0" 
@@ -156,6 +161,23 @@ export function TitlePainter(){
                     />
                 </div>    
             </div>
+            <AnimatePresence>
+                {nextButtonVisible && (
+                    <motion.div 
+                        key='next-button-container'
+                        className={styles.nextButtonContainerWrapper}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0, transition: { duration: 0 } }}
+                        transition={{ duration: 1 }}
+                    >
+                        <div className={styles.nextButtonContainer}>
+                            press space to continue
+                        </div>
+                    </motion.div>
+                 )
+                }
+            </AnimatePresence>
         </>
         )}
         

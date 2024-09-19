@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import styles from './Stars.module.css';
 import { useEditor, track } from 'tldraw';
@@ -23,6 +23,11 @@ function applyOffset(boxShadow, offsetX, offsetY, color) {
 
 export const Stars = track(() => {
   const { starControls } = useStarFireSync();
+  const onCompleteRef = useRef(starControls.onComplete);
+
+  useEffect(() => {
+    onCompleteRef.current = starControls.onComplete;
+  }, [starControls.onComplete]);
 
   const [shadowsSmall, setShadowsSmall] = useState('');
   const [shadowsMedium, setShadowsMedium] = useState('');
@@ -73,7 +78,7 @@ export const Stars = track(() => {
         onAnimationComplete={(animation) => {
           console.log("STARS COMPLETED!")
           console.log("STAR CONTROLS", starControls)
-          starControls.onComplete && starControls.onComplete();
+          onCompleteRef.current && onCompleteRef.current();
         }}
       ></motion.div>
       <motion.div

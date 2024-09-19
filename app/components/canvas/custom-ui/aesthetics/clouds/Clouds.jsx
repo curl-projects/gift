@@ -1,10 +1,15 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import styles from './Clouds.module.css';
 import { useConstellationMode } from '~/components/canvas/custom-ui/utilities/ConstellationModeContext';
 import { useStarFireSync } from '~/components/synchronization/StarFireSync';
 export function Clouds({ absoluteMode = false }) {
     const { cloudControls } = useStarFireSync();
+    const onCompleteRef = useRef(cloudControls.onComplete);
+
+    useEffect(() => {
+        onCompleteRef.current = cloudControls.onComplete;
+    }, [cloudControls.onComplete]);
 
     return (
         <>
