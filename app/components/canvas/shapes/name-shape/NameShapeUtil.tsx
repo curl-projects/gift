@@ -227,7 +227,7 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
                 this.editor.zoomToBounds(this.editor.getShapePageBounds(shape), {
                     animation: {
                         duration: 300,
-                        ease: "easeInOut"
+                        easing: (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2,
                     },
                     targetZoom: 1,
                 });

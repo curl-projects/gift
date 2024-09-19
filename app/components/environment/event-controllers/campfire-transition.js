@@ -423,8 +423,8 @@ export function initializeLookingAtSky(scene, camera, treeScale=true){
 
             // after all effect have finished, freeze the canvas
             setTimeout(() => {
-                const engine = scene.getEngine();
-                engine.stopRenderLoop();
+                // const engine = scene.getEngine();
+                // engine.stopRenderLoop();
                 resolve(); // Resolve the promise when all operations are complete
             }, 100);
         } else {

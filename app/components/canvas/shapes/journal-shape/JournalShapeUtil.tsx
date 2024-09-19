@@ -93,6 +93,29 @@ export class JournalShapeUtil extends BaseBoxShapeUtil<JournalShape> {
             top: false,
         });
 
+        useEffect(()=>{
+            // trigger camera change
+            const nameShape = this.editor.getShape(createShapeId('andre-vacha'))
+           
+            if(nameShape){
+                const bounds = this.editor.getShapePageBounds(nameShape)
+                const newBounds = {
+                    w: bounds.width,
+                    h: bounds.height,
+                    x: bounds.x + window.innerWidth * 0.20,
+                    y: bounds.y
+                }
+                
+                this.editor.zoomToBounds(newBounds, {
+                    animation: {
+                        duration: 300,
+                        easing: (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
+                },
+                    targetZoom: 1,
+                });
+            }
+        }, [])
+
         useEffect(() => {
             const handleResize = () => {
                 this.editor.updateShape({

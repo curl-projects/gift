@@ -4,6 +4,7 @@ import { InkBleed } from "~/components/canvas/custom-ui/post-processing-effects/
 
 
 const pitchText = [
+    {type: 'heading', text: "Starlight"},
     {type: 'paragraph', text: "Starlight is a game set in the cosmos and built around social portfolios: spaces where you can understand your own creative process, learn from the ideas of others, and imprint your thoughts upon the stars."},
     {type: 'paragraph', text: "It is designed for those who wish to capture their thoughts in a humane way, collaborate on big ideas with others, and forge friendships with people online in a way that is impossible in traditional social networks."},
     {type: 'paragraph', text: "Armed with a journal and astrolabe, players chart through constellations of ideas woven together by both other players and historical figures. Each constellation has a unique covenant: a set of conditions for proving that you understand its ideas, left behind by its creator."},
@@ -27,19 +28,26 @@ export function Pitch(){
         e.stopPropagation();
     }}
     >
-        <InkBleed
-            initialBlur={4}
-            delay={0}
-            duration={0.5}>
-                <h1 className={journalStyles.journalLargeText}>Starlight</h1>
-                {pitchText.map((script, index) => (
+        {pitchText.map((script, index) => (
                     {
-                        'paragraph': <p key={index} className={journalStyles.journalSmallText}>{script.text}</p>,
-                        'heading': <h1 key={index} className={journalStyles.journalLargeText}>{script.text}</h1>,
+                        'paragraph': <InkBleed
+                                        divKey={`journal-paragraph-${index}`}
+                                        key={index}
+                                        initialBlur={4}
+                                        delay={0}
+                                        duration={2}>
+                                        <p key={index} className={journalStyles.journalSmallText}>{script.text}</p>
+                                      </InkBleed>,
+                        'heading': <InkBleed
+                                        divKey={`journal-heading-${index}`}
+                                        key={index}
+                                        initialBlur={4}
+                                        delay={0}
+                                        duration={2}>
+                                        <h1 key={index} className={journalStyles.journalLargeText}>{script.text}</h1>
+                                    </InkBleed>,
                     }[script.type]
-                    
-                ))}
-        </InkBleed>
+        ))}
     </div>
     )
 }
