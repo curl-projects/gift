@@ -166,6 +166,10 @@ export class JournalShapeUtil extends BaseBoxShapeUtil<JournalShape> {
                         onPointerDown={(e) => {
                             e.stopPropagation();
                         }}
+                        onScrollCapture={(e) => e.stopPropagation()}
+                        onWheelCapture={(e) => {
+							e.stopPropagation();
+						}}
                         style={{
                             }}   
                         >

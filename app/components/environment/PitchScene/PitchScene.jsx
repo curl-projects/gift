@@ -81,6 +81,7 @@ export function PitchScene(){
             // fade in/out behaviour
 
             const campfire = task.loadedMeshes.find(mesh => mesh.name === 'campfire');
+            campfire.position.x = 0;
             const { fireSPS, fireBaseSPS, embersSPS, smokeSPS } = addCampfireParticles(scene, campfire);
             const shadowGenerator = addCampfireLight(scene, campfire);
         
@@ -111,17 +112,17 @@ export function PitchScene(){
         addBoxSkybox(scene);
 
         assetManager.onFinish = function (tasks) {
-            void Promise.all([
-                import("@babylonjs/core/Debug/debugLayer"),
-                import("@babylonjs/inspector"),
-            ]).then((_values) => {
-                console.log(_values);
-                scene.debugLayer.show({
-                    handleResize: true,
-                    overlay: false,
-                    // globalRoot: document.getElementById("#root") || undefined,
-                });
-            }); 
+            // void Promise.all([
+            //     import("@babylonjs/core/Debug/debugLayer"),
+            //     import("@babylonjs/inspector"),
+            // ]).then((_values) => {
+            //     console.log(_values);
+            //     scene.debugLayer.show({
+            //         handleResize: true,
+            //         overlay: false,
+            //         // globalRoot: document.getElementById("#root") || undefined,
+            //     });
+            // }); 
 
             
           

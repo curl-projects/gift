@@ -47,40 +47,40 @@ export function NarratorVoice() {
     const narratorOrchestration = {
         'pitch': [
             // setup -- it's a dark night with a faded sky
-            // {
-            //     type: 'callback',
-            //     callback: () => {
-            //         setCampfireView({ active: false, immediate: true })
-            //         setConstellationLabel({ visible: false, immediate: true })
-            //         setOverlayControls({ dark: true, immediate: true })
-            //         setStarControls({ visible: false, immediate: true })
-            //         setCloudControls({ visible: true, immediate: true })
-            //     }
-            // },
-            // {
-            //     // hardcoded jank because the promise logic isn't working for the components above
-            //     type: 'callback',
-            //     callback: () => {
-            //         return new Promise(resolve => setTimeout(resolve, 2000));
-            //     },
-            //     waitForCallback: true,
-            // },     
-            // {
-            //     type: 'callback',
-            //     callback: () => {
-            //         return Promise.all([
-            //             setTextEvent({ 
-            //                 type: 'narrator',
-            //                 visible: true,
-            //                 overlay: false,
-            //                 text: "This can be a cold and desolate place.", 
-            //                 requiresInteraction: true, 
-            //                 darkeningVisible: false, 
-            //             })
-            //         ])
-            //     },
-            //     waitForCallback: true,
-            // }, 
+            {
+                type: 'callback',
+                callback: () => {
+                    setCampfireView({ active: false, immediate: true })
+                    setConstellationLabel({ visible: false, immediate: true })
+                    setOverlayControls({ dark: true, immediate: true })
+                    setStarControls({ visible: false, immediate: true })
+                    setCloudControls({ visible: true, immediate: true })
+                }
+            },
+            {
+                // hardcoded jank because the promise logic isn't working for the components above
+                type: 'callback',
+                callback: () => {
+                    return new Promise(resolve => setTimeout(resolve, 2000));
+                },
+                waitForCallback: true,
+            },     
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setTextEvent({ 
+                            type: 'narrator',
+                            visible: true,
+                            overlay: false,
+                            text: "This can be a cold and desolate place.", 
+                            requiresInteraction: true, 
+                            darkeningVisible: false, 
+                        })
+                    ])
+                },
+                waitForCallback: true,
+            }, 
             // {
             //     type: 'callback',
             //     callback: () => {
@@ -186,8 +186,9 @@ export function NarratorVoice() {
             //             setCampfireView({ 
             //                 active: true, 
             //                 immediate: true, 
-            //                 useTargetPosition: false,
+            //                 useTargetPosition: true,
             //                 targetMeshName: 'ground',
+            //                 targetPosition: new BABYLON.Vector3(0, 0, 0),
             //              }),
             //             setStarControls({ visible: true, immediate: true })
                         
@@ -287,20 +288,20 @@ export function NarratorVoice() {
             //     },
             //     waitForCallback: true,
             // }, 
-            {
-                type: 'callback',
-                callback: () => {
-                    return Promise.all([
-                        setCampfireView({ active: false, immediate: false }),
-                        setTextEvent({ 
-                            type: 'narrator',
-                            visible: false,
-                            overlay: true,
-                        })
-                    ])
-                },
-                waitForCallback: true,
-            }, 
+            // {
+            //     type: 'callback',
+            //     callback: () => {
+            //         return Promise.all([
+            //             setCampfireView({ active: false, immediate: false }),
+            //             setTextEvent({ 
+            //                 type: 'narrator',
+            //                 visible: false,
+            //                 overlay: true,
+            //             })
+            //         ])
+            //     },
+            //     waitForCallback: true,
+            // }, 
             // {
             //     type: 'callback',
             //     callback: () => {
@@ -377,22 +378,22 @@ export function NarratorVoice() {
             //     },
             //     waitForCallback: true,
             // },
-            // {
-            //     type: 'callback',
-            //     callback: () => {
-            //         return Promise.all([
-            //             setGlyphControls({ visible: false, immediate: false, duration: 4 }),
-            //             setTextEvent({ 
-            //                 type: 'system',
-            //                 visible: false,
-            //                 overlay: false,
-            //             }),
-            //             setJournalMode({ active: true, page: 'cover' })
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setGlyphControls({ visible: false, immediate: false, duration: 4 }),
+                        setTextEvent({ 
+                            type: 'system',
+                            visible: false,
+                            overlay: false,
+                        }),
+                        setJournalMode({ active: true, page: 'pitch' })
 
-            //         ])
-            //     },
-            //     waitForCallback: true,
-            // },
+                    ])
+                },
+                waitForCallback: true,
+            },
             // {
             //     type: 'callback',
             //     callback: () => {
