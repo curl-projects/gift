@@ -9,10 +9,26 @@ export function giveControlToCanvas() {
     document.body.style.pointerEvents = 'none';
 }
 
+// export function giveControlToCanvas() {
+//     const elementsToDisable = document.querySelectorAll('.disable-pointer-events');
+//     elementsToDisable.forEach(element => {
+//         element.style.pointerEvents = 'none';
+//     });
+// }
+
 export function giveControlToEnvironment(){
     document.body.style.pointerEvents = 'auto';
     document.body.style.overflow = 'unset';
 }
+
+
+// export function giveControlToEnvironment() {
+//     const elementsToEnable = document.querySelectorAll('.disable-pointer-events');
+//     elementsToEnable.forEach(element => {
+//         element.style.pointerEvents = 'auto';
+//     });
+//     document.body.style.overflow = 'unset';
+// }
 
 function calculateNewFovWithoutPosition(camera, mesh){
     const boundingInfo = mesh.getBoundingInfo();

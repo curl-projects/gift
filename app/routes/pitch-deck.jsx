@@ -31,7 +31,9 @@ export default function PitchDeck(){
             }}>
                 <WorldCanvas />
             </div>
-            <div style={{
+            <div 
+            id="disable-pointer-events"
+            style={{
             height: '100vh',
             width: '100vw',
             position: 'fixed',
