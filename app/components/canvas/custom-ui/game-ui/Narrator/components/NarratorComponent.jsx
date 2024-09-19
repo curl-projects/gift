@@ -80,16 +80,18 @@ const NarratorComponent = ({
                        
                     </AnimatePresence>
                     </motion.div>
-                    <motion.p 
-                        key={text}
-                        className={styles.nextButtonContainer}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: requiresInteraction ? 1 : 0 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 4, delay: 0.5 }}
-                    >
-                        press space to continue
-                    </motion.p>
+                    <div className={styles.nextButtonContainerWrapper}>
+                        <motion.p 
+                            key={text}
+                            className={styles.nextButtonContainer}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: requiresInteraction ? 1 : 0 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 4, delay: 0.5 }}
+                        >
+                            press space to continue
+                        </motion.p>
+                    </div>
                 </>
             )}
         </AnimatePresence>

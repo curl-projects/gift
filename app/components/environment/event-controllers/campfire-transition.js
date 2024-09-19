@@ -435,12 +435,12 @@ export function initializeLookingAtSky(scene, camera, treeScale=true){
             console.log("REDWOOD MESHES:", redwoodMeshes);
             treeScale && redwoodMeshes.forEach(mesh => customFadeOut(mesh, scene, 1.5, true)); // Directly apply the fade out effect
 
-            giveControlToCanvas();
+            // giveControlToCanvas();
 
             // after all effect have finished, freeze the canvas
             setTimeout(() => {
-                // const engine = scene.getEngine();
-                // engine.stopRenderLoop();
+                const engine = scene.getEngine();
+                engine.stopRenderLoop();
                 resolve(); // Resolve the promise when all operations are complete
             }, 100);
         } else {

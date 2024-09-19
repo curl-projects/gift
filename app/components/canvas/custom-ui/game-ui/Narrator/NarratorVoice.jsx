@@ -34,6 +34,7 @@ export function NarratorVoice() {
         constellationLabel, setConstellationLabel,
         glyphControls, setGlyphControls,
         animationEvent, setAnimationEvent,
+        titleControls, setTitleControls,
     } = useStarFireSync();
 
     const [narratorState, setNarratorState] = useState({ visible: false, text: '', requiresInteraction: false });
@@ -55,32 +56,33 @@ export function NarratorVoice() {
                     setOverlayControls({ dark: true, immediate: true })
                     setStarControls({ visible: false, immediate: true })
                     setCloudControls({ visible: true, immediate: true })
+                    setTitleControls({ visible: true, immediate: false })
                 }
             },
             {
                 // hardcoded jank because the promise logic isn't working for the components above
                 type: 'callback',
                 callback: () => {
-                    return new Promise(resolve => setTimeout(resolve, 2000));
+                    return new Promise(resolve => setTimeout(resolve, 200000));
                 },
                 waitForCallback: true,
             },     
-            {
-                type: 'callback',
-                callback: () => {
-                    return Promise.all([
-                        setTextEvent({ 
-                            type: 'narrator',
-                            visible: true,
-                            overlay: false,
-                            text: "This can be a cold and desolate place.", 
-                            requiresInteraction: true, 
-                            darkeningVisible: false, 
-                        })
-                    ])
-                },
-                waitForCallback: true,
-            }, 
+            // {
+            //     type: 'callback',
+            //     callback: () => {
+            //         return Promise.all([
+            //             setTextEvent({ 
+            //                 type: 'narrator',
+            //                 visible: true,
+            //                 overlay: false,
+            //                 text: "This can be a cold and desolate place.", 
+            //                 requiresInteraction: true, 
+            //                 darkeningVisible: false, 
+            //             })
+            //         ])
+            //     },
+            //     waitForCallback: true,
+            // }, 
             // {
             //     type: 'callback',
             //     callback: () => {
