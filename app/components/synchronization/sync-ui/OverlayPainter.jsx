@@ -15,7 +15,7 @@ export function OverlayPainter(){
             // rip down overlay if it exists
     
         // Apply transition duration
-        const duration = overlayControls.immediate ? 0 : (overlayControls.duration || 2);
+        const duration = overlayControls.immediate ? 0.001 : (overlayControls.duration || 2);
 
         console.log("overlayControls", overlayControls)
 
@@ -32,8 +32,9 @@ export function OverlayPainter(){
             tlContainer?.style.setProperty('--overlay-transition-duration', `${duration}s`);
             tlBackground?.style.setProperty('--overlay-transition-duration', `${duration}s`);
             setTimeout(()=>{
+                console.log("completing overlay controls")
                 overlayControls.onComplete && overlayControls.onComplete();
-            }, duration)
+            }, duration * 1000)
         }, overlayControls.delay * 1000 || 0)
         
        
@@ -66,6 +67,8 @@ export function OverlayPainter(){
         transition={{ duration: trueOverlayControls.immediate ? 0 : (trueOverlayControls.duration || 0 ), 
                       delay: trueOverlayControls.delay || 0 }}
         onAnimationComplete={(animation) => {
+            console.log("true overlay complete")
+            
             trueOverlayControls.onComplete && trueOverlayControls.onComplete();
         }}
         style={{

@@ -51,38 +51,80 @@ export function NarratorVoice() {
             {
                 type: 'callback',
                 callback: () => {
-                    setCampfireView({ active: false, immediate: true })
-                    setConstellationLabel({ visible: false, immediate: true })
-                    setOverlayControls({ dark: true, immediate: true })
-                    setStarControls({ visible: false, immediate: true })
-                    setCloudControls({ visible: true, immediate: true })
-                    setTitleControls({ visible: true, immediate: false })
-                }
+                        setTrueOverlayControls({ visible: true, immediate: true})
+                        setCampfireView({ active: false, immediate: true })
+                        setStarControls({ visible: true, immediate: true})
+                        setCloudControls({ visible: true, immediate: true})
+                        setOverlayControls({ dark: true, immediate: true})
+                },
+                // waitForCallback: true,
             },
             {
                 // hardcoded jank because the promise logic isn't working for the components above
                 type: 'callback',
                 callback: () => {
-                    return new Promise(resolve => setTimeout(resolve, 200000));
+                    return new Promise(resolve => setTimeout(resolve, 2000));
                 },
                 waitForCallback: true,
-            },     
+            },   
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setTrueOverlayControls({ visible: false, immediate: false, duration: 3}),
+                        setTitleControls({ visible: true, immediate: false, duration: 4, delay: 1 })
+                    ])
+                    
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: async () => {
+                  await Promise.all([
+                        setTitleControls({ visible: false, immediate: false, duration: 1 })
+                    ])
+                    console.log('concluded!')
+                    return true
+                    
+                },
+                waitForCallback: true,
+            },
             // {
             //     type: 'callback',
             //     callback: () => {
-            //         return Promise.all([
-            //             setTextEvent({ 
-            //                 type: 'narrator',
-            //                 visible: true,
-            //                 overlay: false,
-            //                 text: "This can be a cold and desolate place.", 
-            //                 requiresInteraction: true, 
-            //                 darkeningVisible: false, 
-            //             })
-            //         ])
+            //         setCampfireView({ active: false, immediate: true })
+            //         setConstellationLabel({ visible: false, immediate: true })
+            //         setOverlayControls({ dark: true, immediate: true })
+            //         setStarControls({ visible: false, immediate: true })
+            //         setCloudControls({ visible: true, immediate: true })
+            //     }
+            // },
+            // {
+            //     // hardcoded jank because the promise logic isn't working for the components above
+            //     type: 'callback',
+            //     callback: () => {
+            //         return new Promise(resolve => setTimeout(resolve, 200000));
             //     },
             //     waitForCallback: true,
-            // }, 
+            // },     
+            {
+                type: 'callback',
+                callback: () => {
+                    console.warn('narrator event start')
+                    return Promise.all([
+                        setTextEvent({ 
+                            type: 'narrator',
+                            visible: true,
+                            overlay: false,
+                            text: "This can be a cold and desolate place.", 
+                            requiresInteraction: true, 
+                            darkeningVisible: false, 
+                        })
+                    ])
+                },
+                waitForCallback: true,
+            }, 
             // {
             //     type: 'callback',
             //     callback: () => {
@@ -380,22 +422,22 @@ export function NarratorVoice() {
             //     },
             //     waitForCallback: true,
             // },
-            {
-                type: 'callback',
-                callback: () => {
-                    return Promise.all([
-                        setGlyphControls({ visible: false, immediate: false, duration: 4 }),
-                        setTextEvent({ 
-                            type: 'system',
-                            visible: false,
-                            overlay: false,
-                        }),
-                        setJournalMode({ active: true, page: 'pitch' })
+            // {
+            //     type: 'callback',
+            //     callback: () => {
+            //         return Promise.all([
+            //             setGlyphControls({ visible: false, immediate: false, duration: 4 }),
+            //             setTextEvent({ 
+            //                 type: 'system',
+            //                 visible: false,
+            //                 overlay: false,
+            //             }),
+            //             setJournalMode({ active: true, page: 'pitch' })
 
-                    ])
-                },
-                waitForCallback: true,
-            },
+            //         ])
+            //     },
+            //     waitForCallback: true,
+            // },
             // {
             //     type: 'callback',
             //     callback: () => {

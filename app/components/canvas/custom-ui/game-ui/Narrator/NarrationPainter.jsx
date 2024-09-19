@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback, useRef } from "react"
 import { useStarFireSync } from "~/components/synchronization/StarFireSync"
 import { useConstellationMode } from "~/components/canvas/custom-ui/utilities/ConstellationModeContext"
@@ -49,7 +50,7 @@ export function NarrationPainter(){
 
             if(!textEvent.visible){
                 console.log("text event is not visible:", textEvent)
-                setState({ visible: false, text: "", requiresInteraction: false })
+                setState({ visible: false, textf: "", requiresInteraction: false })
                 // todo: this should be promise chained, but i can't figure out why it's not resolving
                 // .then(()=>{
                     console.log("text event complete")

@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from "react"
+import { useRef, useState, useEffect, useCallback } from "react"
 import styles from "./TitlePainter.module.css"
 import { motion, AnimatePresence } from "framer-motion"
 import { useStarFireSync } from "~/components/synchronization/StarFireSync";
@@ -19,6 +19,8 @@ const motionPaths = [
 export function TitlePainter(){
     const { titleControls } = useStarFireSync();
     const titleRef = useRef(null);
+    const onCompleteRef = useRef(titleControls.onComplete);
+    const handleKeyDownRef = useRef();
     const [groupBBox, setGroupBBox] = useState({ width: 0, height: 0 });
 
     const updateBBox = () => {
@@ -31,15 +33,45 @@ export function TitlePainter(){
         }
     };
 
+    const handleKeyDown = useCallback((event) => {
+        if (event.key === ' ') {
+            console.log('triggering listener!')
+            window.removeEventListener('keydown', handleKeyDownRef.current);
+            event.preventDefault();
+            titleControls.onComplete && titleControls.onComplete();
+        }
+    }, [titleControls]);
+
+    useEffect(() => {
+        handleKeyDownRef.current = handleKeyDown;
+    }, [handleKeyDown]);
+
+    useEffect(() => {
+        onCompleteRef.current = titleControls.onComplete;
+    }, [titleControls.onComplete]);
+
+
+    useEffect(()=>{
+        if(!titleControls.visible){
+            // onCompleteRef.current && onCompleteRef.current();
+        }
+        else{
+            window.addEventListener('keydown', handleKeyDownRef.current);   
+        }
+    }, [titleControls])
+
     useEffect(() => {
         updateBBox();
         window.addEventListener('resize', updateBBox);
         return () => window.removeEventListener('resize', updateBBox);
-    }, [titleRef.current]);
+    }, [titleRef.current, titleControls]);
 
     return(
         <>
         <AnimatePresence>
+        
+        {titleControls.visible && (
+            <>
             <div className={styles.titlePainter}>
                <svg 
                     className={styles.title}
@@ -79,8 +111,7 @@ export function TitlePainter(){
                         {motionPaths.map((path, idx) => 
                              <motion.path 
                              filter="url(#glow) url(#combined)"
-                            //  filter="url(#glow)"
-                             key={idx}
+                             key={`$title-path-${idx}`}
                              strokeWidth="3px"
                              initial={{ pathLength: 0, fillOpacity: 0, opacity: 1 }}
                              animate={{ 
@@ -90,10 +121,17 @@ export function TitlePainter(){
                              }}
                              exit={{ opacity: 0 }}
                              transition={{ 
-                                 duration: titleControls.immediate ? 0 : (titleControls.duration || 4), 
+                                 duration: titleControls.immediate ? 0 : (titleControls.duration || 1), 
                                  delay: titleControls.delay ? titleControls.delay + idx * 0.25 : idx * 0.25,
                                  times: [0, 0.01, 1],
-                                //  ease: "easeInOut"
+                                 ease: "easeInOut"
+                             }}
+                             onAnimationComplete={(animation)=>{
+                                console.log("title animation opacity", animation)
+                                if(idx === motionPaths.length - 1 && animation.opacity === 0){
+                                    console.log('triggering title onComplete', titleControls.onComplete)
+                                    onCompleteRef.current && onCompleteRef.current()
+                                }
                              }}
                              d={path} 
                              id="0" 
@@ -114,10 +152,13 @@ export function TitlePainter(){
                         initial={{ opacity: 0 }}
                         animate={{ opacity: titleControls.visible ? 1 : 0 }}
                         exit={{ opacity: 0 }}
-                        transition={{ duration: titleControls.immediate ? 0 : (titleControls.duration || 4), delay: titleControls.delay || 0 }}
+                        transition={{ duration: titleControls.immediate ? 0 : (titleControls.duration || 1), delay: titleControls.delay || 0 }}
                     />
                 </div>    
             </div>
+        </>
+        )}
+        
         </AnimatePresence>
         </>
     )
