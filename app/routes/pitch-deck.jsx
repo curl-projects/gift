@@ -1,6 +1,6 @@
 import { PitchScene } from "~/components/environment/PitchScene/PitchScene";
 import WorldCanvas from "~/components/canvas/WorldCanvas";
-import { getWorldContent } from "~/models/world-model.server";
+import { getWorldContent, getJournalEntries } from "~/models/world-model.server";
 import { json } from "@remix-run/node";
 import { useStarFireSync } from "~/components/synchronization/StarFireSync";
 import { OverlayPainter } from "~/components/synchronization/sync-ui/OverlayPainter";
@@ -9,8 +9,9 @@ export async function loader() {
 
   
     const user = await getWorldContent('andre-vacha')
+    const journalEntries = await getJournalEntries('andre-vacha')
   
-    return json({ user });
+    return json({ user, journalEntries });
   }
 
 

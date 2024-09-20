@@ -116,6 +116,63 @@ ol {
   color: pink;
 }
 
+/* JOURNAL TIPTAP */
+.journal-tiptap p {
+  margin: 0;
+  color: rgb(242, 242, 242);
+  font-family: "IBM Plex Mono", monospace;
+  font-weight: 400;
+  letter-spacing: -0.003em;
+  line-height: 20px;
+  font-size: 16px;
+  margin-bottom: 10px;
+  animation: fadeIn 1s ease-in-out; /* Added animation */
+}
+
+.journal-tiptap a {
+  border-bottom: 0.05em solid;
+  border-color: rgba(255, 255, 255, 0.283);
+  opacity: 0.7;
+  cursor: pointer;
+}
+
+.journal-tiptap code {
+    background: rgba(135, 131, 120, .15);
+    color: #EB5757;
+    border-radius: 4px;
+    font-size: 85%;
+    padding: 0.2em 0.4em;
+}
+
+.journal-tiptap h1, h2, h3, h4, h5, h6 {
+  font-family: "IBM Plex Mono", monospace;
+  font-weight: 700;
+  color: rgb(242, 242, 242);
+  font-size: 30px;
+  letter-spacing: -0.04em;
+  line-height: 38px;
+  font-size: 30px;
+  margin-bottom: 20px;
+  animation: fadeIn 1s ease-in-out; /* Added animation */
+}
+
+.journal-tiptap hr {
+    border-bottom: 0px solid rgba(255, 255, 255, 1);
+    margin-top: 14px;
+    margin-bottom: 14px;
+    opacity: 0.13;
+}
+
+.journal-tiptap ul li {
+  color: #EB5757;
+}
+
+
+
+
+
+/* END JOURNAL TIPTAP */
+
 
 /* p.is-editor-empty:first-child::before {
   content: attr(data-placeholder);

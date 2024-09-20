@@ -45,6 +45,16 @@ export async function getWorldContent(uniqueName){
     return user
 }
 
+export async function getJournalEntries(uniqueName){
+    const journalEntries = await prisma.media.findMany({
+        where: {
+            userId: uniqueName,
+            // type: "journalPage",
+        }
+    })
+    return journalEntries;
+}
+
 export async function saveAnnotation(mediaId, content, fromPos, toPos) {
     const annotation = await prisma.annotation.create({
         data: {

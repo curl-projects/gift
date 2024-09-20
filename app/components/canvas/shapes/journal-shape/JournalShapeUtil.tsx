@@ -23,6 +23,7 @@ import { JournalBorder } from './parchment-journal/journal-border/JournalBorder'
 import { JournalMenu } from './parchment-journal/journal-menu/JournalMenu';
 import { useStarFireSync } from "~/components/synchronization/StarFireSync"
 import { ParchmentJournal } from './parchment-journal/ParchmentJournal';
+import { ModernJournal } from './modern-journal/ModernJournal';
 
 const journalShapeProps = {
 	w: T.number,
@@ -41,6 +42,10 @@ type JournalShape = TLBaseShape<
 	}
 >
 
+const journalWidthScaling = 0.6
+const journalHeightScaling = 0.8
+export const journalMarginOffset = 0.4
+
 /** @public */
 export class JournalShapeUtil extends BaseBoxShapeUtil<JournalShape> {
 	static override type = 'journal' as const
@@ -53,8 +58,8 @@ export class JournalShapeUtil extends BaseBoxShapeUtil<JournalShape> {
 
 	getDefaultProps(): JournalShape['props'] {
 		return { 
-			w: window.innerWidth * 0.4,
-			h: window.innerHeight * 0.8,
+			w: window.innerWidth * journalWidthScaling,
+			h: window.innerHeight * journalHeightScaling,
             expanded: false,
             page: 'cover',
 		}
@@ -105,8 +110,8 @@ export class JournalShapeUtil extends BaseBoxShapeUtil<JournalShape> {
                   type: shape.type,
                   id: shape.id,
                   props: {
-                    w: window.innerWidth * 0.4,
-                    h: window.innerHeight * 0.8
+                    w: window.innerWidth * journalWidthScaling,
+                    h: window.innerHeight * journalHeightScaling
                   }
             });
             };
@@ -123,15 +128,15 @@ export class JournalShapeUtil extends BaseBoxShapeUtil<JournalShape> {
             const margin = window.innerHeight * 0.1;
 
             const updateShapePosition = () => {
-                const { x, y } = this.editor.screenToPage({ x: window.innerWidth * 0.6 - margin, y: margin });
+                const { x, y } = this.editor.screenToPage({ x: window.innerWidth * journalMarginOffset - margin, y: margin });
                 this.editor.updateShape({
                     type: shape.type,
                     id: shape.id,
                     x: x,
                     y: y,
                     props: {
-                        w: window.innerWidth * 0.4,
-                        h: window.innerHeight * 0.8,
+                        w: window.innerWidth * journalWidthScaling,
+                        h: window.innerHeight * journalHeightScaling,
                     }
                 });
                 requestAnimationFrame(updateShapePosition);
@@ -166,7 +171,8 @@ export class JournalShapeUtil extends BaseBoxShapeUtil<JournalShape> {
                             height: "100%",
                         }}				
                         >
-                            <ParchmentJournal shape={shape} journalMode={journalMode} contentRef={contentRef}/>
+                            {/* <ParchmentJournal shape={shape} journalMode={journalMode} contentRef={contentRef}/> */}
+                            <ModernJournal shape={shape} journalMode={journalMode} contentRef={contentRef}/>
                         </motion.div>
                     }
                 </AnimatePresence>
