@@ -17,10 +17,7 @@ import { Node } from "@tiptap/core";
 import Placeholder from '@tiptap/extension-placeholder'
 import styles from './JournalShapeUtil.module.css';
 import { motion, useAnimate, AnimatePresence } from 'framer-motion';
-import { InkBleed } from "~/components/canvas/custom-ui/post-processing-effects/InkBleed"
-import { JournalThread } from './parchment-journal/journal-thread/JournalThread';
-import { JournalBorder } from './parchment-journal/journal-border/JournalBorder';
-import { JournalMenu } from './parchment-journal/journal-menu/JournalMenu';
+
 import { useStarFireSync } from "~/components/synchronization/StarFireSync"
 import { ParchmentJournal } from './parchment-journal/ParchmentJournal';
 import { ModernJournal } from './modern-journal/ModernJournal';
@@ -171,8 +168,12 @@ export class JournalShapeUtil extends BaseBoxShapeUtil<JournalShape> {
                             height: "100%",
                         }}				
                         >
-                            {/* <ParchmentJournal shape={shape} journalMode={journalMode} contentRef={contentRef}/> */}
-                            <ModernJournal shape={shape} journalMode={journalMode} contentRef={contentRef}/>
+                            {
+                                journalMode.variant === 'parchment' ?
+                                <ParchmentJournal shape={shape} journalMode={journalMode} contentRef={contentRef}/>
+                                :
+                                <ModernJournal shape={shape} journalMode={journalMode} contentRef={contentRef}/>
+                            }
                         </motion.div>
                     }
                 </AnimatePresence>

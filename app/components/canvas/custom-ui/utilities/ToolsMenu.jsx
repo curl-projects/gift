@@ -16,7 +16,7 @@ export function ToolsMenu(){
     }, [journalMode])
 
     const handleJournalClick = () => {
-        setJournalMode({ active: !journalMode.active, page: 'pitch' })
+        setJournalMode({ active: !journalMode.active, page: journalMode.page || 'pitch', variant: journalMode.variant })
     };
 
     const handleAstrolabeClick = useCallback(() => {

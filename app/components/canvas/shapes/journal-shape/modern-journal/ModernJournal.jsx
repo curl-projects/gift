@@ -5,6 +5,7 @@ import StarterKit from '@tiptap/starter-kit';
 import Link from "@tiptap/extension-link";
 import * as showdown from 'showdown';
 import { useLoaderData } from '@remix-run/react';
+import { JournalThread } from '~/components/canvas/shapes/journal-shape/parchment-journal/journal-thread/JournalThread.jsx'
 
 const pages = [
     { page: 'elevator-pitch', 
@@ -49,6 +50,7 @@ export function ModernJournal({ shape, journalMode, contentRef }){
       }, [htmlContent, editor]);
 
     return (
+      <>
         <div className={styles.shapeContent}
             ref={contentRef}
             onPointerDown={(e) => {
@@ -64,5 +66,16 @@ export function ModernJournal({ shape, journalMode, contentRef }){
                 className="journal-tiptap"
             />
         </div>
+
+        <svg className={styles.animatedLine} viewBox={`0 0 ${shape.props.w} ${shape.props.h}`}>
+          <JournalThread 
+            d={`M -5 -5 L ${shape.props.w + 5} -5 L ${shape.props.w + 5} ${shape.props.h + 5} L -5 ${shape.props.h + 5} Z`} 
+            delay={0} 
+            duration={1} 
+            strokeWidth={1} 
+            pageContainer 
+            />
+        </svg>
+        </>
     )
 }
