@@ -1,5 +1,5 @@
 import styles from './Cover.module.css';
-import journalStyles from "~/components/canvas/shapes/journal-shape/JournalShapeUtil.module.css"
+import journalStyles from "~/components/canvas/shapes/journal-shape/parchment-journal/ParchmentJournal.module.css"
 import { InkBleed } from "~/components/canvas/custom-ui/post-processing-effects/InkBleed"
 
 

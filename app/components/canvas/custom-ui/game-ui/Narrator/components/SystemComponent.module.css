@@ -26,7 +26,9 @@
 
 
 .systemText {
-    font-size: 50px;
+    font-size: 40px;
+    text-align: center;
+    line-height: 1em;
     color: rgba(255, 255, 255, 0.4);
     font-family: "Handjet", sans-serif;
     font-weight: 300;
@@ -36,7 +38,7 @@
     -webkit-background-clip: text;
     background-clip: text;
     background-size: 100% 100%, 100% 100%;
-    animation: cloudLoop 40s linear infinite alternate !important,
+    animation: cloudLoop 40s linear infinite alternate,
                cloudLoopReverse 40s linear infinite alternate !important;
     z-index: 100;
 }

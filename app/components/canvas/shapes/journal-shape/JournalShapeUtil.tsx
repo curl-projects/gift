@@ -18,14 +18,11 @@ import Placeholder from '@tiptap/extension-placeholder'
 import styles from './JournalShapeUtil.module.css';
 import { motion, useAnimate, AnimatePresence } from 'framer-motion';
 import { InkBleed } from "~/components/canvas/custom-ui/post-processing-effects/InkBleed"
-import { JournalThread } from './journal-thread/JournalThread';
-import { JournalBorder } from './journal-border/JournalBorder';
-import { JournalMenu } from './journal-menu/JournalMenu';
+import { JournalThread } from './parchment-journal/journal-thread/JournalThread';
+import { JournalBorder } from './parchment-journal/journal-border/JournalBorder';
+import { JournalMenu } from './parchment-journal/journal-menu/JournalMenu';
 import { useStarFireSync } from "~/components/synchronization/StarFireSync"
-
-// pages
-import {Cover} from './journal-pages/cover/Cover';
-import {Pitch} from './journal-pages/pitch/Pitch';
+import { ParchmentJournal } from './parchment-journal/ParchmentJournal';
 
 const journalShapeProps = {
 	w: T.number,
@@ -76,22 +73,8 @@ export class JournalShapeUtil extends BaseBoxShapeUtil<JournalShape> {
 		const bounds = this.editor.getShapeGeometry(shape).bounds
 		const data: any = useLoaderData();
         const contentRef = useRef<HTMLDivElement>(null);
-        const [page, setPage] = useState(shape.props.page);
         const { journalMode } = useStarFireSync()
 
-        const [inkVisible, setInkVisible] = useState(false);
-        const [outerBorderVisibility, setOuterBorderVisibility] = useState({
-            bottom: false,
-            left: false,
-            right: false,
-            top: false,
-        });
-        const [innerBorderVisibility, setInnerBorderVisibility] = useState({
-            bottom: false,
-            left: false,
-            right: false,
-            top: false,
-        });
 
         useEffect(()=>{
             // trigger camera change
@@ -166,180 +149,26 @@ export class JournalShapeUtil extends BaseBoxShapeUtil<JournalShape> {
                 transform: 'scale(var(--tl-scale))',
                 }}>
                 <AnimatePresence>
-                {shape.props.expanded &&
-                    <motion.div 
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 1, ease: 'easeInOut'}}
-                    onAnimationComplete={(animation) => {
-                        if(animation?.opacity === 0){
-                            this.editor.deleteShape(shape.id) // dispose of shape after completion
-                        }
-                    }}
-                    key='journal'
-                    id={shape.id}
-                    className={styles.container}
-                    style={{
-                        width: "100%",
-                        height: "100%",
-                    }}				
-                    >
-                    <div 
-                        className={styles.shapeContent}
-                        ref={contentRef}
-                        onPointerDown={(e) => {
-                            e.stopPropagation();
+                    {shape.props.expanded &&
+                        <motion.div 
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 1, ease: 'easeInOut'}}
+                        onAnimationComplete={(animation) => {
+                            if(animation?.opacity === 0){
+                                this.editor.deleteShape(shape.id) // dispose of shape after completion
+                            }
                         }}
-                        onScrollCapture={(e) => e.stopPropagation()}
-                        onWheelCapture={(e) => {
-							e.stopPropagation();
-						}}
+                        key='journal'
+                        id={shape.id}
+                        className={styles.container}
                         style={{
-                            }}   
+                            width: "100%",
+                            height: "100%",
+                        }}				
                         >
-                        <motion.div
-                            className={styles.shapeContentBackground}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ duration: 1, delay: 1 }} // Adjust delay as needed
-                            onAnimationComplete={(animation) => {
-                                console.log("BACKGROUND COMPLETED")
-                                if(animation?.opacity === 1){
-                                    setInkVisible(true)
-
-                                    setTimeout(()=>{
-                                        journalMode.onComplete && journalMode.onComplete()
-                                    }, 1000)
-                                }
-                            }}
-                            style={{
-                            position: 'absolute',
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            bottom: 0,
-                            willChange: 'opacity', // Add will-change property
-                            // backgroundImage: 'url("/assets/old-paper.jpg")',
-                            // backgroundSize: 'cover',
-                            // backgroundPosition: 'center',
-                            }}
-                        />
-
-                                        
-                            {/* outer border */}
-                            <JournalBorder borderThickness={4} distance={20} borderVisibility={outerBorderVisibility} />
-
-                            {/* inner border */}
-                            <JournalBorder borderThickness={2} distance={30} borderVisibility={innerBorderVisibility}/>
-
-                        
-                            {inkVisible && (
-                                <>
-                                <JournalMenu page={page} setPage={setPage}/>
-                                {/* <InkBleed 
-                                    initialBlur={200}
-                                    delay={0}
-                                    duration={4}
-                                >
-                                <div className={styles.exampleCircle}/>
-                                </InkBleed> */}
-                                <div className={styles.journalPageContainer}>
-                                        <AnimatePresence>
-                                        {
-                                            {
-                                                'cover': <Cover key='cover'/>,
-                                                'pitch': <Pitch key='pitch'/>,
-                                            }[page]
-                                        }
-                                    </AnimatePresence>
-                                </div>
-                            </>
-                            )}
-                    </div>
-
-                    
-                    <svg className={styles.animatedLine} viewBox={`0 0 ${shape.props.w} ${shape.props.h}`}>
-
-                        <JournalThread 
-                            d={`M -5 -5 L ${shape.props.w + 5} -5 L ${shape.props.w + 5} ${shape.props.h + 5} L -5 ${shape.props.h + 5} Z`} 
-                            delay={0} 
-                            duration={1} 
-                            strokeWidth={1} 
-                            pageContainer 
-                        />
-
-                        {/* outer line */}
-
-                        {/* top */}
-                        <JournalThread 
-                            d={`M 20 20 L ${shape.props.w - 20} 20`} 
-                            delay={1}
-                            duration={0.5}
-                            strokeWidth={1} 
-                            onOpaque={() => setOuterBorderVisibility(prevState => ({...prevState, left: true}))}
-                        />
-
-                        {/* { left } */}
-                        <JournalThread 
-                            d={`M 20 20 L 20 ${shape.props.h - 20}`} 
-                            delay={1} 
-                            duration={0.5}
-                            strokeWidth={1} 
-                            onOpaque={() => setOuterBorderVisibility(prevState => ({...prevState, top: true}))}
-                        />
-                        
-                        {/* bottom */}
-                        <JournalThread 
-                            d={`M 20 ${shape.props.h - 20} L ${shape.props.w - 20} ${shape.props.h - 20}`} 
-                            delay={1.3}
-                            duration={0.5}
-                            strokeWidth={1} 
-                            onOpaque={() => setOuterBorderVisibility(prevState => ({...prevState, right: true}))}
-                        />
-
-                        {/* right */}
-                        <JournalThread 
-                            d={`M ${shape.props.w - 20} 20 L ${shape.props.w - 20} ${shape.props.h - 20}`} 
-                            delay={1.3}
-                            duration={0.5}
-                            strokeWidth={1} 
-                            onOpaque={() => setOuterBorderVisibility(prevState => ({...prevState, bottom: true}))}
-                        />
-
-                        {/* inner line */}
-                        <JournalThread 
-                            d={`M 30 30 L ${shape.props.w - 30} 30`} 
-                            delay={1.5}
-                            duration={0.5} 
-                            strokeWidth={1} 
-                            onOpaque={() => setInnerBorderVisibility(prevState => ({...prevState, left: true}))}
-                        />
-                        <JournalThread 
-                            d={`M 30 30 L 30 ${shape.props.h - 30}`} 
-                            delay={1.5}
-                            duration={0.5} 
-                            strokeWidth={1} 
-                            onOpaque={() => setInnerBorderVisibility(prevState => ({...prevState, top: true}))}
-                        />
-                        <JournalThread 
-                            d={`M 30 ${shape.props.h - 30} L ${shape.props.w - 30} ${shape.props.h - 30}`} 
-                            delay={1.8} 
-                            duration={0.5}
-                            strokeWidth={1} 
-                            onOpaque={() => setInnerBorderVisibility(prevState => ({...prevState, right: true}))}
-                        />
-                        <JournalThread 
-                            d={`M ${shape.props.w - 30} 30 L ${shape.props.w - 30} ${shape.props.h - 30}`} 
-                            delay={1.8} 
-                            duration={0.5}
-                            strokeWidth={1} 
-                            onOpaque={() => {
-                                setInnerBorderVisibility(prevState => ({...prevState, bottom: true}))
-                            }}
-                        />
-
-                    </svg>
-                    </motion.div>
-                }
+                            <ParchmentJournal shape={shape} journalMode={journalMode} contentRef={contentRef}/>
+                        </motion.div>
+                    }
                 </AnimatePresence>
             </HTMLContainer>
 		)

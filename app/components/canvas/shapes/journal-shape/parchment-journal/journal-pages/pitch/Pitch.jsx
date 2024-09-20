@@ -1,7 +1,6 @@
 import styles from './Pitch.module.css'
-import journalStyles from "~/components/canvas/shapes/journal-shape/JournalShapeUtil.module.css"
+import journalStyles from "~/components/canvas/shapes/journal-shape/parchment-journal/ParchmentJournal.module.css"
 import { InkBleed } from "~/components/canvas/custom-ui/post-processing-effects/InkBleed"
-
 
 const pitchText = [
     {type: 'heading', text: "Starlight"},
@@ -34,6 +33,7 @@ export function Pitch(){
                                         divKey={`journal-paragraph-${index}`}
                                         key={index}
                                         initialBlur={4}
+                                        finalBlur={0.7}
                                         delay={0}
                                         duration={2}>
                                         <p key={index} className={journalStyles.journalSmallText}>{script.text}</p>
@@ -42,6 +42,7 @@ export function Pitch(){
                                         divKey={`journal-heading-${index}`}
                                         key={index}
                                         initialBlur={4}
+                                        finalBlur={0.7}
                                         delay={0}
                                         duration={2}>
                                         <h1 key={index} className={journalStyles.journalLargeText}>{script.text}</h1>

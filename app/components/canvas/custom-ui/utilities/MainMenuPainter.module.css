@@ -1,0 +1,18 @@
+.mainMenu{
+    position: fixed;
+    top: 20px;
+    left: 60px;
+    z-index: 21000000000;
+    display: flex;
+    gap: 60px;
+    max-width: 70vw;
+}
+
+
+.menuItem{
+    font-size: 24px;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    font-family: "Handjet", sans-serif;
+}

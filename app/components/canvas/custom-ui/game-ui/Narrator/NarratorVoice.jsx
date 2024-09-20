@@ -322,9 +322,9 @@ export function NarratorVoice() {
                             visible: true,
                             overlay: true,
                             text: "So long spent in the dark sky - do you even remember what the stars look like?", 
-                            duration: 3,
+                            duration: 10,
                             delay: 1.5,
-                            requiresInteraction: true,
+                            requiresInteraction: false,
                             waitUntilVisible: true,
                             darkeningVisible: true, 
                         })
@@ -355,7 +355,7 @@ export function NarratorVoice() {
                             visible: true, 
                             immediate: false, 
                             duration: 2, 
-                            delay: 2,
+                            delay: 0,
                             text: "The First Star"
                         }),
                         
@@ -439,44 +439,47 @@ export function NarratorVoice() {
                 waitForCallback: true,
             },
         ],
-        'welcome': [
+        'journalTest': [
             {
-                "type": "narrator",
-                'text': 'Welcome',
-                'duration': 3000,
-                'requiresInteraction': true,
+                type: 'callback',
+                callback: () => {
+                        setTrueOverlayControls({ visible: true, immediate: true})
+                        setCampfireView({ active: false, immediate: true })
+                        setStarControls({ visible: true, immediate: true})
+                        setCloudControls({ visible: true, immediate: true})
+                        setOverlayControls({ dark: true, immediate: true})
+                },
+                // waitForCallback: true,
             },
             {
-                'type': "narrator",
-                'text': 'This place is a simple simulation',
-                'duration': 3000,
-                'requiresInteraction': true,
+                // hardcoded jank because the promise logic isn't working for the components above
+                type: 'callback',
+                callback: () => {
+                    return new Promise(resolve => setTimeout(resolve, 1000));
+                },
+                waitForCallback: true,
+            },   
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setTrueOverlayControls({ visible: false, immediate: false, duration: 3})
+                    ])
+                    
+                },
+                waitForCallback: true,
             },
             {
-                'type': "system",
-                'text': 'an echo of something far greater',
-                'duration': 3000,
-                'requiresInteraction': true,
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setJournalMode({ active: true, page: 'pitch' })
+                    ])
+                    
+                },
+                waitForCallback: true,
             },
-            {
-                'type': "system",
-                'text': 'i hope you enjoy it',
-                'duration': 3000,
-                'requiresInteraction': true,
-            },
-            // {   
-            //     'type': 'callback',
-            //     'callback': () => setDrifting(true)
-            // },
-        ],
-        'leaveAnnotation': [
-            {
-                'text': 'You must offer up something in return',
-                'duration': 3000,
-                'waitForCondition': useCallback(() => {
-                    return editor.getOnlySelectedShape()?.id !== createShapeId("temp-annotation")
-                }, [editor])
-            }
+
         ]
     };
 

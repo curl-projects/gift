@@ -20,6 +20,7 @@ import { NarrationPainter } from "~/components/canvas/custom-ui/game-ui/Narrator
 import { GameController } from "~/components/canvas/custom-ui/game-ui/GameControls/GameController"
 import CustomToolbar from "~/components/canvas/custom-ui/custom-toolbar/CustomToolbar"
 import { CollectionProvider } from "~/components/canvas/custom-ui/collections";
+import { MainMenuPainter } from "~/components/canvas/custom-ui/utilities/MainMenuPainter";
 import { GraphLayoutCollection } from "~/components/canvas/custom-ui/graph/GraphLayoutCollection";
 import { AnnotationLayoutCollection } from "~/components/canvas/custom-ui/graph/AnnotationLayoutCollection";
 import { GraphUi } from "~/components/canvas/custom-ui/graph/GraphUi";
@@ -205,6 +206,7 @@ export default function WorldCanvas() {
                             <GlyphPainter />
                             <TitlePainter />
                             <JournalPainter />
+                            <MainMenuPainter />
                             <CovenantPainter />
                             <NarrationPainter />
                             {/* <ConstellationFinder /> */}

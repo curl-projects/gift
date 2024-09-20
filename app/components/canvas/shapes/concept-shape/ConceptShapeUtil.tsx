@@ -224,7 +224,7 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
                 // Create excerpts if they don't exist
                 if(!excerptsExist(this.editor, concept)){
                     generateExcerpts(this.editor, concept);
-                    applyProgressiveBlur(this.editor, shape, [...excerptIds, createShapeId(data.user.uniqueName)]);
+                    // applyProgressiveBlur(this.editor, shape, [...excerptIds, createShapeId(data.user.uniqueName)]);
 
                     setTimeout(()=>{
                         expandExcerpts?.onComplete && expandExcerpts.onComplete()
