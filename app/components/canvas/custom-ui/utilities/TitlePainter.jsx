@@ -172,7 +172,7 @@ export function TitlePainter(){
                         transition={{ duration: 1 }}
                     >
                         <div className={styles.nextButtonContainer}>
-                            press space to continue
+                            press space to start demo
                         </div>
                     </motion.div>
                  )
