@@ -305,6 +305,7 @@ export function addConstellationCanvas(scene, canvasZoneRef, RenderingGroups) {
         plane.renderingGroupId = RenderingGroups.embeddedElements;
         const matPlane = new BABYLON.StandardMaterial("plane", scene);
 
+        // matPlane.alpha = 0.0;
         plane.material = matPlane;
         plane.rotationQuaternion = BABYLON.Quaternion.FromEulerAngles(-Math.PI / 2, Math.PI, 0);
         plane.rotation = new BABYLON.Vector3(-Math.PI / 2, Math.PI, 0);

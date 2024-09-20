@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useEditor, createShapeId } from "tldraw"
 import { useConstellationMode } from './ConstellationModeContext';
+import { removeProgressiveBlur, applyProgressiveBlur } from "~/components/canvas/helpers/distribution-funcs.js"
 
 export function ConstellationExpander(){
     const editor = useEditor()
@@ -69,7 +70,7 @@ export function ConstellationExpander(){
                             id: concept.id,
                             type: concept.type,
                             props: {
-                                expanded: true
+                                expanded: true,
                             }
                         });
                     }

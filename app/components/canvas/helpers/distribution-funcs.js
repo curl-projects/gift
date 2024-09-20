@@ -72,7 +72,7 @@ export function applyProgressiveBlur(editor, centralShape, excludeIds = []){
     }
 }
 
-export function removeProgressiveBlur(editor, centralShape, excludeIds = []){
+export function removeProgressiveBlur(editor){
     // get all shapes
     const shapes = editor.getCurrentPageShapes();
     // exclude those in excludeIds

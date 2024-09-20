@@ -1,0 +1,43 @@
+.toolsMenu {
+    position: fixed;
+    pointer-events: all;
+    z-index: 2147483647;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    gap: 20px;
+}
+
+.item{
+    height: 50px;
+    width: 40px;
+    box-sizing: border-box;
+    padding: 2px;
+    border-top: 1px solid rgba(255, 255, 255, 0.6);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8); 
+    cursor: pointer;
+
+}
+
+.itemInner{
+    height: 100%;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon{
+    color: gray;
+    font-size: 26px;
+}
+
+.iconActive{
+    color: white;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+}

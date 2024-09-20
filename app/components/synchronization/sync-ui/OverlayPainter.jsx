@@ -68,7 +68,6 @@ export function OverlayPainter(){
                       delay: trueOverlayControls.delay || 0 }}
         onAnimationComplete={(animation) => {
             console.log("true overlay complete")
-            
             trueOverlayControls.onComplete && trueOverlayControls.onComplete();
         }}
         style={{

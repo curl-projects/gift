@@ -3,9 +3,11 @@ export function animateMesh(scene, animationEvent){
     const animationGroup = scene.getAnimationGroupByName(animationGroupName);
     
     if (animationGroup) {
+        const speed = props.speed || 1.0; // Default speed is 1.0 if not provided
+
         if (props.reverse) {
             console.log("STARTING REVERSE ANIMATION", props.startFrame, props.endFrame)
-            animationGroup.play(false, 1.0, props.startFrame || animationGroup.to, props.endFrame || animationGroup.from);
+            animationGroup.play(false, speed, props.startFrame || animationGroup.to, props.endFrame || animationGroup.from);
             animationGroup.onAnimationEndObservable.addOnce(() => {
                 animationGroup.pause();
                 const idleAnimationGroup = scene.getAnimationGroupByName('idle');

@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import styles from "./SystemComponent.module.css";
 import { TextScramble } from "~/components/canvas/custom-ui/post-processing-effects/text-scramble/TextScramble";
 
-const SystemComponent = ({ visible, text, requiresInteraction, delay, textDelay = 0, onComplete = null}) => {
+const SystemComponent = ({ visible, text, requiresInteraction, delay, nextButtonVisible, setNextButtonVisible, textDelay = 0, onComplete = null}) => {
     const textRef = useRef(null);
     const [animationComplete, setAnimationComplete] = useState(false);
 
@@ -60,17 +60,21 @@ const SystemComponent = ({ visible, text, requiresInteraction, delay, textDelay 
                         </motion.p>
                     </div>
                 </motion.div>
-                <AnimatePresence mode="wait">
-                    <motion.p 
-                        key={text}
-                        className={styles.nextButtonContainer}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: requiresInteraction ? 1 : 0 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 2, delay: 1 }}
-                    >
-                        press space to continue
-                    </motion.p>
+                <AnimatePresence>
+                    {nextButtonVisible && (
+                        <div className={styles.nextButtonContainerWrapper}>
+                            <motion.p 
+                                key="next-button-container"
+                                className={styles.nextButtonContainer}
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: requiresInteraction ? 1 : 0 }}
+                                exit={{ opacity: 0, transition: { duration: 0 } }}
+                                transition={{ duration: 1, delay: 0 }}
+                            >
+                                press space to continue
+                            </motion.p>
+                        </div>
+                        )}
                 </AnimatePresence>
                 </>
                 

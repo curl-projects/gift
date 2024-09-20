@@ -63,7 +63,7 @@ export function NarratorVoice() {
                 // hardcoded jank because the promise logic isn't working for the components above
                 type: 'callback',
                 callback: () => {
-                    return new Promise(resolve => setTimeout(resolve, 2000));
+                    return new Promise(resolve => setTimeout(resolve, 1000));
                 },
                 waitForCallback: true,
             },   
@@ -134,7 +134,7 @@ export function NarratorVoice() {
                             type: 'narrator',
                             visible: true,
                             overlay: false,
-                            text: "We have spent much of our lives here, lost in a stupor, adrift in a void,", 
+                            text: "We have spent much of our lives here. Lost in a stupor, adrift in a void,", 
                             requiresInteraction: true, 
                             darkeningVisible: false
                         })
@@ -313,7 +313,8 @@ export function NarratorVoice() {
                             props: {
                                 reverse: true,
                                 startFrame: 300,  
-                                endFrame: 10,          
+                                endFrame: 10,
+                                speed: 0.5,          
                             }
                         }),
                         setTextEvent({ 

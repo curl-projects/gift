@@ -317,16 +317,16 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
                         }
                         </AnimatePresence> */}
                         <AnimatePresence>
-                        {shape.props.expanded && ( 
-                            <motion.div
-                                key="dashedRing"
-                                className={styles.dashedRing}
-                                initial="hidden"
-                                animate={["visible", "rotate"]}
-                                exit="exit"
-                                variants={dashedRingVariants}
-                            />
-                        )}
+                            {isOnlySelected && ( 
+                                <motion.div
+                                    key="dashedRing"
+                                    className={styles.dashedRing}
+                                    initial="hidden"
+                                    animate={["visible", "rotate"]}
+                                    exit="exit"
+                                    variants={dashedRingVariants}
+                                />
+                            )}
 
                         </AnimatePresence>
                         <motion.div

@@ -204,17 +204,7 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
                     props: {
                         expanded: false
                     }
-                })
-                // tearDownExcerpts(this.editor, concept)
-                // removeProgressiveBlur(this.editor, shape, excerptIds);
-
-                // if(!memoizedSelectedShapeIds.map(id => this.editor.getShape(id)).some(shape => ['excerpt', 'concept'].includes(shape?.type))){
-                //     console.log("No concept or excerpt selected", memoizedSelectedShapeIds.map(id => this.editor.getShape(id)))
-                //     removeProgressiveBlur(this.editor, shape, excerptIds);
-                // }
-                // else{
-                    
-                // }            
+                })         
             }
         }, [memoizedSelectedShapeIds]);
 
@@ -234,7 +224,6 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
                 // Create excerpts if they don't exist
                 if(!excerptsExist(this.editor, concept)){
                     generateExcerpts(this.editor, concept);
-                    // removeProgressiveBlur(this.editor, shape, excerptIds);
                     applyProgressiveBlur(this.editor, shape, [...excerptIds, createShapeId(data.user.uniqueName)]);
 
                     setTimeout(()=>{
@@ -248,7 +237,7 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
             }
             else{
                 tearDownExcerpts(this.editor, concept)
-                removeProgressiveBlur(this.editor, shape, [...excerptIds, createShapeId(data.user.uniqueName)]); // TODO: do this globally
+                removeProgressiveBlur(this.editor); // TODO: do this globally
             }
         }, [shape.props.expanded])
 

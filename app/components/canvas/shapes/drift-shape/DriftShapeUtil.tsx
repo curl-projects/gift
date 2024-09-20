@@ -12,9 +12,6 @@ import { useLoaderData } from '@remix-run/react';
 import { useCallback, useState, useEffect, useRef, useLayoutEffect, useMemo } from 'react'
 import styles from './DriftShapeUtil.module.css';
 import { motion, useAnimate, AnimatePresence, useAnimationControls } from 'framer-motion';
-// import { generateExcerpts, tearDownExcerpts, excerptsExist } from "~/components/canvas/helpers/thread-funcs"
-// import { applyProgressiveBlur, removeProgressiveBlur } from '~/components/canvas/helpers/distribution-funcs';
-// import { updateThreadBindingProps } from '~/components/canvas/bindings/thread-binding/ThreadBindingUtil';
 import { useConstellationMode } from '~/components/canvas/custom-ui/utilities/ConstellationModeContext';
 import { getChainToShape } from '~/components/canvas/helpers/thread-funcs';
 

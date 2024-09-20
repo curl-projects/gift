@@ -15,6 +15,7 @@ import { GlyphPainter } from "~/components/canvas/custom-ui/utilities/GlyphPaint
 import { TitlePainter } from "~/components/canvas/custom-ui/utilities/TitlePainter"
 import { JournalPainter } from "~/components/canvas/custom-ui/utilities/JournalPainter"
 import { CovenantPainter } from "~/components/canvas/custom-ui/utilities/CovenantPainter"
+import { ToolsMenu } from "~/components/canvas/custom-ui/utilities/ToolsMenu"
 import { NarrationPainter } from "~/components/canvas/custom-ui/game-ui/Narrator/NarrationPainter"
 import { GameController } from "~/components/canvas/custom-ui/game-ui/GameControls/GameController"
 import CustomToolbar from "~/components/canvas/custom-ui/custom-toolbar/CustomToolbar"
@@ -211,6 +212,7 @@ export default function WorldCanvas() {
                             <ConstellationLabel 
                                 name={data.user.name}
                             />
+                            <ToolsMenu />
                             <GraphTrigger />
                             <SelectionListener 
                                 user={data.user}
