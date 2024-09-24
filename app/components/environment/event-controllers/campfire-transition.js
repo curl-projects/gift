@@ -5,21 +5,22 @@ import { framerate, Epsilon } from '~/components/environment/helpers/constants';
 // import { customFadeIn, customFadeOut } from '~/components/environment/helpers/mesh-behaviours';
 import { createShapeId } from "tldraw";
 
-export function giveControlToCanvas() {
-    document.body.style.pointerEvents = 'none';
-}
-
 // export function giveControlToCanvas() {
-//     const elementsToDisable = document.querySelectorAll('.disable-pointer-events');
-//     elementsToDisable.forEach(element => {
-//         element.style.pointerEvents = 'none';
-//     });
+//     console.log("CANVAS CONTROL TRIGGERED!")
+//     document.body.style.pointerEvents = 'none';
 // }
 
-export function giveControlToEnvironment(){
-    document.body.style.pointerEvents = 'auto';
-    document.body.style.overflow = 'unset';
-}
+// // export function giveControlToCanvas() {
+// //     const elementsToDisable = document.querySelectorAll('.disable-pointer-events');
+// //     elementsToDisable.forEach(element => {
+// //         element.style.pointerEvents = 'none';
+// //     });
+// // }
+
+// export function giveControlToEnvironment(){
+//     document.body.style.pointerEvents = 'auto';
+//     document.body.style.overflow = 'unset';
+// }
 
 
 // export function giveControlToEnvironment() {
@@ -237,10 +238,9 @@ export function focusWithoutMovingToConstellationCanvas(scene, camera, triggerEf
 
                     // Start the FOV animation after rotation animations complete
                     scene.beginDirectAnimation(camera, [fovAnimation], 0, fovAnimationDuration * framerate, false, 1, () => {
-                        giveControlToCanvas();
 
                         const engine = scene.getEngine();
-                        engine.stopRenderLoop();
+                        // engine.stopRenderLoop();
 
                       
                         resolve(); // Resolve the promise when all animations are complete
@@ -334,7 +334,6 @@ export function unfocusFromConstellationCanvas(scene, camera, triggerEffect, onR
     
                 scene.beginDirectAnimation(camera, [fovAnimation], 0, fovAnimationDuration * framerate, false, 1, () => {
                     scene.beginDirectAnimation(camera, [rotationQuaternionAnimation], 0, targetAnimationDuration * framerate, false, 1, () => {
-                        giveControlToEnvironment()
                         resolve();
                     });
                 });
@@ -388,8 +387,6 @@ export function unfocusFromConstellationCanvasImmediately(scene, camera, onRende
             treeScale && redwoodMeshes.forEach(mesh => customFadeIn(mesh, scene, 3, true)); // Directly apply the fade in effect
 
 
-            giveControlToEnvironment();
-
             resolve();
         } else {
             console.error(`${targetMeshName} not found`);
@@ -435,12 +432,11 @@ export function initializeLookingAtSky(scene, camera, treeScale=true){
             console.log("REDWOOD MESHES:", redwoodMeshes);
             treeScale && redwoodMeshes.forEach(mesh => customFadeOut(mesh, scene, 1.5, true)); // Directly apply the fade out effect
 
-            // giveControlToCanvas();
 
             // after all effect have finished, freeze the canvas
             setTimeout(() => {
                 const engine = scene.getEngine();
-                engine.stopRenderLoop();
+                // engine.stopRenderLoop();
                 resolve(); // Resolve the promise when all operations are complete
             }, 100);
         } else {

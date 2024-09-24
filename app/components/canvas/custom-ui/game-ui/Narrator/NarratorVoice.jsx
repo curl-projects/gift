@@ -8,18 +8,19 @@ import NarratorComponent from "./components/NarratorComponent";
 import SystemComponent from "./components/SystemComponent";
 import * as BABYLON from '@babylonjs/core';
 
+
 export function NarratorVoice() {
     const editor = useEditor();
-    const { narratorEvent, setNarratorEvent, 
-        setDrifting, overlayMode, setOverlayMode, 
+    const {
+        overlayMode, setOverlayMode, 
        
         expandConstellation, setExpandConstellation,
     } = useConstellationMode();
 
-
     const { 
         campfireView,
         setCampfireView,
+        narratorEvent, setNarratorEvent, 
         cloudControls, setCloudControls,
         starControls, setStarControls,
         overlayControls, setOverlayControls,
@@ -35,19 +36,486 @@ export function NarratorVoice() {
         glyphControls, setGlyphControls,
         animationEvent, setAnimationEvent,
         titleControls, setTitleControls,
+        drifting, setDrifting,
     } = useStarFireSync();
 
     const [narratorState, setNarratorState] = useState({ visible: false, text: '', requiresInteraction: false });
     const [systemState, setSystemState] = useState({ visible: false, text: '', requiresInteraction: false });
     // const [commands, setCommands] = useState([]);
 
+
     useEffect(() => {
-        setNarratorEvent('pitch');
+        setNarratorEvent('setup');
     }, [setNarratorEvent]);
 
     const narratorOrchestration = {
-        'pitch': [
-            // setup - before title drop
+        'setup': [
+            {
+                type: 'callback',
+                callback: () => {
+                        setTrueOverlayControls({ visible: true, immediate: true})
+                        setCampfireView({ active: true, immediate: true })
+                        setStarControls({ visible: true, immediate: true})
+                        setCloudControls({ visible: true, immediate: true})
+                        setOverlayControls({ dark: true, immediate: true})
+                        setTitleControls({ visible: false, immediate: true })
+                        setJournalMode({ active: false, immediate: true })
+                },
+                // waitForCallback: true,
+            },
+            {
+                // hardcoded jank because the promise logic isn't working for the components above
+                type: 'callback',
+                callback: () => {
+                    return new Promise(resolve => setTimeout(resolve, 1000));
+                },
+                waitForCallback: true,
+            },   
+            {
+                type: 'callback',
+                callback: () => {
+                    setNarratorEvent('pitch')
+                },
+                waitForCallback: false,
+            }
+        ],
+        'elevator-pitch': [
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setTitleControls({ visible: false, immediate: false, duration: 2, delay: 0, })
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setJournalMode({ active: true, variant: 'modern', page: 'elevator-pitch' })
+                    ])
+                },
+            }
+        ],
+        'design-philosophy': [
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setTitleControls({ visible: false, immediate: false, duration: 1, delay: 0, })
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setTextEvent({ 
+                            type: 'narrator',
+                            visible: true,
+                            overlay: false,
+                            text: "The best way to understand my design philosophy is to explore my work.", 
+                            requiresInteraction: true, 
+                            darkeningVisible: true, 
+                        }),
+                        setConstellationLabel({ 
+                            visible: true, 
+                            immediate: false, 
+                            duration: 2, 
+                            delay: 2,
+                            text: "Finn's Design Philosophy for Starlight"
+                        })
+
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setTextEvent({
+                            type: 'narrator',
+                            visible: false,
+                            overlay: false,
+                        })
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        
+                        setTextEvent({ 
+                            type: 'system',
+                            visible: true,
+                            overlay: false,
+                            text: "Use the constellation to explore my design portfolio. Click everything to expand it! Return home by clicking the titles", 
+                            requiresInteraction: true,
+                            darkeningVisible: true,
+                        })
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        
+                        setTextEvent({ 
+                            type: 'system',
+                            visible: false,
+                            overlay: false,
+                        })
+                    ])
+                },
+                waitForCallback: true,
+            },
+        ],
+        'mechanics': [
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setTitleControls({ visible: false, immediate: false, duration: 1, delay: 0, }),
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setOverlayControls({ dark: false, immediate: false, duration: 1, delay: 0 }),
+                        setTriggerWarp({ active: true, accDuration: 1000, deaccDuration: 1000, constAccDuration: 1000 }),
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setTextEvent({
+                            type: 'system',
+                            visible: true,
+                            overlay: false,
+                            textAlign: 'left',
+                            text: "Starlight automatically creates portfolios from your existing work as users drop in half-finished ideas and articles, which you can then customize and develop over time. It does so by identifying the concepts that are present across different pieces of work, and the excerpts from each piece of media that best represent them. This hierarchy -- concepts, excerpts and media -- are then organized into a constellation, which is a dynamic web of connections between different media objects.",
+                            headerText: "[1] Creating Portfolios: Constellations",
+                            darkeningVisible: true,
+                            requiresInteraction: true,
+                        }),
+                        setExpandConstellation({ concepts: true, excerpts: true }),
+
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setTextEvent({
+                            type: 'system',
+                            visible: true,
+                            overlay: false,
+                            textAlign: 'left',
+                            text: "Starlight imagines discovering the portfolios of others as traversing a galaxy of stars. As users inspect constellations, they can use an astrolabe to see excerpts and concepts from other people that are related to the idea currently in focus. Clicking on any of these will warp the user to another portfolio. In this way, users can find new ideas and people by deeply exploring the ideas that they resonate with. The natural starting point for this exploration is the user's own constellation.",
+                            headerText: "[2] Traversing Portfolios: The Astrolabe",
+                            darkeningVisible: true,
+                            requiresInteraction: true,
+                        }),
+                        // setExpandConstellation({ concepts: false, excerpts: false }),
+                        setDrifting({ active: true }),
+                        
+                       
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setTextEvent({
+                            type: 'system',
+                            visible: false,
+                            overlay: false,
+                        }),
+                        setDrifting({ active: false }),
+                        setTriggerWarp({ active: true, accDuration: 1000, deaccDuration: 1000, constAccDuration: 1000 }),
+                        setConstellationLabel({ visible: true, immediate: false, duration: 2, delay: 0, text: "Covenants: an Introduction" })
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setTextEvent({
+                            type: 'system',
+                            visible: true,
+                            overlay: false,
+                            textAlign: 'left',
+                            headerText: "[3] Understanding Others: Covenants",
+                            text: "The core of Starlight is understanding the ideas of others. This is operationalized through the ***Covenant*** system. Covenants are tasks that are set on each portfolio by its creator. For example, a very simple covenant might require highlighting three sentences from a piece of media that resonate with the viewer, while a very complex covenant might require them to write a comment analyzing one of the core themes. There will be a configurable templated system for creating covenants, similar to the very simple coding logic of tools like [fix this]. The completion status of these covenants will be determined by rule-based systems for simple tasks, LLMs for more complex ones, and optionally by the constellation's creator. In short, covenants are challenges designed to make users demonstrate their understanding of the ideas of the portfolio's creator. By completing a covenant, a user receives a glyph (see below), and can start to develop a relationship with that person. Covenants are a reaction to the issues that emerge from the frictionless nature of most modern social ecosystems. Platforms such as LinkedIn make it effortless to connect with another person, and in doing so devalue those connections.",
+                            darkeningVisible: true,
+                            requiresInteraction: true,
+                        }),
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setGlyphControls({ visible: true, immediate: false, duration: 4 }),
+                        setTextEvent({
+                            type: 'system',
+                            visible: true,
+                            overlay: false,
+                            textAlign: 'left',
+                            text: "Glyphs are records of your connections with other people. You might think of them as the analog of friend requests. You receive the glyph of an individual by completing the covenant (challenge of understanding) associated with their constellation. This acts as a permannt record of their portfolio, allowing you to revisit it using your journal whenever you wish. Glyphs can be *restored* when both people interact with each other's constellations. This allows them to communicate at the campfire -- the beginnings of a friendship.",
+                            headerText: "[4] Making Connections: Glyphs",
+                            darkeningVisible: true,
+                            requiresInteraction: true,
+                        }),
+                    ])
+                },
+                waitForCallback: true,
+            },
+
+            // todo: fix
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        // setGlyphControls({ visible: false, immediate: false, duration: 1 }),
+                        setJournalMode({ active: true, variant: 'parchment', page: 'cover' }),
+                        setTextEvent({
+                            type: 'system',
+                            visible: true,
+                            overlay: false,
+                            textAlign: 'left',
+                            text: "Your journal is where you record the various glyphs and ideas that you come across in your travels, as well as track the messages that you have sent to others. ",
+                            headerText: "[5] Recording Your Travels: The Journal",
+                            darkeningVisible: true,
+                            requiresInteraction: true,
+                        }),
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    console.log("triggered")
+
+                    return Promise.all([
+                        setTextEvent({
+                            type: 'system',
+                            visible: false,
+                            overlay: false,
+                        }),
+                        setJournalMode({ active: false, variant: 'parchment', page: 'cover' }),
+                      
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setCampfireView({ 
+                            active: true, 
+                            immediate: false, 
+                            useTargetPosition: true,
+                            targetPosition: new BABYLON.Vector3(0.17, -3.25, 4.22),
+                        }),
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    console.log("setting overlay text event")
+                    
+                    return Promise.all([
+                        
+                        setTextEvent({ 
+                            type: 'system',
+                            visible: true,
+                            overlay: true,
+                            text: "Try looking up", 
+                            waitUntilVisible: true,
+                            darkeningVisible: true, 
+                            waitCondition: () => {
+                                return Promise.all([
+                                    setCommandEvent({
+                                         eventType: 'camera-moved',
+                                        props: {}
+                                    })
+                                ])
+                            }
+                        })
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setCommandEvent({
+                            eventType: 'mesh-visible', 
+                            props: {
+                                meshName: 'narrator'
+                            }
+                            })
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setAnimationEvent({ 
+                            animationGroupName: 'looking-down',
+                            props: {
+                                reverse: true,
+                                 startFrame: 300,  
+                                endFrame: 10,
+                                speed: 0.5,          
+                            }
+                        }),
+                        setTextEvent({ 
+                            type: 'narrator',
+                            visible: true,
+                            overlay: true,
+                            text: "The campfire is a space in a redwood grove where users can interact directly with each other, leaving messages or chatting in real time once they have demonstrated their understanding of each other's ideas. It's also the refuge of the narrator, who introduces players to the world and keeps track of their progress as they restore glyphs and explore the galaxy.", 
+                            delay: 1.5,
+                            requiresInteraction: true,
+                            darkeningVisible: true, 
+                        })
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setCampfireView({ active: false, immediate: false, duration: 1 }),
+                        setTextEvent({ 
+                            type: 'system',
+                            visible: false,
+                            overlay: true,
+                        }),
+                    ])
+                },
+                waitForCallback: true,
+            },  
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setOverlayControls({ dark: true, immediate: false, duration: 1, delay: 0 }),
+                        setTitleControls({ visible: true, immediate: false, duration: 1.3, delay: 0.3 }),
+                    ])
+                },
+                waitForCallback: true,
+            },      
+        ],
+        'technical-foundations': [
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setTitleControls({ visible: false, immediate: false, duration: 1, delay: 0, })
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setGlyphControls({ visible: true, immediate: false, duration: 4 })
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setJournalMode({ active: true, variant: 'modern', page: 'technical-foundations' })
+                    ])
+                },
+            }
+        ],
+        'justification': [
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setTitleControls({ visible: false, immediate: false, duration: 1, delay: 0, })
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setCampfireView({ 
+                            active: true, 
+                            immediate: false,
+                            useTargetPosition: true,
+                            targetPosition: new BABYLON.Vector3(0.17, -3.25, 4.22),
+                        })
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        
+                        setTextEvent({ 
+                            type: 'system',
+                            visible: true,
+                            overlay: true,
+                            text: "Try looking up", 
+                            waitUntilVisible: true,
+                            darkeningVisible: true, 
+                            waitCondition: () => {
+                                return Promise.all([
+                                    setCommandEvent({
+                                         eventType: 'camera-moved',
+                                        props: {}
+                                    })
+                                ])
+                            }
+                        })
+                    ])
+                },
+                waitForCallback: true,
+            }, 
+        ],
+        'journalTest': [
             {
                 type: 'callback',
                 callback: () => {
@@ -71,8 +539,7 @@ export function NarratorVoice() {
                 type: 'callback',
                 callback: () => {
                     return Promise.all([
-                        setTrueOverlayControls({ visible: false, immediate: false, duration: 3}),
-                        setTitleControls({ visible: true, immediate: false, duration: 4, delay: 0.3 })
+                        setTrueOverlayControls({ visible: false, immediate: false, duration: 3})
                     ])
                     
                 },
@@ -80,13 +547,66 @@ export function NarratorVoice() {
             },
             {
                 type: 'callback',
-                callback: async () => {
-                  await Promise.all([
+                callback: () => {
+                    return Promise.all([
+                        setJournalMode({ active: true, page: 'pitch' })
+                    ])
+                    
+                },
+                waitForCallback: true,
+            },
+
+        ],
+        'pitch': [
+            // setup - before title drop
+            // {
+            //     type: 'callback',
+            //     callback: () => {
+            //             setTrueOverlayControls({ visible: true, immediate: true})
+            //             setCampfireView({ active: false, immediate: true })
+            //             setStarControls({ visible: true, immediate: true})
+            //             setCloudControls({ visible: true, immediate: true})
+            //             setOverlayControls({ dark: true, immediate: true})
+            //             setTitleControls({ visible: false, immediate: true })
+            //             setJournalMode({ active: false, immediate: true })
+            //     },
+            //     // waitForCallback: true,
+            // },
+            // {
+            //     // hardcoded jank because the promise logic isn't working for the components above
+            //     type: 'callback',
+            //     callback: () => {
+            //         return new Promise(resolve => setTimeout(resolve, 1000));
+            //     },
+            //     waitForCallback: true,
+            // },   
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setTrueOverlayControls({ visible: false, immediate: false, duration: 3}),
+                        // setJournalMode({ active: false, immediate: true }),
+                        // setTitleControls({ visible: true, immediate: false, duration: 1.3, delay: 0.3 }),
+                        // setGlyphControls({ visible: false, immediate: false, duration: 2 }),
+                        // setConstellationLabel({ visible: false, immediate: false, duration: 2, delay: 0}),
+                        // setOverlayControls({ dark: true, immediate: false, duration: 2, delay: 0}),
+                        // setTextEvent({ type: 'system', visible: false, overlay: false }),
+                        // setDrifting({active: false }),
+                        
+                        setCampfireView({ active: false, immediate: false })
+
+                    ])
+                    
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
                         setStarControls({ visible: false, immediate: false, duration: 0.5 }),
                         setTitleControls({ visible: false, immediate: false, duration: 1 })
                     ])
-                    console.log('concluded!')
-                    return true
                     
                 },
                 waitForCallback: true,
@@ -385,13 +905,13 @@ export function NarratorVoice() {
                 callback: () => {
                     return Promise.all([
                         setTriggerWarp({ active: true, accDuration: 1000, deaccDuration: 1000, constAccDuration: 1000 }).then(()=>{
-                            setConstellationLabel({ 
-                                visible: true, 
-                                immediate: false, 
-                                duration: 2, 
-                                delay: 2,
-                                text: "Finn's Cluster"
-                            })
+                        setConstellationLabel({ 
+                            visible: true, 
+                            immediate: false, 
+                            duration: 2, 
+                            delay: 2,
+                            text: "Finn's Cluster"
+                        })
                         }),
                         setTextEvent({ 
                             type: 'system',
@@ -439,48 +959,7 @@ export function NarratorVoice() {
                 waitForCallback: true,
             },
         ],
-        'journalTest': [
-            {
-                type: 'callback',
-                callback: () => {
-                        setTrueOverlayControls({ visible: true, immediate: true})
-                        setCampfireView({ active: false, immediate: true })
-                        setStarControls({ visible: true, immediate: true})
-                        setCloudControls({ visible: true, immediate: true})
-                        setOverlayControls({ dark: true, immediate: true})
-                },
-                // waitForCallback: true,
-            },
-            {
-                // hardcoded jank because the promise logic isn't working for the components above
-                type: 'callback',
-                callback: () => {
-                    return new Promise(resolve => setTimeout(resolve, 1000));
-                },
-                waitForCallback: true,
-            },   
-            {
-                type: 'callback',
-                callback: () => {
-                    return Promise.all([
-                        setTrueOverlayControls({ visible: false, immediate: false, duration: 3})
-                    ])
-                    
-                },
-                waitForCallback: true,
-            },
-            {
-                type: 'callback',
-                callback: () => {
-                    return Promise.all([
-                        setJournalMode({ active: true, page: 'pitch' })
-                    ])
-                    
-                },
-                waitForCallback: true,
-            },
-
-        ]
+       
     };
 
 

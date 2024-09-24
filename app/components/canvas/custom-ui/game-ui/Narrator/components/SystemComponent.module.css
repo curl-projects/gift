@@ -24,6 +24,13 @@
 }
 
 
+.systemHeaderText {
+    display: block;
+    margin-bottom: 20px;
+    font-weight: 500;
+    font-size: 50px;
+    text-decoration: underline;
+}
 
 .systemText {
     font-size: 40px;
@@ -81,7 +88,7 @@
     bottom: 0;
     left: 0;
     right: 0;
-    z-index: 1000;
+    z-index: 1000000;
     display: flex;
     justify-content: center;
     align-items: center;

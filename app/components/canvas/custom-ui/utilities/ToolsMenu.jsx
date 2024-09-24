@@ -9,19 +9,19 @@ import { useEffect } from 'react';
 
 export function ToolsMenu(){
     const editor = useEditor();
-    const { journalMode, setJournalMode } = useStarFireSync()
+    const { drifting, setDrifting, journalMode, setJournalMode } = useStarFireSync()
 
     useEffect(()=>{
         console.log('journalMode', journalMode)
     }, [journalMode])
 
     const handleJournalClick = () => {
-        setJournalMode({ active: !journalMode.active, page: journalMode.page || 'pitch', variant: journalMode.variant })
+        setJournalMode({ active: !journalMode.active, page: journalMode.page || 'elevator-pitch', variant: journalMode.variant })
     };
 
-    const handleAstrolabeClick = useCallback(() => {
-        console.log('astrolabe');
-    }, []);
+    const handleAstrolabeClick = () => {
+        setDrifting({ active: !drifting.active })
+    };
 
     const handleTelescopeClick = useCallback(() => {
         console.log('telescope');
@@ -39,7 +39,7 @@ export function ToolsMenu(){
             id: 'middle',
             tool: "astrolabe",
             icon: <GiAstrolabe />,
-            active: false,
+            active: drifting.active,
             onClick: handleAstrolabeClick
         },
         {

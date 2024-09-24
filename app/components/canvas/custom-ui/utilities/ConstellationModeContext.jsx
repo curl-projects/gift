@@ -5,9 +5,9 @@ const ConstellationModeContext = createContext();
 
 // Create a provider component
 export const ConstellationModeProvider = ({ children }) => {
-    const [drifting, setDrifting] = useState(false);
+    
     const [expandedShapeIds, setExpandedShapeIds] = useState([]);
-    const [narratorEvent, setNarratorEvent] = useState(null);
+    
     
 
     const [constellationLabel, _setConstellationLabel] = useState({ visible: false, immediate: true });
@@ -43,9 +43,7 @@ export const ConstellationModeProvider = ({ children }) => {
     return (
         <ConstellationModeContext.Provider 
             value={{ 
-                drifting, setDrifting, 
                 expandedShapeIds, setExpandedShapeIds, 
-                narratorEvent, setNarratorEvent, 
                 expandConcepts, setExpandConcepts,
                 expandExcerpts, setExpandExcerpts,
                 expandConstellation, setExpandConstellation,

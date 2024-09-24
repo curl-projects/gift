@@ -1,11 +1,9 @@
 import { useStarFireSync } from '~/components/synchronization/StarFireSync';
 import { useEffect } from 'react';
 import { focusWithoutMovingToConstellationCanvas, 
-         giveControlToCanvas,
          unfocusFromConstellationCanvas,
          unfocusFromConstellationCanvasImmediately,
          initializeLookingAtSky,
-         giveControlToEnvironment,
         } from '~/components/environment/event-controllers/campfire-transition';
 
 export function CampfireSyncListener({ scene, onRender }){

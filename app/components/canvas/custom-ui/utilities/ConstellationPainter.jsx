@@ -54,7 +54,7 @@ export function ConstellationPainter({ user }){
             })
             setTimeout(()=>{
                 // delete all shapes
-                const constellationShapes = editor.getCurrentPageShapes().filter(shape => ['thread', 'concept', 'excerpt', 'name', 'annotation'].includes(shape.type))
+                const constellationShapes = editor.getCurrentPageShapes().filter(shape => ['thread', 'concept', 'excerpt', 'name', 'annotation', "drift"].includes(shape.type))
 
                 // allows us to override thread locks
                 editor.run(

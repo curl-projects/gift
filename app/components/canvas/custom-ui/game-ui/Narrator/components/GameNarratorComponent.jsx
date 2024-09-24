@@ -4,7 +4,7 @@ import { useEffect, useState, memo } from "react";
 import { Stars } from '~/components/canvas/custom-ui/aesthetics/stars/Stars';
 import { Clouds } from '~/components/canvas/custom-ui/aesthetics/clouds/Clouds';
 
-const GameNarratorComponent = ({ visible, text, requiresInteraction, exitDuration, onComplete }) => {
+const GameNarratorComponent = ({ visible, text, headerText, requiresInteraction, exitDuration, onComplete, nextButtonVisible, setNextButtonVisible }) => {
     return (
         <AnimatePresence>
             {visible && (
@@ -53,6 +53,7 @@ const GameNarratorComponent = ({ visible, text, requiresInteraction, exitDuratio
                             exit={{ opacity: 0 }}
                             transition={{ duration: 2 }}
                         >
+                            <span className={styles.narratorHeaderText}>{headerText}</span>
                                 {text}
                             </motion.p>
                        
@@ -68,6 +69,22 @@ const GameNarratorComponent = ({ visible, text, requiresInteraction, exitDuratio
                     <Stars />
                     <Clouds absoluteMode />
                 </motion.div>
+                <AnimatePresence>
+                    {nextButtonVisible && (
+                        <div className={styles.nextButtonContainerWrapper}>
+                            <motion.p 
+                                key="next-button-container"
+                                className={styles.nextButtonContainer}
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: requiresInteraction ? 1 : 0 }}
+                                exit={{ opacity: 0, transition: { duration: 0 } }}
+                                transition={{ duration: 1, delay: 0 }}
+                            >
+                                press space to continue
+                            </motion.p>
+                        </div>
+                        )}
+                    </AnimatePresence>
                 </>
             )}
         </AnimatePresence>

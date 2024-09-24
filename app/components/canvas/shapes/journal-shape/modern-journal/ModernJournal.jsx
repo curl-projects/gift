@@ -18,7 +18,8 @@ export function ModernJournal({ shape, journalMode, contentRef }){
 
     useEffect(()=>{
       console.log("DATA:", data.journalEntries)
-        setHtmlContent(converter.makeHtml(data.journalEntries[0].content) || "")
+      const page = data.journalEntries.filter(entry => entry.type === 'journalPage').find(page => page.url === journalMode.page)
+        setHtmlContent(converter.makeHtml(page.content) || "")
     }, [data])
 
     const editor = useEditor({

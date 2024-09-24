@@ -3,6 +3,8 @@ import React, { createContext, useContext, useState, useCallback } from 'react';
 const StarFireSyncContext = createContext();
 
 const StarFireSyncProvider = ({ children }) => {
+    const [narratorEvent, setNarratorEvent] = useState(null);
+
     const [activeEffect, setActiveEffect] = useState(null);
     const [triggerWarp, _setTriggerWarp] = useState({active: false, accDuration: 500, deaccDuration: 500, constAccDuration: 500});
     const [restored, setRestored] = useState(false);
@@ -15,6 +17,8 @@ const StarFireSyncProvider = ({ children }) => {
     const [starControls, _setStarControls] = useState({ visible: true, immediate: true });
     const [glyphControls, _setGlyphControls] = useState({ visible: false, immediate: false });
     const [titleControls, _setTitleControls] = useState({ visible: false, immediate: false });
+
+    const [drifting, _setDrifting] = useState({ active: false });
 
     // TEXT STUFF
     const [textEvent, _setTextEvent] = useState(null);
@@ -29,7 +33,7 @@ const StarFireSyncProvider = ({ children }) => {
     const [overlayControls, _setOverlayControls] = useState({ dark: false, immediate: true, duration: 2, }); // Consolidated state
     
     // set this true initially to cover everything
-    const [trueOverlayControls, _setTrueOverlayControls] = useState({ visible: true, immediate: true, duration: 2, }); // Consolidated state
+    const [trueOverlayControls, _setTrueOverlayControls] = useState({ visible: true, immediate: true, }); // Consolidated state
 
 
     const [journalMode, _setJournalMode] = useState({ active: false, page: ""});
@@ -67,6 +71,7 @@ const StarFireSyncProvider = ({ children }) => {
     const setCommandEvent = useStateWithPromise(_setCommandEvent);
     const setAnimationEvent = useStateWithPromise(_setAnimationEvent);
     const setJournalMode = useStateWithPromise(_setJournalMode);
+    const setDrifting = useStateWithPromise(_setDrifting);
 
     const triggerEffect = useCallback(({domain, selector, effect, callback}) => {
         console.log("HELLO")
@@ -82,6 +87,7 @@ const StarFireSyncProvider = ({ children }) => {
     return (
         <StarFireSyncContext.Provider 
             value={{ 
+                narratorEvent, setNarratorEvent,
                 triggerEffect, 
                 activeEffect, 
                 triggerWarp, 
@@ -97,6 +103,7 @@ const StarFireSyncProvider = ({ children }) => {
                 commandEvent, setCommandEvent,
                 animationEvent, setAnimationEvent,
                 journalMode, setJournalMode,
+                drifting, setDrifting,
 
 
                 textEvent, setTextEvent,

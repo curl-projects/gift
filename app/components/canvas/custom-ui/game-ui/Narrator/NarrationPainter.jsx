@@ -27,6 +27,7 @@ export function NarrationPainter(){
         handleKeyDownRef.current = handleKeyDown;
     }, [handleKeyDown]);
 
+    // todo: this is terrible logic, fix later
     useEffect(()=>{
         if(textEvent){
             console.log("TEXT EVENT", textEvent)
@@ -66,7 +67,8 @@ export function NarrationPainter(){
 
                 if(textEvent.waitUntilVisible){
                     setState({ visible: true, text: textEvent.text, requiresInteraction: textEvent.requiresInteraction, 
-                            darkeningVisible: textEvent.darkeningVisible, darkeningDuration: textEvent.darkeningDuration, delay: textEvent.delay }).then(()=>{
+                            darkeningVisible: textEvent.darkeningVisible, darkeningDuration: textEvent.darkeningDuration, delay: textEvent.delay,
+                            headerText: textEvent.headerText, textAlign: textEvent.textAlign }).then(()=>{
                         console.log("adding listener once visible")
                         // setState(prevState => ({ ...prevState, nextButtonVisible: true }))
                         window.addEventListener('keydown', handleKeyDownRef.current);
@@ -74,7 +76,8 @@ export function NarrationPainter(){
                 }
                 else{
                     setState({ visible: true, text: textEvent.text, requiresInteraction: textEvent.requiresInteraction, 
-                        darkeningVisible: textEvent.darkeningVisible, darkeningDuration: textEvent.darkeningDuration, delay: textEvent.delay })
+                        darkeningVisible: textEvent.darkeningVisible, darkeningDuration: textEvent.darkeningDuration, delay: textEvent.delay, 
+                        headerText: textEvent.headerText, textAlign: textEvent.textAlign })
                     console.log("adding listener immediately")
                     window.addEventListener('keydown', handleKeyDownRef.current);
                 }
@@ -84,7 +87,8 @@ export function NarrationPainter(){
                 Promise.all([
                     // setOtherState({ visible: false, text: '', requiresInteraction: false }),
                     setState({ visible: true, text: textEvent.text, requiresInteraction: textEvent.requiresInteraction, 
-                                darkeningVisible: textEvent.darkeningVisible, darkeningDuration: textEvent.darkeningDuration, delay: textEvent.delay })
+                                darkeningVisible: textEvent.darkeningVisible, darkeningDuration: textEvent.darkeningDuration, delay: textEvent.delay, 
+                                headerText: textEvent.headerText, textAlign: textEvent.textAlign })
                 ]).then(()=>{
                     // once the animation has resolved, resolve the text event
                     setTimeout(() => {
@@ -99,7 +103,8 @@ export function NarrationPainter(){
                 if(textEvent.waitUntilVisible){
                     console.log("wait until visible")
                     setState({ visible: true, text: textEvent.text, requiresInteraction: textEvent.requiresInteraction, 
-                        darkeningVisible: textEvent.darkeningVisible, darkeningDuration: textEvent.darkeningDuration, delay: textEvent.delay }).then(()=>{
+                        darkeningVisible: textEvent.darkeningVisible, darkeningDuration: textEvent.darkeningDuration, delay: textEvent.delay, 
+                        headerText: textEvent.headerText, textAlign: textEvent.textAlign }).then(()=>{
                             console.log("wait condition activated")
                             textEvent.waitCondition().then(()=>{
                                 console.log('waiting')
@@ -109,7 +114,8 @@ export function NarrationPainter(){
                 }
                 else{
                     setState({ visible: true, text: textEvent.text, requiresInteraction: textEvent.requiresInteraction, 
-                        darkeningVisible: textEvent.darkeningVisible, darkeningDuration: textEvent.darkeningDuration, delay: textEvent.delay })
+                        darkeningVisible: textEvent.darkeningVisible, darkeningDuration: textEvent.darkeningDuration, delay: textEvent.delay, 
+                        headerText: textEvent.headerText, textAlign: textEvent.textAlign })
                     
                          // resolve when the wait condition is met
                         textEvent.waitCondition().then(()=>{
@@ -147,9 +153,11 @@ export function NarrationPainter(){
             <SystemComponent 
                 visible={systemText.visible} 
                 text={systemText.text}  
+                headerText={systemText.headerText}
                 requiresInteraction={systemText.requiresInteraction}
                 onComplete={systemText.onComplete}
                 delay={systemText.delay}
+                textAlign={systemText.textAlign}
                 nextButtonVisible={nextButtonVisible}
                 setNextButtonVisible={setNextButtonVisible}
                 />

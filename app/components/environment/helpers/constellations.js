@@ -26,8 +26,10 @@ export function addConstellationCanvas(scene, canvasZoneRef, RenderingGroups) {
             renderer.setSize(canvasZone.offsetWidth, canvasZone.offsetHeight);
 
             window.addEventListener('resize', e => {
+              console.log("RESIZING CONSTELLATIOn")
                 renderer.setSize(canvasZone.offsetWidth, canvasZone.offsetHeight);
                 resizePlane();
+                resizeHTMLContent();
             });
             return renderer;
         };
@@ -36,6 +38,13 @@ export function addConstellationCanvas(scene, canvasZoneRef, RenderingGroups) {
             plane.scaling.x = document.documentElement.clientWidth / 4;
             plane.scaling.y = document.documentElement.clientHeight / 4;
             refreshPosition();
+        }
+
+        function resizeHTMLContent() {
+            if (CSSobject && CSSobject.element) {
+                CSSobject.element.style.width = `${document.documentElement.clientWidth}px`;
+                CSSobject.element.style.height = `${document.documentElement.clientHeight}px`;
+            }
         }
 
         function refreshPosition() {
@@ -61,17 +70,17 @@ export function addConstellationCanvas(scene, canvasZoneRef, RenderingGroups) {
             div.style.width = `${width}px`;
             div.style.height = `${height}px`;
             div.style.zIndex = '1';
+            div.style.pointerEvents = 'auto'; // Ensure it can receive mouse events
             CSSobject = new CSS3DObject(div, scene);
 
             refreshPosition();
 
             var childDiv = document.getElementById('constellation-canvas');
-            console.log("CHILD DIV:", childDiv)
+            console.log("CHILD DIV:", childDiv);
             if (childDiv) {
                 childDiv.style.position = 'absolute';
                 childDiv.style.left = '0';
                 childDiv.style.top = '0';
-
                 childDiv.style.width = `${width}px`;
                 childDiv.style.height = `${height}px`;
                 childDiv.style.pointerEvents = 'auto'; // Ensure childDiv can receive mouse events
@@ -79,6 +88,26 @@ export function addConstellationCanvas(scene, canvasZoneRef, RenderingGroups) {
 
                 refreshPosition();
             }
+
+            // Use ResizeObserver for the div
+            const resizeObserver = new ResizeObserver(entries => {
+                for (let entry of entries) {
+                    const { width, height } = entry.contentRect;
+                    div.style.width = `${width}px`;
+                    div.style.height = `${height}px`;
+                    if (childDiv) {
+                        childDiv.style.width = `${width}px`;
+                        childDiv.style.height = `${height}px`;
+                    }
+                }
+            });
+
+            resizeObserver.observe(div);
+
+            // Clean up observer on unmount
+            window.addEventListener('unload', () => {
+                resizeObserver.disconnect();
+            });
         };
 
         function createMaskingScreen(maskMesh, scene) {

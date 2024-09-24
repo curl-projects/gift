@@ -14,7 +14,7 @@ import styles from './DriftShapeUtil.module.css';
 import { motion, useAnimate, AnimatePresence, useAnimationControls } from 'framer-motion';
 import { useConstellationMode } from '~/components/canvas/custom-ui/utilities/ConstellationModeContext';
 import { getChainToShape } from '~/components/canvas/helpers/thread-funcs';
-
+import { useStarFireSync } from '~/components/synchronization/StarFireSync';
 const driftShapeProps = {
 	w: T.number,
 	h: T.number,
@@ -72,7 +72,8 @@ export class DriftShapeUtil extends BaseBoxShapeUtil<DriftShape> {
 		const shapeRef = useRef<HTMLDivElement>(null);
 		const controls = useAnimationControls()
 		const [scope, animate] = useAnimate();
-		const { drifting, setDrifting, setExpandedShapeIds } = useConstellationMode();
+		const { setExpandedShapeIds } = useConstellationMode();
+		const { setDrifting } = useStarFireSync();
 
 		useEffect(() => {
 			if (shape.props.triggerDelete) {
@@ -155,7 +156,7 @@ export class DriftShapeUtil extends BaseBoxShapeUtil<DriftShape> {
                     onMouseLeave={() => setIsHovered(false)}
 					onPointerDown={()=> { 
 
-						setDrifting(false)
+						setDrifting({active: false})
 						console.log("BLAH:", getChainToShape(data.user, shape.props.parentDatabaseId).map(databaseId => createShapeId(databaseId)))
 						setExpandedShapeIds(
 							getChainToShape(data.user, shape.props.parentDatabaseId).map(databaseId => createShapeId(databaseId))

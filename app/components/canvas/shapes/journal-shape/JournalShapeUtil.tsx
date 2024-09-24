@@ -87,7 +87,7 @@ export class JournalShapeUtil extends BaseBoxShapeUtil<JournalShape> {
                 const newBounds = {
                     w: bounds.width,
                     h: bounds.height,
-                    x: bounds.x + window.innerWidth * 0.20,
+                    x: bounds.x + window.innerWidth * 0.30,
                     y: bounds.y
                 }
                 
@@ -100,6 +100,22 @@ export class JournalShapeUtil extends BaseBoxShapeUtil<JournalShape> {
                 });
             }
         }, [])
+
+        useEffect(()=>{
+            if(!journalMode.active){
+                const nameShape = this.editor.getShape(createShapeId('andre-vacha'))
+                if(nameShape){
+                    this.editor.zoomToBounds(this.editor.getShapePageBounds(nameShape), {
+                        animation: {
+                            duration: 1000,
+                            easing: (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
+                        },
+                        targetZoom: 1,
+                    });
+                }
+                journalMode.onComplete && journalMode.onComplete();
+            }
+        }, [journalMode])
 
         useEffect(() => {
             const handleResize = () => {

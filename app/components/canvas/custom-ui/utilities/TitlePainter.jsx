@@ -59,6 +59,11 @@ export function TitlePainter(){
     const [groupBBox, setGroupBBox] = useState({ width: 0, height: 0 });
     const [nextButtonVisible, setNextButtonVisible] = useState(false);
 
+    useEffect(()=>{
+        console.log('titleControls', titleControls);
+    }, [titleControls]);
+
+
     const updateBBox = () => {
         if (titleRef.current) {
             const bbox = titleRef.current.getBBox();
@@ -68,6 +73,13 @@ export function TitlePainter(){
             });
         }
     };
+
+    useEffect(()=>{
+        
+        if(!titleControls.visible){
+            setNextButtonVisible(false);
+        }
+    }, [titleControls.visible]);
 
     const handleKeyDown = useCallback((event) => {
         if (event.key === ' ') {
@@ -146,23 +158,31 @@ export function TitlePainter(){
                     transform={`translate(${(600 - groupBBox.width) / 2}, ${((600 - groupBBox.height) / 2) - 100})`}
                     >
                         {motionPaths.map((path, idx) => 
+                       
                              <motion.path 
                              filter="url(#glow) url(#combined)"
-                             key={`$title-path-${idx}`}
+                             key={`$title-path-${idx}-${titleControls.visible}`}
                              strokeWidth="3px"
                              initial={{ pathLength: 0, fillOpacity: 0, opacity: 1 }}
                              animate={{ 
                                  pathLength: titleControls.visible ? [0, 0.01, 1.5] : [0, 0, 0], 
                                  fillOpacity: titleControls.visible ? [0, 0.01, 0] : [0, 0, 0], 
-                                 opacity: titleControls.visible ? [1, 1, 1] : [0, 0, 0]
+                                 opacity: titleControls.visible ? [1, 1, 1] : [0, 0, 0],
+                                 transition: {
+                                    duration: titleControls.immediate ? 0 : (titleControls.duration || 1),
+                                    delay: titleControls.delay ? titleControls.delay + idx * 0.25 : idx * 0.25,
+                                    times: [0, 0.01, 1],
+                                    ease: "easeInOut"
+                                 }
                              }}
-                             exit={{ opacity: 0 }}
-                             transition={{ 
-                                 duration: titleControls.immediate ? 0 : (titleControls.duration || 1), 
-                                 delay: titleControls.delay ? titleControls.delay + idx * 0.25 : idx * 0.25,
-                                 times: [0, 0.01, 1],
-                                 ease: "easeInOut"
-                             }}
+                             exit={{ 
+                                    opacity: 0, 
+                                    transition: { 
+                                        duration: titleControls.immediate ? 0 : (titleControls.duration || 1),
+                                        delay: titleControls.delay ? titleControls.delay + idx * 0.25 : idx * 0.25,
+                                        ease: "easeInOut"
+                                    } 
+                                }}
                              onAnimationComplete={(animation)=>{
                                 console.log("title animation opacity", animation)
                                 if(idx === motionPaths.length - 1 && animation.opacity === 0){

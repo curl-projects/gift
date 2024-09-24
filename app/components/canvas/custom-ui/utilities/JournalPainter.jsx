@@ -7,6 +7,11 @@ export function JournalPainter(){
     const { journalMode } = useStarFireSync()
 
     useEffect(()=>{
+        console.log("journalMode", journalMode)
+    }, [journalMode])
+
+    
+    useEffect(()=>{
         const journal = editor.getShape({type: 'journal', id: createShapeId('journal')})
 
         if(journalMode.active){

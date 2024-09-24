@@ -74,8 +74,8 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
         const [isHovered, setIsHovered] = useState(false);
         const data = useLoaderData();
         const { collection, size } = useCollection('graph')
-        const { drifting, setDrifting, triggerWarp, expandConcepts } = useConstellationMode();
-        const { triggerEffect, activeEffect } = useStarFireSync();
+        const { triggerWarp, expandConcepts } = useConstellationMode();
+        const { drifting, setDrifting, triggerEffect, activeEffect } = useStarFireSync();
         
 
 
@@ -219,7 +219,7 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
 
                     }, 3000);
                 })
-                setDrifting(false);
+                setDrifting({active: false});
 
             }
             else{

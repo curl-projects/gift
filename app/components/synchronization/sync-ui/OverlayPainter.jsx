@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useStarFireSync } from "~/components/synchronization/StarFireSync";
 import { motion } from "framer-motion";
 import SystemComponent from "~/components/canvas/custom-ui/game-ui/Narrator/components/SystemComponent";
@@ -8,6 +8,7 @@ import styles from './OverlayPainter.module.css';
 export function OverlayPainter(){
     const { overlayControls, trueOverlayControls, gameSystemText, gameNarratorText } = useStarFireSync(); // Destructure overlayControls
 
+    const [nextButtonVisible, setNextButtonVisible] = useState(false);
 
     useEffect(() => {
         const tlContainer = document.querySelector('.tl-container');
@@ -90,13 +91,19 @@ export function OverlayPainter(){
                 requiresInteraction={gameSystemText.requiresInteraction}
                 exitDuration={gameSystemText.exitDuration}
                 onComplete={gameSystemText.onComplete}
+                nextButtonVisible={nextButtonVisible}
+                setNextButtonVisible={setNextButtonVisible}
+
                 />
         <GameNarratorComponent 
                 visible={gameNarratorText.visible} 
-                text={gameNarratorText.text} 
+                text={gameNarratorText.text}
+                headerText={gameNarratorText.headerText} 
                 requiresInteraction={gameNarratorText.requiresInteraction}
                 exitDuration={gameNarratorText.exitDuration}
                 onComplete={gameNarratorText.onComplete}
+                nextButtonVisible={nextButtonVisible}
+                setNextButtonVisible={setNextButtonVisible}
                 />
         </div>
 

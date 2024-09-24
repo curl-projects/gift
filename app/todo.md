@@ -1,4 +1,4 @@
-Orchestration New Functionality:
+ Orchestration New Functionality:
 - [x] change targeting to allow for position
 - [] generate floating text on ray intersection of character
 - [x] system text in the overlay component
@@ -89,3 +89,27 @@ New To Dos:
 - [] create subtitle for title screen 
 - [] narrator face blips out 
 - [] disable camera arrow keys
+
+
+
+
+
+
+After Roadtrip To Dos:
+- [] make starlight disappear more quickly BLOCKED
+- [x] upload elevator pitch
+- [x] create mechanics flow
+- [] create technical foundations page
+- [] fix resizing
+- [] fix movement between different parts of the pitch
+
+- [] add journal cover
+- [] fix the text for typos and styling
+- [] shorten all text
+- [x] fix the next button
+- [] fix campfire visibility
+- [] fix collapsing stars
+
+- [] add version number
+- [] add subtitle
+- [] add media articles about game design

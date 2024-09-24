@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { createShapeId, useEditor, Vec } from 'tldraw';
-import { useConstellationMode } from '~/components/canvas/custom-ui/utilities/ConstellationModeContext';
+import { useStarFireSync } from '~/components/synchronization/StarFireSync';
 
 const shuffleArray = (array) => {
     for (let i = array.length - 1; i > 0; i--) {
@@ -90,11 +90,23 @@ const createDriftShape = (editor, excerpt, existingShapes) => {
 
 export function DriftPainter({ user }){
     const editor = useEditor();
-    const { drifting } = useConstellationMode();
+    const { drifting } = useStarFireSync();
     const timeouts = useRef([]);
 
     useEffect(()=>{
-        if(drifting){
+        console.log("DRIFTING", drifting)
+    }, [drifting])
+
+
+    useEffect(() => {
+        console.log("DRIFTING", drifting)
+        drifting.onComplete && drifting.onComplete()
+
+    }, [drifting])
+
+
+    useEffect(()=>{
+        if(drifting.active){    
             const excerpts = user.concepts.flatMap(concept => concept.excerpts);
 
             const shuffledExcerpts = shuffleArray([...excerpts]);
@@ -140,7 +152,7 @@ export function DriftPainter({ user }){
                 editor.updateShape({id: drift.id, type: "drift", props: {triggerDelete: true}})
             });
         };
-    }, [drifting]);
+    }, [drifting.active]);
 
     return null;
 }

@@ -5,8 +5,7 @@ import { framerate, Epsilon } from './constants';
 import { customFadeIn, customFadeOut } from './mesh-behaviours';
 import { createShapeId } from "tldraw";
 import { 
-    focusWithoutMovingToConstellationCanvas, 
-    giveControlToCanvas, 
+    focusWithoutMovingToConstellationCanvas,  
     unfocusFromConstellationCanvas } from '~/components/environment/event-controllers/campfire-transition';
 
 export function createFullscreenUI() {
@@ -71,7 +70,7 @@ export function createCanvasControlsButton(scene, advancedTexture){
     toggleButton.color = "white";
     toggleButton.cornerRadius = 20;
     toggleButton.background = "blue";
-    toggleButton.onPointerUpObservable.add(() => giveControlToCanvas());
+    // toggleButton.onPointerUpObservable.add(() => giveControlToCanvas());
     toggleButton.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
     toggleButton.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
     toggleButton.left = "160px"; // Adjust this value to position the button above the focus button

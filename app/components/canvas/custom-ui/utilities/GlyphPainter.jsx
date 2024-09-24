@@ -82,7 +82,11 @@ export function GlyphPainter(){
                             strokeLinejoin="round"
                             onAnimationComplete={(animation) => {
                                 console.log('animation complete', animation)
-                                if(animation.pathLength[animation.pathLength.length - 1] === 1){
+                                if(animation.opacity === 0){
+                                    console.log('completed')
+                                    glyphControls.onComplete && glyphControls.onComplete();
+                                }
+                                else if(animation.pathLength[animation.pathLength.length - 1] === 1){
                                     glyphControls.onComplete && glyphControls.onComplete();
                                 }
                             }}
