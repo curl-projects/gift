@@ -1,6 +1,8 @@
 import * as BABYLON from "@babylonjs/core";
 
 
+export var smokeOpacity = 0.4;
+
 export function addCampfireParticles(scene, campfire, verticalOffset = -0.2) {
     var glowLayer = new BABYLON.GlowLayer("campfire-glow", scene);
     glowLayer.intensity = 2;
@@ -9,7 +11,7 @@ export function addCampfireParticles(scene, campfire, verticalOffset = -0.2) {
     var fireParticles = 200;
     var fireBaseParticles = 50;
     var smokeParticles = 100;
-    var smokeOpacity = 0.4;
+
     var emberParticles = 50;
     var emberSize = 0.2;
     var size = 0.5;

@@ -96,19 +96,20 @@ New To Dos:
 
 
 After Roadtrip To Dos:
-- [] make starlight disappear more quickly BLOCKED
+- [x] make starlight disappear more quickly BLOCKED -- WORKAROUND
 - [x] upload elevator pitch
 - [x] create mechanics flow
-- [] create technical foundations page
-- [] fix resizing
+- [x] create technical foundations page
+- [x] fix resizing
 - [] fix movement between different parts of the pitch
 
 - [] add journal cover
 - [] fix the text for typos and styling
 - [] shorten all text
 - [x] fix the next button
-- [] fix campfire visibility
+- [x] fix campfire visibility
 - [] fix collapsing stars
+- [] add tooltip to journal
 
 - [] add version number
 - [] add subtitle

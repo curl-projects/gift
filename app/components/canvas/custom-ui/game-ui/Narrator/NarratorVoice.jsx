@@ -435,6 +435,12 @@ export function NarratorVoice() {
                     ])
                 },
                 waitForCallback: true,
+            },  
+            {
+                type: 'callback',
+                callback: () => {
+                    setNarratorEvent('pitch')
+                },
             },      
         ],
         'technical-foundations': [
@@ -583,12 +589,17 @@ export function NarratorVoice() {
             {
                 type: 'callback',
                 callback: () => {
+
+                    // todo: jank -- not returning completion
+                    setConstellationLabel({ visible: false, immediate: false, duration: 2, delay: 0})
+                    setGlyphControls({ visible: false, immediate: false, duration: 2 })
+                    setJournalMode({ active: false, immediate: true })
+
+
                     return Promise.all([
                         setTrueOverlayControls({ visible: false, immediate: false, duration: 3}),
-                        setJournalMode({ active: false, immediate: true }),
                         setTitleControls({ visible: true, immediate: false, duration: 1.3, delay: 0.3 }),
-                        setGlyphControls({ visible: false, immediate: false, duration: 2 }),
-                        setConstellationLabel({ visible: false, immediate: false, duration: 2, delay: 0}),
+
                         setOverlayControls({ dark: true, immediate: false, duration: 2, delay: 0}),
                         setTextEvent({ type: 'system', visible: false, overlay: false }),
                         setDrifting({active: false }),
@@ -597,6 +608,61 @@ export function NarratorVoice() {
                 },
                 waitForCallback: true,
             },
+
+            {
+                type: 'callback',
+                callback: () => {
+                    console.log("expanding constellation")
+                    return Promise.all([
+                        setExpandConstellation({ concepts: true, excerpts: true }),
+                    ])
+                    
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    console.log("waiting for 1 second")
+                    return Promise.all([
+                        new Promise(resolve => setTimeout(resolve, 1000))
+                    ])
+                    
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    console.log("no longer expanding constellation")
+                    return Promise.all([
+                        setExpandConstellation({ concepts: true, excerpts: false }),
+                    ])
+                    
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    console.log("no longer expanding constellation")
+                    return Promise.all([
+                        setExpandConstellation({ concepts: false, excerpts: false }),
+                    ])
+                    
+                },
+                waitForCallback: true,
+            },
+            // {
+            //     type: 'callback',
+            //     callback: () => {
+            //         return Promise.all([
+            //             setCampfireView({ active: false, immediate: false})
+            //         ])
+                    
+            //     },
+            //     waitForCallback: true,
+            // },
             {
                 type: 'callback',
                 callback: () => {

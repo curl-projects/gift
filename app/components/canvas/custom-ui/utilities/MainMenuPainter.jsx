@@ -55,25 +55,27 @@ export function MainMenuPainter() {
             <AnimatePresence>
                 
             {menuItems.map((item, idx) => 
-                
-                <motion.p 
-                    className={styles.menuItem} 
-                    key={idx} 
-                    onPointerDown={item.onClick}
-                    style={{
-                        display: (item.name !== 'Home' && narratorEvent !== 'pitch') ? 'none' : 'block',
-                        textDecoration: narratorEvent === item.narratorEvent ? 'underline' : 'none'
-                    }}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.5, delay: idx * 0.1 }}
-                >
-                    {/* {item.name === 'Home' && 
-                        <span className={styles.circleContainer}>
-                            <HomeIcon />
-                        </span>} */}
-                    {item.name}
-                    </motion.p>
+                (item.name === 'Home' || ['pitch'].includes(narratorEvent)) &&
+                    <motion.p 
+                        className={styles.menuItem} 
+                        key={`${idx}-${item.name}`} 
+                        onPointerDown={item.onClick}
+                        style={{
+                            // display: (item.name !== 'Home' && narratorEvent !== 'pitch') ? 'none' : 'block',
+                            textDecoration: narratorEvent === item.narratorEvent ? 'underline' : 'none'
+                        }}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0, transition: { duration: 2 } }}
+                        transition={{ duration: 2, delay: idx * 0.25 }}
+                    >
+                        {/* {item.name === 'Home' && 
+                            <span className={styles.circleContainer}>
+                                <HomeIcon />
+                            </span>} */}
+                        {item.name}
+                        </motion.p>
+            
             )}
             </AnimatePresence>
         </div>

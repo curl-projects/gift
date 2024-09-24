@@ -32,10 +32,7 @@ export function ConstellationLabel({ name }){
             // }}
             onAnimationComplete={(animation) => {
                 // manual text scramble delay
-                console.log("animation", animation)
-                if(animation && animation.opacity === 1){
-                    
-                }
+
                 if(constellationLabel.visible && animation.opacity === 1){
                     setTimeout(()=>{
                         setAnimationCommenced(true)
@@ -46,7 +43,7 @@ export function ConstellationLabel({ name }){
                     }, 1000)
                     
                 }
-                else if(!constellationLabel.visible && animation.opacity === 0){
+                else if(animation.opacity === 0){
                     constellationLabel.onComplete && constellationLabel.onComplete()
                 }
             }

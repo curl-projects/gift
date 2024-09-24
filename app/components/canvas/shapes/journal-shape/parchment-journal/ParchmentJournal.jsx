@@ -81,7 +81,7 @@ export function ParchmentJournal({ shape, journalMode, contentRef }){
             
                 {inkVisible && (
                     <>
-                    <JournalMenu page={page} setPage={setPage}/>
+                    {/* <JournalMenu page={page} setPage={setPage}/> */}
                     {/* <InkBleed 
                         initialBlur={200}
                         delay={0}

@@ -29,10 +29,15 @@ export function ConstellationExpander(){
                     })
                 }
                 else{
+                    setExpandExcerpts({ expanded: false })
                     expandConstellation.onComplete && expandConstellation.onComplete()
                 }
             })
         }
+        else{
+            setExpandConcepts({ expanded: false })
+        }
+        
     }, [expandConstellation])
 
 
@@ -54,7 +59,19 @@ export function ConstellationExpander(){
                 }
                 
             }
-        }        
+        }
+        else{
+            const nameShape = editor.getShape({id: createShapeId('andre-vacha')})
+            if(nameShape){
+                editor.updateShape({
+                    id: nameShape.id,
+                    type: nameShape.type,
+                    props: {
+                        expanded: false
+                    }
+                })
+            }
+        }   
     }, [expandConcepts])
 
 
@@ -79,6 +96,25 @@ export function ConstellationExpander(){
             else{
                 expandExcerpts.onComplete && expandExcerpts.onComplete()
             }
+        }
+        else{
+            const conceptShapes = editor.getCurrentPageShapes().filter(shape => shape.type === 'concept')
+
+            const allCollapsed = conceptShapes.every(concept => !concept.props.expanded);
+            if (!allCollapsed) {
+                for (let concept of conceptShapes) {
+                    if (concept.props.expanded) {
+                        editor.updateShape({
+                            id: concept.id,
+                            type: concept.type,
+                            props: {
+                                expanded: false,
+                            }
+                        });
+                    }
+                }
+            }
+
         }
     }, [expandExcerpts])
 }

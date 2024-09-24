@@ -12,6 +12,9 @@ export function Cover(){
                 duration={0.5}>
                     <h1 className={journalStyles.journalLargeText}>Starlight</h1>
             </InkBleed>
+            <InkBleed>
+             
+            </InkBleed>
         </div>
     )
 }

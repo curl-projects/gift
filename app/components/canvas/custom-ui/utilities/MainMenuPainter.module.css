@@ -18,6 +18,12 @@
     display: flex;
     align-items: center;
     line-height: 1em;
+    transition: color 0.3s ease-in-out, text-decoration 0.3s ease-in-out;
+}
+
+.menuItem:hover{
+    color: rgba(255, 255, 255, 1);
+    text-decoration: underline !important;
 }
 
 .circleContainer {

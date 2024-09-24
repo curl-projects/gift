@@ -28,12 +28,12 @@
     display: block;
     margin-bottom: 20px;
     font-weight: 500;
-    font-size: 50px;
+    font-size: 40px;
     text-decoration: underline;
 }
 
 .systemText {
-    font-size: 40px;
+    font-size: 28px;
     text-align: center;
     line-height: 1em;
     color: rgba(255, 255, 255, 0.4);

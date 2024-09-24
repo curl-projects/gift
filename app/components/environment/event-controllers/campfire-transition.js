@@ -4,6 +4,53 @@ import { Matrix } from '@babylonjs/core';
 import { framerate, Epsilon } from '~/components/environment/helpers/constants';
 // import { customFadeIn, customFadeOut } from '~/components/environment/helpers/mesh-behaviours';
 import { createShapeId } from "tldraw";
+import { smokeOpacity } from '~/components/environment/helpers/campfire';
+
+function adjustCampfireSmoke(scene, {visible = true, immediate = false}) {
+    const smokeSPS = scene.getMeshByName('smokeSPS');
+    const embersSPS = scene.getMeshByName('embersSPS');
+
+    const smokeMaxAlpha = smokeOpacity;
+    const embersMaxAlpha = 1;
+    const animationDuration = immediate ? 0 : 1.5; // Duration in seconds
+    const framerate = 60; // Animation framerate
+
+    const animateAlpha = (mesh, targetAlpha, maxAlpha, duration) => {
+        if (mesh && mesh.material) {
+            if (immediate) {
+                mesh.material.alpha = targetAlpha * maxAlpha;
+            } else {
+                const initialAlpha = mesh.material.alpha;
+                const alphaAnimation = new BABYLON.Animation(
+                    'alphaAnimation',
+                    'material.alpha',
+                    framerate,
+                    BABYLON.Animation.ANIMATIONTYPE_FLOAT,
+                    BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT
+                );
+
+                const keyFrames = [
+                    { frame: 0, value: initialAlpha },
+                    { frame: duration * framerate, value: targetAlpha * maxAlpha }
+                ];
+
+                alphaAnimation.setKeys(keyFrames);
+
+                const ease = new BABYLON.CubicEase();
+                ease.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEINOUT);
+                alphaAnimation.setEasingFunction(ease);
+
+                mesh.animations.push(alphaAnimation);
+                scene.beginDirectAnimation(mesh, [alphaAnimation], 0, duration * framerate, false);
+            }
+        }
+    };
+
+    const targetAlpha = visible ? 1 : 0;
+    animateAlpha(smokeSPS, targetAlpha, smokeMaxAlpha, animationDuration);
+    animateAlpha(embersSPS, targetAlpha, embersMaxAlpha, animationDuration);
+}
+
 
 // export function giveControlToCanvas() {
 //     console.log("CANVAS CONTROL TRIGGERED!")
@@ -230,6 +277,7 @@ export function focusWithoutMovingToConstellationCanvas(scene, camera, triggerEf
             // Start the rotation quaternion animation
             scene.beginDirectAnimation(camera, [rotationQuaternionAnimation], 0, targetAnimationDuration * framerate, false, 1, () => {
                 // wait for the star to trigger
+                adjustCampfireSmoke(scene, {visible: false, immediate: false})
                 triggerEffect({domain: "canvas", selector: {type: "shape", id: createShapeId("andre-vacha")}, effect: "ripple", callback: () => {
                     // start moving the redwoods out and widening the field of view
                     treeScale && redwoodMeshes.map(mesh => customFadeOut(mesh, scene, 1.5, false));
@@ -333,6 +381,7 @@ export function unfocusFromConstellationCanvas(scene, camera, triggerEffect, onR
                 treeScale && redwoodMeshes.map(mesh => customFadeIn(mesh, scene, 3, false));
     
                 scene.beginDirectAnimation(camera, [fovAnimation], 0, fovAnimationDuration * framerate, false, 1, () => {
+                    adjustCampfireSmoke(scene, {visible: true, immediate: false})
                     scene.beginDirectAnimation(camera, [rotationQuaternionAnimation], 0, targetAnimationDuration * framerate, false, 1, () => {
                         resolve();
                     });
@@ -374,6 +423,8 @@ export function unfocusFromConstellationCanvasImmediately(scene, camera, onRende
             const { targetQuaternion } = calculateNewTargetRotations(camera, target);
 
             const newFov = targetFov;
+
+            adjustCampfireSmoke(scene, {visible: true, immediate: true})
        
 
             camera.rotationQuaternion = targetQuaternion;
@@ -393,18 +444,6 @@ export function unfocusFromConstellationCanvasImmediately(scene, camera, onRende
             resolve();
         }
     });
-}
-
-function setSPSOpacityToZero(scene) {
-    for(let mesh of scene.meshes){
-        if (mesh instanceof BABYLON.SolidParticleSystem) {
-            console.warn("MESH:", mesh)
-            if (mesh.material) {
-                console.warn("MATERIAL:", mesh.material)
-                mesh.material.alpha = 0;
-            }
-        }
-    }
 }
 
 
@@ -432,11 +471,14 @@ export function initializeLookingAtSky(scene, camera, treeScale=true){
             console.log("REDWOOD MESHES:", redwoodMeshes);
             treeScale && redwoodMeshes.forEach(mesh => customFadeOut(mesh, scene, 1.5, true)); // Directly apply the fade out effect
 
+            // hide campfire smoke
+            adjustCampfireSmoke(scene, {visible: false, immediate: true})
+
 
             // after all effect have finished, freeze the canvas
             setTimeout(() => {
                 const engine = scene.getEngine();
-                engine.stopRenderLoop();
+                // engine.stopRenderLoop();
                 resolve(); // Resolve the promise when all operations are complete
             }, 100);
         } else {
