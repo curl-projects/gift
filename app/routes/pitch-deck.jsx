@@ -42,7 +42,7 @@ export default function PitchDeck(){
             left: 0,
             zIndex: 0,
             overflow: 'hidden',
-            // pointerEvents: campfireView?.active ? 'unset' : 'none',
+            pointerEvents: campfireView?.active ? 'unset' : 'none',
             }}>
             <PitchScene/>
             </div>        

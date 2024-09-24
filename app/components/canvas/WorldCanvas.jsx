@@ -14,6 +14,7 @@ import { DriftPainter } from "~/components/canvas/custom-ui/utilities/DriftPaint
 import { GlyphPainter } from "~/components/canvas/custom-ui/utilities/GlyphPainter"
 import { TitlePainter } from "~/components/canvas/custom-ui/utilities/TitlePainter"
 import { JournalPainter } from "~/components/canvas/custom-ui/utilities/JournalPainter"
+import { ResizePainter } from "~/components/canvas/custom-ui/utilities/ResizePainter"
 import { CovenantPainter } from "~/components/canvas/custom-ui/utilities/CovenantPainter"
 import { ToolsMenu } from "~/components/canvas/custom-ui/utilities/ToolsMenu"
 import { NarrationPainter } from "~/components/canvas/custom-ui/game-ui/Narrator/NarrationPainter"
@@ -208,6 +209,7 @@ export default function WorldCanvas() {
                             <JournalPainter />
                             <MainMenuPainter />
                             <CovenantPainter />
+                            <ResizePainter />
                             <NarrationPainter />
                             {/* <ConstellationFinder /> */}
                             {/* <CustomToolbar /> */}

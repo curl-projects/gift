@@ -586,7 +586,7 @@ export function NarratorVoice() {
                     return Promise.all([
                         setTrueOverlayControls({ visible: false, immediate: false, duration: 3}),
                         // setJournalMode({ active: false, immediate: true }),
-                        // setTitleControls({ visible: true, immediate: false, duration: 1.3, delay: 0.3 }),
+                        setTitleControls({ visible: true, immediate: false, duration: 1.3, delay: 0.3 }),
                         // setGlyphControls({ visible: false, immediate: false, duration: 2 }),
                         // setConstellationLabel({ visible: false, immediate: false, duration: 2, delay: 0}),
                         // setOverlayControls({ dark: true, immediate: false, duration: 2, delay: 0}),
