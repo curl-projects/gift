@@ -240,7 +240,7 @@ export function focusWithoutMovingToConstellationCanvas(scene, camera, triggerEf
                     scene.beginDirectAnimation(camera, [fovAnimation], 0, fovAnimationDuration * framerate, false, 1, () => {
 
                         const engine = scene.getEngine();
-                        // engine.stopRenderLoop();
+                        engine.stopRenderLoop();
 
                       
                         resolve(); // Resolve the promise when all animations are complete
@@ -436,7 +436,7 @@ export function initializeLookingAtSky(scene, camera, treeScale=true){
             // after all effect have finished, freeze the canvas
             setTimeout(() => {
                 const engine = scene.getEngine();
-                // engine.stopRenderLoop();
+                engine.stopRenderLoop();
                 resolve(); // Resolve the promise when all operations are complete
             }, 100);
         } else {

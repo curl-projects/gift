@@ -54,7 +54,7 @@ export function NarratorVoice() {
                 type: 'callback',
                 callback: () => {
                         setTrueOverlayControls({ visible: true, immediate: true})
-                        setCampfireView({ active: true, immediate: true })
+                        setCampfireView({ active: false, immediate: true })
                         setStarControls({ visible: true, immediate: true})
                         setCloudControls({ visible: true, immediate: true})
                         setOverlayControls({ dark: true, immediate: true})
@@ -585,16 +585,13 @@ export function NarratorVoice() {
                 callback: () => {
                     return Promise.all([
                         setTrueOverlayControls({ visible: false, immediate: false, duration: 3}),
-                        // setJournalMode({ active: false, immediate: true }),
+                        setJournalMode({ active: false, immediate: true }),
                         setTitleControls({ visible: true, immediate: false, duration: 1.3, delay: 0.3 }),
-                        // setGlyphControls({ visible: false, immediate: false, duration: 2 }),
-                        // setConstellationLabel({ visible: false, immediate: false, duration: 2, delay: 0}),
-                        // setOverlayControls({ dark: true, immediate: false, duration: 2, delay: 0}),
-                        // setTextEvent({ type: 'system', visible: false, overlay: false }),
-                        // setDrifting({active: false }),
-                        
-                        setCampfireView({ active: false, immediate: false })
-
+                        setGlyphControls({ visible: false, immediate: false, duration: 2 }),
+                        setConstellationLabel({ visible: false, immediate: false, duration: 2, delay: 0}),
+                        setOverlayControls({ dark: true, immediate: false, duration: 2, delay: 0}),
+                        setTextEvent({ type: 'system', visible: false, overlay: false }),
+                        setDrifting({active: false }),
                     ])
                     
                 },

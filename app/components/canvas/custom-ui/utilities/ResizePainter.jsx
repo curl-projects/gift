@@ -5,21 +5,28 @@ export function ResizePainter() {
     const editor = useEditor();
 
     useEffect(() => {
+        let resizeTimeout;
+
         const handleResize = () => {
-            if (editor) {
-                // Example: Center the view based on new window size
-                const nameShape = editor.getShape({ id: createShapeId('andre-vacha')})
-                if(nameShape){
-                    editor.zoomToBounds(editor.getShapePageBounds(nameShape), {
-                        animation: {
-                            duration: 200,
-                            easing: (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
-                        },
-                        targetZoom: 1
-                    })
-                }
-                
+            if (resizeTimeout) {
+                clearTimeout(resizeTimeout);
             }
+
+            resizeTimeout = setTimeout(() => {
+                if (editor) {
+                    // Example: Center the view based on new window size
+                    const nameShape = editor.getShape({ id: createShapeId('andre-vacha')})
+                    if(nameShape){
+                        editor.zoomToBounds(editor.getShapePageBounds(nameShape), {
+                            animation: {
+                                duration: 500,
+                                easing: (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
+                            },
+                            targetZoom: 1
+                        })
+                    }
+                }
+            }, 100); // Adjust the debounce delay as needed
         };
 
         // Initial adjustment
@@ -30,6 +37,9 @@ export function ResizePainter() {
         // Clean up the event listener on unmount
         return () => {
             window.removeEventListener('resize', handleResize);
+            if (resizeTimeout) {
+                clearTimeout(resizeTimeout);
+            }
         };
     }, [editor]);
 

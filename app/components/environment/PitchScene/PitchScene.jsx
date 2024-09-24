@@ -74,7 +74,6 @@ export function PitchScene(){
     
             });
 
-        
 
         const meshTask = assetManager.addMeshTask("meshTask", "", "/assets/", "simple-landscape-improved.glb");
         meshTask.onSuccess = async function (task) {
@@ -112,17 +111,17 @@ export function PitchScene(){
         addBoxSkybox(scene);
 
         assetManager.onFinish = function (tasks) {
-            void Promise.all([
-                import("@babylonjs/core/Debug/debugLayer"),
-                import("@babylonjs/inspector"),
-            ]).then((_values) => {
-                console.log(_values);
-                scene.debugLayer.show({
-                    handleResize: true,
-                    overlay: false,
-                    // globalRoot: document.getElementById("#root") || undefined,
-                });
-            }); 
+            // void Promise.all([
+            //     import("@babylonjs/core/Debug/debugLayer"),
+            //     import("@babylonjs/inspector"),
+            // ]).then((_values) => {
+            //     console.log(_values);
+            //     scene.debugLayer.show({
+            //         handleResize: true,
+            //         overlay: false,
+            //         // globalRoot: document.getElementById("#root") || undefined,
+            //     });
+            // }); 
 
             
           
