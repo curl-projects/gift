@@ -609,50 +609,49 @@ export function NarratorVoice() {
                 waitForCallback: true,
             },
 
-            {
-                type: 'callback',
-                callback: () => {
-                    console.log("expanding constellation")
-                    return Promise.all([
-                        setExpandConstellation({ concepts: true, excerpts: true }),
-                    ])
+            // {
+            //     type: 'callback',
+            //     callback: () => {
+            //         console.log("expanding constellation")
+            //         return Promise.all([
+            //             setExpandConstellation({ concepts: true, excerpts: true }),
+            //         ])
                     
-                },
-                waitForCallback: true,
-            },
-            {
-                type: 'callback',
-                callback: () => {
-                    console.log("waiting for 1 second")
-                    return Promise.all([
-                        new Promise(resolve => setTimeout(resolve, 1000))
-                    ])
+            //     },
+            //     waitForCallback: true,
+            // },
+            // {
+            //     type: 'callback',
+            //     callback: () => {
+            //         console.log("waiting for 1 second")
+            //         return Promise.all([
+            //             new Promise(resolve => setTimeout(resolve, 1000))
+            //         ])
                     
-                },
-                waitForCallback: true,
-            },
-            {
-                type: 'callback',
-                callback: () => {
-                    console.log("no longer expanding constellation")
-                    return Promise.all([
-                        setExpandConstellation({ concepts: true, excerpts: false }),
-                    ])
+            //     },
+            //     waitForCallback: true,
+            // },
+            // {
+            //     type: 'callback',
+            //     callback: () => {
+            //         console.log("no longer expanding constellation")
+            //         return Promise.all([
+            //             setExpandConstellation({ concepts: true, excerpts: false }),
+            //         ])
+            //     },
+            //     waitForCallback: true,
+            // },
+            // {
+            //     type: 'callback',
+            //     callback: () => {
+            //         console.log("no longer expanding constellation")
+            //         return Promise.all([
+            //             setExpandConstellation({ concepts: false, excerpts: false }),
+            //         ])
                     
-                },
-                waitForCallback: true,
-            },
-            {
-                type: 'callback',
-                callback: () => {
-                    console.log("no longer expanding constellation")
-                    return Promise.all([
-                        setExpandConstellation({ concepts: false, excerpts: false }),
-                    ])
-                    
-                },
-                waitForCallback: true,
-            },
+            //     },
+            //     waitForCallback: true,
+            // },
             // {
             //     type: 'callback',
             //     callback: () => {

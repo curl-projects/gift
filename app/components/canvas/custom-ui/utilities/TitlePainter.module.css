@@ -61,6 +61,29 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     animation: gradientAnimation 10s infinite; */
+}
+
+.subtitleContainer {
+    position: fixed;
+    bottom: 57vh; /* Adjust as needed */
+    left: -40vh;
+    right: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    mix-blend-mode: overlay;
+}
+
+.subtitle {
+    color: rgba(255, 255, 255, 1);
+    font-family: "IM Plex Mono", monospace;
+    font-weight: 300;
+    text-align: center;
+    font-size: 18px; /* Adjust as needed */
+    line-height: 1.2em;
+    text-transform: uppercase;
+    transform: scaleY(0.9);
 
 }
 

@@ -108,9 +108,13 @@ After Roadtrip To Dos:
 - [] shorten all text
 - [x] fix the next button
 - [x] fix campfire visibility
-- [] fix collapsing stars
+- [x] fix collapsing stars
 - [] add tooltip to journal
 
 - [] add version number
 - [] add subtitle
 - [] add media articles about game design
+
+
+Long-Term Fixes:
+- fix animation logic on expand/collapse for stars
