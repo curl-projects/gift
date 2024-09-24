@@ -111,8 +111,8 @@ After Roadtrip To Dos:
 - [x] fix collapsing stars
 - [] add tooltip to journal
 
-- [] add version number
-- [] add subtitle
+- [x] add version number
+- [x] add subtitle
 - [] add media articles about game design
 
 
