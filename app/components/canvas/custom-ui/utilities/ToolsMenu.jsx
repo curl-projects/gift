@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import styles from './ToolsMenu.module.css'
 import { FaJournalWhills } from "react-icons/fa";
 import { GiAstrolabe } from "react-icons/gi";
@@ -9,25 +9,36 @@ import { useEffect } from 'react';
 
 export function ToolsMenu(){
     const editor = useEditor();
-    const { drifting, setDrifting, journalMode, setJournalMode } = useStarFireSync()
+    const { drifting, setDrifting, journalMode, setJournalMode } = useStarFireSync();
+    const [tooltipVisible, setTooltipVisible] = useState(false);
+    const [tooltipText, setTooltipText] = useState('');
 
     useEffect(()=>{
-        console.log('journalMode', journalMode)
-    }, [journalMode])
+        console.log('journalMode', journalMode);
+    }, [journalMode]);
 
     const handleJournalClick = () => {
-        console.log("JOURNAL CLICK MODE:", journalMode)
-        // setJournalMode({ active: !journalMode.active, page: journalMode.page || 'elevator-pitch', variant: journalMode.variant })
-        setJournalMode({ active: !journalMode.active, page: 'pitch', variant: 'parchment' })
+        console.log("JOURNAL CLICK MODE:", journalMode);
+        setJournalMode({ active: !journalMode.active, page: journalMode.page || "elevator-pitch", variant: journalMode.variant || 'modern'});
     };
 
     const handleAstrolabeClick = () => {
-        setDrifting({ active: !drifting.active })
+        setDrifting({ active: !drifting.active });
+
     };
 
-    const handleTelescopeClick = useCallback(() => {
+    const handleTelescopeClick = () => {
         console.log('telescope');
-    }, []);
+    };
+
+    const handleMouseEnter = (text) => {
+        setTooltipText(text);
+        setTooltipVisible(true);
+    };
+
+    const handleMouseLeave = () => {
+        setTooltipVisible(false);
+    };
 
     const items = [
         {
@@ -35,35 +46,45 @@ export function ToolsMenu(){
             tool: 'journal',
             icon: <FaJournalWhills />,
             active: journalMode.active,
-            onClick: handleJournalClick
+            onClick: handleJournalClick,
+            tooltip: 'Journal'
         },
         {
             id: 'middle',
             tool: "astrolabe",
             icon: <GiAstrolabe />,
             active: drifting.active,
-            onClick: handleAstrolabeClick
+            onClick: handleAstrolabeClick,
+            tooltip: 'Astrolabe'
         },
         {
             id: 'right',
             tool: 'telescope',
             icon: <IoTelescope />,
             active: false,
-            onClick: handleTelescopeClick
+            onClick: handleTelescopeClick,
+            tooltip: 'Telescope (soon)'
         }
-    ]
+    ];
 
     return(
-        <div className={styles.toolsMenu} 
-        // onPointerDown={(e) => e.stopPropagation()}
-        >
-            {items.map((item, index) => (
-                <div key={item.id} className={`${styles.item} ${styles[item.id]}`} onPointerDown={(e) => item.onClick()}>
-                    <div className={styles.itemInner}>
-                        <p className={`${styles.icon} ${item.active ? styles.iconActive : ''}`}>{item.icon}</p>
-                    </div>
-                </div> 
-            ))}
+        <div className={styles.outerToolsMenu}>
+            <div className={styles.toolsMenu}>
+                {items.map((item) => (
+                    <div 
+                        key={item.id} 
+                        className={`${styles.item} ${styles[item.id]}`} 
+                        onPointerDown={(e) => item.onClick()}
+                        onMouseEnter={() => handleMouseEnter(item.tooltip)}
+                        onMouseLeave={handleMouseLeave}
+                    >
+                        <div className={styles.itemInner}>
+                            <p className={`${styles.icon} ${item.active ? styles.iconActive : ''}`}>{item.icon}</p>
+                        </div>
+                    </div> 
+                ))}
+            </div>
+            {tooltipVisible && <p className={styles.toolsTooltip}>{tooltipText}</p>}
         </div>
-    )
+    );
 }
