@@ -8,12 +8,35 @@ import { useStarFireSync } from "~/components/synchronization/StarFireSync"
 export function ConstellationPainter({ user }){
     const editor = useEditor();
     const { collection, size } = useCollection('graph')
-    const { triggerWarp, setTriggerWarp } = useStarFireSync()
+    const { triggerWarp, setTriggerWarp, deleteStar, setDeleteStar } = useStarFireSync()
 
-    
 
-    function createConstellationStar(name){
-        const centralShapeId = createShapeId(name);
+    useEffect(()=>{
+        console.log("DELETE STAR:", deleteStar)
+        if(deleteStar.deleted){
+            // delete logic happens in NameShapeUtil
+        }
+        else if(deleteStar.created){
+            console.log("CREATED STAR:", deleteStar)
+            if(deleteStar.id){
+                const nameShape = editor.getShape(deleteStar.id)
+                if(!nameShape){
+                    console.log("CREATING STAR")
+                    createConstellationStar(editor, collection, deleteStar.id)
+                    deleteStar.onComplete && deleteStar.onComplete()
+                    setDeleteStar({ created: false, id: null })
+                    
+                }
+            }
+            else{
+                console.error("Deleted star has no name:", deleteStar)
+            }
+        }
+    }, [deleteStar])
+
+
+    function createConstellationStar(editor, collection, name){
+        const centralShapeId = name;
 
         const centralShape = editor.getShape(centralShapeId)
         if (!centralShape) {
@@ -38,10 +61,10 @@ export function ConstellationPainter({ user }){
 
     useLayoutEffect(()=>{
         console.log("INITIAL COLLECTION:", collection)
-        if(collection){
-            createConstellationStar(user.uniqueName)
+        if(collection && !deleteStar.deleted){
+            createConstellationStar(editor, collection, createShapeId(user.uniqueName))
         }
-    }, [collection])
+    }, [collection, deleteStar])
 
     useEffect(()=>{
         console.log("TRIGGER WARP:", triggerWarp)
@@ -70,7 +93,7 @@ export function ConstellationPainter({ user }){
 
                 setTimeout(()=>{
                     // todo -- this will become a new user when that system exists
-                    createConstellationStar(user.uniqueName)
+                    createConstellationStar(editor, collection, createShapeId(user.uniqueName))
                 }, triggerWarp.constAccDuration + triggerWarp.deaccDuration * 0.05)
 
                 // Once the zoom has been

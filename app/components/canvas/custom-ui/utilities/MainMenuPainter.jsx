@@ -55,7 +55,7 @@ export function MainMenuPainter() {
             <AnimatePresence>
                 
             {menuItems.map((item, idx) => 
-                (item.name === 'Home' || ['pitch', 'conceptual-pitch '].includes(narratorEvent)) &&
+                (item.name === 'Home' || ['pitch', 'conceptual-pitch'].includes(narratorEvent)) &&
                     <motion.p 
                         className={styles.menuItem} 
                         key={`${idx}-${item.name}`} 

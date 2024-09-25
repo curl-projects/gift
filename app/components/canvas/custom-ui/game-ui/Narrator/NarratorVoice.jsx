@@ -58,10 +58,12 @@ export function NarratorVoice() {
         animationEvent, setAnimationEvent,
         titleControls, setTitleControls,
         drifting, setDrifting,
+        deleteStar, setDeleteStar,
     } = useStarFireSync();
 
     const [narratorState, setNarratorState] = useState({ visible: false, text: '', requiresInteraction: false });
     const [systemState, setSystemState] = useState({ visible: false, text: '', requiresInteraction: false });
+
     // const [commands, setCommands] = useState([]);
 
 
@@ -996,6 +998,7 @@ export function NarratorVoice() {
                     setConstellationLabel({ visible: false, immediate: false, duration: 2, delay: 0})
                     setGlyphControls({ visible: false, immediate: false, duration: 2 })
                     setJournalMode({ active: false, immediate: true })
+                    setExpandConstellation({ concepts: false, excerpts: false })
 
 
                     return Promise.all([
@@ -1013,7 +1016,7 @@ export function NarratorVoice() {
             {
                 type: 'callback',
                 callback: () => {
-                    hideAllShapes(editor);
+                    setDeleteStar({ deleted: true, id: createShapeId("andre-vacha") })
                     setTitleControls({ visible: false, immediate: false, duration: 1, delay: 0, })
                     setStarControls({ visible: false, immediate: false, duration: 0.5 })
                 },
@@ -1071,7 +1074,8 @@ export function NarratorVoice() {
                 callback: () => {
                     setStarControls({ visible: true, immediate: false, duration: 4 })
                     
-                    showAllShapes(editor);
+                    setDeleteStar({ created: true, id: createShapeId("andre-vacha") })
+
                     return Promise.all([
                         setTextEvent({
                             type: 'system',
@@ -1308,6 +1312,7 @@ export function NarratorVoice() {
             {
                 type: 'callback',
                 callback: () => {
+                    setDrifting({ active: true })
                     return Promise.all([
                         setTriggerWarp({ active: true, accDuration: 1000, deaccDuration: 1000, constAccDuration: 1000 }).then(()=>{
                             setConstellationLabel({ 
@@ -1334,6 +1339,7 @@ export function NarratorVoice() {
             {
                 type: 'callback',
                 callback: () => {
+                    setDrifting({ active: false })
                     return Promise.all([
                         setGlyphControls({ visible: true, immediate: false, duration: 4 }),
                         setOverlayControls({ dark: false, immediate: false, duration: 2, delay: 0}),

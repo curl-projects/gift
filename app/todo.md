@@ -115,7 +115,13 @@ After Roadtrip To Dos:
 - [x] add version number
 - [x] add subtitle
 - [] add media articles about game design
-- [] add the ability to hide and show the main star
+- [x] add the ability to hide and show the main star
+- [x] entrance animation for central star 
+- [x] recenter star when zooming back in
+
+Control Limitations:
+- [x] user cannot use the arrow keys to move around the scene
+- [] make sure the journal works from wherever
 
 Long-Term Fixes:
 - fix animation logic on expand/collapse for stars

@@ -75,7 +75,7 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
         const data = useLoaderData();
         const { collection, size } = useCollection('graph')
         const { triggerWarp, expandConcepts } = useConstellationMode();
-        const { drifting, setDrifting, triggerEffect, activeEffect } = useStarFireSync();
+        const { drifting, setDrifting, triggerEffect, activeEffect, deleteStar, setDeleteStar } = useStarFireSync();
         
 
 
@@ -173,6 +173,7 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
 
         useEffect(() => {
             if (isOnlySelected) {
+                console.log("TRIGGERING RIPPLE ANIMATION")
                 // Trigger ripple animation
                 animate(".nameCircle", { scale: 0.9 }, { duration: 0.2, ease: 'easeInOut' })
                     .then(() => animate(".nameCircle", { scale: 1.1 }, { duration: 0.2, ease: 'easeInOut' }))
@@ -273,8 +274,7 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
             console.log("EXPAND CONSTELLATION NAME TRIGGER")
         
 
-
-            
+        
         // needs to be in a time out because the canvas position doesn't update while all of these changes are happening
             // setTimeout(() => {
             //     setDrifting(true);
@@ -282,6 +282,26 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
         }
         }
         }, [shape.props.expanded])
+
+        useEffect(() => {
+            console.log("DELETE STAR:", deleteStar)
+            if (deleteStar.deleted && deleteStar.id === shape.id) {
+                // Trigger exit animation
+                animate(".nameCircle", { scale: 0.01 }, { duration: 0.5, ease: 'easeInOut' })
+                    .then(() => {
+                        console.log("DELETING STAR")
+                        // Delete the shape after the animation completes
+                        this.editor.deleteShape(shape.id);
+
+                        deleteStar.onComplete && deleteStar.onComplete()
+
+                        // setDeleteStar({ deleted: false, id: null });
+                    });
+            }
+        }, [deleteStar]);
+    
+                
+    
 
         return (
 			<HTMLContainer 

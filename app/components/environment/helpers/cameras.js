@@ -21,6 +21,13 @@ export function addMovableCamera(scene, name) {
     camera.attachControl(canvas, true);
     scene.activeCamera = camera;
     
+    // Clear default key bindings to prevent movement with arrow keys
+    camera.keysUp = [];
+    camera.keysDown = [];
+    camera.keysLeft = [];
+    camera.keysRight = [];
+
+        
     // // Set camera properties
     // camera.speed = 0.5; // Adjust the speed of the camera
     // camera.inertia = 0.9; // Adjust the inertia (higher values = more smoothness)

@@ -50,18 +50,20 @@ export function Pitch(){
                                     </InkBleed>,
                     }[script.type]
         ))}
+        <div className={journalStyles.learnMoreContainer}>
         <InkBleed
             divKey={`journal-learn-more`}
             initialBlur={4}
-            finalBlur={0.7}
+            finalBlur={0.3}
             delay={0}
             duration={2}>
             <h1 
-                className={journalStyles.journalLargeText} 
+                className={journalStyles.journalLinkText} 
                 onClick={() => setNarratorEvent('elevator-pitch')}>
                 Learn More
             </h1>
         </InkBleed>
+        </div>
     </div>
     )
 }

@@ -80,7 +80,7 @@
     font-family: "IM Plex Mono", monospace;
     font-weight: 300;
     text-align: center;
-    font-size: 18px; /* Adjust as needed */
+    font-size: 2.2vh; /* Adjust as needed */
     line-height: 1.2em;
     text-transform: uppercase;
     transform: scaleY(0.9);

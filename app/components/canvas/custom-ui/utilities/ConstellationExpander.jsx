@@ -20,17 +20,45 @@ export function ConstellationExpander(){
 
     // trigger resolution if all constitution components are resolved
     useEffect(()=>{
+        const nameShape = editor.getShape({id: createShapeId('andre-vacha')})
+
         if(expandConstellation?.concepts){
             setExpandConcepts({ expanded: true }).then(()=>{
                 console.log("HELLO!")
                 if(expandConstellation?.excerpts){
                     setExpandExcerpts({ expanded: true }).then(() => {
-                        expandConstellation.onComplete && expandConstellation.onComplete()
+
+                        if(nameShape){
+                            editor.zoomToBounds(editor.getShapePageBounds(nameShape), {
+                                animation: {
+                                    duration: 300,
+                                    easing: (t) => t * t, // Quadratic ease function
+                                },
+                                targetZoom: 1
+                            })
+                        }
+
+                        setTimeout(()=>{
+                            expandConstellation.onComplete && expandConstellation.onComplete()
+                        }, 300)
                     })
                 }
-                else{
+            else{
                     setExpandExcerpts({ expanded: false })
-                    expandConstellation.onComplete && expandConstellation.onComplete()
+
+                    if(nameShape){
+                        editor.zoomToBounds(editor.getShapePageBounds(nameShape), {
+                            animation: {
+                                duration: 300,
+                                easing: (t) => t * t, // Quadratic ease function
+                            },
+                            targetZoom: 1
+                        })
+                    }
+
+                    setTimeout(()=>{
+                        expandConstellation.onComplete && expandConstellation.onComplete()
+                    }, 300)
                 }
             })
         }
