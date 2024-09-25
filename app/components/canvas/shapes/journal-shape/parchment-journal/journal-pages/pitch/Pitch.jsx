@@ -1,6 +1,7 @@
 import styles from './Pitch.module.css'
 import journalStyles from "~/components/canvas/shapes/journal-shape/parchment-journal/ParchmentJournal.module.css"
 import { InkBleed } from "~/components/canvas/custom-ui/post-processing-effects/InkBleed"
+import { useStarFireSync } from "~/components/synchronization/StarFireSync"
 
 const pitchText = [
     {type: 'heading', text: "Starlight"},
@@ -11,9 +12,9 @@ const pitchText = [
     {type: 'paragraph', text: "As players venture further into the cosmos, they uncover lost skills in traversal, research and starweaving as they develop their own constellation alongside a community of others."},
     {type: 'paragraph', text: "Starlight constructs a protocol for social connection and ideation out of the core loop of a video game, one rooted in both understanding of the self and deep empathy for others. It is built around the principle that an understanding of the thoughts of another is a crucial foundation of meaningful connection."},
     {type: 'paragraph', text: "Starlight uses the uniquely expressive tools of games -- narrative, challenge, catharsis -- to create experiences of introspection, wonder and empathy: goals far beyond the scope of most software."},
-    {type: 'paragraph', text: "It’s written in browser-native technologies, which means that it can be played by anyone, anywhere, on any surface."},
 ]
 export function Pitch(){
+    const { setNarratorEvent } = useStarFireSync();
     return(
     <div 
     className={styles.pitchLayout}
@@ -49,6 +50,18 @@ export function Pitch(){
                                     </InkBleed>,
                     }[script.type]
         ))}
+        <InkBleed
+            divKey={`journal-learn-more`}
+            initialBlur={4}
+            finalBlur={0.7}
+            delay={0}
+            duration={2}>
+            <h1 
+                className={journalStyles.journalLargeText} 
+                onClick={() => setNarratorEvent('elevator-pitch')}>
+                Learn More
+            </h1>
+        </InkBleed>
     </div>
     )
 }

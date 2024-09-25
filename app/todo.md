@@ -109,12 +109,13 @@ After Roadtrip To Dos:
 - [x] fix the next button
 - [x] fix campfire visibility
 - [x] fix collapsing stars
+- [] fix initial campfire blip
 - [] add tooltip to journal
 
 - [x] add version number
 - [x] add subtitle
 - [] add media articles about game design
-
+- [] add the ability to hide and show the main star
 
 Long-Term Fixes:
 - fix animation logic on expand/collapse for stars

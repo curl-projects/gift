@@ -8,6 +8,27 @@ import NarratorComponent from "./components/NarratorComponent";
 import SystemComponent from "./components/SystemComponent";
 import * as BABYLON from '@babylonjs/core';
 
+export function hideAllShapes(editor){
+    const pageShapes = editor.getCurrentPageShapes().filter(shape => shape.type !== 'journal');
+    editor.run(() => {
+        editor.updateShapes(pageShapes.map(shape => ({id: shape.id, isLocked: true, opacity: 0})))
+    },
+    { ignoreHistory: true })
+    
+}
+
+export function showAllShapes(editor){
+    const pageShapes = editor.getCurrentPageShapes().filter(shape => shape.type !== 'journal');
+
+    editor.run(() => {
+        editor.updateShapes(pageShapes.map(shape => ({id: shape.id, isLocked: false, opacity: 1})))
+    },
+    { ignoreShapeLock: true })
+
+    const threads = pageShapes.filter(shape => shape.type === 'thread');
+    editor.updateShapes(threads.map(thread => ({id: thread.id, isLocked: true})))
+}
+
 
 export function NarratorVoice() {
     const editor = useEditor();
@@ -74,7 +95,7 @@ export function NarratorVoice() {
             {
                 type: 'callback',
                 callback: () => {
-                    setNarratorEvent('pitch')
+                    setNarratorEvent('conceptual-pitch')
                 },
                 waitForCallback: false,
             }
@@ -608,60 +629,6 @@ export function NarratorVoice() {
                 },
                 waitForCallback: true,
             },
-
-            // {
-            //     type: 'callback',
-            //     callback: () => {
-            //         console.log("expanding constellation")
-            //         return Promise.all([
-            //             setExpandConstellation({ concepts: true, excerpts: true }),
-            //         ])
-                    
-            //     },
-            //     waitForCallback: true,
-            // },
-            // {
-            //     type: 'callback',
-            //     callback: () => {
-            //         console.log("waiting for 1 second")
-            //         return Promise.all([
-            //             new Promise(resolve => setTimeout(resolve, 1000))
-            //         ])
-                    
-            //     },
-            //     waitForCallback: true,
-            // },
-            // {
-            //     type: 'callback',
-            //     callback: () => {
-            //         console.log("no longer expanding constellation")
-            //         return Promise.all([
-            //             setExpandConstellation({ concepts: true, excerpts: false }),
-            //         ])
-            //     },
-            //     waitForCallback: true,
-            // },
-            // {
-            //     type: 'callback',
-            //     callback: () => {
-            //         console.log("no longer expanding constellation")
-            //         return Promise.all([
-            //             setExpandConstellation({ concepts: false, excerpts: false }),
-            //         ])
-                    
-            //     },
-            //     waitForCallback: true,
-            // },
-            // {
-            //     type: 'callback',
-            //     callback: () => {
-            //         return Promise.all([
-            //             setCampfireView({ active: false, immediate: false})
-            //         ])
-                    
-            //     },
-            //     waitForCallback: true,
-            // },
             {
                 type: 'callback',
                 callback: () => {
@@ -694,7 +661,6 @@ export function NarratorVoice() {
             {
                 type: 'callback',
                 callback: () => {
-                    console.warn('narrator event start')
                     return Promise.all([
                         setTextEvent({ 
                             type: 'narrator',
@@ -1021,6 +987,386 @@ export function NarratorVoice() {
                 waitForCallback: true,
             },
         ],
+        'conceptual-pitch': [
+            {
+                type: 'callback',
+                callback: () => {
+
+                    // todo: jank -- not returning completion
+                    setConstellationLabel({ visible: false, immediate: false, duration: 2, delay: 0})
+                    setGlyphControls({ visible: false, immediate: false, duration: 2 })
+                    setJournalMode({ active: false, immediate: true })
+
+
+                    return Promise.all([
+                        setTrueOverlayControls({ visible: false, immediate: false, duration: 3}),
+                        setTitleControls({ visible: true, immediate: false, duration: 1.3, delay: 0.3 }),
+
+                        setOverlayControls({ dark: true, immediate: false, duration: 2, delay: 0}),
+                        setTextEvent({ type: 'system', visible: false, overlay: false }),
+                        setDrifting({active: false }),
+                    ])
+                    
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    hideAllShapes(editor);
+                    setTitleControls({ visible: false, immediate: false, duration: 1, delay: 0, })
+                    setStarControls({ visible: false, immediate: false, duration: 0.5 })
+                },
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setTextEvent({ 
+                            type: 'system',
+                            visible: true,
+                            overlay: false,
+                            text: "This is a portfolio: a collection of ideas, a record of part of a person.", 
+                            requiresInteraction: true, 
+                            darkeningVisible: false, 
+                        })
+                    ])
+                },
+                waitForCallback: true,
+            }, 
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setTextEvent({ 
+                            type: 'system',
+                            visible: true,
+                            overlay: false,
+                            text: "They’re important because they are the vehicle through which we share our thinking. Through them, we refine our ideas, find others who resonate with us, define who we are.", 
+                            requiresInteraction: true, 
+                            darkeningVisible: false, 
+                        })
+                    ])
+                },
+                waitForCallback: true,
+            }, 
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setTextEvent({ 
+                            type: 'system',
+                            visible: true,
+                            overlay: false,
+                            text: "This portfolio is quite bad at achieving its ends: it requires a significant amount of effort and technical knowledge to make compelling, it is quite static and boring to navigate, and very rarely does it foster connection, wasting away in a static website on some isolated corner of the internet.", 
+                            requiresInteraction: true, 
+                            darkeningVisible: false, 
+                        })
+                    ])
+                },
+                waitForCallback: true,
+            }, 
+            {
+                type: 'callback',
+                callback: () => {
+                    setStarControls({ visible: true, immediate: false, duration: 4 })
+                    
+                    showAllShapes(editor);
+                    return Promise.all([
+                        setTextEvent({
+                            type: 'system',
+                            visible: false,
+                            overlay: false,
+                        })
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    
+                    return Promise.all([
+                        setTextEvent({ 
+                            type: 'narrator',
+                            visible: true,
+                            overlay: false,
+                            text: "This is also a portfolio, reimagined using the principles of game design.", 
+                            requiresInteraction: true, 
+                            darkeningVisible: true, 
+                        })
+                    ])
+                },
+                waitForCallback: true,
+            }, 
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setExpandConstellation({ concepts: true, excerpts: false }),
+                        setTextEvent({ 
+                            type: 'narrator',
+                            visible: true,
+                            overlay: false,
+                            text: "It is designed to be beautiful to explore and navigate through, to be a vehicle through which you might understand your own ideas, to be the anchor for deep connection with others based on a mutual understanding of each other’s ideas. Try interacting with it.", 
+                            requiresInteraction: true, 
+                            darkeningVisible: true, 
+                            delay: 2,
+                        })
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    console.log('fade narrator event')
+                    return Promise.all([
+                        setTextEvent({ 
+                            type: 'narrator',
+                            overlay: false,
+                            visible: false,
+                            
+                           
+                        })
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setTrueOverlayControls({ visible: true, immediate: false, duration: 3 }),
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    console.warn("campfire view callback")
+                    setCampfireView({ 
+                        active: true, 
+                        immediate: true, 
+                        useTargetPosition: true,
+                        targetMeshName: 'ground',
+                        targetPosition: new BABYLON.Vector3(0.17, -3.25, 4.22),
+                        })
+                    setExpandConstellation({ concepts: false, excerpts: false })
+                }
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    console.warn("overlay fade out callback")
+                    return Promise.all([
+                        setTrueOverlayControls({ visible: false, immediate: false, duration: 3 }),
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        
+                        setTextEvent({ 
+                            type: 'system',
+                            visible: true,
+                            overlay: true,
+                            text: "Try looking up", 
+                            waitUntilVisible: true,
+                            darkeningVisible: true, 
+                            waitCondition: () => {
+                                return Promise.all([
+                                    setCommandEvent({
+                                         eventType: 'camera-moved',
+                                        props: {}
+                                    })
+                                ])
+                            }
+                        })
+                    ])
+                },
+                waitForCallback: true,
+            }, 
+            {
+                type: 'callback',
+                callback: () => {
+                    console.log('triggered')
+                    return Promise.all([
+                        setTextEvent({ 
+                            type: 'system',
+                            overlay: true,
+                            visible: false,
+                            
+                           
+                        })
+                    ])
+                },
+                waitForCallback: false,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setCommandEvent({
+                            eventType: 'mesh-visible', 
+                            props: {
+                                meshName: 'narrator'
+                            }
+                            })
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setAnimationEvent({ 
+                            animationGroupName: 'looking-down',
+                            props: {
+                                reverse: true,
+                                startFrame: 300,  
+                                endFrame: 10,
+                                speed: 0.5,          
+                            }
+                        }),
+                        setTextEvent({ 
+                            type: 'narrator',
+                            visible: true,
+                            overlay: true,
+                            text: "This, too, might be considered a portfolio: a representation of a person that you can interact with in natural language, one that leverages the immersive qualities of a game to encourage empathetic communication.", 
+                            requiresInteraction: true, 
+                            darkeningVisible: true, 
+                        })
+                    ])
+                },
+                waitForCallback: true,
+            }, 
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setCampfireView({ active: false, immediate: false }),
+                        setTextEvent({ 
+                            type: 'narrator',
+                            visible: false,
+                            overlay: true,
+                        })
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        
+                        setConstellationLabel({ 
+                            visible: true, 
+                            immediate: false, 
+                            duration: 2, 
+                            delay: 0,
+                            text: "The First Star: Your Own Work"
+                        }),
+                        
+                    ])
+                },
+                waitForCallback: true,
+            },
+
+            {
+                type: 'callback',
+                callback: () => {
+                                            
+                    setConstellationLabel({ 
+                        visible: false, 
+                        immediate: false, 
+                        duration: 1, 
+                        delay: 0,
+                    })
+
+                    return Promise.all([
+                        setTextEvent({ 
+                            type: 'system',
+                            visible: true,
+                            overlay: false,
+                            headerText: "create constellations to explore your work",
+                            text: "constellations are dynamically constructed, interactive portfolios that organise your media using common concepts found across them", 
+                            requiresInteraction: true, 
+                            darkeningVisible: true, 
+                        }),
+                        setExpandConstellation({ concepts: true, excerpts: true })
+                    ])
+                },
+                waitForCallback: true,
+            }, 
+            
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setTriggerWarp({ active: true, accDuration: 1000, deaccDuration: 1000, constAccDuration: 1000 }).then(()=>{
+                            setConstellationLabel({ 
+                                visible: true, 
+                                immediate: false, 
+                                duration: 2, 
+                                delay: 2,
+                                text: "Finn's Cluster"
+                            })
+                        }),
+                        setTextEvent({ 
+                            type: 'system',
+                            visible: true,
+                            overlay: false,
+                            headerText: "traverse the stars to discover new ideas",
+                            text: "constellations are linked together based on the similarity of their ideas. users traverse the galaxy to find new ideas and connections", 
+                            requiresInteraction: true, 
+                            darkeningVisible: true, 
+                        })
+                    ])
+                },
+                waitForCallback: true,
+            }, 
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setGlyphControls({ visible: true, immediate: false, duration: 4 }),
+                        setOverlayControls({ dark: false, immediate: false, duration: 2, delay: 0}),
+                        setTextEvent({ 
+                            type: 'system',
+                            visible: true,
+                            overlay: false,
+                            headerText: "collect glyphs to forge new friendships",
+                            text: "interacting with the constellation of another gifts you a glyph: a record of their ideas. Gather glyphs to connect with others and uncover lost skills in traversal, research and star-weaving as you develop your own constellation alongside a community of others", 
+                            requiresInteraction: true, 
+                            darkeningVisible: true, 
+                        })
+                    ])
+                },
+                waitForCallback: true,
+            }, 
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setGlyphControls({ visible: false, immediate: false, duration: 4 }),
+                        setTextEvent({ 
+                            type: 'system',
+                            visible: false,
+                            overlay: false,
+                        }),
+                        setJournalMode({ active: true, variant: 'parchment', page: 'pitch' }),
+
+                    ])
+                },
+                waitForCallback: true,
+            },
+        ]
        
     };
 

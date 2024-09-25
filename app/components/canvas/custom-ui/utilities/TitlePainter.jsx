@@ -230,7 +230,7 @@ export function TitlePainter(){
                 </motion.div>
             {/* second version to create contrast */}
             <motion.div 
-                    key='subtitle-container'
+                    key='subtitle-container-backlight'
                     className={styles.subtitleContainer}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
