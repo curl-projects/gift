@@ -24,7 +24,6 @@
     position: relative;
   }
 
-
   .dashedRing {
     border: 2px dashed rgba(251, 247, 245, 0.2);
     border-radius: 100%;

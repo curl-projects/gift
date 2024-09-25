@@ -78,7 +78,6 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
         const { drifting, setDrifting, triggerEffect, activeEffect, deleteStar, setDeleteStar } = useStarFireSync();
         
 
-
         // useEffect(()=>{
         //     console.log("SHAPE:", shape)
         //     if(triggerWarp){

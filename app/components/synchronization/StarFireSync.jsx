@@ -8,7 +8,7 @@ const StarFireSyncProvider = ({ children }) => {
     const [activeEffect, setActiveEffect] = useState(null);
     const [triggerWarp, _setTriggerWarp] = useState({active: false, accDuration: 500, deaccDuration: 500, constAccDuration: 500});
     const [restored, setRestored] = useState(false);
-    const [campfireView, _setCampfireView] = useState(null);
+    const [campfireView, _setCampfireView] = useState({ active: false, immediate: true});
     const [sceneLoaded, setSceneLoaded] = useState(false);
     const [commandEvent, _setCommandEvent] = useState(null);
     const [animationEvent, _setAnimationEvent] = useState(null);
@@ -34,7 +34,7 @@ const StarFireSyncProvider = ({ children }) => {
     const [overlayControls, _setOverlayControls] = useState({ dark: false, immediate: true, duration: 2, }); // Consolidated state
     
     // set this true initially to cover everything
-    const [trueOverlayControls, _setTrueOverlayControls] = useState({ visible: true, immediate: true, }); // Consolidated state
+    const [trueOverlayControls, _setTrueOverlayControls] = useState({ visible: true, immediate: true }); // Consolidated state
 
 
     const [journalMode, _setJournalMode] = useState({ active: false, page: ""});
