@@ -120,20 +120,62 @@ After Roadtrip To Dos:
 - [x] recenter star when zooming back in
 - [x] deploy online
 - [] stop it from showing up on phones
-- [] fix command leak
+- [] prevent people from typing in the media objects (deprioritized)
+- [x] fix command leak
 
 
 FINAL CHECKLIST:
-- [] Elevator Pitch
+- [x] Elevator Pitch
 
 - [] Design Philosophy
+    - [x] Upload media documents for design philosophy
+    - [x] Remove unnecessary excerpts from "Virtual Self-Representation" & "Resonance-Based Connection"
 
-- [] Mechanics
+- [x] Mechanics
+    - [x] shorten mechanics text
+    - [] add paragraph spacing and rich text into system text components
+    - [x] add starlight icon to the the cover page during the flow
 
 - [] Technical Foundations
+    - [x] Link to Github
 
 - [] Why is this important?
+    - [x] Finish script using narrator voice
+    - [] add rich text capabilities to narrator text
+
+
+- [] Get in Touch
+    - [] improve animation of contact
+    - [] add ability to copy or select the address
 
 - [] Demo
+    - [] delete excerpts when star disppears
+    - [] add portfolio
+    - [] screen flickers when moving back to the constellation view
+    - [] when constellation expands, it moves to a random location
+    - [x] moon in journal doesn't have the right center of rotation
+    - [x] learn more in journal doesn't work
+    - [] journal breaks when you click home
 
-- [] Misc. Manipulation
+- [] Misc. Stuff
+    - [] check that the system works on phone
+    - [] add waitlist
+    - [] check multiple browsers:
+        - [] safari
+            - small fixes
+        - [] firefox
+            - small fixes
+        - [] edge
+            - large fixes
+        - [] arc
+            - very small fixes
+
+- [] Transitions
+    - [] if you transition to and from home quickly, it doesn't transition properly
+    - [] force text events to clear
+    - [] clear title next button immediately when the narrator event changes 
+    - [] fix the flickering white border as the system re-adjusts
+    - [] mechanics transition to home doesn't work
+
+
+    - transitions don't 

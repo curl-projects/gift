@@ -17,6 +17,7 @@ const StarFireSyncProvider = ({ children }) => {
     const [starControls, _setStarControls] = useState({ visible: true, immediate: true });
     const [glyphControls, _setGlyphControls] = useState({ visible: false, immediate: false });
     const [titleControls, _setTitleControls] = useState({ visible: false, immediate: false });
+    const [toggleContact, _setToggleContact] = useState({visible: false});
 
     const [drifting, _setDrifting] = useState({ active: false });
     const [deleteStar, _setDeleteStar] = useState({ deleted: false, created: false});
@@ -74,6 +75,7 @@ const StarFireSyncProvider = ({ children }) => {
     const setAnimationEvent = useStateWithPromise(_setAnimationEvent);
     const setJournalMode = useStateWithPromise(_setJournalMode);
     const setDrifting = useStateWithPromise(_setDrifting);
+    const setToggleContact = useStateWithPromise(_setToggleContact);
 
     const triggerEffect = useCallback(({domain, selector, effect, callback}) => {
         console.log("HELLO")
@@ -121,6 +123,7 @@ const StarFireSyncProvider = ({ children }) => {
                 glyphControls, setGlyphControls,
                 titleControls, setTitleControls,
                 deleteStar, setDeleteStar,
+                toggleContact, setToggleContact,
             }}>
             {children}
         </StarFireSyncContext.Provider>

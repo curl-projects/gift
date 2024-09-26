@@ -30,6 +30,23 @@ export function showAllShapes(editor){
 }
 
 
+export function zoomToShape(editor, shapeId){
+    if(editor){
+        const shape = editor.getShape(shapeId);
+        if(shape){
+            editor.zoomToBounds(editor.getShapePageBounds(shape), {
+                animation: {
+                    duration: 300,
+                    easing: t => t * t
+                },
+                targetZoom: 1,
+            })
+        }
+        
+    }
+    
+}
+
 export function NarratorVoice() {
     const editor = useEditor();
     const {
@@ -59,6 +76,7 @@ export function NarratorVoice() {
         titleControls, setTitleControls,
         drifting, setDrifting,
         deleteStar, setDeleteStar,
+        toggleContact, setToggleContact,
     } = useStarFireSync();
 
     const [narratorState, setNarratorState] = useState({ visible: false, text: '', requiresInteraction: false });
@@ -102,6 +120,14 @@ export function NarratorVoice() {
                 },
             },  
         ],
+        'contact': [
+            {
+                type: 'callback',
+                callback: () => {
+                    setToggleContact({ visible: true })
+                },
+            },
+        ],
         'home': [
             {
                 type: 'callback',
@@ -109,10 +135,13 @@ export function NarratorVoice() {
 
                     // todo: jank -- not returning completion
                     setDeleteStar({ created: true, id: createShapeId("andre-vacha") })
+                    setToggleContact({ visible: false })
                     setConstellationLabel({ visible: false, immediate: false, duration: 2, delay: 0})
                     setGlyphControls({ visible: false, immediate: false, duration: 2 })
                     setJournalMode({ active: false, immediate: true })
                     setExpandConstellation({ concepts: false, excerpts: false })
+
+                    zoomToShape(editor, "andre-vacha")
 
 
                     return Promise.all([
@@ -127,6 +156,7 @@ export function NarratorVoice() {
                 },
                 waitForCallback: true,
             },
+            
         ],
         'elevator-pitch': [
             {
@@ -260,7 +290,7 @@ export function NarratorVoice() {
                             visible: true,
                             overlay: false,
                             textAlign: 'left',
-                            text: "Starlight automatically creates portfolios from your existing work as users drop in half-finished ideas and articles, which you can then customize and develop over time. It does so by identifying the concepts that are present across different pieces of work, and the excerpts from each piece of media that best represent them. This hierarchy -- concepts, excerpts and media -- are then organized into a constellation, which is a dynamic web of connections between different media objects.",
+                            text: "Starlight automatically creates portfolios from your existing work as users drop in half-finished ideas and articles, which you can them customize and develop over time. Concepts, excerpts and media are extracted from your work and then organized into a constellation, which is a dynamic web of connections between different media objects.",
                             headerText: "[1] Creating Portfolios: Constellations",
                             darkeningVisible: true,
                             requiresInteraction: true,
@@ -280,7 +310,7 @@ export function NarratorVoice() {
                             visible: true,
                             overlay: false,
                             textAlign: 'left',
-                            text: "Starlight imagines discovering the portfolios of others as traversing a galaxy of stars. As users inspect constellations, they can use an astrolabe to see excerpts and concepts from other people that are related to the idea currently in focus. Clicking on any of these will warp the user to another portfolio. In this way, users can find new ideas and people by deeply exploring the ideas that they resonate with. The natural starting point for this exploration is the user's own constellation.",
+                            text: "Starlight imagines discovering the portfolios of others as traversing a galaxy of stars. As users inspect constellations, they can use an astrolabe to see excerpts and concepts from other people that are related to the idea currently in focus. Clicking on any of these will warp the user to another portfolio. In this way, users can find new ideas and people by deeply exploring the ideas that they resonate with.",
                             headerText: "[2] Traversing Portfolios: The Astrolabe",
                             darkeningVisible: true,
                             requiresInteraction: true,
@@ -319,7 +349,7 @@ export function NarratorVoice() {
                             overlay: false,
                             textAlign: 'left',
                             headerText: "[3] Understanding Others: Covenants",
-                            text: "The core of Starlight is understanding the ideas of others. This is operationalized through the ***Covenant*** system. Covenants are tasks that are set on each portfolio by its creator. For example, a very simple covenant might require highlighting three sentences from a piece of media that resonate with the viewer, while a very complex covenant might require them to write a comment analyzing one of the core themes. There will be a configurable templated system for creating covenants, similar to the very simple coding logic of tools like [fix this]. The completion status of these covenants will be determined by rule-based systems for simple tasks, LLMs for more complex ones, and optionally by the constellation's creator. In short, covenants are challenges designed to make users demonstrate their understanding of the ideas of the portfolio's creator. By completing a covenant, a user receives a glyph (see below), and can start to develop a relationship with that person. Covenants are a reaction to the issues that emerge from the frictionless nature of most modern social ecosystems. Platforms such as LinkedIn make it effortless to connect with another person, and in doing so devalue those connections.",
+                            text: "The core of Starlight is understanding the ideas of others. This is operationalized through the Covenant system. Covenants are tasks that are set on each portfolio by its creator.  For example, a very simple covenant might require highlighting three sentences from a piece of media that resonate with the viewer, while a very complex covenant might require them to write a comment analyzing one of the core themes. There will be a configurable templated system for creating covenants. The completion status of these covenants will be determined by rule-based systems for simple tasks, LLMs for more complex ones, and optionally by the constellation's creator. In short, covenants are challenges designed to make users demonstrate their understanding of the ideas of the portfolio's creator. By completing a covenant, a user receives a glyph (see below), and can start to develop a relationship with that person. Covenants are a reaction to the issues that emerge from the frictionless nature of most modern social ecosystems.",
                             darkeningVisible: true,
                             requiresInteraction: true,
                         }),
@@ -337,7 +367,7 @@ export function NarratorVoice() {
                             visible: true,
                             overlay: false,
                             textAlign: 'left',
-                            text: "Glyphs are records of your connections with other people. You might think of them as the analog of friend requests. You receive the glyph of an individual by completing the covenant (challenge of understanding) associated with their constellation. This acts as a permannt record of their portfolio, allowing you to revisit it using your journal whenever you wish. Glyphs can be *restored* when both people interact with each other's constellations. This allows them to communicate at the campfire -- the beginnings of a friendship.",
+                            text: "Glyphs are records of your connections with other people. You might think of them as the analog of friend requests. You receive the glyph of an individual by completing the covenant (challenge of understanding) associated with their constellation. This acts as a permannt record of their portfolio, allowing you to revisit it using your journal whenever you wish. Glyphs can be restored when both people interact with each other's constellations. This allows them to communicate at the campfire -- the beginnings of a friendship.",
                             headerText: "[4] Making Connections: Glyphs",
                             darkeningVisible: true,
                             requiresInteraction: true,
@@ -359,7 +389,7 @@ export function NarratorVoice() {
                             visible: true,
                             overlay: false,
                             textAlign: 'left',
-                            text: "Your journal is where you record the various glyphs and ideas that you come across in your travels, as well as track the messages that you have sent to others. ",
+                            text: "Your journal is where you record the various glyphs and ideas that you come across in your travels, as well as track the messages that you have sent to others.",
                             headerText: "[5] Recording Your Travels: The Journal",
                             darkeningVisible: true,
                             requiresInteraction: true,
@@ -526,82 +556,66 @@ export function NarratorVoice() {
             }
         ],
         'justification': [
+            // todo: this is a super janky flow, but for some reason it prevents command leak
             {
                 type: 'callback',
                 callback: () => {
                     return Promise.all([
-                        setTitleControls({ visible: false, immediate: false, duration: 1, delay: 0, })
-                    ])
-                },
-                waitForCallback: true,
-            },
-            {
-                type: 'callback',
-                callback: () => {
-                    return Promise.all([
-                        setCampfireView({ 
-                            active: true, 
-                            immediate: false,
-                            useTargetPosition: true,
-                            targetPosition: new BABYLON.Vector3(0.17, -3.25, 4.22),
-                        })
-                    ])
-                },
-                waitForCallback: true,
-            },
-            {
-                type: 'callback',
-                callback: () => {
-                    return Promise.all([
-                        
-                        setTextEvent({ 
+                        setTextEvent({
                             type: 'system',
+                            visible: false,
+                            overlay: false,
+                        }),
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setTitleControls({ visible: false, immediate: false, duration: 1, delay: 0, }),
+                        setTextEvent({ 
+                            type: 'narrator',
                             visible: true,
-                            overlay: true,
-                            text: "Try looking up", 
-                            waitUntilVisible: true,
+                            overlay: false,
+                            text: "The internet can feel cold, desolate.", 
+                            requiresInteraction: true, 
                             darkeningVisible: true, 
-                            waitCondition: () => {
-                                return Promise.all([
-                                    setCommandEvent({
-                                         eventType: 'camera-moved',
-                                        props: {}
-                                    })
-                                ])
-                            }
                         })
                     ])
                 },
                 waitForCallback: true,
-            }, 
-        ],
-        'journalTest': [
-            {
-                type: 'callback',
-                callback: () => {
-                        setTrueOverlayControls({ visible: true, immediate: true})
-                        setCampfireView({ active: false, immediate: true })
-                        setStarControls({ visible: true, immediate: true})
-                        setCloudControls({ visible: true, immediate: true})
-                        setOverlayControls({ dark: true, immediate: true})
-                },
-                // waitForCallback: true,
             },
-            {
-                // hardcoded jank because the promise logic isn't working for the components above
-                type: 'callback',
-                callback: () => {
-                    return new Promise(resolve => setTimeout(resolve, 1000));
-                },
-                waitForCallback: true,
-            },   
+            // {
+            //     type: 'callback',
+            //     callback: () => {
+            //         return Promise.all([
+            //             setTextEvent({ 
+            //                 type: 'narrator',
+            //                 visible: true,
+            //                 overlay: false,
+            //                 text: "The internet can feel cold, desolate.", 
+            //                 requiresInteraction: true, 
+            //                 darkeningVisible: true, 
+            //             })
+            //         ])
+            //     },
+            //     waitForCallback: true,
+            // },
             {
                 type: 'callback',
                 callback: () => {
                     return Promise.all([
-                        setTrueOverlayControls({ visible: false, immediate: false, duration: 3})
+                        setTextEvent({ 
+                            type: 'narrator',
+                            visible: true,
+                            overlay: false,
+                            text: "Billions of others, calling out at such a pitch and volume that it registers only as a stabbing silence.", 
+                            requiresInteraction: true, 
+                            darkeningVisible: true, 
+                        })
                     ])
-                    
                 },
                 waitForCallback: true,
             },
@@ -609,13 +623,151 @@ export function NarratorVoice() {
                 type: 'callback',
                 callback: () => {
                     return Promise.all([
-                        setJournalMode({ active: true, page: 'pitch' })
+                        setTextEvent({ 
+                            type: 'narrator',
+                            visible: true,
+                            overlay: false,
+                            text: "I have spent much of my life here, and I can count on one hand the number of friends that I have made. With each day, it often feels that it gets harder to focus, to remember, to feel. I become less of myself.", 
+                            requiresInteraction: true, 
+                            darkeningVisible: true, 
+                        })
                     ])
-                    
                 },
                 waitForCallback: true,
             },
-
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setTextEvent({ 
+                            type: 'narrator',
+                            visible: true,
+                            overlay: false,
+                            text: "These are twinned problems. Connection to others allows us to cultivate a connection to ourselves. A connection to ourselves forges us into the type of person capable of connecting with others. I do not believe that these are problems to be addressed with willpower alone, or through the cauterization of the online. I also do not believe they can be addressed with our current paradigm of software.", 
+                            requiresInteraction: true, 
+                            darkeningVisible: true, 
+                        })
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setTextEvent({ 
+                            type: 'narrator',
+                            visible: true,
+                            overlay: false,
+                            text: "So where have we fallen short? Are our interfaces inhumane? Are our interaction patterns unsatisfying? Are our workflows inefficient? Have we failed to optimize enough?", 
+                            requiresInteraction: true, 
+                            darkeningVisible: true, 
+                        })
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setTextEvent({ 
+                            type: 'narrator',
+                            visible: true,
+                            overlay: false,
+                            text: "No.", 
+                            requiresInteraction: true, 
+                            darkeningVisible: true, 
+                        })
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setTextEvent({ 
+                            type: 'narrator',
+                            visible: true,
+                            overlay: false,
+                            text: "We have optimized far, far too much. In our attempts to make our lives more efficient, I believe that we have stripped from software the characteristics that would bring more joy to our unavoidably online days: beauty, wonder, challenge, narrative, catharsis.", 
+                            requiresInteraction: true, 
+                            darkeningVisible: true, 
+                        })
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setTextEvent({ 
+                            type: 'narrator',
+                            visible: true,
+                            overlay: false,
+                            text: "These are the primitives of game design. Starlight is my first, fledgling attempt to weave them into what we might otherwise consider “software”: code that serves some practical purpose in the real world.", 
+                            requiresInteraction: true, 
+                            darkeningVisible: true, 
+                        })
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setTextEvent({ 
+                            type: 'narrator',
+                            visible: true,
+                            overlay: false,
+                            text: "Starlight is more important to me than its function. It represents a philosophy, a promise that I wish to fulfil:",
+                            requiresInteraction: true, 
+                            darkeningVisible: true, 
+                        })
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setTextEvent({ 
+                            type: 'narrator',
+                            visible: true,
+                            overlay: false,
+                            text: "amidst a million systems crushing us into cold automata, at least a few of the the tools that we use should cultivate both focus and joy.", 
+                            requiresInteraction: true, 
+                            darkeningVisible: true, 
+                        })
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setTextEvent({ 
+                            type: 'narrator',
+                            visible: false,
+                            overlay: false,
+                        })
+                    ])
+                },
+                waitForCallback: true,
+            },
+            {
+                type: 'callback',
+                callback: () => {
+                    setNarratorEvent('home')
+                },
+                waitForCallback: false,
+            },
+            
         ],
         'pitch': [
             // setup - before title drop
@@ -1312,7 +1464,7 @@ export function NarratorVoice() {
                             requiresInteraction: true, 
                             darkeningVisible: true, 
                         }),
-                        setExpandConstellation({ concepts: true, excerpts: true })
+                        setExpandConstellation({ concepts: true, excerpts: false })
                     ])
                 },
                 waitForCallback: true,

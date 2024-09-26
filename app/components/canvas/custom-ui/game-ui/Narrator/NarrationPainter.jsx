@@ -8,7 +8,7 @@ import SystemComponent from "~/components/canvas/custom-ui/game-ui/Narrator/comp
 export function NarrationPainter(){
     const { textEvent, setTextEvent, gameSystemText, gameNarratorText, 
             setGameSystemText, setGameNarratorText, narratorText, systemText, 
-            setNarratorText, setSystemText } = useStarFireSync();
+            setNarratorText, setSystemText, narratorEvent } = useStarFireSync();
     
     const handleKeyDownRef = useRef();
     const [nextButtonVisible, setNextButtonVisible] = useState(false);
@@ -134,7 +134,11 @@ export function NarrationPainter(){
 
     }, [textEvent])
 
-
+    useEffect(() => {
+        return () => {
+            window.removeEventListener('keydown', handleKeyDownRef.current);
+        };
+    }, [narratorEvent]);
 
  
     return (

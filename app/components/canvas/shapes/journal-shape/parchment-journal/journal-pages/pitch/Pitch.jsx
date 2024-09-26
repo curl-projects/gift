@@ -68,13 +68,13 @@ const moonVariants = {
 
 // Define animation variants for the moon's orbit
 const moonOrbitVariants = {
+    rotate: {
+        rotate: [0, 360],
+        transition: { repeat: Infinity, duration: 10, ease: "linear" }
+    },
     animate: {
-        rotate: 360,
-        transition: {
-            repeat: Infinity,
-            duration: 10, // Adjust the duration as needed for speed
-            ease: "linear"
-        }
+        x: "-50%",
+        y: "-50%",
     }
 };
 
@@ -113,7 +113,7 @@ export function Pitch(){
                      <motion.div
                         className={`${styles.moonOrbit} nameCircle`}
                         variants={moonOrbitVariants}
-                        animate="animate"
+                        animate={["animate", "rotate"]}
                     >
                         <motion.div
                             className={styles.moon}
@@ -206,7 +206,10 @@ export function Pitch(){
                     duration={2}>
                     <h1 
                         className={journalStyles.journalLinkText} 
-                        onClick={() => setNarratorEvent('elevator-pitch')}>
+                        onPointerDown={() => {
+                            console.log('clicking')
+                            setNarratorEvent('elevator-pitch')
+                            }}>
                         Learn More
                     </h1>
                 </InkBleed>

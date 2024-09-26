@@ -51,7 +51,7 @@ const subtitleMotionPaths = [
 ]
 
 export function TitlePainter(){
-    const { titleControls, setNarratorEvent } = useStarFireSync();
+    const { titleControls, setNarratorEvent, toggleContact } = useStarFireSync();
     const titleRef = useRef(null);
     const onCompleteRef = useRef(titleControls.onComplete);
     const handleKeyDownRef = useRef();
@@ -220,7 +220,7 @@ export function TitlePainter(){
                 </div>    
             </div>
             <motion.div 
-                    key='subtitle-container'
+                    key={`subtitle-container`}
                     className={styles.subtitleContainer}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -228,25 +228,26 @@ export function TitlePainter(){
                     transition={{ duration: 1, delay: 3.5 }}
                 >
                     <div className={styles.subtitle}>
-                        Beautiful Social Portfolios [v0.1]
+                        {toggleContact.visible ? 'developing.starlight@gmail.com' : 'Beautiful Social Portfolios [v0.1]'}
                     </div>
                 </motion.div>
             {/* second version to create contrast */}
             <motion.div 
-                    key='subtitle-container-backlight'
+                    key={`subtitle-container-backlight`}
                     className={styles.subtitleContainer}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0, transition: { delay: 1, duration: 2} }}
                     transition={{ duration: 1 , delay: 3.5 }}
                     style={{
-                        mixBlendMode: 'unset'
+                        mixBlendMode: 'unset',
+                        pointerEvents: toggleContact.visible ? 'all' : 'none',
                     }}
                 >
                     <div className={styles.subtitle} style={{
                         color: 'rgba(255, 255, 255, 0.2)'
                     }}>
-                        Beautiful Social Portfolios [v0.1]
+                        {toggleContact.visible ? 'developing.starlight@gmail.com' : 'Beautiful Social Portfolios [v0.1]'}
                     </div>
                 </motion.div>
             <AnimatePresence>

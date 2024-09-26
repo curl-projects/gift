@@ -6,3 +6,134 @@
     justify-content: center;
     align-items: center;
 }
+
+
+.outerCircleContainer{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 60px;
+    padding-bottom: 60px;
+}
+
+.circleContainer {
+    min-height: 56px;
+    min-width: 56px; 
+    position: relative;
+}
+
+.extremeOuterRing{
+    border: 2.6px dashed rgba(84, 77, 71, 0.9);
+    border-radius: 50%;
+    height: 140px;
+    width: 140px; 
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    box-shadow: 0px 0px 10px 0px rgba(84, 77, 71, 0.9);
+}
+
+.moonOrbit {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 150px; /* Same as .extremeOuterRing */
+    height: 150px;
+    /* transform: translate(-50%, -50%); */
+    /* transform-origin: center; Ensure the rotation happens around the center */
+    pointer-events: none;
+}
+
+.moon {
+    border-radius: 50%;
+    background-color: rgba(84, 77, 71, 0.9);
+    height: 10px;
+    width: 10px;
+    position: absolute;
+    top: 0;
+    left: 50%; /* Center horizontally within the .moonOrbit */
+    transform: translateX(-50%); /* Adjust to center the moon */
+    box-shadow: 0px 0px 10px 0px rgba(84, 77, 71, 0.7);
+    transform-origin: center;
+}
+
+.mostOuterRing{
+    border: 2.6px solid rgba(84, 77, 71, 0.9);
+    border-radius: 50%;
+    height: 84px;
+    width: 84px; 
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    box-shadow: 0px 0px 10px 0px rgba(84, 77, 71, 0.7);
+}
+
+.orbitingRingOne{
+    border: 20px dotted rgba(84, 77, 71, 0.7);
+    border-radius: 50%;
+    height: 260px;
+    width: 260px; 
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    opacity: 0.5;
+    box-shadow: 0px 0px 10px 0px rgba(84, 77, 71, 0.7);
+}
+
+.outerRing {
+    border: 2.6px solid rgba(84, 77, 71, 0.9);
+    border-radius: 50%;
+    height: 70px;
+    width: 70px; 
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    box-shadow: 0px 0px 10px 0px rgba(84, 77, 71, 0.7);
+}
+
+.innerRing {
+    border: 1.8px solid rgba(0, 0, 0, 0.7);
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    height: 48px;
+    width: 48px; 
+    box-shadow: 0px 0px 10px 0px rgba(84, 77, 71, 0.7);
+}
+
+.glow {
+    height: 45px;
+    width: 45px;
+    border-radius: 50%;
+    background-color: rgba(84, 77, 71, 0.7);
+    filter: blur(2.73px);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    box-shadow: 0px 0px 10px 0px rgba(84, 77, 71, 0.7);
+}
+
+.innerGlow {
+    height: 27px;
+    width: 27px;
+    border-radius: 50%;
+    background-color: rgba(84, 77, 71, 0.9);
+    filter: blur(13.66px);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    box-shadow: 0px 0px 10px 0px rgba(84, 77, 71, 0.7);
+}
+
+.circle {
+    border-radius: 50%;
+    background-color: rgba(84, 77, 71, 0.9);
+    height: 25px;
+    width: 25px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    box-shadow: 0px 0px 10px 0px rgba(84, 77, 71, 0.7);
+}

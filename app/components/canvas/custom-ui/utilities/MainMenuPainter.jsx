@@ -47,6 +47,13 @@ export function MainMenuPainter() {
                 setNarratorEvent('justification')
             },
             narratorEvent: 'justification'
+        },
+        {
+            name: "Get in Touch",
+            onClick: () => {
+                setNarratorEvent('contact')
+            },
+            narratorEvent: 'contact'
         }
     ]
 
