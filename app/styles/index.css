@@ -1,3 +1,5 @@
+@import url("tldraw/tldraw.css");
+
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@500;700&display=swap");
 @import url("tldraw/tldraw.css");
 @import url("https://fonts.googleapis.com/css2?family=Adamina&display=swap");
@@ -8,7 +10,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Mingzat&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Inknut+Antiqua:wght@300;400;500;600;700;800;900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Cinzel&family=Cinzel+Decorative&family=IM+Fell+DW+Pica+SC&family=IM+Fell+DW+Pica:ital@0;1&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Handjet:wght@100..900&display=swap');
 body {
   font-family: "Inter";
 }

@@ -4,6 +4,8 @@ import { getWorldContent, getJournalEntries } from "~/models/world-model.server"
 import { json } from "@remix-run/node";
 import { useStarFireSync } from "~/components/synchronization/StarFireSync";
 import { OverlayPainter } from "~/components/synchronization/sync-ui/OverlayPainter";
+import { BrowserView, MobileView, isBrowser, isMobile } from 'react-device-detect';
+import { MobileStarlight } from "~/components/misc/MobileStarlight"
 
 export async function loader() {
 
@@ -20,32 +22,38 @@ export default function PitchDeck(){
     const { campfireView } = useStarFireSync();
     return(
         <>
-        
-            <OverlayPainter />
-            <div id='constellation-canvas' style={{
-            height: '100vh',
-            width: '100vw',
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            zIndex: 0,
-            overflow: 'hidden',
-            }}>
-                <WorldCanvas />
-            </div>
-            <div 
-            style={{
-            height: '100vh',
-            width: '100vw',
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            zIndex: 0,
-            overflow: 'hidden',
-            pointerEvents: campfireView?.active ? 'unset' : 'none',
-            }}>
-            <PitchScene/>
-            </div>        
+        <MobileView>
+            <MobileStarlight />
+        </MobileView>
+        <BrowserView>
+            <>
+                <OverlayPainter />
+                <div id='constellation-canvas' style={{
+                height: '100vh',
+                width: '100vw',
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                zIndex: 0,
+                overflow: 'hidden',
+                }}>
+                    <WorldCanvas />
+                </div>
+                <div 
+                style={{
+                height: '100vh',
+                width: '100vw',
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                zIndex: 0,
+                overflow: 'hidden',
+                pointerEvents: campfireView?.active ? 'unset' : 'none',
+                }}>
+                <PitchScene/>
+                </div>        
+            </>
+        </BrowserView>
         </>
     )
 }

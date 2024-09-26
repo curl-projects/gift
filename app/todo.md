@@ -103,14 +103,14 @@ After Roadtrip To Dos:
 - [x] fix resizing
 - [] fix movement between different parts of the pitch
 
-- [] add journal cover
+- [x] add journal cover
 - [] fix the text for typos and styling
 - [] shorten all text
 - [x] fix the next button
 - [x] fix campfire visibility
 - [x] fix collapsing stars
-- [] fix initial campfire blip
-- [] add tooltip to journal
+- [x] fix initial campfire blip
+- [x] add tooltip to journal
 
 - [x] add version number
 - [x] add subtitle
@@ -118,10 +118,22 @@ After Roadtrip To Dos:
 - [x] add the ability to hide and show the main star
 - [x] entrance animation for central star 
 - [x] recenter star when zooming back in
+- [x] deploy online
+- [] stop it from showing up on phones
+- [] fix command leak
 
-Control Limitations:
-- [x] user cannot use the arrow keys to move around the scene
-- [] make sure the journal works from wherever
 
-Long-Term Fixes:
-- fix animation logic on expand/collapse for stars
+FINAL CHECKLIST:
+- [] Elevator Pitch
+
+- [] Design Philosophy
+
+- [] Mechanics
+
+- [] Technical Foundations
+
+- [] Why is this important?
+
+- [] Demo
+
+- [] Misc. Manipulation

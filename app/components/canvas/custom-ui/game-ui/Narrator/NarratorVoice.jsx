@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import styles from "./NarratorVoice.module.css";
 import { useConstellationMode } from "~/components/canvas/custom-ui/utilities/ConstellationModeContext";
@@ -63,8 +63,8 @@ export function NarratorVoice() {
 
     const [narratorState, setNarratorState] = useState({ visible: false, text: '', requiresInteraction: false });
     const [systemState, setSystemState] = useState({ visible: false, text: '', requiresInteraction: false });
-
-    // const [commands, setCommands] = useState([]);
+    const [commands, setCommands] = useState([]);
+    const cancelRef = useRef({ canceled: false });
 
 
     useEffect(() => {
@@ -95,12 +95,38 @@ export function NarratorVoice() {
                 waitForCallback: true,
             },   
             {
+                // hardcoded jank because the promise logic isn't working for the components above
                 type: 'callback',
                 callback: () => {
-                    setNarratorEvent('conceptual-pitch')
+                    setNarratorEvent('home')
                 },
-                waitForCallback: false,
-            }
+            },  
+        ],
+        'home': [
+            {
+                type: 'callback',
+                callback: () => {
+
+                    // todo: jank -- not returning completion
+                    setDeleteStar({ created: true, id: createShapeId("andre-vacha") })
+                    setConstellationLabel({ visible: false, immediate: false, duration: 2, delay: 0})
+                    setGlyphControls({ visible: false, immediate: false, duration: 2 })
+                    setJournalMode({ active: false, immediate: true })
+                    setExpandConstellation({ concepts: false, excerpts: false })
+
+
+                    return Promise.all([
+                        setTrueOverlayControls({ visible: false, immediate: false, duration: 5}),
+                        setTitleControls({ visible: true, immediate: false, duration: 1.3, delay: 0.3 }),
+
+                        setOverlayControls({ dark: true, immediate: false, duration: 2, delay: 0}),
+                        setTextEvent({ type: 'system', visible: false, overlay: false }),
+                        setDrifting({active: false }),
+                    ])
+                    
+                },
+                waitForCallback: true,
+            },
         ],
         'elevator-pitch': [
             {
@@ -126,7 +152,11 @@ export function NarratorVoice() {
                 type: 'callback',
                 callback: () => {
                     return Promise.all([
-                        setTitleControls({ visible: false, immediate: false, duration: 1, delay: 0, })
+                        setTextEvent({
+                            type: 'system',
+                            visible: false,
+                            overlay: false,
+                        }),
                     ])
                 },
                 waitForCallback: true,
@@ -135,6 +165,7 @@ export function NarratorVoice() {
                 type: 'callback',
                 callback: () => {
                     return Promise.all([
+                        setTitleControls({ visible: false, immediate: false, duration: 1, delay: 0}),
                         setTextEvent({ 
                             type: 'narrator',
                             visible: true,
@@ -177,7 +208,7 @@ export function NarratorVoice() {
                             type: 'system',
                             visible: true,
                             overlay: false,
-                            text: "Use the constellation to explore my design portfolio. Click everything to expand it! Return home by clicking the titles", 
+                            text: "Use the constellation to explore my design portfolio. Interact with everything to expand it! Return home using the menu in the top left.", 
                             requiresInteraction: true,
                             darkeningVisible: true,
                         })
@@ -993,30 +1024,7 @@ export function NarratorVoice() {
             {
                 type: 'callback',
                 callback: () => {
-
-                    // todo: jank -- not returning completion
-                    setConstellationLabel({ visible: false, immediate: false, duration: 2, delay: 0})
-                    setGlyphControls({ visible: false, immediate: false, duration: 2 })
-                    setJournalMode({ active: false, immediate: true })
-                    setExpandConstellation({ concepts: false, excerpts: false })
-
-
-                    return Promise.all([
-                        setTrueOverlayControls({ visible: false, immediate: false, duration: 5}),
-                        setTitleControls({ visible: true, immediate: false, duration: 1.3, delay: 0.3 }),
-
-                        setOverlayControls({ dark: true, immediate: false, duration: 2, delay: 0}),
-                        setTextEvent({ type: 'system', visible: false, overlay: false }),
-                        setDrifting({active: false }),
-                    ])
                     
-                },
-                waitForCallback: true,
-            },
-            {
-                type: 'callback',
-                callback: () => {
-                    setDeleteStar({ deleted: true, id: createShapeId("andre-vacha") })
                     setTitleControls({ visible: false, immediate: false, duration: 1, delay: 0, })
                     setStarControls({ visible: false, immediate: false, duration: 0.5 })
                 },
@@ -1025,6 +1033,7 @@ export function NarratorVoice() {
                 type: 'callback',
                 callback: () => {
                     return Promise.all([
+                        setDeleteStar({ deleted: true, id: createShapeId("andre-vacha") }),
                         setTextEvent({ 
                             type: 'system',
                             visible: true,
@@ -1068,7 +1077,7 @@ export function NarratorVoice() {
                     ])
                 },
                 waitForCallback: true,
-            }, 
+            },
             {
                 type: 'callback',
                 callback: () => {
@@ -1373,83 +1382,15 @@ export function NarratorVoice() {
                 waitForCallback: true,
             },
         ]
-       
     };
 
-
-    const executeCommands = useCallback((commands, index) => {
-        // const handleKeyDown = (event, setState) => {
-        //     console.log("HANDLING KEYDOWN")
-        //     console.log("EVENT!", event)
-        //     if (event.key === ' ') {
-        //         window.removeEventListener('keydown', handleKeyDown);
-        //         event.preventDefault();
-
-        //         if(commands[index].waitForCompletion) {
-        //             setState({ visible: false, text: "", requiresInteraction: false })
-        //             setTimeout(() => {
-        //                 executeCommands(commands, index + 1);
-        //             }, commands[index].exitDuration || 2000) // currently hard-coded, but can change this
-        //         } else {
-        //             executeCommands(commands, index + 1);
-        //         }  
-        //     }
-        // };
-
-        // if (index >= commands.length) {
-        //     setNarratorState({ visible: false, text: '', requiresInteraction: false });
-        //     setSystemState({ visible: false, text: '', requiresInteraction: false });
-        //     setGameNarratorText({ visible: false, text: '', requiresInteraction: false });
-        //     setGameSystemText({ visible: false, text: '', requiresInteraction: false });
-        //     setNarratorEvent(null);
-        //     return;
-        // }
-
+    const executeCommands = (commands, index) => {
+    
         if(index >= commands.length){
             return;
         }
 
         const command = commands[index];
-
-        // if (command.type === "system" || command.type === "narrator") {
-        //     // to do: fix this, not generalizable to many actors
-        //     const setState = command.type === "system" 
-        //         ? (command.overlay ? setGameSystemText : setSystemState) 
-        //         : (command.overlay ? setGameNarratorText : setNarratorState);
-
-        //     const setOtherState = command.type === "system" 
-        //         ? (command.overlay ? setGameNarratorText : setNarratorState) 
-        //         : (command.overlay ? setGameSystemText : setSystemState);
-
-        //     setOtherState({ visible: false, text: '', requiresInteraction: false });
-        //     setState({ visible: true, text: command.text, requiresInteraction: command.requiresInteraction, 
-        //                 darkeningVisible: command.darkeningVisible, 
-        //                 darkeningDuration: command.darkeningDuration });
-
-        //     if (command.requiresInteraction) {
-        //         window.addEventListener('keydown', (event) => handleKeyDown(event, setState));
-            
-        //     } else if (command.waitForCondition) {
-        //         const checkCondition = () => {
-        //             if (command.waitForCondition()) {
-        //                 setState({ visible: false, text: '', requiresInteraction: false });
-        //                 setTimeout(() => {
-        //                     executeCommands(commands, index + 1);
-        //                 }, command.waitConditionTime || 1000);
-        //             } else {
-        //                 setTimeout(checkCondition, 200);
-        //             }
-        //         };
-        //         checkCondition();
-        //     } else if (command.duration) {
-        //         setTimeout(() => {
-        //             setState({ visible: false, text: '', requiresInteraction: false });
-        //             executeCommands(commands, index + 1);
-        //         }, command.duration);
-        //     } else {
-        //         console.error("Command was incorrectly specified: no interaction, wait condition or duration provided");
-        //     }
-        // }
 
         console.log("COMMANDS", commands)
         console.log("COMMAND", command)
@@ -1481,23 +1422,22 @@ export function NarratorVoice() {
             else {
                 if (command.waitForCallback) {
                     command.callback().then(() => {
-                        console.log('executing next command')
                         executeCommands(commands, index + 1);
                     });
                 } else {
-                    command.callback()
-                    executeCommands(commands, index + 1);
+                    command.callback();
+                        executeCommands(commands, index + 1);
                 }
             } 
             }
             else {
                 console.error("Unknown command type:", command.type);
             }   
-    }, []);
+    };
 
     useEffect(() => {
         if (narratorEvent && narratorOrchestration[narratorEvent]) {
-            // setCommands(narratorOrchestration[narratorEvent]);
+            setCommands(narratorOrchestration[narratorEvent]);
             executeCommands(narratorOrchestration[narratorEvent], 0);
         }
     }, [narratorEvent]);

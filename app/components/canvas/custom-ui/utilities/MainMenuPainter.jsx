@@ -9,9 +9,9 @@ export function MainMenuPainter() {
         {
             name: 'Home',
             onClick: () => {
-                setNarratorEvent('pitch')
+                setNarratorEvent('home')
             },
-            narratorEvent: 'pitch'
+            narratorEvent: 'home'
         },
         {
             name: 'Elevator Pitch + Market Analysis',
@@ -55,7 +55,7 @@ export function MainMenuPainter() {
             <AnimatePresence>
                 
             {menuItems.map((item, idx) => 
-                (item.name === 'Home' || ['pitch', 'conceptual-pitch'].includes(narratorEvent)) &&
+                (item.name === 'Home' || ['pitch', 'conceptual-pitch', 'home'].includes(narratorEvent)) &&
                     <motion.p 
                         className={styles.menuItem} 
                         key={`${idx}-${item.name}`} 

@@ -51,7 +51,7 @@ const subtitleMotionPaths = [
 ]
 
 export function TitlePainter(){
-    const { titleControls } = useStarFireSync();
+    const { titleControls, setNarratorEvent } = useStarFireSync();
     const titleRef = useRef(null);
     const onCompleteRef = useRef(titleControls.onComplete);
     const handleKeyDownRef = useRef();
@@ -74,11 +74,10 @@ export function TitlePainter(){
     };
 
     useEffect(()=>{
-        
         if(!titleControls.visible){
             setNextButtonVisible(false);
         }
-    }, [titleControls.visible]);
+    }, [titleControls]);
 
     const handleKeyDown = useCallback((event) => {
         if (event.key === ' ') {
@@ -86,7 +85,8 @@ export function TitlePainter(){
             setNextButtonVisible(false);
             window.removeEventListener('keydown', handleKeyDownRef.current);
             event.preventDefault();
-            titleControls.onComplete && titleControls.onComplete();
+            setNarratorEvent('conceptual-pitch')
+            // titleControls.onComplete && titleControls.onComplete();
         }
     }, [titleControls]);
 
@@ -99,14 +99,17 @@ export function TitlePainter(){
     }, [titleControls.onComplete]);
 
 
-    useEffect(()=>{
-        if(!titleControls.visible){
-            // onCompleteRef.current && onCompleteRef.current();
+    useEffect(() => {
+        if (titleControls.visible) {
+            window.addEventListener('keydown', handleKeyDownRef.current);
+        } else {
+            window.removeEventListener('keydown', handleKeyDownRef.current);
         }
-        else{
-            window.addEventListener('keydown', handleKeyDownRef.current);   
-        }
-    }, [titleControls])
+
+        return () => {
+            window.removeEventListener('keydown', handleKeyDownRef.current);
+        };
+    }, [titleControls.visible]);
 
     useEffect(() => {
         updateBBox();
