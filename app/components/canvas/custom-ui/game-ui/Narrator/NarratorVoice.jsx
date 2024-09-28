@@ -77,6 +77,7 @@ export function NarratorVoice() {
         drifting, setDrifting,
         deleteStar, setDeleteStar,
         toggleContact, setToggleContact,
+        portfolioControls, setPortfolioControls,
     } = useStarFireSync();
 
     const [narratorState, setNarratorState] = useState({ visible: false, text: '', requiresInteraction: false });
@@ -133,11 +134,12 @@ export function NarratorVoice() {
                 type: 'callback',
                 callback: () => {
 
+                
                     // todo: jank -- not returning completion
                     setDeleteStar({ created: true, id: createShapeId("andre-vacha") })
                     setToggleContact({ visible: false })
                     setConstellationLabel({ visible: false, immediate: false, duration: 2, delay: 0})
-                    setGlyphControls({ visible: false, immediate: false, duration: 2 })
+                    setGlyphControls({ visible: false, immediate: true, duration: 2 })
                     setJournalMode({ active: false, immediate: true })
                     setExpandConstellation({ concepts: false, excerpts: false })
 
@@ -145,6 +147,7 @@ export function NarratorVoice() {
 
 
                     return Promise.all([
+                        setPortfolioControls({ visible: false }),
                         setTrueOverlayControls({ visible: false, immediate: false, duration: 5}),
                         setTitleControls({ visible: true, immediate: false, duration: 1.3, delay: 0.3 }),
 
@@ -295,7 +298,7 @@ export function NarratorVoice() {
                             darkeningVisible: true,
                             requiresInteraction: true,
                         }),
-                        setExpandConstellation({ concepts: true, excerpts: true }),
+                        setExpandConstellation({ concepts: true, excerpts: false }),
 
                     ])
                 },
@@ -304,6 +307,7 @@ export function NarratorVoice() {
             {
                 type: 'callback',
                 callback: () => {
+                    setExpandConstellation({ concepts: false, excerpts: false })
                     return Promise.all([
                         setTextEvent({
                             type: 'system',
@@ -349,7 +353,7 @@ export function NarratorVoice() {
                             overlay: false,
                             textAlign: 'left',
                             headerText: "[3] Understanding Others: Covenants",
-                            text: "The core of Starlight is understanding the ideas of others. This is operationalized through the Covenant system. Covenants are tasks that are set on each portfolio by its creator.  For example, a very simple covenant might require highlighting three sentences from a piece of media that resonate with the viewer, while a very complex covenant might require them to write a comment analyzing one of the core themes. There will be a configurable templated system for creating covenants. The completion status of these covenants will be determined by rule-based systems for simple tasks, LLMs for more complex ones, and optionally by the constellation's creator. In short, covenants are challenges designed to make users demonstrate their understanding of the ideas of the portfolio's creator. By completing a covenant, a user receives a glyph (see below), and can start to develop a relationship with that person. Covenants are a reaction to the issues that emerge from the frictionless nature of most modern social ecosystems.",
+                            text: "The core of Starlight is understanding the ideas of others. This is operationalized through the Covenant system. Covenants are tasks that are set on each portfolio by its creator.  For example, a very simple covenant might require highlighting three sentences from a piece of media that resonate with the viewer, while a very complex covenant might require them to write a comment analyzing one of the core themes. In short, covenants are challenges designed to make users demonstrate their understanding of the ideas of the portfolio's creator. By completing a covenant, a user receives a glyph (more on them soon), and can start to develop a relationship with that person.",
                             darkeningVisible: true,
                             requiresInteraction: true,
                         }),
@@ -367,7 +371,7 @@ export function NarratorVoice() {
                             visible: true,
                             overlay: false,
                             textAlign: 'left',
-                            text: "Glyphs are records of your connections with other people. You might think of them as the analog of friend requests. You receive the glyph of an individual by completing the covenant (challenge of understanding) associated with their constellation. This acts as a permannt record of their portfolio, allowing you to revisit it using your journal whenever you wish. Glyphs can be restored when both people interact with each other's constellations. This allows them to communicate at the campfire -- the beginnings of a friendship.",
+                            text: "Glyphs are records of your connections with other people. You might think of them as an analog of friend requests. You receive the glyph of an individual by completing the covenant (challenge of understanding) associated with their constellation. This acts as a permanent record of their portfolio, allowing you to revisit it using your journal whenever you wish. Glyphs can be restored when you and another person interact with each other's constellations. This allows you to communicate with them at the campfire -- the beginnings of a friendship.",
                             headerText: "[4] Making Connections: Glyphs",
                             darkeningVisible: true,
                             requiresInteraction: true,
@@ -418,7 +422,9 @@ export function NarratorVoice() {
             {
                 type: 'callback',
                 callback: () => {
+                    setGlyphControls({ visible: false, immediate: false, duration: 1 })
                     return Promise.all([
+                        setConstellationLabel({ visible: false, immediate: false, duration: 1 }),
                         setCampfireView({ 
                             active: true, 
                             immediate: false, 
@@ -440,7 +446,7 @@ export function NarratorVoice() {
                             type: 'system',
                             visible: true,
                             overlay: true,
-                            text: "Try looking up", 
+                            text: "Travelling to the campfire...", 
                             waitUntilVisible: true,
                             darkeningVisible: true, 
                             waitCondition: () => {
@@ -1190,7 +1196,24 @@ export function NarratorVoice() {
                             type: 'system',
                             visible: true,
                             overlay: false,
-                            text: "This is a portfolio: a collection of ideas, a record of part of a person.", 
+                            text: "These are portfolios: collections of ideas, records of part of a person.", 
+                            requiresInteraction: true, 
+                            darkeningVisible: false, 
+                        }),
+                        setPortfolioControls({ visible: true })
+                    ])
+                },
+                waitForCallback: true,
+            }, 
+            {
+                type: 'callback',
+                callback: () => {
+                    return Promise.all([
+                        setTextEvent({ 
+                            type: 'system',
+                            visible: true,
+                            overlay: false,
+                            text: "Portfolios are important because they are the vehicle through which we share our thinking. Through them, we refine our ideas, find others who resonate with us, define who we are.", 
                             requiresInteraction: true, 
                             darkeningVisible: false, 
                         })
@@ -1206,23 +1229,7 @@ export function NarratorVoice() {
                             type: 'system',
                             visible: true,
                             overlay: false,
-                            text: "They’re important because they are the vehicle through which we share our thinking. Through them, we refine our ideas, find others who resonate with us, define who we are.", 
-                            requiresInteraction: true, 
-                            darkeningVisible: false, 
-                        })
-                    ])
-                },
-                waitForCallback: true,
-            }, 
-            {
-                type: 'callback',
-                callback: () => {
-                    return Promise.all([
-                        setTextEvent({ 
-                            type: 'system',
-                            visible: true,
-                            overlay: false,
-                            text: "This portfolio is quite bad at achieving its ends: it requires a significant amount of effort and technical knowledge to make compelling, it is quite static and boring to navigate, and very rarely does it foster connection, wasting away in a static website on some isolated corner of the internet.", 
+                            text: "These portfolios are quite bad at achieving their ends:they requires a significant amount of effort and technical & design skill to make compelling, they are static and boring to navigate, and very rarely do they foster connection, wasting away on some isolated corner of the internet.", 
                             requiresInteraction: true, 
                             darkeningVisible: false, 
                         })
@@ -1238,6 +1245,7 @@ export function NarratorVoice() {
                     setDeleteStar({ created: true, id: createShapeId("andre-vacha") })
 
                     return Promise.all([
+                        setPortfolioControls({ visible: false }),
                         setTextEvent({
                             type: 'system',
                             visible: false,

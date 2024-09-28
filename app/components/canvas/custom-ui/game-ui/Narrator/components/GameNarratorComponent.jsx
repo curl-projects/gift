@@ -16,8 +16,11 @@ const GameNarratorComponent = ({ visible, text, headerText, requiresInteraction,
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 4 }}
-                    onAnimationComplete={() => {
+                    onAnimationComplete={(animation) => {
                         onComplete && onComplete();
+                        if(animation && animation.opacity === 1){
+                            setNextButtonVisible(true)
+                        }
                     }}
                 >
                     <div className={styles.narratorContainerInner}>

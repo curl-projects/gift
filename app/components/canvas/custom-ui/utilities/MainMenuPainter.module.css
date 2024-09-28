@@ -4,7 +4,7 @@
     left: 60px;
     z-index: 21000000000;
     display: flex;
-    gap: 60px;
+    gap: 40px;
     max-width: 90vw;
 }
 
@@ -21,6 +21,9 @@
     transition: color 0.3s ease-in-out, text-decoration 0.3s ease-in-out;
     position: relative; /* Ensure this is applied to each menu item */
     overflow: hidden; /* Ensure this is applied to each menu item */
+    max-width: 10vw;
+    text-align: center;
+    justify-content: center;
 }
 
 

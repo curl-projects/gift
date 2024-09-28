@@ -2,6 +2,7 @@ import { useRef, useState, useEffect, useCallback } from "react"
 import styles from "./TitlePainter.module.css"
 import { motion, AnimatePresence } from "framer-motion"
 import { useStarFireSync } from "~/components/synchronization/StarFireSync";
+import { isSafari, isChrome, isFirefox, isEdge, isOpera } from 'react-device-detect'
 
 const motionPaths = [
     "M 0 64.3 L 1.8 63 Q 3.6 65.4 5.7 67.35 Q 7.8 69.3 10.4 70.75 Q 13 72.2 16.25 72.95 A 27.58 27.58 0 0 0 19.528 73.488 Q 21.205 73.667 23.093 73.695 A 47.827 47.827 0 0 0 23.8 73.7 Q 33.4 73.7 38.65 69.45 A 13.685 13.685 0 0 0 43.425 61.527 A 21.25 21.25 0 0 0 43.9 56.9 A 22.808 22.808 0 0 0 43.694 53.747 Q 43.463 52.094 42.973 50.701 A 12.441 12.441 0 0 0 42.55 49.65 A 14.216 14.216 0 0 0 40.659 46.571 A 12.162 12.162 0 0 0 38.95 44.85 A 16.609 16.609 0 0 0 34.799 42.372 A 19.397 19.397 0 0 0 33.7 41.95 Q 30.7 40.9 27.5 40.4 L 19.5 39.1 Q 14.2 38.2 10.75 36.45 A 20.901 20.901 0 0 1 7.867 34.699 A 15.258 15.258 0 0 1 5.25 32.3 Q 3.2 29.9 2.4 27 Q 1.6 24.1 1.6 21 A 21.112 21.112 0 0 1 1.941 17.117 A 15.748 15.748 0 0 1 3.15 13.3 Q 4.7 10 7.55 7.85 A 18.518 18.518 0 0 1 11.674 5.526 A 23.548 23.548 0 0 1 14.4 4.6 A 30.074 30.074 0 0 1 19.185 3.711 A 38.765 38.765 0 0 1 23.3 3.5 Q 29.356 3.5 33.711 4.871 A 19.688 19.688 0 0 1 36.95 6.2 A 23.512 23.512 0 0 1 41.91 9.632 A 19.813 19.813 0 0 1 45 13.2 L 43.3 14.6 Q 40.2 10.1 35.4 7.8 Q 31.641 5.999 26.225 5.608 A 43.482 43.482 0 0 0 23.1 5.5 Q 14 5.5 8.9 9.35 A 12.394 12.394 0 0 0 4.203 16.925 A 19.431 19.431 0 0 0 3.8 21 Q 3.8 25.1 5.1 27.9 A 13.699 13.699 0 0 0 7.434 31.434 A 12.597 12.597 0 0 0 8.6 32.55 A 16.453 16.453 0 0 0 13.118 35.229 A 18.852 18.852 0 0 0 13.7 35.45 A 31.725 31.725 0 0 0 18.677 36.793 A 35.957 35.957 0 0 0 19.9 37 L 27.9 38.3 A 41.36 41.36 0 0 1 31.751 39.109 Q 34.731 39.894 36.95 41.05 A 20.869 20.869 0 0 1 39.76 42.793 Q 41.375 43.994 42.5 45.4 A 15.21 15.21 0 0 1 44.958 49.727 A 14.279 14.279 0 0 1 45.3 50.8 Q 46.1 53.7 46.1 56.8 A 23.166 23.166 0 0 1 45.449 62.468 A 15.157 15.157 0 0 1 40.05 70.95 A 20.973 20.973 0 0 1 32.515 74.639 Q 28.621 75.7 23.8 75.7 A 42.688 42.688 0 0 1 19.707 75.513 Q 17.513 75.302 15.6 74.85 A 29.893 29.893 0 0 1 11.787 73.688 A 24.283 24.283 0 0 1 9.15 72.5 Q 6.3 71 4.1 68.9 Q 1.9 66.8 0 64.3 Z",
@@ -126,8 +127,7 @@ export function TitlePainter(){
             <div className={styles.titlePainter}>
                <svg 
                     className={styles.title}
-                    width="100vw" // Set the desired width
-                    height="100vh" // Set the desired 
+                    style={{ width: '100vw', height: '100vh' }} // Use inline styles
                     viewBox="0 0 600 600"
                     preserveAspectRatio="xMidYMid meet" // Center the SVG
                     // filter="url(#pencilTexture4)"
@@ -143,15 +143,49 @@ export function TitlePainter(){
                             <stop offset="100%" style={{ stopColor: "#FF6F61", stopOpacity: 1 }} />
                         </linearGradient>
                         <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-                            <feGaussianBlur stdDeviation="3.5" result="coloredBlur"/>
+                            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
                             <feMerge>
                                 <feMergeNode in="coloredBlur"/>
                                 <feMergeNode in="SourceGraphic"/>
                             </feMerge>
 				        </filter>
                         <filter id="combined">
-                            <feTurbulence type="fractalNoise" baseFrequency=".05" numOctaves="4" />
-                            <feDisplacementMap in="SourceGraphic" scale="4" />
+                        <feTurbulence
+                            type="fractalNoise"
+                            baseFrequency="0.05"
+                            numOctaves="4"
+                        result="turbulence"
+                        />
+                        <feDisplacementMap
+                            in="SourceGraphic"
+                            in2="turbulence"
+                            scale="4"
+                            xChannelSelector="R"
+                            yChannelSelector="G"
+                        />
+                        </filter>
+                        <filter id="safariCombined" x="-50%" y="-50%" width="200%" height="200%">
+                        <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blurred" />
+                            <feTurbulence 
+                                type="fractalNoise" 
+                                baseFrequency="0.05" 
+                                numOctaves="4" 
+                                result="turbulence" 
+                            />
+
+                            <feDisplacementMap 
+                                in="blurred" 
+                                in2="turbulence" 
+                                scale="4" 
+                                xChannelSelector="R" 
+                                yChannelSelector="G" 
+                                result="displaced"
+                            />
+
+                            <feMerge>
+                                <feMergeNode in="displaced"/>
+                            </feMerge>
+
                         </filter>
                     </defs>
                     <g id="svgGroup" strokeLinecap="round" fillRule="evenodd" 
@@ -162,7 +196,7 @@ export function TitlePainter(){
                         {motionPaths.map((path, idx) => 
                        
                              <motion.path 
-                             filter="url(#glow) url(#combined)"
+                             filter={isSafari ? "url(#combined)" : "url(#combined) url(#glow)"}
                              key={`$title-path-${idx}-${titleControls.visible}`}
                              strokeWidth="3px"
                              initial={{ pathLength: 0, fillOpacity: 0, opacity: 1 }}
@@ -228,7 +262,7 @@ export function TitlePainter(){
                     transition={{ duration: 1, delay: 3.5 }}
                 >
                     <div className={styles.subtitle}>
-                        {toggleContact.visible ? 'developing.starlight@gmail.com' : 'Beautiful Social Portfolios [v0.1]'}
+                        {toggleContact.visible ? 'developing.starlight@gmail.com' : 'A Game about Social Portfolios, Discovery & Connection [v0.1]'}
                     </div>
                 </motion.div>
             {/* second version to create contrast */}
@@ -247,7 +281,7 @@ export function TitlePainter(){
                     <div className={styles.subtitle} style={{
                         color: 'rgba(255, 255, 255, 0.2)'
                     }}>
-                        {toggleContact.visible ? 'developing.starlight@gmail.com' : 'Beautiful Social Portfolios [v0.1]'}
+                        {toggleContact.visible ? 'developing.starlight@gmail.com' : 'A Game about Social Portfolios, Discovery & Connection [v0.1]'}
                     </div>
                 </motion.div>
             <AnimatePresence>

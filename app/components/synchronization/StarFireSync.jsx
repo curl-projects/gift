@@ -13,6 +13,8 @@ const StarFireSyncProvider = ({ children }) => {
     const [commandEvent, _setCommandEvent] = useState(null);
     const [animationEvent, _setAnimationEvent] = useState(null);
 
+    const [portfolioControls, _setPortfolioControls] = useState({ visible: false });
+
     const [cloudControls, _setCloudControls] = useState({ visible: true, immediate: true });
     const [starControls, _setStarControls] = useState({ visible: true, immediate: true });
     const [glyphControls, _setGlyphControls] = useState({ visible: false, immediate: false });
@@ -76,6 +78,7 @@ const StarFireSyncProvider = ({ children }) => {
     const setJournalMode = useStateWithPromise(_setJournalMode);
     const setDrifting = useStateWithPromise(_setDrifting);
     const setToggleContact = useStateWithPromise(_setToggleContact);
+    const setPortfolioControls = useStateWithPromise(_setPortfolioControls);
 
     const triggerEffect = useCallback(({domain, selector, effect, callback}) => {
         console.log("HELLO")
@@ -109,6 +112,7 @@ const StarFireSyncProvider = ({ children }) => {
                 journalMode, setJournalMode,
                 drifting, setDrifting,
 
+                portfolioControls, setPortfolioControls,
 
                 textEvent, setTextEvent,
                 gameSystemText, setGameSystemText,

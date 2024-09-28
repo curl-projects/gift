@@ -90,11 +90,6 @@ New To Dos:
 - [] narrator face blips out 
 - [] disable camera arrow keys
 
-
-
-
-
-
 After Roadtrip To Dos:
 - [x] make starlight disappear more quickly BLOCKED -- WORKAROUND
 - [x] upload elevator pitch
@@ -178,4 +173,19 @@ FINAL CHECKLIST:
     - [] mechanics transition to home doesn't work
 
 
-    - transitions don't 
+    - transitions don't
+    
+
+- SAFARI BUGS
+    - [] svg height and width
+    - [] svg roughness doesn't apply
+        - title component
+        - journal component
+
+
+Breaking Fixes:
+
+
+Non-Essential Bugs:
+- prevent zoom on page when hovering over media object
+- fix starlight on mobile

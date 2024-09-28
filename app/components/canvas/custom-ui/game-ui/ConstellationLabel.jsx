@@ -24,6 +24,9 @@ export function ConstellationLabel({ name }){
                 duration: constellationLabel.immediate ? 0 : (constellationLabel.duration || 1),
                 delay: constellationLabel.delay || 0,
             }}
+            style={{
+                pointerEvents: constellationLabel.visible ? 'all' : 'none',
+            }}
             // onAnimationStart = {() => {
             //     console.log('started')
             //     setTimeout(()=>{

@@ -197,7 +197,7 @@ export function Pitch(){
                                 </InkBleed>,
                 }[script.type]
             ))}
-            <div className={journalStyles.learnMoreContainer}>
+            {/* <div className={journalStyles.learnMoreContainer}>
                 <InkBleed
                     divKey={`journal-learn-more`}
                     initialBlur={4}
@@ -213,7 +213,7 @@ export function Pitch(){
                         Learn More
                     </h1>
                 </InkBleed>
-            </div>
+            </div> */}
         </div>
     )
 }

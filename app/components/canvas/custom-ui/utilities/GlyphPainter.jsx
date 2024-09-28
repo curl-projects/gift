@@ -13,8 +13,7 @@ export function GlyphPainter(){
             <div className={styles.glyphPainter}>
                 <svg 
                     className={styles.glyph}
-                    width="100vw" // Set the desired width
-                    height="100vh" // Set the desired 
+                    style={{ width: '100vw', height: '100vh' }} // Use inline styles
                     viewBox="0 0 250 250"
                     preserveAspectRatio="xMidYMid meet" // Center the SVG
                     filter="url(#pencilTexture4)"

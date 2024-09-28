@@ -65,8 +65,8 @@
 
 .subtitleContainer {
     position: fixed;
-    bottom: 57vh; /* Adjust as needed */
-    left: -40vh;
+    bottom: 55.5vh; /* Adjust as needed */
+    left: 0vh;
     right: 0;
     z-index: 1000;
     display: flex;

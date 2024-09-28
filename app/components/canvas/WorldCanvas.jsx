@@ -16,6 +16,7 @@ import { TitlePainter } from "~/components/canvas/custom-ui/utilities/TitlePaint
 import { JournalPainter } from "~/components/canvas/custom-ui/utilities/JournalPainter"
 import { ResizePainter } from "~/components/canvas/custom-ui/utilities/ResizePainter"
 import { CovenantPainter } from "~/components/canvas/custom-ui/utilities/CovenantPainter"
+import { ImagePainter } from "~/components/canvas/custom-ui/utilities/ImagePainter.jsx"
 import { ToolsMenu } from "~/components/canvas/custom-ui/utilities/ToolsMenu"
 import { NarrationPainter } from "~/components/canvas/custom-ui/game-ui/Narrator/NarrationPainter"
 import { GameController } from "~/components/canvas/custom-ui/game-ui/GameControls/GameController"
@@ -206,6 +207,7 @@ export default function WorldCanvas() {
                             />
                             <GlyphPainter />
                             <TitlePainter />
+                            <ImagePainter />
                             <JournalPainter />
                             <MainMenuPainter />
                             <CovenantPainter />

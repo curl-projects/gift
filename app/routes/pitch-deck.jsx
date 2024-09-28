@@ -6,6 +6,8 @@ import { useStarFireSync } from "~/components/synchronization/StarFireSync";
 import { OverlayPainter } from "~/components/synchronization/sync-ui/OverlayPainter";
 import { BrowserView, MobileView, isBrowser, isMobile } from 'react-device-detect';
 import { MobileStarlight } from "~/components/misc/MobileStarlight"
+import { BrowserWarning } from "~/components/synchronization/browser-sync/BrowserWarning"
+import { DisclaimerPainter } from "~/components/canvas/custom-ui/utilities/DisclaimerPainter"
 
 export async function loader() {
 
@@ -27,6 +29,8 @@ export default function PitchDeck(){
         </MobileView>
         <BrowserView>
             <>
+                <DisclaimerPainter />
+                <BrowserWarning />
                 <OverlayPainter />
                 <div id='constellation-canvas' style={{
                 height: '100vh',

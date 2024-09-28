@@ -11,6 +11,7 @@ const pages = [
     { page: 'elevator-pitch', 
       content: 'elevator-pitch' },
 ]
+
 export function ModernJournal({ shape, journalMode, contentRef }){
     const data = useLoaderData();
     const converter = new showdown.Converter();
@@ -19,7 +20,12 @@ export function ModernJournal({ shape, journalMode, contentRef }){
     useEffect(()=>{
       console.log("DATA:", data.journalEntries)
       const page = data.journalEntries.filter(entry => entry.type === 'journalPage').find(page => page.url === journalMode.page)
+      if(page){
         setHtmlContent(converter.makeHtml(page.content) || "")
+      }
+      else{
+        setHtmlContent("")
+      }
     }, [data])
 
     const editor = useEditor({

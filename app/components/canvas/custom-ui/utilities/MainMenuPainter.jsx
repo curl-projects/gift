@@ -14,7 +14,7 @@ export function MainMenuPainter() {
             narratorEvent: 'home'
         },
         {
-            name: 'Elevator Pitch + Market Analysis',
+            name: 'Elevator Pitch',
             onClick: () => {
                 setNarratorEvent('elevator-pitch')
             },
@@ -42,7 +42,7 @@ export function MainMenuPainter() {
             narratorEvent: 'technical-foundations'
         },
         {
-            name: "Why is this Important?",
+            name: "Why is Starlight Important?",
             onClick: () => {
                 setNarratorEvent('justification')
             },
@@ -62,7 +62,7 @@ export function MainMenuPainter() {
             <AnimatePresence>
                 
             {menuItems.map((item, idx) => 
-                (item.name === 'Home' || ['pitch', 'conceptual-pitch', 'home'].includes(narratorEvent)) &&
+                (item.name === 'Home' || ['home'].includes(narratorEvent)) &&
                     <motion.p 
                         className={styles.menuItem} 
                         key={`${idx}-${item.name}`} 

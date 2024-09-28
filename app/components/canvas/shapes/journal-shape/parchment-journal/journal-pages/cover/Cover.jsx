@@ -5,6 +5,8 @@ import { motion } from "framer-motion"
 
 export function Cover(){
     
+    const randomDelay = 0.2
+    
     const ringVariants = {
         hidden: { scale: 0, x: "-50%", y: "-50%" },
         visible: (delay = 0) => ({

@@ -1,0 +1,38 @@
+.browserWarning{
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 40px;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 100000000;
+    pointer-events: none;
+}
+
+.browserWarningContent{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: left;
+}
+
+.browserWarningText{
+    color: white;
+    font-family: 'Handjet', cursive;
+    font-size: 34px;
+    font-weight: 300;
+}
+
+.closeButton{
+    position: absolute;
+    top: 10px;
+    right: 30px;
+    color: white;
+    font-family: 'Handjet', cursive;
+    font-size: 34px;
+    font-weight: 300;
+    cursor: pointer;
+    text-decoration: underline;
+    pointer-events: all;
+}

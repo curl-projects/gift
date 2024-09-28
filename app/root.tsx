@@ -12,6 +12,7 @@ import { StarFireSync } from "~/components/synchronization/StarFireSync";
 export const links = () => {
   return [
     { rel: "stylesheet", href: styles },
+    { rel: "preconnect", href: "tldraw/tldraw.css" },
     // { rel: "preconnect", href: "https://fonts.googleapis.com" },
     // { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
     // { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Inter:wght@500;700&display=swap" },

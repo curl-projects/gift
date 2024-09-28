@@ -58,8 +58,8 @@ body {
   font-family: "IBM Plex Mono", monospace;
   font-weight: 400;
   letter-spacing: -0.003em;
-  line-height: 18px;
-  font-size: 13px;
+  line-height: 20px;
+  font-size: 16px;
   margin-bottom: 10px;
   animation: fadeIn 1s ease-in-out; /* Added animation */
 }
@@ -272,3 +272,27 @@ ol {
     background: linear-gradient(to right, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0.1) 100%);
     background-size: 2000px 100%;
   } */
+
+[p] ~ grammarly-extension,
+input ~ grammarly-extension,
+textarea ~ grammarly-extension {
+  display: none;
+}
+
+[contenteditable=true] ~ grammarly-extension,
+input ~ grammarly-extension,
+textarea ~ grammarly-extension {
+  display: none;
+}
+
+
+input,textarea,div[contenteditable=true] {
+  data-gramm_editor: "false";
+  data-enable-grammarly: "false";
+  data-gramm: "false";
+
+}
+
+grammarly-extension {
+  display: none;
+}
