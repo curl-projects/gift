@@ -16,11 +16,14 @@ export function ImagePainter() {
                 const viewportWidth = window.innerWidth;
                 const viewportHeight = window.innerHeight;
 
-                const scaling = 3;
+                const scaling = Math.min(viewportWidth / 1920, viewportHeight / 1080, 1);
+                console.log("scaling", scaling, viewportWidth / 1920, viewportHeight / 1080)
+
+
                 const images = [
-                    { src: "/images/portfolio1.png", id: "portfolio1", h: 900 / scaling, w: 1400 / scaling, x: viewportWidth * 0.45, y: viewportHeight * 0.3 },
-                    { src: "/images/portfolio2.png", id: "portfolio2", h: 811 / scaling, w: 1000 / scaling, x: viewportWidth * 0.2, y: viewportHeight * 0.4 },
-                    { src: "/images/portfolio3.png", id: "portfolio3", h: 550 / scaling, w: 900 / scaling, x: viewportWidth * 0.15, y: viewportHeight * 0.2 },
+                    { src: "/images/portfolio1.png", id: "portfolio1", h: 900 * scaling, w: 1400 * scaling, x: viewportWidth * 0.45, y: viewportHeight * 0.3 },
+                    { src: "/images/portfolio2.png", id: "portfolio2", h: 811 * scaling, w: 1000 * scaling, x: viewportWidth * 0.2, y: viewportHeight * 0.4 },
+                    { src: "/images/portfolio3.png", id: "portfolio3", h: 550 * scaling, w: 900 * scaling, x: viewportWidth * 0.15, y: viewportHeight * 0.2 },
                 ];
 
                 for (const image of images) {

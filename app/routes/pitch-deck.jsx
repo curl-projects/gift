@@ -4,7 +4,7 @@ import { getWorldContent, getJournalEntries } from "~/models/world-model.server"
 import { json } from "@remix-run/node";
 import { useStarFireSync } from "~/components/synchronization/StarFireSync";
 import { OverlayPainter } from "~/components/synchronization/sync-ui/OverlayPainter";
-import { BrowserView, MobileView, isBrowser, isMobile } from 'react-device-detect';
+import { isBrowser, isMobile, isTablet } from 'react-device-detect';
 import { MobileStarlight } from "~/components/misc/MobileStarlight"
 import { BrowserWarning } from "~/components/synchronization/browser-sync/BrowserWarning"
 import { DisclaimerPainter } from "~/components/canvas/custom-ui/utilities/DisclaimerPainter"
@@ -22,12 +22,14 @@ export async function loader() {
 
 export default function PitchDeck(){
     const { campfireView } = useStarFireSync();
-    return(
-        <>
-        <MobileView>
+
+    if(isMobile){
+        return(
             <MobileStarlight />
-        </MobileView>
-        <BrowserView>
+        )
+    }
+    else if(isBrowser || isTablet){
+        return(
             <>
                 <DisclaimerPainter />
                 <BrowserWarning />
@@ -57,7 +59,7 @@ export default function PitchDeck(){
                 <PitchScene/>
                 </div>        
             </>
-        </BrowserView>
-        </>
-    )
+        )
+    }
+    else return null;
 }

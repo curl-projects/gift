@@ -142,6 +142,8 @@ export function NarratorVoice() {
                     setGlyphControls({ visible: false, immediate: true, duration: 2 })
                     setJournalMode({ active: false, immediate: true })
                     setExpandConstellation({ concepts: false, excerpts: false })
+                    const excerpts = editor.getCurrentPageShapes().filter(shape => shape.type === 'excerpt');
+                    editor.deleteShapes(excerpts);
 
                     zoomToShape(editor, "andre-vacha")
 

@@ -5,16 +5,6 @@ import { isChrome, isSafari, isEdge, isFirefox, isOpera, isIE } from 'react-devi
 export function BrowserWarning(){
     const [isVisible, setIsVisible] = useState(true);
 
-
-    useEffect(()=>{
-        console.warn('isChrome', isChrome)
-        console.warn('isSafari', isSafari)
-        console.warn('isEdge', isEdge)
-        console.warn('isFirefox', isFirefox)
-        console.warn('isOpera', isOpera)
-        console.warn('isIE', isIE)
-    }, [])
-
     if (!isVisible || isChrome) return null;
 
     if(isSafari){
