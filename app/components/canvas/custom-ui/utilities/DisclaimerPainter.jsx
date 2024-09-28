@@ -6,7 +6,7 @@ export function DisclaimerPainter(){
             <p>If something breaks, try refreshing or view the backup
                 <a 
                     className={styles.disclaimerLink}
-                    href="https://starlight-static.vercel.app/" 
+                    href="https://drive.google.com/drive/folders/10m2ikjjGyw44GsVYDIp8tcAtGKgGONyR?usp=sharing" 
                     target="_blank">here</a>.
             </p>
         </div>
