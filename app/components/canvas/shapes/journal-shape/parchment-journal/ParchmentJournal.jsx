@@ -8,7 +8,7 @@ import { JournalMenu } from './journal-menu/JournalMenu.jsx'
 // pages
 import {Cover} from './journal-pages/cover/Cover';
 import {Pitch} from './journal-pages/pitch/Pitch';
-
+import {People} from './journal-pages/people/People';
 
 export function ParchmentJournal({ shape, journalMode, contentRef }){
     const [inkVisible, setInkVisible] = useState(false);
@@ -81,7 +81,7 @@ export function ParchmentJournal({ shape, journalMode, contentRef }){
             
                 {inkVisible && (
                     <>
-                    {/* <JournalMenu page={page} setPage={setPage}/> */}
+                    <JournalMenu page={page} setPage={setPage}/>
                     {/* <InkBleed 
                         initialBlur={200}
                         delay={0}
@@ -95,6 +95,7 @@ export function ParchmentJournal({ shape, journalMode, contentRef }){
                                 {
                                     'cover': <Cover key='cover'/>,
                                     'pitch': <Pitch key='pitch'/>,
+                                    'people': <People key='people'/>,
                                 }[page]
                             }
                         </AnimatePresence>

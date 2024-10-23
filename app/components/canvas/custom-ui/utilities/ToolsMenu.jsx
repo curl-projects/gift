@@ -20,11 +20,12 @@ export function ToolsMenu(){
     const handleJournalClick = () => {
         console.log("JOURNAL CLICK MODE:", journalMode);
         // setJournalMode({ active: !journalMode.active, page: journalMode.page || "elevator-pitch", variant: journalMode.variant || 'modern'});
-        setJournalMode({ active: !journalMode.active, page: "pitch", variant: "parchment"});
+        setJournalMode({ active: !journalMode.active, page: "people", variant: "parchment"});
     };
 
     const handleAstrolabeClick = () => {
-        setDrifting({ active: !drifting.active });
+        // setDrifting({ active: !drifting.active });
+        console.log("astrolabe")
 
     };
 
@@ -56,7 +57,7 @@ export function ToolsMenu(){
             icon: <GiAstrolabe />,
             active: drifting.active,
             onClick: handleAstrolabeClick,
-            tooltip: 'Astrolabe'
+            tooltip: 'Astrolabe (soon)'
         },
         {
             id: 'right',

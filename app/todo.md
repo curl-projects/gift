@@ -1,3 +1,16 @@
+*** CURRENT BUGS & FEATURES ***
+1. User navigation
+    a. display people in the journal
+        - separate out the two journal types
+    b. clicking their entry in the journal transitions you to the star
+
+
+
+*** OLD BUGS & FEATURES ***
+
+
+
+
  Orchestration New Functionality:
 - [x] change targeting to allow for position
 - [] generate floating text on ray intersection of character
