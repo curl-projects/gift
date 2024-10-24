@@ -16,7 +16,7 @@ import Placeholder from '@tiptap/extension-placeholder'
 import styles from './ExcerptShapeUtil.module.css';
 import { motion, useAnimate } from 'framer-motion';
 import { TypeAnimation } from 'react-type-animation';
-import { useLoaderData } from "@remix-run/react"
+import { useDataContext } from '~/components/synchronization/DataContext';
 import ExcerptMediaEditor from './ExcerptMediaEditor';
 import { updateThreadBindingProps } from '~/components/canvas/bindings/thread-binding/ThreadBindingUtil';
 
@@ -75,7 +75,7 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 
 	component(shape: ExcerptShape) {
 		const shapeRef = useRef();
-		const data = useLoaderData();
+		const data = useDataContext();
 		const isOnlySelected = this.editor.getOnlySelectedShapeId() === shape.id;
 		const selectedShapeIds = this.editor.getSelectedShapeIds();
 		const [scope, animate] = useAnimate(); // Use animation controls

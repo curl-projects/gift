@@ -1,0 +1,104 @@
+import { PitchScene } from "~/components/environment/PitchScene/PitchScene";
+import WorldCanvas from "~/components/canvas/WorldCanvas";
+// import { getWorldContent, getJournalEntries } from "~/models/world-model.server";
+// import { json } from "@remix-run/node";
+import { useEffect } from "react";
+import { useStarFireSync } from "~/components/synchronization/StarFireSync";
+import { OverlayPainter } from "~/components/synchronization/sync-ui/OverlayPainter";
+import { isBrowser, isMobile, isTablet } from 'react-device-detect';
+import { MobileStarlight } from "~/components/misc/MobileStarlight"
+import { BrowserWarning } from "~/components/synchronization/browser-sync/BrowserWarning"
+import { DisclaimerPainter } from "~/components/canvas/custom-ui/utilities/DisclaimerPainter"
+import { useQuery } from '@tanstack/react-query';
+import { useParams } from '@remix-run/react';
+import { DataProvider } from '~/components/synchronization/DataContext';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+export async function loader() {
+    return null;
+  }
+
+export default function PitchDeck(){
+    const { campfireView } = useStarFireSync();
+
+    const { person } = useParams();
+    // const person = "andre-vacha"
+
+    console.log("PERSON:", person)
+
+    
+    const { data, isLoading, error } = useQuery({
+        queryKey: ['worldContent', person],
+        queryFn: async () => {
+            const response = await fetch(`/data/${person}`);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        }
+    });
+
+    useEffect(() => {
+        console.log("DATA:", data)
+    }, [data])
+
+    useEffect(() => {
+        console.log("ERROR:", error)
+    }, [error])
+
+    if(data){
+        if(isMobile){
+            return(
+                <MobileStarlight />
+            )
+        }
+        else if(isBrowser || isTablet){
+            return(
+                <>
+                <DataProvider value={data}>
+                    <DisclaimerPainter />
+                    <BrowserWarning />
+                    <OverlayPainter />
+                    <div id='constellation-canvas' style={{
+                    height: '100vh',
+                    width: '100vw',
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    zIndex: 0,
+                    overflow: 'hidden',
+                    }}>
+                        <WorldCanvas />
+                    </div>
+                    <div 
+                    style={{
+                    height: '100vh',
+                    width: '100vw',
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    zIndex: 0,
+                    overflow: 'hidden',
+                    pointerEvents: campfireView?.active ? 'unset' : 'none',
+                    }}>
+                        <PitchScene/>
+                    </div>   
+                </DataProvider>     
+                </>
+            )
+        }
+        else return null;
+    }
+    else{
+        return  <div style={{
+            backgroundColor: 'black',
+            height: '100vh',
+            width: '100vw',
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            zIndex: 0,
+        }}></div>
+    }
+  
+}

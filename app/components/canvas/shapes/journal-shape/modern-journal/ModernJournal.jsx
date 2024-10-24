@@ -4,7 +4,7 @@ import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Link from "@tiptap/extension-link";
 import * as showdown from 'showdown';
-import { useLoaderData } from '@remix-run/react';
+import { useDataContext } from '~/components/synchronization/DataContext';
 import { JournalThread } from '~/components/canvas/shapes/journal-shape/parchment-journal/journal-thread/JournalThread.jsx'
 
 const pages = [
@@ -13,7 +13,7 @@ const pages = [
 ]
 
 export function ModernJournal({ shape, journalMode, contentRef }){
-    const data = useLoaderData();
+    const data = useDataContext();
     const converter = new showdown.Converter();
     const [htmlContent, setHtmlContent] = useState("");
 

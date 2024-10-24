@@ -1,5 +1,6 @@
 import { useState, useLayoutEffect, useEffect, useMemo } from 'react';
-import { useNavigation, useLoaderData, useRouteError } from '@remix-run/react';
+import { useNavigation, useRouteError } from '@remix-run/react';
+import { useDataContext } from '~/components/synchronization/DataContext';
 
 import _ from 'lodash'
 import { Tldraw, createTLStore, defaultShapeUtils, defaultBindingUtils, DefaultSpinner, getSnapshot, loadSnapshot, useEditor, createShapeId, useValue } from 'tldraw';
@@ -61,7 +62,7 @@ import { createBoundThread, hasExistingThread } from '~/components/canvas/helper
 
 export default function WorldCanvas() {
     const [editor, setEditor] = useState(null)
-    const data = useLoaderData();
+    const data = useDataContext()
     const navigation = useNavigation();
     const error = useRouteError();
 

@@ -202,3 +202,7 @@ Breaking Fixes:
 Non-Essential Bugs:
 - prevent zoom on page when hovering over media object
 - fix starlight on mobile
+
+
+Notes:
+- Use location to read URL, not remix

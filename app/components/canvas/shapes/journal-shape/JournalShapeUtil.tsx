@@ -8,7 +8,8 @@ import {
 } from '@tldraw/editor'
 
 import { T, createShapeId } from 'tldraw';
-import { useLoaderData } from '@remix-run/react';
+import { useDataContext } from '~/components/synchronization/DataContext';
+
 import { useCallback, useState, useEffect, useRef, useLayoutEffect, useMemo } from 'react'
 import { EditorContent, useEditor } from '@tiptap/react';
 import { Paragraph } from '@tiptap/extension-paragraph';
@@ -73,7 +74,7 @@ export class JournalShapeUtil extends BaseBoxShapeUtil<JournalShape> {
 	component(shape: JournalShape) {
         const [scope, animate] = useAnimate();
 		const bounds = this.editor.getShapeGeometry(shape).bounds
-		const data: any = useLoaderData();
+		const data: any = useDataContext();
         const contentRef = useRef<HTMLDivElement>(null);
         const { journalMode } = useStarFireSync()
 

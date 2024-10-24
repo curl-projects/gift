@@ -8,7 +8,8 @@ import {
 } from '@tldraw/editor'
 
 import { T, createShapeId } from 'tldraw';
-import { useLoaderData, useFetcher } from '@remix-run/react';
+import { useFetcher } from '@remix-run/react';
+import { useDataContext } from '~/components/synchronization/DataContext';
 import { useCallback, useState, useEffect, useRef, useLayoutEffect, useMemo } from 'react'
 import styles from './AnnotationShapeUtil.module.css';
 import { motion, useAnimate, AnimatePresence, useAnimationControls } from 'framer-motion';
@@ -85,7 +86,7 @@ export class AnnotationShapeUtil extends BaseBoxShapeUtil<AnnotationShape> {
 	}
 
 	component(shape: AnnotationShape) {
-		const data: any = useLoaderData();
+		const data: any = useDataContext();
 		const [isHovered, setIsHovered] = useState(false);
 		const shapeRef = useRef<HTMLDivElement>(null);
 		const [scope, animate] = useAnimate();

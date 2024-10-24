@@ -8,6 +8,9 @@ import {
 import "./tailwind.css";
 import styles from "~/styles/index.css?url";
 import { StarFireSync } from "~/components/synchronization/StarFireSync";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+// Create a client
 
 export const links = () => {
   return [
@@ -25,7 +28,10 @@ export const links = () => {
   ];
 };
 
+const queryClient = new QueryClient();
+
 export function Layout({ children }: { children: React.ReactNode }) {
+
   return (
     <html lang="en">
       <head>
@@ -35,9 +41,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <StarFireSync>
-        {children}
-        </StarFireSync>
+        <QueryClientProvider client={queryClient}>
+          <StarFireSync>
+            {children}
+          </StarFireSync>
+        </QueryClientProvider>
         <ScrollRestoration />
         <Scripts />
       </body>
@@ -46,5 +54,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+
+
   return <Outlet />;
 }

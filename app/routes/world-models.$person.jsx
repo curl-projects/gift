@@ -1,4 +1,5 @@
-import { useActionData, useLoaderData } from "@remix-run/react";
+import { useActionData } from "@remix-run/react";
+import { useDataContext } from '~/components/synchronization/DataContext';
 import { json } from "@remix-run/node";
 import { ClientOnly } from "remix-utils/client-only";
 import WorldCanvas from "~/components/canvas/WorldCanvas.jsx";
@@ -40,7 +41,7 @@ export async function action({ request }) {
 }
 
 export default function WorldModel(){
-    const data = useLoaderData();
+    const data = useDataContext();
     const actionData = useActionData();
 
     useEffect(()=>{

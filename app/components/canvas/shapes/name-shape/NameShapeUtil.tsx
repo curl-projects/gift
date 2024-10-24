@@ -8,7 +8,7 @@ import {
 } from '@tldraw/editor'
 import { T, createShapeId } from 'tldraw';
 import { useCallback, useState, useEffect, useRef, useLayoutEffect } from 'react'
-import { useLoaderData } from '@remix-run/react';
+import { useDataContext } from '~/components/synchronization/DataContext';
 import styles from './NameShapeUtil.module.css';
 import { motion, useAnimate, AnimatePresence } from 'framer-motion';
 import { conceptsExist, generateConcepts, generateConceptLinks } from "~/components/canvas/helpers/thread-funcs"
@@ -72,7 +72,7 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
         const [scope, animate] = useAnimate()
         const isOnlySelected = this.editor.getOnlySelectedShapeId() === shape.id;
         const [isHovered, setIsHovered] = useState(false);
-        const data = useLoaderData();
+        const data = useDataContext();
         const { collection, size } = useCollection('graph')
         const { triggerWarp, expandConcepts } = useConstellationMode();
         const { drifting, setDrifting, triggerEffect, activeEffect, deleteStar, setDeleteStar } = useStarFireSync();

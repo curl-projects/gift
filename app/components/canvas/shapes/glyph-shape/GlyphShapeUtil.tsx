@@ -8,7 +8,7 @@ import {
 } from '@tldraw/editor'
 
 import { T, createShapeId } from 'tldraw';
-import { useLoaderData } from '@remix-run/react';
+import { useDataContext } from '~/components/synchronization/DataContext';
 import { useCallback, useState, useEffect, useRef, useLayoutEffect, useMemo } from 'react'
 import { EditorContent, useEditor } from '@tiptap/react';
 import { Paragraph } from '@tiptap/extension-paragraph';
@@ -68,7 +68,7 @@ export class GlyphShapeUtil extends BaseBoxShapeUtil<GlyphShape> {
 	component(shape: GlyphShape) {
         const [scope, animate] = useAnimate();
 		const bounds = this.editor.getShapeGeometry(shape).bounds
-		const data: any = useLoaderData();
+		const data: any = useDataContext();
 
 		const shapeRef = useRef<HTMLDivElement>(null);
 

@@ -93,6 +93,9 @@ export function ConstellationPainter({ user }){
 
                 setTimeout(()=>{
                     // todo -- this will become a new user when that system exists
+
+                    // console.log("NEW LOCATION:", location)
+
                     createConstellationStar(editor, collection, createShapeId(user.uniqueName))
                 }, triggerWarp.constAccDuration + triggerWarp.deaccDuration * 0.05)
 
