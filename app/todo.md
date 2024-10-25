@@ -210,3 +210,10 @@ Notes:
 
 NEW DATA LOADING
 - when the URL location changes, reload the data
+
+
+NEXT CHANGES:
+- Navigation system UI
+- Figure out journal UI generally -- doesn't look good
+- Challenge UI: figure out how to represent covenants
+- Goal UI: figure out how to represent user goals

@@ -1,0 +1,38 @@
+.goal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 20px; /* Optional: for some spacing */
+    padding-left: 30px;
+    z-index: 100000000;
+    font-family: 'Handjet', monospace;
+    color: rgba(255, 255, 255, 0.7);
+    pointer-events: all;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: color 0.5s ease-in-out;
+}
+
+.goal:hover {
+    color: white; /* Change text color to pure white on hover */
+}
+
+
+.goal:hover .innerIcon path {
+    stroke: white; /* Change SVG stroke color to white on hover */
+}
+
+.innerIcon {
+    width: 12px; /* Adjust size as needed */
+    height: 12px; /* Adjust size as needed */
+    transition: stroke 0.5s ease-in-out;
+
+}
+
+.innerIcon path {
+    transition: stroke 0.5s ease-in-out;
+}

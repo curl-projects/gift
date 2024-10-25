@@ -7,6 +7,7 @@ function timeStamp(){
 }
 
 export function WarpStars({ 
+    isSuccess,
     depth = 1000,
     speed = 0.05,
     density = 30, 
@@ -64,20 +65,32 @@ export function WarpStars({
     });
 };
 
-  useEffect(()=>{
-    const easeInOutQuad = (t) => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-    if(triggerWarp.active){
+useEffect(()=>{
+  const easeInOutQuad = (t) => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  if(triggerWarp.active){
+    (async () => {
+      await animateParams({speed: 4, warpEffectLength: 5}, triggerWarp.accDuration, easeInOutQuad)
 
-        animateParams({speed: 4, warpEffectLength: 5}, triggerWarp.accDuration, easeInOutQuad).then(()=>{
-            setTimeout(()=>{
-                animateParams({speed: 0.05, warpEffectLength: 1}, triggerWarp.deaccDuration, easeInOutQuad).then(()=>{
-                    triggerWarp.onComplete && triggerWarp.onComplete()
-                    setTriggerWarp({active: false})
-                })
-            }, triggerWarp.constAccDuration)
+       // Wait for either 5 seconds or isSuccess to be true
+       await Promise.race([
+        new Promise(resolve => setTimeout(resolve, 5000)),
+        new Promise(resolve => {
+          const intervalId = setInterval(() => {
+            if (isSuccess) {
+              clearInterval(intervalId);
+              resolve();
+            }
+          }, 20);
         })
-    }
-  }, [triggerWarp.active])
+      ]);
+
+      await animateParams({speed: 0.05, warpEffectLength: 1}, triggerWarp.deaccDuration, easeInOutQuad)
+      triggerWarp.onComplete && triggerWarp.onComplete()
+      setTriggerWarp({active: false })
+    })()
+  }
+}, [triggerWarp.active])
+
 
   useEffect(() => {
     const canvas = canvasRef.current;

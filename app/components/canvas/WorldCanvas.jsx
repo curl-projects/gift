@@ -16,9 +16,9 @@ import { GlyphPainter } from "~/components/canvas/custom-ui/utilities/GlyphPaint
 import { TitlePainter } from "~/components/canvas/custom-ui/utilities/TitlePainter"
 import { JournalPainter } from "~/components/canvas/custom-ui/utilities/JournalPainter"
 import { ResizePainter } from "~/components/canvas/custom-ui/utilities/ResizePainter"
-import { CovenantPainter } from "~/components/canvas/custom-ui/utilities/CovenantPainter"
 import { ImagePainter } from "~/components/canvas/custom-ui/utilities/ImagePainter.jsx"
 import { ToolsMenu } from "~/components/canvas/custom-ui/utilities/ToolsMenu"
+import { GoalPainter } from "~/components/canvas/custom-ui/utilities/GoalPainter"
 import { NarrationPainter } from "~/components/canvas/custom-ui/game-ui/Narrator/NarrationPainter"
 import { GameController } from "~/components/canvas/custom-ui/game-ui/GameControls/GameController"
 import CustomToolbar from "~/components/canvas/custom-ui/custom-toolbar/CustomToolbar"
@@ -212,8 +212,8 @@ export default function WorldCanvas() {
                             <TitlePainter />
                             <ImagePainter />
                             <JournalPainter />
-                            <MainMenuPainter />
-                            <CovenantPainter />
+                            {/* <MainMenuPainter /> */}
+                            <GoalPainter />
                             <ResizePainter />
                             <NarrationPainter />
                             {/* <ConstellationFinder /> */}
@@ -228,7 +228,9 @@ export default function WorldCanvas() {
                             />
                             <ConstellationExpander />
                             <Stars />
-                            <WarpStars />
+                            <WarpStars 
+                                isSuccess={isSuccess}
+                            />
                             <Clouds />
                             <NarratorVoice />
                         </>
