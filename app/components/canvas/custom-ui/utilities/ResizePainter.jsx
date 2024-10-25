@@ -1,8 +1,10 @@
 import { useEffect } from 'react';
 import { createShapeId, useEditor } from 'tldraw';
+import { useParams } from "@remix-run/react";
 
 export function ResizePainter() {
     const editor = useEditor();
+    const { person } = useParams();
 
     useEffect(() => {
         let resizeTimeout;
@@ -15,7 +17,7 @@ export function ResizePainter() {
             resizeTimeout = setTimeout(() => {
                 if (editor) {
                     // Example: Center the view based on new window size
-                    const nameShape = editor.getShape({ id: createShapeId('andre-vacha')})
+                    const nameShape = editor.getShape({ id: createShapeId(person)})
                     if(nameShape){
                         editor.zoomToBounds(editor.getShapePageBounds(nameShape), {
                             animation: {

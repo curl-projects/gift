@@ -22,6 +22,7 @@ import { motion, useAnimate, AnimatePresence } from 'framer-motion';
 import { useStarFireSync } from "~/components/synchronization/StarFireSync"
 import { ParchmentJournal } from './parchment-journal/ParchmentJournal';
 import { ModernJournal } from './modern-journal/ModernJournal';
+import { useParams } from "@remix-run/react";
 
 const journalShapeProps = {
 	w: T.number,
@@ -77,11 +78,11 @@ export class JournalShapeUtil extends BaseBoxShapeUtil<JournalShape> {
 		const { data } = useDataContext();
         const contentRef = useRef<HTMLDivElement>(null);
         const { journalMode } = useStarFireSync()
-
+        const { person } = useParams();
 
         useEffect(()=>{
             // trigger camera change
-            const nameShape = this.editor.getShape(createShapeId('andre-vacha'))
+            const nameShape = this.editor.getShape(createShapeId(person))    
            
             if(nameShape){
                 const bounds = this.editor.getShapePageBounds(nameShape)
@@ -104,7 +105,7 @@ export class JournalShapeUtil extends BaseBoxShapeUtil<JournalShape> {
 
         useEffect(()=>{
             if(!journalMode.active){
-                const nameShape = this.editor.getShape(createShapeId('andre-vacha'))
+                const nameShape = this.editor.getShape(createShapeId(person))
                 if(nameShape){
                     this.editor.zoomToBounds(this.editor.getShapePageBounds(nameShape), {
                         animation: {

@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useEditor, createShapeId } from "tldraw"
 import { useConstellationMode } from './ConstellationModeContext';
 import { removeProgressiveBlur, applyProgressiveBlur } from "~/components/canvas/helpers/distribution-funcs.js"
+import { useParams } from "@remix-run/react";
 
 export function ConstellationExpander(){
     const editor = useEditor()
@@ -13,6 +14,8 @@ export function ConstellationExpander(){
        console.log("EXPAND CONSTELLATION", expandConstellation)
     }, [expandConstellation])
 
+    const { person } = useParams();
+
 
     useEffect(()=>{
         console.log("EXPAND COMPONENTS", expandConcepts, expandExcerpts)
@@ -20,7 +23,7 @@ export function ConstellationExpander(){
 
     // trigger resolution if all constitution components are resolved
     useEffect(()=>{
-        const nameShape = editor.getShape({id: createShapeId('andre-vacha')})
+        const nameShape = editor.getShape({id: createShapeId(person)})
 
         if(expandConstellation?.concepts){
             setExpandConcepts({ expanded: true }).then(()=>{
@@ -71,7 +74,7 @@ export function ConstellationExpander(){
 
     useEffect(()=>{
         if(expandConcepts.expanded){
-            const nameShape = editor.getShape({id: createShapeId('andre-vacha')})
+            const nameShape = editor.getShape({id: createShapeId(person)})
             if(nameShape){
                 if(nameShape.props.expanded){
                     expandConcepts.onComplete && expandConcepts.onComplete()
@@ -89,7 +92,7 @@ export function ConstellationExpander(){
             }
         }
         else{
-            const nameShape = editor.getShape({id: createShapeId('andre-vacha')})
+            const nameShape = editor.getShape({id: createShapeId(person)})
             if(nameShape){
                 editor.updateShape({
                     id: nameShape.id,
@@ -148,7 +151,7 @@ export function ConstellationExpander(){
 }
 
 // if(expandConstellation.concepts.expanded){
-//     const nameShape = editor.getShape({id: createShapeId('andre-vacha')})
+//     const nameShape = editor.getShape({id: createShapeId(person)})
 //     // get name shape
 
 //     if(nameShape){

@@ -5,10 +5,11 @@ import { focusWithoutMovingToConstellationCanvas,
          unfocusFromConstellationCanvasImmediately,
          initializeLookingAtSky,
         } from '~/components/environment/event-controllers/campfire-transition';
+import { useParams } from "@remix-run/react";
 
 export function CampfireSyncListener({ scene, onRender }){
     const { triggerEffect, activeEffect, setTriggerWarp, campfireView, setCampfireView, sceneLoaded } = useStarFireSync();
-
+    const { person } = useParams();
 
 
     useEffect(() => {
@@ -37,7 +38,7 @@ export function CampfireSyncListener({ scene, onRender }){
                     
                 }
                 else{
-                    unfocusFromConstellationCanvas(scene, camera, triggerEffect, onRender, treeScale, targetMeshName, targetPosition, 0.8, useTargetPosition).then(()=>
+                    unfocusFromConstellationCanvas(scene, camera, triggerEffect, person, onRender, treeScale, targetMeshName, targetPosition, 0.8, useTargetPosition).then(()=>
                         campfireView.onComplete && campfireView.onComplete()
                     )
                 }
@@ -52,7 +53,7 @@ export function CampfireSyncListener({ scene, onRender }){
                     })
                 }
                 else{
-                    focusWithoutMovingToConstellationCanvas(scene, camera, triggerEffect, treeScale).then(()=>
+                    focusWithoutMovingToConstellationCanvas(scene, camera, triggerEffect, person, treeScale).then(()=>
                         campfireView.onComplete && campfireView.onComplete()
                     )
                 }   

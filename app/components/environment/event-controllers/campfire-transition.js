@@ -215,7 +215,7 @@ export function customFadeIn(mesh, scene, animationDuration = 1.5, immediate = f
 }
 
 
-export function focusWithoutMovingToConstellationCanvas(scene, camera, triggerEffect, treeScale=true) {
+export function focusWithoutMovingToConstellationCanvas(scene, camera, triggerEffect, person, treeScale=true) {
     return new Promise((resolve) => {
         const constellationCanvas = scene.getMeshByName('constellationCanvas');
         if (constellationCanvas) {
@@ -278,7 +278,7 @@ export function focusWithoutMovingToConstellationCanvas(scene, camera, triggerEf
             scene.beginDirectAnimation(camera, [rotationQuaternionAnimation], 0, targetAnimationDuration * framerate, false, 1, () => {
                 // wait for the star to trigger
                 adjustCampfireSmoke(scene, {visible: false, immediate: false})
-                triggerEffect({domain: "canvas", selector: {type: "shape", id: createShapeId("andre-vacha")}, effect: "ripple", callback: () => {
+                triggerEffect({domain: "canvas", selector: {type: "shape", id: createShapeId(person)}, effect: "ripple", callback: () => {
                     // start moving the redwoods out and widening the field of view
                     treeScale && redwoodMeshes.map(mesh => customFadeOut(mesh, scene, 1.5, false));
 
@@ -302,7 +302,7 @@ export function focusWithoutMovingToConstellationCanvas(scene, camera, triggerEf
     });
 }
 
-export function unfocusFromConstellationCanvas(scene, camera, triggerEffect, onRender, treeScale=true, targetMeshName = 'campfire', targetPosition = null, targetFov = 0.8, useTargetPosition = false) {
+export function unfocusFromConstellationCanvas(scene, camera, triggerEffect, onRender, person, treeScale=true, targetMeshName = 'campfire', targetPosition = null, targetFov = 0.8, useTargetPosition = false) {
     return new Promise((resolve) => {
 
         var target;
@@ -374,7 +374,7 @@ export function unfocusFromConstellationCanvas(scene, camera, triggerEffect, onR
 
             console.log("SCENE MESHES:", scene.meshes);
         
-            triggerEffect({domain: "canvas", selector: {type: "shape", id: createShapeId("andre-vacha")}, effect: "ripple", callback: () => {
+            triggerEffect({domain: "canvas", selector: {type: "shape", id: createShapeId(person)}, effect: "ripple", callback: () => {
                 const redwoodMeshes = scene.meshes.filter(mesh => mesh.name && mesh.name.includes('redwood'));
 
                 console.log("REDWOOD MESHES:", redwoodMeshes);

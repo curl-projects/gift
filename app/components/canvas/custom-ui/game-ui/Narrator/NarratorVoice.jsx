@@ -7,6 +7,7 @@ import { useStarFireSync } from "~/components/synchronization/StarFireSync";
 import NarratorComponent from "./components/NarratorComponent";
 import SystemComponent from "./components/SystemComponent";
 import * as BABYLON from '@babylonjs/core';
+import { useParams } from "@remix-run/react";
 
 export function hideAllShapes(editor){
     const pageShapes = editor.getCurrentPageShapes().filter(shape => shape.type !== 'journal');
@@ -84,6 +85,7 @@ export function NarratorVoice() {
     const [systemState, setSystemState] = useState({ visible: false, text: '', requiresInteraction: false });
     const [commands, setCommands] = useState([]);
     const cancelRef = useRef({ canceled: false });
+    const { person } = useParams();
 
 
     useEffect(() => {
@@ -135,7 +137,7 @@ export function NarratorVoice() {
                 callback: () => {
 
                     // todo: jank -- not returning completion
-                    setDeleteStar({ created: true, id: createShapeId("andre-vacha") })
+                    setDeleteStar({ created: true, id: createShapeId(person) })
                     setToggleContact({ visible: false })
                     setConstellationLabel({ visible: false, immediate: false, duration: 2, delay: 0})
                     setGlyphControls({ visible: false, immediate: true, duration: 2 })
@@ -144,7 +146,7 @@ export function NarratorVoice() {
                     const excerpts = editor.getCurrentPageShapes().filter(shape => shape.type === 'excerpt');
                     editor.deleteShapes(excerpts);
 
-                    zoomToShape(editor, "andre-vacha")
+                    zoomToShape(editor, person)
 
 
                     return Promise.all([
@@ -1191,7 +1193,7 @@ export function NarratorVoice() {
                 type: 'callback',
                 callback: () => {
                     return Promise.all([
-                        setDeleteStar({ deleted: true, id: createShapeId("andre-vacha") }),
+                        setDeleteStar({ deleted: true, id: createShapeId(person) }),
                         setTextEvent({ 
                             type: 'system',
                             visible: true,
@@ -1242,7 +1244,7 @@ export function NarratorVoice() {
                 callback: () => {
                     setStarControls({ visible: true, immediate: false, duration: 4 })
                     
-                    setDeleteStar({ created: true, id: createShapeId("andre-vacha") })
+                    setDeleteStar({ created: true, id: createShapeId(person) })
 
                     return Promise.all([
                         setPortfolioControls({ visible: false }),
