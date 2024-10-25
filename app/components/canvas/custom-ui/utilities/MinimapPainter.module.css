@@ -1,0 +1,117 @@
+.minimap{
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    height: 300px;
+    width: 300px;
+    border: 2px solid white;
+    z-index: 100000000;
+    display: flex;
+    padding: 40px;
+    cursor: pointer;
+    pointer-events: none;
+}
+
+.innerMinimap{
+    border: 2px solid pink;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    pointer-events: all;
+}
+
+/* .innerMinimap:hover > *{
+    transform: scale(0.7143)
+} */
+
+.circle {
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.6);
+    height: 10px;
+    width: 10px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    box-shadow: 0px 0px 10px 0px rgba(255, 255, 255, 0.7);
+}
+
+.innerGlow {
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.9);
+    filter: blur(13.66px);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    box-shadow: 0px 0px 10px 0px rgba(255, 255, 255, 0.7);
+}
+
+
+
+.innerRing {
+    border: 1.8px solid rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    height: 24px;
+    width: 24px; 
+    box-shadow: 0px 0px 10px 0px rgba(255, 255, 255, 0.7);
+}
+
+.hoverDescription {
+    position: absolute;
+    bottom: 120%;
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: fit-content;
+    max-width: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: rgb(242, 242, 242);
+    font-family: "IBM Plex Mono", monospace;
+    font-weight: 400;
+    background-color: rgba(0, 0, 0, 0.4);
+    line-height: 1.3em;
+    font-size: 8px;
+    padding: 8px;
+    overflow: hidden;
+    margin-bottom: 4px;
+    box-shadow: 0px 36px 42px -4px rgba(77, 77, 77, 0.15);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.newStar{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    /* translate: (-50%, -50%); */
+    transform-origin: center;
+    height: fit-content;
+    width: fit-content;
+    /* border: 2px solid white; */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* transform: rotate(45deg); */
+    
+}
+
+.newStarText{
+    /* transform: rotate(-45deg); */
+    font-family: "Mingzat", sans-serif;
+    color: white;
+    font-size: 10px;
+    position: relative;
+    top: -2px;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.8), /* Outer glow */
+                 0 0 10px rgba(255, 255, 255, 0.6), /* Middle glow */
+                 0 0 15px rgba(255, 255, 255, 0.4); /* Inner glow */
+}

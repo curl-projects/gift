@@ -24,9 +24,9 @@ export function GoalPainter(){
                 >
                     <motion.path
                         d="M50 10 L90 50 L50 90 L10 50 Z"
-                        stroke="rgba(255, 255, 255, 0.7)"
+                        stroke={isComplete ? "rgba(255, 255, 255, 0.7)" : "rgba(255, 255, 255, 1)"}
                         strokeWidth="20px"
-                        fill={isFilled ? "rgba(255, 255, 255, 1)" : "transparent"}
+                        fill={isFilled ? "rgba(255, 255, 255, 0.7)" : "transparent"}
                         initial={{ pathLength: 0 }}
                         animate={{ pathLength: 1 }}
                         transition={{
@@ -44,7 +44,7 @@ export function GoalPainter(){
                         duration: 1,
                         delay: 0.5,
                     }}
-                    style={{ color: isComplete ? "rgba(255, 255, 255, 1)" : "inherit"}}
+                    style={{ color: isComplete ? "rgba(255, 255, 255, 0.7)" : "inherit"}}
                 >
                     Make a new friend
                 </motion.p>

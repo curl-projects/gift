@@ -19,6 +19,7 @@ import { ResizePainter } from "~/components/canvas/custom-ui/utilities/ResizePai
 import { ImagePainter } from "~/components/canvas/custom-ui/utilities/ImagePainter.jsx"
 import { ToolsMenu } from "~/components/canvas/custom-ui/utilities/ToolsMenu"
 import { GoalPainter } from "~/components/canvas/custom-ui/utilities/GoalPainter"
+import { MinimapPainter } from '~/components/canvas/custom-ui/utilities/MinimapPainter';
 import { NarrationPainter } from "~/components/canvas/custom-ui/game-ui/Narrator/NarrationPainter"
 import { GameController } from "~/components/canvas/custom-ui/game-ui/GameControls/GameController"
 import CustomToolbar from "~/components/canvas/custom-ui/custom-toolbar/CustomToolbar"
@@ -214,6 +215,7 @@ export default function WorldCanvas() {
                             <JournalPainter />
                             {/* <MainMenuPainter /> */}
                             <GoalPainter />
+                            <MinimapPainter />
                             <ResizePainter />
                             <NarrationPainter />
                             {/* <ConstellationFinder /> */}
