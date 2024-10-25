@@ -357,7 +357,7 @@ export function unfocusFromConstellationCanvas(scene, camera, triggerEffect, onR
                 { frame: targetAnimationDuration * framerate, value: targetQuaternion }
             ];
 
-            // Set key frames for FOV
+        // Set key frames for FOV
             const fovKeyFrames = [
                 { frame: 0, value: camera.fov },
                 { frame: fovAnimationDuration * framerate, value: newFov }

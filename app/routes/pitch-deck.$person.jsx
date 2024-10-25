@@ -35,7 +35,7 @@ export default function PitchDeck(){
         console.log("PERSON:", person)
     }, [person])
 
-    const { data: newData, isLoading, error } = useQuery({
+    const { data: newData, isLoading, isSuccess, error } = useQuery({
         queryKey: ['worldContent', person],
         queryFn: async () => {
             const response = await fetch(`/data/${person}`);
@@ -72,7 +72,7 @@ export default function PitchDeck(){
         else if(isBrowser || isTablet){
             return(
                 <>
-                <DataProvider value={{data, isLoading}}>
+                <DataProvider value={{data, isLoading, isSuccess}}>
                     <DisclaimerPainter />
                     <BrowserWarning />
                     <OverlayPainter />

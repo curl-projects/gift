@@ -22,6 +22,10 @@ const peopleList = [
     {
         name: "Yourself",
         userId: "yourself",
+    },
+    {
+        name: "Andre Vacha",
+        userId: "andre-vacha",
     }
 ]
 

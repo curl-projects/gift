@@ -62,7 +62,7 @@ import { createBoundThread, hasExistingThread } from '~/components/canvas/helper
 
 export default function WorldCanvas() {
     const [editor, setEditor] = useState(null)
-    const { data } = useDataContext()
+    const { data, isLoading, isSuccess } = useDataContext()
     const navigation = useNavigation();
     const error = useRouteError();
 
@@ -203,8 +203,10 @@ export default function WorldCanvas() {
                             <DriftPainter 
                                 user={data.user}
                             />
-                            <ConstellationPainter 
-                                user={data.user} 
+                            <ConstellationPainter
+                                user={data.user}
+                                isLoading={isLoading}
+                                isSuccess={isSuccess}
                             />
                             <GlyphPainter />
                             <TitlePainter />
