@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useStarFireSync } from '~/components/synchronization/StarFireSync';
 import styles from './WarpStars.module.css';
 
-
 function timeStamp(){
 	if(window.performance.now)return window.performance.now(); else return Date.now();
 }

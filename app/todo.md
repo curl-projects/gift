@@ -206,3 +206,7 @@ Non-Essential Bugs:
 
 Notes:
 - Use location to read URL, not remix
+
+
+NEW DATA LOADING
+- when the URL location changes, reload the data

@@ -75,7 +75,7 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 
 	component(shape: ExcerptShape) {
 		const shapeRef = useRef();
-		const data = useDataContext();
+		const { data } = useDataContext();
 		const isOnlySelected = this.editor.getOnlySelectedShapeId() === shape.id;
 		const selectedShapeIds = this.editor.getSelectedShapeIds();
 		const [scope, animate] = useAnimate(); // Use animation controls

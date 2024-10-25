@@ -68,7 +68,7 @@ export class GlyphShapeUtil extends BaseBoxShapeUtil<GlyphShape> {
 	component(shape: GlyphShape) {
         const [scope, animate] = useAnimate();
 		const bounds = this.editor.getShapeGeometry(shape).bounds
-		const data: any = useDataContext();
+		const { data } = useDataContext();
 
 		const shapeRef = useRef<HTMLDivElement>(null);
 

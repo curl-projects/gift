@@ -2,7 +2,7 @@ import { PitchScene } from "~/components/environment/PitchScene/PitchScene";
 import WorldCanvas from "~/components/canvas/WorldCanvas";
 // import { getWorldContent, getJournalEntries } from "~/models/world-model.server";
 // import { json } from "@remix-run/node";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useStarFireSync } from "~/components/synchronization/StarFireSync";
 import { OverlayPainter } from "~/components/synchronization/sync-ui/OverlayPainter";
 import { isBrowser, isMobile, isTablet } from 'react-device-detect';
@@ -18,16 +18,24 @@ export async function loader() {
     return null;
   }
 
+
+// prevent remix based revalidation
+export function shouldRevalidate(){
+    return false;
+}
+
 export default function PitchDeck(){
+
     const { campfireView } = useStarFireSync();
 
     const { person } = useParams();
-    // const person = "andre-vacha"
+    const [data, setData] = useState(null);
 
-    console.log("PERSON:", person)
+    useEffect(() => {
+        console.log("PERSON:", person)
+    }, [person])
 
-    
-    const { data, isLoading, error } = useQuery({
+    const { data: newData, isLoading, error } = useQuery({
         queryKey: ['worldContent', person],
         queryFn: async () => {
             const response = await fetch(`/data/${person}`);
@@ -35,12 +43,21 @@ export default function PitchDeck(){
                 throw new Error('Network response was not ok');
             }
             return response.json();
-        }
+        },
+        enabled: !!person,
     });
 
+
     useEffect(() => {
-        console.log("DATA:", data)
-    }, [data])
+        console.log("NEW DATA:", newData)
+        if(newData){
+            setData(newData);
+        }
+    }, [newData])
+
+    useEffect(()=>{
+        console.log("IS LOADING:", isLoading)
+    }, [isLoading])
 
     useEffect(() => {
         console.log("ERROR:", error)
@@ -55,7 +72,7 @@ export default function PitchDeck(){
         else if(isBrowser || isTablet){
             return(
                 <>
-                <DataProvider value={data}>
+                <DataProvider value={{data, isLoading}}>
                     <DisclaimerPainter />
                     <BrowserWarning />
                     <OverlayPainter />

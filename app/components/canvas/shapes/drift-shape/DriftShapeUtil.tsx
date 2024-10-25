@@ -68,7 +68,7 @@ export class DriftShapeUtil extends BaseBoxShapeUtil<DriftShape> {
 
 	component(shape: DriftShape) {
 		const bounds = this.editor.getShapeGeometry(shape).bounds
-		const data: any = useDataContext();
+		const { data } = useDataContext();
 		const [isHovered, setIsHovered] = useState(false)
 		const shapeRef = useRef<HTMLDivElement>(null);
 		const controls = useAnimationControls()

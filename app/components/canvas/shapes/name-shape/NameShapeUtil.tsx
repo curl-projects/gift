@@ -72,7 +72,7 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
         const [scope, animate] = useAnimate()
         const isOnlySelected = this.editor.getOnlySelectedShapeId() === shape.id;
         const [isHovered, setIsHovered] = useState(false);
-        const data = useDataContext();
+        const { data } = useDataContext();
         const { collection, size } = useCollection('graph')
         const { triggerWarp, expandConcepts } = useConstellationMode();
         const { drifting, setDrifting, triggerEffect, activeEffect, deleteStar, setDeleteStar } = useStarFireSync();

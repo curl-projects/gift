@@ -74,7 +74,7 @@ export class JournalShapeUtil extends BaseBoxShapeUtil<JournalShape> {
 	component(shape: JournalShape) {
         const [scope, animate] = useAnimate();
 		const bounds = this.editor.getShapeGeometry(shape).bounds
-		const data: any = useDataContext();
+		const { data } = useDataContext();
         const contentRef = useRef<HTMLDivElement>(null);
         const { journalMode } = useStarFireSync()
 

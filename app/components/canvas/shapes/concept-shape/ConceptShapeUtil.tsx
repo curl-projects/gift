@@ -79,7 +79,7 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
 	component(shape: ConceptShape) {
         const [scope, animate] = useAnimate();
 		const bounds = this.editor.getShapeGeometry(shape).bounds
-		const data: any = useDataContext();
+		const {data } = useDataContext();
         const { expandExcerpts } = useConstellationMode();
 
 		const shapeRef = useRef<HTMLDivElement>(null);

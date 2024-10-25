@@ -13,7 +13,7 @@ const pages = [
 ]
 
 export function ModernJournal({ shape, journalMode, contentRef }){
-    const data = useDataContext();
+    const { data } = useDataContext();
     const converter = new showdown.Converter();
     const [htmlContent, setHtmlContent] = useState("");
 

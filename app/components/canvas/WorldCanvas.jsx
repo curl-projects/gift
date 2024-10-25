@@ -62,7 +62,7 @@ import { createBoundThread, hasExistingThread } from '~/components/canvas/helper
 
 export default function WorldCanvas() {
     const [editor, setEditor] = useState(null)
-    const data = useDataContext()
+    const { data } = useDataContext()
     const navigation = useNavigation();
     const error = useRouteError();
 
@@ -217,7 +217,7 @@ export default function WorldCanvas() {
                             {/* <ConstellationFinder /> */}
                             {/* <CustomToolbar /> */}
                             <ConstellationLabel 
-                                name={data.user.name}
+                                name={data.user ? data.user.name : ""}
                             />
                             <ToolsMenu />
                             <GraphTrigger />
