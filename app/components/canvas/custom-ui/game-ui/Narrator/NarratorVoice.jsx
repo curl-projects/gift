@@ -8,6 +8,7 @@ import NarratorComponent from "./components/NarratorComponent";
 import SystemComponent from "./components/SystemComponent";
 import * as BABYLON from '@babylonjs/core';
 import { useParams } from "@remix-run/react";
+import { useDataContext } from '~/components/synchronization/DataContext';
 
 export function hideAllShapes(editor){
     const pageShapes = editor.getCurrentPageShapes().filter(shape => shape.type !== 'journal');
@@ -86,6 +87,7 @@ export function NarratorVoice() {
     const [commands, setCommands] = useState([]);
     const cancelRef = useRef({ canceled: false });
     const { person } = useParams();
+    const { data } = useDataContext();
 
 
     useEffect(() => {
@@ -135,11 +137,10 @@ export function NarratorVoice() {
             {
                 type: 'callback',
                 callback: () => {
-
                     // todo: jank -- not returning completion
                     setDeleteStar({ created: true, id: createShapeId(person) })
                     setToggleContact({ visible: false })
-                    setConstellationLabel({ visible: false, immediate: false, duration: 2, delay: 0})
+                    setConstellationLabel({ visible: true, immediate: false, duration: 2, delay: 2, text: data.user.name })
                     setGlyphControls({ visible: false, immediate: true, duration: 2 })
                     setJournalMode({ active: false, immediate: true })
                     setExpandConstellation({ concepts: false, excerpts: false })
