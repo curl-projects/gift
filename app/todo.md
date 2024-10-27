@@ -218,3 +218,16 @@ NEXT CHANGES:
 - Challenge UI: figure out how to represent covenants
 - [x] Goal UI: figure out how to represent user goals
 
+CHALLENGE TYPES:
+1. Connect to your own work AND justify why it's connected
+2. Connect to something that you've found
+3. Connect to someone interesting
+4. Attach a novel thought
+5. 
+
+AND:
+- justify
+
+WITH:
+- more than X words
+- an [image, pdf, etc]

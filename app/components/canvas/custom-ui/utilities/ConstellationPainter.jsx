@@ -8,7 +8,7 @@ import { useStarFireSync } from "~/components/synchronization/StarFireSync"
 export function ConstellationPainter({ user, isLoading, isSuccess }){
     const editor = useEditor();
     const { collection, size } = useCollection('graph')
-    const { triggerWarp, setTriggerWarp, deleteStar, setDeleteStar } = useStarFireSync()
+    const { triggerWarp, setTriggerWarp, deleteStar, setDeleteStar, setOverlayControls, setCloudDarkeningControls } = useStarFireSync()
 
     const [startListening, setStartListening] = useState(false);
 
@@ -125,9 +125,12 @@ export function ConstellationPainter({ user, isLoading, isSuccess }){
         if (startListening) {
             // Check if isLoading transitions from true to false
             if (isSuccess) {
-
+                console.log("SETTING OVERLAY CONTROLS:", user.startColor, user.endColor)
                 console.log("isLoading transitioned from true to false, creating constellation star", user);
                 createConstellationStar(editor, collection, createShapeId(user.uniqueName));
+
+                setOverlayControls({ startColor: user.startColor, endColor: user.endColor, immediate: false, duration: 0.5, delay: 0}),
+                setCloudDarkeningControls({ visible: true, colors: user.darkeningColors, immediate: false, duration: 0.5, delay: 0}),
 
                 // Dispose of the listener
                 setStartListening(false);

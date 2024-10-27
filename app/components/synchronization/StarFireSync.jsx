@@ -34,13 +34,16 @@ const StarFireSyncProvider = ({ children }) => {
     const [constellationLabel, _setConstellationLabel] = useState({ visible: false, immediate: true });
 
 
-    const [overlayControls, _setOverlayControls] = useState({ dark: false, immediate: true, duration: 2, }); // Consolidated state
+    const [overlayControls, _setOverlayControls] = useState({ startColor: '#1E4D60', endColor: '#101C3E', immediate: true, duration: 2, delay: 0 }); // Consolidated state;
+    const [cloudDarkeningControls, _setCloudDarkeningControls] = useState({ visible: false, colors: [] });
     
     // set this true initially to cover everything
     const [trueOverlayControls, _setTrueOverlayControls] = useState({ visible: true, immediate: true }); // Consolidated state
 
 
     const [journalMode, _setJournalMode] = useState({ active: false, page: ""});
+
+    const [minimapMode, _setMinimapMode] = useState({ active: true });
 
     const useStateWithPromise = (setter) => (value) => {
         return new Promise((resolve) => {
@@ -76,8 +79,10 @@ const StarFireSyncProvider = ({ children }) => {
     const setCommandEvent = useStateWithPromise(_setCommandEvent);
     const setAnimationEvent = useStateWithPromise(_setAnimationEvent);
     const setJournalMode = useStateWithPromise(_setJournalMode);
+    const setMinimapMode = useStateWithPromise(_setMinimapMode);
     const setDrifting = useStateWithPromise(_setDrifting);
     const setToggleContact = useStateWithPromise(_setToggleContact);
+    const setCloudDarkeningControls = useStateWithPromise(_setCloudDarkeningControls);
     const setPortfolioControls = useStateWithPromise(_setPortfolioControls);
 
     const triggerEffect = useCallback(({domain, selector, effect, callback}) => {
@@ -128,6 +133,8 @@ const StarFireSyncProvider = ({ children }) => {
                 titleControls, setTitleControls,
                 deleteStar, setDeleteStar,
                 toggleContact, setToggleContact,
+                minimapMode, setMinimapMode,
+                cloudDarkeningControls, setCloudDarkeningControls,
             }}>
             {children}
         </StarFireSyncContext.Provider>

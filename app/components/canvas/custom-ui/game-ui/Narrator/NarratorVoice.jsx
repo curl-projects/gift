@@ -80,6 +80,7 @@ export function NarratorVoice() {
         deleteStar, setDeleteStar,
         toggleContact, setToggleContact,
         portfolioControls, setPortfolioControls,
+        cloudDarkeningControls, setCloudDarkeningControls,
     } = useStarFireSync();
 
     const [narratorState, setNarratorState] = useState({ visible: false, text: '', requiresInteraction: false });
@@ -103,7 +104,8 @@ export function NarratorVoice() {
                         setCampfireView({ active: false, immediate: true })
                         setStarControls({ visible: true, immediate: true})
                         setCloudControls({ visible: true, immediate: true})
-                        setOverlayControls({ dark: true, immediate: true})
+                        setOverlayControls({ startColor: '#000000', endColor: '#000000', immediate: true}),
+
                         setTitleControls({ visible: false, immediate: true })
                         setJournalMode({ active: false, immediate: true })
                 },
@@ -149,12 +151,13 @@ export function NarratorVoice() {
 
                     zoomToShape(editor, person)
 
-
+                    console.log("data.user", data.user)
                     return Promise.all([
                         setPortfolioControls({ visible: false }),
                         setTrueOverlayControls({ visible: false, immediate: false, duration: 5}),
                         // setTitleControls({ visible: true, immediate: false, duration: 1.3, delay: 0.3 }),
-                        setOverlayControls({ dark: true, immediate: false, duration: 2, delay: 0}),
+                        setOverlayControls({ startColor: data.user.startColor, endColor: data.user.endColor, immediate: false, duration: 2, delay: 0}),
+                        setCloudDarkeningControls({ visible: true, colors: ["#94DAF4", "#69A9E6", "#7F89D0"], immediate: false, duration: 2, delay: 0}),
                         setTextEvent({ type: 'system', visible: false, overlay: false }),
                         setDrifting({active: false }),
                     ])
@@ -281,7 +284,8 @@ export function NarratorVoice() {
                 type: 'callback',
                 callback: () => {
                     return Promise.all([
-                        setOverlayControls({ dark: false, immediate: false, duration: 1, delay: 0 }),
+                        setOverlayControls({ startColor: '#1E4D60', endColor: '#101C3E', immediate: false, duration: 1, delay: 0}),
+
                         setTriggerWarp({ active: true, accDuration: 1000, deaccDuration: 1000, constAccDuration: 1000 }),
                     ])
                 },
@@ -523,7 +527,7 @@ export function NarratorVoice() {
                 type: 'callback',
                 callback: () => {
                     return Promise.all([
-                        setOverlayControls({ dark: true, immediate: false, duration: 1, delay: 0 }),
+                        setOverlayControls({ startColor: '#000000', endColor: '#000000', immediate: false, duration: 1, delay: 0}),
                         setTitleControls({ visible: true, immediate: false, duration: 1.3, delay: 0.3 }),
                     ])
                 },
@@ -814,8 +818,8 @@ export function NarratorVoice() {
                     return Promise.all([
                         setTrueOverlayControls({ visible: false, immediate: false, duration: 3}),
                         setTitleControls({ visible: true, immediate: false, duration: 1.3, delay: 0.3 }),
+                        setOverlayControls({ startColor: '#000000', endColor: '#000000', immediate: false, duration: 2, delay: 0}),
 
-                        setOverlayControls({ dark: true, immediate: false, duration: 2, delay: 0}),
                         setTextEvent({ type: 'system', visible: false, overlay: false }),
                         setDrifting({active: false }),
                     ])
@@ -986,7 +990,8 @@ export function NarratorVoice() {
                     console.warn("overlay fade out callback")
                     return Promise.all([
                         setTrueOverlayControls({ visible: false, immediate: false, duration: 4 }),
-                        setOverlayControls({ dark: false, immediate: false, duration: 1, delay: 0 }),
+                        setOverlayControls({ startColor: '#1E4D60', endColor: '#101C3E', immediate: false, duration: 1, delay: 0}),
+
                     ])
                 },
                 waitForCallback: true,
@@ -1514,7 +1519,8 @@ export function NarratorVoice() {
                     setDrifting({ active: false })
                     return Promise.all([
                         setGlyphControls({ visible: true, immediate: false, duration: 4 }),
-                        setOverlayControls({ dark: false, immediate: false, duration: 2, delay: 0}),
+                        setOverlayControls({ startColor: '#1E4D60', endColor: '#101C3E', immediate: false, duration: 2, delay: 0}),
+
                         setTextEvent({ 
                             type: 'system',
                             visible: true,

@@ -1,8 +1,9 @@
 .disclaimer {
     position: fixed;
-    bottom: 0;
-    right: 0;
-    padding: 10px; /* Optional: for some spacing */
+    top: 0;
+    left: 0;
+    padding-left: 22px; /* Optional: for some spacing */
+    padding-top: 14px;
     z-index: 100000000;
     font-family: 'Handjet', monospace;
     color: rgba(255, 255, 255, 0.3);

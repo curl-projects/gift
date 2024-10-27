@@ -1,0 +1,169 @@
+.labelWrapper{
+    position: absolute;
+    bottom: 60px;
+    left: 80px;
+    height: fit-content;
+    width: fit-content;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+.constellationGlyph{
+    font-family: "Mingzat", sans-serif;
+    font-weight: 400;
+    font-size: 24px;
+    text-transform: uppercase;
+    letter-spacing: 0.4em;
+
+    color: transparent;
+    background: linear-gradient(to right, #E7E5ED, #B7B7BD);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-transform: uppercase;
+
+    position: relative;
+    top: 16px;
+}
+
+.covenantWrapper{
+    display: flex;
+    flex-direction: row;
+    gap: 2px;
+    cursor: pointer;
+    align-items: flex-end;
+
+}
+
+.metadataContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+}
+
+.covenantLabel{
+    font-family: "IBM Plex Mono", sans-serif;
+    font-size: 14px;
+    display: flex;
+    color: rgba(231, 229, 237, 1);
+    text-transform: uppercase;
+    font-weight: 500;
+    /* letter-spacing: 0.3em; */
+}
+
+.clauseJoiner{
+    text-transform: uppercase;
+    font-family: "IBM Plex Mono", sans-serif;
+    font-size: 14px;
+
+    font-weight: 500;
+    color: #EB5757;
+    background: rgba(135, 131, 120, .15);
+    padding: 0em 0.4em;
+    margin: 0em 0.2em;
+
+}
+
+.covenantSuperscriptContainer{
+    display: flex;
+    flex-direction: column;
+    padding: 0em 0.6em;
+}
+
+.covenantSuperscript {
+    position: relative; /* Enable relative positioning for the pseudo-element */
+    display: inline-block; /* Ensure the element is treated as a block for positioning */
+    margin-right: 0.6em;
+}
+
+.covenantSuperscript::before {
+    content: attr(data-char); /* Use the data attribute to specify the character */
+    position: absolute;
+    top: -14px; /* Adjust this value to move the character upwards */
+    left: 2px;
+    font-size: 0.8em; /* Optionally adjust the size */
+    color: #b2b3b8;
+    font-family: "IBM Plex Mono", sans-serif;
+    cursor: pointer;
+}
+
+.covenantSuperscript[data-style="active"]::before {
+    color: #ff0000; /* Example: Red color */
+    font-size: 0.9em; /* Slightly larger */
+}
+
+.covenantSuperscript[data-style="inactive"]::before {
+    color: #00ff00; /* Example: Green color */
+    font-size: 0.7em; /* Slightly smaller */
+}
+
+
+.clauseContainer{
+    display: flex;
+    font-family: "IBM Plex Mono", sans-serif;
+    font-size: 14px;
+
+    color: rgb(201, 198, 213);
+    text-transform: uppercase;
+    font-weight: 500;
+}
+
+.constellationMetadataValue{
+    font-family: "IBM Plex", sans-serif;
+    font-size: 16px;
+    color: #b2b3b8;
+    font-weight: 800;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+}
+
+/* TooltipWrapper.module.css */
+.tooltipContainer {
+    position: relative;
+    display: inline-block;
+}
+
+.textWithUnderline {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.underline {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    width: 100%;
+    background-color: #EB5757; /* Match the color of the clauseJoiner */
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease-in-out;
+}
+
+.underlineActive {
+    transform: scaleX(1);
+}
+
+.tooltipBox {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(135, 131, 120, 0.9);
+    color: white;
+    padding: 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    font-size: 12px;
+    z-index: 10;
+    margin-bottom: 8px;
+    opacity: 0;
+    animation: fadeIn 0.3s forwards;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}

@@ -13,26 +13,28 @@ export function OverlayPainter(){
     useEffect(() => {
         const tlContainer = document.querySelector('.tl-container');
         const tlBackground = document.querySelector('.tl-background');
-            // rip down overlay if it exists
-    
+        
         // Apply transition duration
         const duration = overlayControls.immediate ? 0.001 : (overlayControls.duration || 2);
 
         console.log("overlayControls", overlayControls)
 
-        setTimeout(()=>{
+        setTimeout(() => {
             console.log("setting delay")
 
-            if (overlayControls.dark) {
-                tlContainer?.classList.add('overlay-active');
-                tlBackground?.classList.add('overlay-active');
+            // Ensure startColor and endColor are specified
+            if (overlayControls.startColor && overlayControls.endColor) {
+                tlContainer?.style.setProperty('--start-color', overlayControls.startColor);
+                tlBackground?.style.setProperty('--start-color', overlayControls.startColor);
+                tlContainer?.style.setProperty('--end-color', overlayControls.endColor);
+                tlBackground?.style.setProperty('--end-color', overlayControls.endColor);
             } else {
-                tlContainer?.classList.remove('overlay-active');
-                tlBackground?.classList.remove('overlay-active');
+                console.error("Start and end colors must be specified in overlayControls.");
             }
+
             tlContainer?.style.setProperty('--overlay-transition-duration', `${duration}s`);
             tlBackground?.style.setProperty('--overlay-transition-duration', `${duration}s`);
-            setTimeout(()=>{
+            setTimeout(() => {
                 console.log("completing overlay controls")
                 overlayControls.onComplete && overlayControls.onComplete();
             }, duration * 1000)

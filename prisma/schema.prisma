@@ -14,6 +14,47 @@ model User {
   name       String?
   concepts   Concept[]
   media      Media[]
+  startColor String? @default("#1E4D60")
+  endColor   String? @default("#101C3E")
+  darkeningColors String[] @default(["#94DAF4", "#69A9E6", "#7F89D0"])
+  covenants Covenant[]
+}
+
+enum CovenantType {
+  CONNECT_TO_OWN_WORK
+  CONNECT_TO_FOUND_ITEM
+  CONNECT_TO_INTERESTING_PERSON
+  ATTACH_NOVEL_THOUGHT
+}
+
+model Covenant {
+  id String @id @default(uuid())
+  ownerId String
+  owner User @relation(fields: [ownerId], references: [uniqueName])
+  covenantType CovenantType
+  modifiers CovenantModifier[]
+  times Int @default(1)
+  params Json?
+}
+
+enum ModifierCategory {
+  AND
+  WITH
+}
+
+enum ModifierType {
+  JUSTIFY
+  FEWER_WORDS
+  MORE_WORDS
+}
+
+model CovenantModifier {
+  id String @id @default(uuid())
+  covenantId String
+  covenant Covenant @relation(fields: [covenantId], references: [id])
+  modifierCategory ModifierCategory
+  modifier ModifierType
+  params Json?
 }
 
 model Concept {

@@ -10,8 +10,11 @@ import { ClientOnly } from 'remix-utils/client-only';
 import { ConstellationModeProvider } from "~/components/canvas/custom-ui/utilities/ConstellationModeContext"
 // import { ConstellationFinder } from "~/components/canvas/custom-ui/utilities/ConstellationFinder"
 import { ConstellationPainter } from "~/components/canvas/custom-ui/utilities/ConstellationPainter"
+import { ConstellationLabelPainter } from "~/components/canvas/custom-ui/utilities/ConstellationLabelPainter"
+
 import { ConstellationExpander } from "~/components/canvas/custom-ui/utilities/ConstellationExpander"
 import { DriftPainter } from "~/components/canvas/custom-ui/utilities/DriftPainter"
+import { CloudDarkeningPainter } from "~/components/canvas/custom-ui/utilities/CloudDarkeningPainter"
 import { GlyphPainter } from "~/components/canvas/custom-ui/utilities/GlyphPainter"
 import { TitlePainter } from "~/components/canvas/custom-ui/utilities/TitlePainter"
 import { JournalPainter } from "~/components/canvas/custom-ui/utilities/JournalPainter"
@@ -30,7 +33,6 @@ import { AnnotationLayoutCollection } from "~/components/canvas/custom-ui/graph/
 import { GraphUi } from "~/components/canvas/custom-ui/graph/GraphUi";
 import { GraphTrigger } from "~/components/canvas/custom-ui/graph/GraphTrigger";
 import { SelectionListener } from "~/components/canvas/custom-ui/listeners/SelectionListener";
-import { ConstellationLabel } from "~/components/canvas/custom-ui/game-ui/ConstellationLabel"
 import { Stars } from '~/components/canvas/custom-ui/aesthetics/stars/Stars';
 import { WarpStars } from '~/components/canvas/custom-ui/aesthetics/warp-stars/WarpStars';
 import { Clouds } from './custom-ui/aesthetics/clouds/Clouds';
@@ -220,11 +222,12 @@ export default function WorldCanvas() {
                             <NarrationPainter />
                             {/* <ConstellationFinder /> */}
                             {/* <CustomToolbar /> */}
-                            <ConstellationLabel 
+                            <ConstellationLabelPainter 
                                 name={data.user ? data.user.name : ""}
                             />
                             <ToolsMenu />
                             <GraphTrigger />
+                            <CloudDarkeningPainter />
                             <SelectionListener 
                                 user={data.user}
                             />

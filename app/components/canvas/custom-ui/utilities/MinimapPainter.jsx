@@ -1,15 +1,16 @@
 import { useState } from 'react';
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import styles from "./MinimapPainter.module.css";
 import { useDataContext } from "~/components/synchronization/DataContext";
 import { englishToLepchaMap, getRandomLepchaCharacter } from "~/components/canvas/helpers/language-funcs.js"
 import { useStarFireSync } from '~/components/synchronization/StarFireSync'
 import { useNavigate } from '@remix-run/react';
-
-
+import { JournalThread } from '~/components/canvas/shapes/journal-shape/parchment-journal/journal-thread/JournalThread';
+import { createShapeId, useEditor } from 'tldraw';
 
 export function MinimapPainter() {
     const { data } = useDataContext()
+    const { minimapMode } = useStarFireSync()
 
     const allPeople = [
         {
@@ -54,19 +55,24 @@ export function MinimapPainter() {
    
 
     return (
-        <div 
-            className={styles.minimap}
-        >
-            <motion.div 
-                className={styles.innerMinimap}
-                whileHover={{ scale: 1.4, x: -100, y: -100 }}
-                transition={{ duration: 0.2, ease: "easeInOut" }}
-                >  
-                <CentralStar />
-                {people.map((person, index) => (
-                    <NewStar key={index} x={stars[index].x} y={stars[index].y} person={person} />
-                ))}
-            </motion.div>
+        <div className={styles.minimap}>
+            <AnimatePresence>
+                {minimapMode.active &&
+                <motion.div 
+                    className={styles.innerMinimap}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 0.6 }}
+                    exit={{ opacity: 0 }}
+                    whileHover={{ opacity: 1, scale: 1.4, x: -100, y: -100 }}
+                    transition={{ duration: 0.2, ease: "easeInOut" }}
+                    >  
+                    <CentralStar />
+                    {people.map((person, index) => (
+                        <NewStar key={index} x={stars[index].x} y={stars[index].y} person={person} />
+                    ))}
+                    </motion.div>
+                }
+            </AnimatePresence>
         </div>
     );
 }
@@ -74,6 +80,8 @@ export function MinimapPainter() {
 export function CentralStar() {
     const { data } = useDataContext()
     const [isHovered, setIsHovered] = useState(false);
+    const editor = useEditor();
+    
 
     const randomDelay = 0.2
     
@@ -94,12 +102,25 @@ export function CentralStar() {
             <div 
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
+                onClick={()=>{
+                    const nameShape = editor.getShape({ id: createShapeId(data.user.uniqueName)})
+
+                    if(nameShape){
+                        editor.zoomToBounds(editor.getShapePageBounds(nameShape), {
+                            animation: {
+                                duration: 500,
+                                easing: (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
+                            },
+                            targetZoom: 1
+                        })
+                    }
+                }}
             >
                 <motion.div
                     className={`${styles.innerRing} nameCircle`}
                     initial="hidden"
                     animate="visible"
-                    custom={0.95} // Delay for inner ring
+                    custom={0.5} // Delay for inner ring
                     variants={ringVariants}
                 >
                 {isHovered && (
@@ -147,7 +168,7 @@ export function NewStar({ x, y, person }) {
             onMouseLeave={() => setIsHovered(false)}
             onClick={()=>{
                 navigate(`/pitch-deck/${person.uniqueName}`, { replace: false });
-                setTriggerWarp({active: true, accDuration: 1000, deaccDuration: 1000, constAccDuration: 1000}).then(() => {
+                setTriggerWarp({active: true, accDuration: 1000, deaccDuration: 2000, constAccDuration: 1000}).then(() => {
                     setConstellationLabel({ visible: true, immediate: false, duration: 2, delay: 0, text: person.name })
                 })
             }}
@@ -163,7 +184,15 @@ export function NewStar({ x, y, person }) {
                     <p>{person.name}</p>
                 </motion.div>
             )}
-            <p className={styles.newStarText}>{englishToLepchaMap[person.name[0]]}</p>
+            <motion.p 
+                className={styles.newStarText}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3, ease: "linear", delay: 0.5 }}
+            >
+                {englishToLepchaMap[person.name[0]]}
+            </motion.p>
         </div>
     );
 }

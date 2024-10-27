@@ -1,0 +1,33 @@
+.darkeningContainer {
+    width: 100%;
+    position: fixed;
+    pointer-events: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    mix-blend-mode: overlay;
+    height: 100vh;
+}
+
+.darkeningContainerInner{
+    position: relative;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.darkening{
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    /* background:  */
+        /* linear-gradient(to right, #94DAF4, #69A9E6, #7F89D0);Gradient from left to right */
+    /* linear-gradient(to top, transparent, rgb(178 56 0) 50%, transparent), 
+        linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.5) 50%, transparent)        */
+        /* ; Gradient on both sides */
+}

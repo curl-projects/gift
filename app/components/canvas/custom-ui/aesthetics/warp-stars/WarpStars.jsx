@@ -73,7 +73,7 @@ useEffect(()=>{
 
        // Wait for either 5 seconds or isSuccess to be true
        await Promise.race([
-        new Promise(resolve => setTimeout(resolve, 5000)),
+        new Promise(resolve => setTimeout(resolve, 2500)),
         new Promise(resolve => {
           const intervalId = setInterval(() => {
             if (isSuccess) {

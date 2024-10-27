@@ -34,7 +34,12 @@ export async function getWorldContent(uniqueName){
                         }
                     }
                 }
-            }
+            },
+            covenants: {
+                include: {
+                    modifiers: true
+                }
+            },
         }
     })
 

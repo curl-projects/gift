@@ -9,7 +9,7 @@ import { useEffect } from 'react';
 
 export function ToolsMenu(){
     const editor = useEditor();
-    const { drifting, setDrifting, journalMode, setJournalMode } = useStarFireSync();
+    const { drifting, setDrifting, journalMode, setJournalMode, minimapMode, setMinimapMode } = useStarFireSync();
     const [tooltipVisible, setTooltipVisible] = useState(false);
     const [tooltipText, setTooltipText] = useState('');
 
@@ -25,6 +25,7 @@ export function ToolsMenu(){
 
     const handleAstrolabeClick = () => {
         // setDrifting({ active: !drifting.active });
+        setMinimapMode({ active: !minimapMode.active });
         console.log("astrolabe")
 
     };
@@ -55,9 +56,9 @@ export function ToolsMenu(){
             id: 'middle',
             tool: "astrolabe",
             icon: <GiAstrolabe />,
-            active: drifting.active,
+            active: minimapMode.active,
             onClick: handleAstrolabeClick,
-            tooltip: 'Astrolabe (soon)'
+            tooltip: 'Minimap'
         },
         {
             id: 'right',
