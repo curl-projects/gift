@@ -9,7 +9,7 @@ import { useEffect } from 'react';
 
 export function ToolsMenu(){
     const editor = useEditor();
-    const { drifting, setDrifting, journalMode, setJournalMode, minimapMode, setMinimapMode } = useStarFireSync();
+    const { drifting, setDrifting, journalMode, setJournalMode, minimapMode, setMinimapMode, constellationLabel, setConstellationLabel } = useStarFireSync();
     const [tooltipVisible, setTooltipVisible] = useState(false);
     const [tooltipText, setTooltipText] = useState('');
 
@@ -32,6 +32,7 @@ export function ToolsMenu(){
 
     const handleTelescopeClick = () => {
         console.log('telescope');
+        setConstellationLabel({ visible: !constellationLabel.visible });
     };
 
     const handleMouseEnter = (text) => {
@@ -64,9 +65,9 @@ export function ToolsMenu(){
             id: 'right',
             tool: 'telescope',
             icon: <IoTelescope />,
-            active: false,
+            active: constellationLabel.visible,
             onClick: handleTelescopeClick,
-            tooltip: 'Telescope (soon)'
+            tooltip: 'Labels'
         }
     ];
 

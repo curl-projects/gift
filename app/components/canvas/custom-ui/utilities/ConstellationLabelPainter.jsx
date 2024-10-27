@@ -14,6 +14,7 @@ export function ConstellationLabelPainter({ name }){
     const { triggerWarp, setTriggerWarp, constellationLabel } = useStarFireSync()
     const editor = useEditor()
     const textRef = useRef(null);
+    const { data } = useDataContext();
     const [animationCommenced, setAnimationCommenced] = useState(false)
     
     return(
@@ -58,7 +59,7 @@ export function ConstellationLabelPainter({ name }){
                 <LabelTranslate 
                     constellationLabel={constellationLabel} 
                     animationCommenced={animationCommenced}
-                    text={constellationLabel.text}
+                    text={data.user.name}
                 />
             </motion.p>
             <ConstellationCovenants animationCommenced={animationCommenced} constellationLabel={constellationLabel}/>
@@ -140,6 +141,8 @@ export function CovenantTooltip({ children, tooltipText, variant }){
 }
 
 export function Covenant({ covenant, animationCommenced, constellationLabel }){
+    const { cloudDarkeningControls } = useStarFireSync();
+
     const toWords = new ToWords();
     const [currentCount, setCurrentCount] = useState(covenant.times);
 
@@ -284,9 +287,9 @@ export function CovenantModifier({ modifier, constellationLabel, animationCommen
     return(
         <p className={styles.clauseContainer}>
             <CovenantTooltip tooltipText={"This is a tooltip"} variant={"connector"}>
-                <p className={styles.clauseJoiner}>
+                <span className={styles.clauseJoiner}>
                     {modifierCategoryMap[modifier.modifierCategory].text}
-                </p>
+                </span>
             </CovenantTooltip>
             <CovenantTooltip tooltipText={"This is also a tooltip"} variant={"subclause"}>
                 {modifierMap[modifier.modifier].text}

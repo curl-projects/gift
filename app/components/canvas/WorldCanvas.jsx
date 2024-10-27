@@ -23,6 +23,7 @@ import { ImagePainter } from "~/components/canvas/custom-ui/utilities/ImagePaint
 import { ToolsMenu } from "~/components/canvas/custom-ui/utilities/ToolsMenu"
 import { GoalPainter } from "~/components/canvas/custom-ui/utilities/GoalPainter"
 import { MinimapPainter } from '~/components/canvas/custom-ui/utilities/MinimapPainter';
+import MediaArticlePainter from "~/components/canvas/custom-ui/utilities/MediaArticlePainter"
 import { NarrationPainter } from "~/components/canvas/custom-ui/game-ui/Narrator/NarrationPainter"
 import { GameController } from "~/components/canvas/custom-ui/game-ui/GameControls/GameController"
 import CustomToolbar from "~/components/canvas/custom-ui/custom-toolbar/CustomToolbar"
@@ -218,6 +219,7 @@ export default function WorldCanvas() {
                             {/* <MainMenuPainter /> */}
                             <GoalPainter />
                             <MinimapPainter />
+                            <MediaArticlePainter />
                             <ResizePainter />
                             <NarrationPainter />
                             {/* <ConstellationFinder /> */}

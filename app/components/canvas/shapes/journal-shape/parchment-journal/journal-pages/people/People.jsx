@@ -41,7 +41,7 @@ export function People(){
                         // this causes an issue where remix won't update the history internally, but there's no workaround 
                         navigate(`/pitch-deck/${person.userId}`, { replace: false });
                         setTriggerWarp({active: true, accDuration: 1000, deaccDuration: 1000, constAccDuration: 1000}).then(() => {
-                            setConstellationLabel({ visible: true, immediate: false, duration: 2, delay: 0, text: person.name })
+                            setConstellationLabel({ visible: true, immediate: false, duration: 2, delay: 0 })
                         })
                     }}>{person.name}</p>
                 </div>

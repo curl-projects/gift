@@ -19,14 +19,15 @@ export function ModernJournal({ shape, journalMode, contentRef }){
 
     useEffect(()=>{
       console.log("DATA:", data.journalEntries)
-      const page = data.journalEntries.filter(entry => entry.type === 'journalPage').find(page => page.url === journalMode.page)
-      if(page){
-        setHtmlContent(converter.makeHtml(page.content) || "")
+      const content = journalMode.content || "";
+      // const page = data.journalEntries.filter(entry => entry.type === 'journalPage').find(page => page.url === journalMode.page)
+      if(content){
+        setHtmlContent(converter.makeHtml(content) || "")
       }
       else{
         setHtmlContent("")
       }
-    }, [data])
+    }, [data, journalMode])
 
     const editor = useEditor({
         extensions: [
