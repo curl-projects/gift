@@ -6,7 +6,7 @@
     width: fit-content;
     display: flex;
     flex-direction: column;
-    gap: 28px;
+    gap: 18px;
 }
 
 .constellationGlyph{
@@ -31,14 +31,16 @@
     flex-direction: row;
     gap: 2px;
     cursor: pointer;
-    align-items: flex-end;
+    align-items: stretch;
+    justify-content: flex-start;
+
 
 }
 
-.metadataContainer {
+.covenantsContainer {
     display: flex;
     flex-direction: column;
-    gap: 36px;
+    gap: 14px;
 }
 
 .covenantLabel{
@@ -85,16 +87,21 @@
     color: #b2b3b8;
     font-family: "IBM Plex Mono", sans-serif;
     cursor: pointer;
+    font-weight: 800;
 }
 
 .covenantSuperscript[data-style="active"]::before {
-    color: #ff0000; /* Example: Red color */
+    color: white; /* Example: Red color */
     font-size: 0.9em; /* Slightly larger */
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.8), /* Outer glow */
+                 0 0 10px rgba(255, 255, 255, 0.6), /* Middle glow */
+                 0 0 15px rgba(255, 255, 255, 0.4); /* Inner glow */
+
 }
 
 .covenantSuperscript[data-style="inactive"]::before {
-    color: #00ff00; /* Example: Green color */
-    font-size: 0.7em; /* Slightly smaller */
+    color: #b2b3b8; /* Example: Green color */
+    font-size: 0.9em; /* Slightly smaller */
 }
 
 
@@ -106,6 +113,7 @@
     color: rgb(201, 198, 213);
     text-transform: uppercase;
     font-weight: 500;
+    align-items: flex-end;
 }
 
 .constellationMetadataValue{
@@ -120,7 +128,10 @@
 /* TooltipWrapper.module.css */
 .tooltipContainer {
     position: relative;
-    display: inline-block;
+    display: flex;
+    height: 100%;
+    padding-top: 14px;
+    align-items: flex-end;
 }
 
 .textWithUnderline {

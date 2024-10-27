@@ -83,7 +83,7 @@ export function ConstellationCovenants({ animationCommenced, constellationLabel 
     ]
 
     return (
-        <div className={styles.metadataContainer}>
+        <div className={styles.covenantsContainer}>
             {
                 data.user.covenants 
                 ? data.user.covenants.map((covenant, index) => (
@@ -170,7 +170,7 @@ export function Covenant({ covenant, animationCommenced, constellationLabel }){
             helperComponent: <p>Connect to your found items</p>
         },
         "CONNECT_TO_INTERESTING_PERSON": {
-            text: <span>Connect {toWords.convert(currentCount)} {currentCount === 1 ? "idea" : "ideas"} to someone that will resonate with it</span>,
+            text: <span>Connect {toWords.convert(currentCount)} {currentCount === 1 ? "idea" : "ideas"} to someone that will resonate with {currentCount === 1 ? "it" : "them"}</span>,
             icon: "💡",
             helperComponent: <p>Connect to interesting people</p>
         },
@@ -189,7 +189,7 @@ export function Covenant({ covenant, animationCommenced, constellationLabel }){
                                 key={index} 
                                 className={styles.covenantSuperscript} 
                                 data-char={englishToLepchaMap[String.fromCharCode(65 + index)]} 
-                                data-style={index < currentCount ? "active" : "inactive"} 
+                                data-style={index < currentCount ? "inactive" : "active"} 
                                 style={{
                                     marginLeft: `${index * 1}em`
                                 }}
@@ -282,7 +282,7 @@ export function CovenantModifier({ modifier, constellationLabel, animationCommen
     }
 
     return(
-        <div className={styles.clauseContainer}>
+        <p className={styles.clauseContainer}>
             <CovenantTooltip tooltipText={"This is a tooltip"} variant={"connector"}>
                 <p className={styles.clauseJoiner}>
                     {modifierCategoryMap[modifier.modifierCategory].text}
@@ -297,7 +297,7 @@ export function CovenantModifier({ modifier, constellationLabel, animationCommen
                 text={modifierMap[modifier.modifier].text}
                 delay={600}
             /> */}
-        </div>    
+        </p>    
     )
 }
 
