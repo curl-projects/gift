@@ -7,6 +7,8 @@ import * as showdown from 'showdown';
 import { useDataContext } from '~/components/synchronization/DataContext';
 import { JournalThread } from '~/components/canvas/shapes/journal-shape/parchment-journal/journal-thread/JournalThread.jsx'
 import { motion } from 'framer-motion';
+import { useStarFireSync } from '~/components/synchronization/StarFireSync';
+import { BsArrowBarLeft } from "react-icons/bs";
 
 const pages = [
     { page: 'elevator-pitch', 
@@ -15,8 +17,19 @@ const pages = [
 
 export function ModernJournal({ shape, journalMode, contentRef }){
     const { data } = useDataContext();
+    const { setJournalMode } = useStarFireSync();
     const converter = new showdown.Converter();
+    
     const [htmlContent, setHtmlContent] = useState("");
+
+    const [isFirstLoad, setIsFirstLoad] = useState(true);
+    const isMovingLeft = journalMode.position === 'left';
+    const initialOffsetX = isMovingLeft ? window.innerWidth * 0.2 : -window.innerWidth * 0.2;  
+
+    // there's probably a better way of doing this with framer motion variants
+    useEffect(() => {
+        setIsFirstLoad(false);
+    }, []);
 
     useEffect(()=>{
       console.log("DATA:", data.journalEntries)
@@ -62,10 +75,24 @@ export function ModernJournal({ shape, journalMode, contentRef }){
       <>
         <motion.div className={styles.shapeContent}
             ref={contentRef}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 1, ease: 'easeInOut' }}
+            key={journalMode.position} 
+            initial={{
+              opacity: isFirstLoad ? 0 : 1, // Only animate opacity on first load
+              x: isFirstLoad ? 0 : initialOffsetX // Only animate x on position change
+            }}
+            animate={{
+              opacity: 1,
+              x: 0
+            }}
+            exit={{
+              opacity: 0,
+              x: -initialOffsetX
+            }}
+            transition={{
+              opacity: { duration: 0.5, ease: 'easeInOut' },
+              x: { duration: 0.3, ease: 'easeInOut' }
+            }}
+       
             onPointerDown={(e) => {
                 e.stopPropagation();
             }}
@@ -74,6 +101,22 @@ export function ModernJournal({ shape, journalMode, contentRef }){
                 e.stopPropagation();
             }}
         >
+        <div className={styles.journalTools}>
+          <div 
+            className={styles.journalToolButton} 
+            style={{
+                transform: journalMode.position === 'left' ? 'rotate(180deg)' : 'rotate(0deg)',
+            }}
+            onPointerDown={()=>{
+            console.log("clicked")
+            setJournalMode({
+                ...journalMode,
+                position: journalMode.position === 'left' ? 'right' : 'left',
+            })
+          }}>
+            <BsArrowBarLeft />
+            </div>
+          </div>
             <EditorContent 
                 editor={editor}
                 className="journal-tiptap"

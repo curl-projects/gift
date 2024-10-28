@@ -30,7 +30,7 @@ const MediaArticlePainter = track(() => {
         }
         else{
             // close the journal
-            setJournalMode({ active: false, variant: 'modern', page: 'technical-foundations', position: 'right' })
+            setJournalMode({ active: false, variant: 'modern', page: 'technical-foundations' })
         }
     }, [selectedShapeIds])
     // open the journal with associated content whenever an excerpt is clicked

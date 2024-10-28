@@ -23,7 +23,6 @@ import { useStarFireSync } from "~/components/synchronization/StarFireSync"
 import { ParchmentJournal } from './parchment-journal/ParchmentJournal';
 import { ModernJournal } from './modern-journal/ModernJournal';
 import { useParams } from "@remix-run/react";
-import { BsArrowBarLeft } from "react-icons/bs";
 
 const journalShapeProps = {
 	w: T.number,
@@ -216,22 +215,6 @@ export class JournalShapeUtil extends BaseBoxShapeUtil<JournalShape> {
                             height: "100%",
                         }}				
                         >
-                        <div className={styles.journalTools}>
-                            <div 
-                                className={styles.journalToolButton} 
-                                style={{
-                                    transform: journalMode.position === 'left' ? 'rotate(180deg)' : 'rotate(0deg)',
-                                }}
-                                onPointerDown={()=>{
-                                console.log("clicked")
-                                setJournalMode({
-                                    ...journalMode,
-                                    position: journalMode.position === 'left' ? 'right' : 'left',
-                                })
-                            }}>
-                                <BsArrowBarLeft />
-                            </div>
-                        </div>
                             {
                                 journalMode.variant === 'parchment' ?
                                 <ParchmentJournal shape={shape} journalMode={journalMode} contentRef={contentRef}/>
