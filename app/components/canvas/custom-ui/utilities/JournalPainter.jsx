@@ -1,7 +1,8 @@
 import { useEditor, createShapeId } from "tldraw"
 import { useEffect } from "react"
 import { useStarFireSync } from "~/components/synchronization/StarFireSync"
-import { journalMarginOffset } from "~/components/canvas/shapes/journal-shape/JournalShapeUtil"
+import { journalRightOffset, journalLeftOffset } from "~/components/canvas/shapes/journal-shape/JournalShapeUtil"
+
 export function JournalPainter(){
     const editor = useEditor()
     const { journalMode } = useStarFireSync()
@@ -27,8 +28,8 @@ export function JournalPainter(){
             }
             else{
                 const margin = window.innerHeight * 0.1;
-        
-                const { x, y } = editor.screenToPage({x: window.innerWidth * journalMarginOffset - margin, y: margin})
+                const offset = journalMode.position === 'left' ? window.innerWidth * journalLeftOffset : window.innerWidth * journalRightOffset
+                const { x, y } = editor.screenToPage({x: offset - margin, y: margin})
     
                 editor.createShape({
                     type: "journal",
@@ -53,5 +54,6 @@ export function JournalPainter(){
                 }) 
             }
         }
+
     }, [journalMode])
 }

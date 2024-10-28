@@ -23,6 +23,7 @@ import { useStarFireSync } from "~/components/synchronization/StarFireSync"
 import { ParchmentJournal } from './parchment-journal/ParchmentJournal';
 import { ModernJournal } from './modern-journal/ModernJournal';
 import { useParams } from "@remix-run/react";
+import { BsArrowBarLeft } from "react-icons/bs";
 
 const journalShapeProps = {
 	w: T.number,
@@ -43,7 +44,8 @@ type JournalShape = TLBaseShape<
 
 const journalWidthScaling = 0.6
 const journalHeightScaling = 0.8
-export const journalMarginOffset = 0.4
+export const journalRightOffset = 0.4
+export const journalLeftOffset = 0.2
 
 /** @public */
 export class JournalShapeUtil extends BaseBoxShapeUtil<JournalShape> {
@@ -55,6 +57,7 @@ export class JournalShapeUtil extends BaseBoxShapeUtil<JournalShape> {
     override hideSelectionBoundsBg = () => false
     override hideSelectionBoundsFg = () => false;
 
+        
 	getDefaultProps(): JournalShape['props'] {
 		return { 
 			w: window.innerWidth * journalWidthScaling,
@@ -77,11 +80,35 @@ export class JournalShapeUtil extends BaseBoxShapeUtil<JournalShape> {
 		const bounds = this.editor.getShapeGeometry(shape).bounds
 		const { data } = useDataContext();
         const contentRef = useRef<HTMLDivElement>(null);
-        const { journalMode } = useStarFireSync()
+        const { journalMode, setJournalMode } = useStarFireSync()
         const { person } = useParams();
+        const selectedShapeIds = this.editor.getSelectedShapeIds();
 
+        // zoom to selected shapes (excerpts or name shape)
         useEffect(()=>{
             // trigger camera change
+            if(selectedShapeIds.length === 1){
+                const selectedShape = this.editor.getShape(selectedShapeIds[0]);
+                if(selectedShape?.type === 'excerpt'){
+                    const excerptBounds = this.editor.getShapePageBounds(selectedShape)
+                    const newBounds = {
+                        w: excerptBounds.width,
+                        h: excerptBounds.height,
+                        x: excerptBounds.x + window.innerWidth * 0.30,
+                        y: excerptBounds.y
+                    }
+                    
+                    this.editor.zoomToBounds(newBounds, {
+                        animation: {
+                            duration: 300,
+                            easing: (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
+                    },
+                        targetZoom: 1,
+                    });
+                }
+            }
+            else{
+                
             const nameShape = this.editor.getShape(createShapeId(person))    
            
             if(nameShape){
@@ -97,9 +124,10 @@ export class JournalShapeUtil extends BaseBoxShapeUtil<JournalShape> {
                     animation: {
                         duration: 300,
                         easing: (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
-                },
-                    targetZoom: 1,
-                });
+                        },
+                        targetZoom: 1,
+                    });
+                }
             }
         }, [])
 
@@ -138,12 +166,14 @@ export class JournalShapeUtil extends BaseBoxShapeUtil<JournalShape> {
             };
           }, [this.editor, shape]);
 
-        //   triggers on animation frame
+        //   triggers on animation frame -- this should be conditional on journalMode.position
           useEffect(() => {
             const margin = window.innerHeight * 0.1;
 
             const updateShapePosition = () => {
-                const { x, y } = this.editor.screenToPage({ x: window.innerWidth * journalMarginOffset - margin, y: margin });
+                // console.log("UPDDATE journalMode.position", journalMode.position)
+                const offset = journalMode.position === 'left' ? window.innerWidth * journalLeftOffset : window.innerWidth * journalRightOffset
+                const { x, y } = this.editor.screenToPage({ x: offset - margin, y: margin });
                 this.editor.updateShape({
                     type: shape.type,
                     id: shape.id,
@@ -160,7 +190,7 @@ export class JournalShapeUtil extends BaseBoxShapeUtil<JournalShape> {
             const animationId = requestAnimationFrame(updateShapePosition);
 
             return () => cancelAnimationFrame(animationId);
-          }, [this.editor, shape]);   
+          }, [journalMode.position]);   
 
 		return (
             <HTMLContainer style={{
@@ -186,6 +216,22 @@ export class JournalShapeUtil extends BaseBoxShapeUtil<JournalShape> {
                             height: "100%",
                         }}				
                         >
+                        <div className={styles.journalTools}>
+                            <div 
+                                className={styles.journalToolButton} 
+                                style={{
+                                    transform: journalMode.position === 'left' ? 'rotate(180deg)' : 'rotate(0deg)',
+                                }}
+                                onPointerDown={()=>{
+                                console.log("clicked")
+                                setJournalMode({
+                                    ...journalMode,
+                                    position: journalMode.position === 'left' ? 'right' : 'left',
+                                })
+                            }}>
+                                <BsArrowBarLeft />
+                            </div>
+                        </div>
                             {
                                 journalMode.variant === 'parchment' ?
                                 <ParchmentJournal shape={shape} journalMode={journalMode} contentRef={contentRef}/>

@@ -4,3 +4,26 @@
     width: fit-content;
     position: relative;
 }
+
+.journalTools{
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    pointer-events: none;
+    z-index: 100000000;
+}
+
+.journalToolButton{
+    height: 24px;
+    width: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    pointer-events: all;
+}
+
+.journalToolButton:hover{
+    filter: opacity(0.75);
+}

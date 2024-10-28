@@ -6,6 +6,7 @@ import Link from "@tiptap/extension-link";
 import * as showdown from 'showdown';
 import { useDataContext } from '~/components/synchronization/DataContext';
 import { JournalThread } from '~/components/canvas/shapes/journal-shape/parchment-journal/journal-thread/JournalThread.jsx'
+import { motion } from 'framer-motion';
 
 const pages = [
     { page: 'elevator-pitch', 
@@ -59,8 +60,12 @@ export function ModernJournal({ shape, journalMode, contentRef }){
 
     return (
       <>
-        <div className={styles.shapeContent}
+        <motion.div className={styles.shapeContent}
             ref={contentRef}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1, ease: 'easeInOut' }}
             onPointerDown={(e) => {
                 e.stopPropagation();
             }}
@@ -73,7 +78,7 @@ export function ModernJournal({ shape, journalMode, contentRef }){
                 editor={editor}
                 className="journal-tiptap"
             />
-        </div>
+        </motion.div>
 
         <svg className={styles.animatedLine} viewBox={`0 0 ${shape.props.w} ${shape.props.h}`}>
           <JournalThread 

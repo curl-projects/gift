@@ -269,14 +269,14 @@ export function CovenantModifier({ modifier, constellationLabel, animationCommen
             helperComponent: <p>Justify the connection</p>
         },
         "FEWER_WORDS": {
-            text: `fewer than ${modifier.params.words} words`,
+            text: `fewer than ${modifier.params ? modifier.params.words : 0} words`,
             helperComponent: <p>Use fewer words</p>
         },
         "MORE_WORDS": {
             text: <span style={{ display: 'flex'}}>more than 
                     <span className={styles.covenantSuperscriptContainer}>
-                        <span className={styles.covenantSuperscript} data-char={modifier.params.words} />
-                        {modifier.params.words}
+                        <span className={styles.covenantSuperscript} data-char={modifier.params ? modifier.params.words : 0} />
+                        {modifier.params ? modifier.params.words : 0}
                     </span>
                     words
                 </span>,

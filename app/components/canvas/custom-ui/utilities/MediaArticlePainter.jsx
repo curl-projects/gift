@@ -21,7 +21,7 @@ const MediaArticlePainter = track(() => {
         if(selectedShapeIds.length === 1){
             const shape = editor.getShape(selectedShapeIds[0]);
             if(shape.type === 'excerpt'){
-                setJournalMode({ active: true, variant: 'modern', page: 'technical-foundations', content: shape.props.media?.content || "" })
+                setJournalMode({ active: true, variant: 'modern', page: 'technical-foundations', content: shape.props.media?.content || "", position: 'right' })
             }
             else if(shape.type === 'annotation'){
                 // do nothing
@@ -30,7 +30,7 @@ const MediaArticlePainter = track(() => {
         }
         else{
             // close the journal
-            setJournalMode({ active: false, variant: 'modern', page: 'technical-foundations' })
+            setJournalMode({ active: false, variant: 'modern', page: 'technical-foundations', position: 'right' })
         }
     }, [selectedShapeIds])
     // open the journal with associated content whenever an excerpt is clicked
