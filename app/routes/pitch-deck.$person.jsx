@@ -13,6 +13,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useParams } from '@remix-run/react';
 import { DataProvider } from '~/components/synchronization/DataContext';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { CovenantProvider } from '~/components/synchronization/CovenantContext';
 
 export async function loader() {
     return null;
@@ -73,33 +74,35 @@ export default function PitchDeck(){
             return(
                 <>
                 <DataProvider value={{data, isLoading, isSuccess}}>
-                    <DisclaimerPainter />
-                    <BrowserWarning />
-                    <OverlayPainter />
-                    <div id='constellation-canvas' style={{
-                    height: '100vh',
-                    width: '100vw',
-                    position: 'fixed',
-                    top: 0,
-                    left: 0,
-                    zIndex: 0,
-                    overflow: 'hidden',
-                    }}>
-                        <WorldCanvas />
-                    </div>
-                    <div 
-                    style={{
-                    height: '100vh',
-                    width: '100vw',
-                    position: 'fixed',
-                    top: 0,
-                    left: 0,
-                    zIndex: 0,
-                    overflow: 'hidden',
-                    pointerEvents: campfireView?.active ? 'unset' : 'none',
-                    }}>
-                        <PitchScene/>
-                    </div>   
+                    <CovenantProvider>
+                        <DisclaimerPainter />
+                        <BrowserWarning />
+                        <OverlayPainter />
+                        <div id='constellation-canvas' style={{
+                        height: '100vh',
+                        width: '100vw',
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        zIndex: 0,
+                        overflow: 'hidden',
+                        }}>
+                            <WorldCanvas />
+                        </div>
+                        <div 
+                        style={{
+                        height: '100vh',
+                        width: '100vw',
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        zIndex: 0,
+                        overflow: 'hidden',
+                        pointerEvents: campfireView?.active ? 'unset' : 'none',
+                        }}>
+                            <PitchScene/>
+                        </div>  
+                    </CovenantProvider> 
                 </DataProvider>     
                 </>
             )

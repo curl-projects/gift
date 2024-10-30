@@ -9,6 +9,7 @@ import { TextScramble } from "~/components/canvas/custom-ui/post-processing-effe
 import { englishToLepchaMap } from "~/components/canvas/helpers/language-funcs.js"
 import { useDataContext } from "~/components/synchronization/DataContext"
 import { ToWords } from 'to-words';
+import { ConnectLabel } from "~/components/canvas/custom-ui/utilities/constellation-label-components/ConnectLabel"
 
 export function ConstellationLabelPainter({ name }){
     const { triggerWarp, setTriggerWarp, constellationLabel } = useStarFireSync()
@@ -131,41 +132,7 @@ export function CovenantMainClause({ covenant, currentCount }){
 
     const covenantMap = {
         "CONNECT_TO_OWN_WORK": {
-            text: 
-                <CovenantTooltip tooltipText={"Connect to your own work"} variant={"mainClause"}>
-                        <span style={{ display: 'flex'}}>
-                        <span 
-                            className={styles.covenantSuperscriptContainer} 
-                            style={{ 
-                                paddingLeft: "0px",
-                                paddingRight: currentCount === 0 ? "0px" : "0.6em"
-                            }}> 
-                            {Array.from({ length: covenant.times }).map((_, index) => (
-                                <span 
-                                    key={index} 
-                                    className={styles.covenantSuperscript} 
-                                    data-char={englishToLepchaMap[String.fromCharCode(65 + index)]} 
-                                    data-style={index < currentCount ? "inactive" : "active"} 
-                                    style={{
-                                        marginLeft: `${index * 1}em`
-                                    }}
-                                />
-                            ))}
-                            Connect
-                        </span>
-                            {currentCount === 0 ? "ed" : " "} {currentCount === 0 ? toWords.convert(covenant.times) : toWords.convert(currentCount)} 
-                            <span className={styles.covenantSuperscriptContainer} style={{
-                                paddingRight: "0px",
-                            }}>
-                                <span className={styles.covenantSuperscript} data-char={
-                                    currentCount === 1 || covenant.times === 1
-                                    ? "idea".split('').map(char => englishToLepchaMap[char] || char).join('') 
-                                    : "ideas".split('').map(char => englishToLepchaMap[char] || char).join('')
-                                    } />
-                                {(currentCount === 1 || covenant.times === 1 ) ? "idea" : "ideas"} to your own work
-                            </span> 
-                        </span>
-                    </CovenantTooltip>,
+            text: <ConnectLabel currentCount={currentCount} covenant={covenant} />,
             icon: "💡",
             helperComponent: <p>Connect to your own work</p>
         },

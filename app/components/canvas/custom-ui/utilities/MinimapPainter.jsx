@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from "framer-motion";
 import styles from "./MinimapPainter.module.css";
 import { useDataContext } from "~/components/synchronization/DataContext";
@@ -10,7 +10,13 @@ import { createShapeId, useEditor } from 'tldraw';
 
 export function MinimapPainter() {
     const { data } = useDataContext()
-    const { minimapMode } = useStarFireSync()
+    const { minimapMode, setMinimapMode, journalMode } = useStarFireSync()
+
+    useEffect(()=>{
+        if(journalMode.position === 'left'){
+            setMinimapMode({ active: false });
+        }
+    }, [journalMode]);
 
     const allPeople = [
         {
@@ -38,7 +44,7 @@ export function MinimapPainter() {
             uniqueName: "andre-vacha",
         }
     ]
-    
+
     const people = allPeople.filter(person => person.uniqueName !== data.user.uniqueName);
 
     const radius = 70; // Base radius for distribution

@@ -94,7 +94,6 @@ function CovenantCard({ i, x, y, rot, scale, clauseData, type, trans, currentCou
             className={styles.covenantCard} 
             key={i} 
             style={{ 
-                border: '2px solid black',
                 flex: flex, // Use the spring value for flex
              }}
             // onMouseEnter={() => setHoverProps({ scale: 1.1, rot: 0 })}
@@ -103,7 +102,6 @@ function CovenantCard({ i, x, y, rot, scale, clauseData, type, trans, currentCou
         <animated.div className={styles.covenantCardInner}
             style={{ 
                 // transform: interpolate([hoverProps.rot, hoverProps.scale], trans),
-                border: "2px solid pink",
                 // height: expandProps.height, 
 
             }}>
@@ -156,7 +154,7 @@ export function JournalCovenants({ shape, selectionFragment, journalCovenantsRef
   const [activeCovenant, setActiveCovenant] = useState(data.user.covenants[0]);
 
   const { flex } = useSpring({
-    flex: annotationsExpanded ? 1 : 0.5,
+    flex: annotationsExpanded ? 2 : 0.5,
     config: { tension: 100, friction: 15 }
 });
 

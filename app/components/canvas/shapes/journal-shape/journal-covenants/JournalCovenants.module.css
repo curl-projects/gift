@@ -4,7 +4,6 @@
     left: 100%; */
     /* width: 50%; */
     height: 100%;
-    border: 2px solid pink;
     z-index: 100000000;
     pointer-events: all;
     min-width: 0%;
@@ -16,7 +15,6 @@
     flex-direction: row;
     gap: 10px;
     padding: 10px;
-    border: 2px solid brown;
 }
 
 .covenantSwitcherItem{
@@ -37,7 +35,6 @@
     align-items: center;
     height: 100%;
     justify-content: flex-start;
-    border: 2px solid green;
     gap: 20px;
   }
 

@@ -92,6 +92,7 @@
     font-family: "IBM Plex Mono", sans-serif;
     cursor: pointer;
     font-weight: 800;
+    transition: color 0.3s ease-in-out, font-size 0.3s ease-in-out, text-shadow 0.3s ease-in-out;
 }
 
 .covenantSuperscript[data-style="active"]::before {
