@@ -8,7 +8,10 @@ import { Covenant, CovenantMainClause, CovenantConjunction, CovenantClause } fro
 import { useDataContext } from "~/components/synchronization/DataContext"
 import { englishToLepchaMap } from "~/components/canvas/helpers/language-funcs.js"
 
-function CovenantCards({ activeCovenant }) {
+import { ConnectCard } from './clause-cards/ConnectCard.jsx'
+import { JustifyCard } from './clause-cards/JustifyCard.jsx'
+
+function CovenantCards({ activeCovenant, selectionFragment }) {
     const [currentCount, setCurrentCount] = useState(activeCovenant.times);
     const [expandedIndex, setExpandedIndex] = useState(null);
 
@@ -72,6 +75,7 @@ function CovenantCards({ activeCovenant }) {
             handleClick={() => handleClick(i)}
             isExpanded={expandedIndex === i}
             isAnyExpanded={isAnyExpanded}
+            selectionFragment={selectionFragment}
         />
       ))}
     </div>
@@ -79,24 +83,20 @@ function CovenantCards({ activeCovenant }) {
 }
 
 
-function CovenantCard({ i, x, y, rot, scale, clauseData, type, trans, currentCount, handleClick, isExpanded, isAnyExpanded }){
-    // const [hoverProps, setHoverProps] = useSpring(() => ({
-    //     scale: 1,
-    //     rot: (isExpanded || isAnyExpanded) ? 0 : rot,
-    //     config: { tension: 300, friction: 20 }
-    // }));
-
-    // const [expandProps] = useSpring(() => ({
-    //     height: isExpanded ? '250%' : isAnyExpanded ? '50%' : '100%', // Adjust height based on state
-    //     config: { tension: 300, friction: 20 },
-    //     rot: (isExpanded || isAnyExpanded) ? 0 : rot,
-    // }), [isExpanded, isAnyExpanded]);
+function CovenantCard({ i, x, y, rot, scale, clauseData, type, trans, currentCount, handleClick, isExpanded, isAnyExpanded, selectionFragment }){
+    const { flex } = useSpring({
+        flex: !isAnyExpanded ? 1 : (isExpanded ? 1 : 0.2),
+        config: { tension: 100, friction: 15 }
+    });
 
     return(
        <animated.div 
             className={styles.covenantCard} 
             key={i} 
-            style={{ border: '2px solid black' }}
+            style={{ 
+                border: '2px solid black',
+                flex: flex, // Use the spring value for flex
+             }}
             // onMouseEnter={() => setHoverProps({ scale: 1.1, rot: 0 })}
             // onMouseLeave={() => setHoverProps({ scale: 1, rot: (isExpanded || isAnyExpanded) ? 0 : rot })}
             onClick={handleClick}>
@@ -108,32 +108,50 @@ function CovenantCard({ i, x, y, rot, scale, clauseData, type, trans, currentCou
 
             }}>
             {type === "mainClause" 
-            ? <MainClauseCard covenant={clauseData} currentCount={currentCount} handleClick={handleClick} /> 
+            ? <MainClauseCard covenant={clauseData} currentCount={currentCount} handleClick={handleClick} selectionFragment={selectionFragment} /> 
             : <ModifierCard modifier={clauseData} currentCount={currentCount} />}
         </animated.div>
        </animated.div> 
     )
 }
 
-function MainClauseCard({ covenant, currentCount, handleClick }){
+function MainClauseCard({ covenant, currentCount, handleClick, selectionFragment }){
+
+    const cardMap = {
+        CONNECT_TO_OWN_WORK: <ConnectCard covenant={covenant} selectionFragment={selectionFragment} />,
+        CONNECT_TO_FOUND_ITEM: <ConnectCard />,
+        CONNECT_TO_INTERESTING_PERSON: <ConnectCard />,
+        ATTACH_NOVEL_THOUGHT: <ConnectCard />,
+    }
+
     return(
         <div onClick={handleClick}>
         <CovenantMainClause covenant={covenant} currentCount={currentCount} />
+        {cardMap[covenant.covenantType]}
        </div>
     )
 }
    
 function ModifierCard({ modifier, currentCount }){
+
+
+    const modifierMap = {
+        JUSTIFY: <JustifyCard modifier={modifier} />,
+    }
+
     return(
-            <p className={labelStyles.clauseContainer}>
+        <div className={styles.clauseContainer}>
+            <div className={styles.clauseTitleContainer}>
                 <CovenantConjunction modifier={modifier} />
                 <CovenantClause modifier={modifier} currentCount={currentCount} />
-            </p>
+            </div>
+            {modifierMap[modifier.modifier]}
+        </div>
 
     )
 }
 
-export function JournalCovenants({ shape }) {
+export function JournalCovenants({ shape, selectionFragment }) {
   const { data } = useDataContext();
   const [activeCovenant, setActiveCovenant] = useState(data.user.covenants[0]);
 
@@ -141,6 +159,7 @@ export function JournalCovenants({ shape }) {
     <div className={styles.journalCovenants}>
         <CovenantCards 
           activeCovenant={activeCovenant}
+          selectionFragment={selectionFragment}
         />
     </div>
   )

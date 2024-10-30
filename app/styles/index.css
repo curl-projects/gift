@@ -189,15 +189,15 @@ ol {
 /* END JOURNAL TIPTAP */
 
 
-/* p.is-editor-empty:first-child::before {
+p.is-editor-empty:first-child::before {
   content: attr(data-placeholder);
   float: left;
   height: 0;
   pointer-events: none;
   opacity: 0.5 !important;
-  color: rgba(0, 0, 0, 0.3) !important;
+  color: rgba(255, 255, 255, 0.3) !important;
   white-space: nowrap;
-} */
+}
 
 .custom-type-animation-cursor::after {
   content: "|";

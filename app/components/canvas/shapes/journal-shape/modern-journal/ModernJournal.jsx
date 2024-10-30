@@ -65,6 +65,7 @@ export function ModernJournal({ shape, contentRef, tldrawEditor }) {
   const [selectionPosition, setSelectionPosition] = useState({from: null, to: null})
   const [htmlContent, setHtmlContent] = useState("");
   const [scrollChange, setScrollChange] = useState(null)
+  const [selectionFragment, setSelectionFragment] = useState(null)
 
   // ANIMATION CONTEXT
   const [isInitialLoad, setIsInitialLoad] = useState(true);
@@ -164,6 +165,7 @@ export function ModernJournal({ shape, contentRef, tldrawEditor }) {
         nodes.push(node.toJSON());
       });
 
+      setSelectionFragment(fragment)
 
       const startCoords = editor.view.coordsAtPos(from);
       const endCoords = editor.view.coordsAtPos(to);
@@ -171,64 +173,64 @@ export function ModernJournal({ shape, contentRef, tldrawEditor }) {
       if (nodes && nodes.length !== 0) {
         // set visible if not visible 
         setJournalMode({...journalMode, position: 'left'})
-        const tempAnnotation = tldrawEditor.getShape({ type: "annotation", id: tempAnnotationId })
-        if (!tempAnnotation) {
-          console.log("CREATING TEMP ANNOTATION")
-          tldrawEditor.createShape({
-            id: tempAnnotationId,
-            // figrure out what x and y need to be
-            x: shape.x + shape.props.w + 40,
-            y: tldrawEditor.screenToPage({ x: 0, y: startCoords.top }).y, // convert this to page space
-            // currently only working with glyph annotations
+        // const tempAnnotation = tldrawEditor.getShape({ type: "annotation", id: tempAnnotationId })
+        // if (!tempAnnotation) {
+        //   console.log("CREATING TEMP ANNOTATION")
+        //   tldrawEditor.createShape({
+        //     id: tempAnnotationId,
+        //     // figrure out what x and y need to be
+        //     x: shape.x + shape.props.w + 40,
+        //     y: tldrawEditor.screenToPage({ x: 0, y: startCoords.top }).y, // convert this to page space
+        //     // currently only working with glyph annotations
 
-            type: 'annotation',
-            isLocked: false,
-            opacity: 1,
-            props: {
-              w: 56,
-              h: 56,
-              annotationType: "comment",
-              from: from,
-              to: to,
-              temporary: true,
-              selected: true,
-              glyph: getRandomLepchaCharacter(),
+        //     type: 'annotation',
+        //     isLocked: false,
+        //     opacity: 1,
+        //     props: {
+        //       w: 56,
+        //       h: 56,
+        //       annotationType: "comment",
+        //       from: from,
+        //       to: to,
+        //       temporary: true,
+        //       selected: true,
+        //       glyph: getRandomLepchaCharacter(),
 
-            }
-          }).createBinding({ // the binding is only for the persistent selections
-            fromId: tempAnnotationId,
-            toId: shape.id,
-            type: "annotation",
-            props: {
-            }
-          })
+        //     }
+        //   }).createBinding({ // the binding is only for the persistent selections
+        //     fromId: tempAnnotationId,
+        //     toId: shape.id,
+        //     type: "annotation",
+        //     props: {
+        //     }
+        //   })
 
-          // debouncedTriggerZoom();
+        //   // debouncedTriggerZoom();
 
-        }
-        else {
-          console.log("UPDATING TEMP ANNOTATION")
-          updateTemporaryAnnotation(tldrawEditor, editor, from, to, shape)
-          // debouncedTriggerZoom();
+        // }
+        // else {
+        //   console.log("UPDATING TEMP ANNOTATION")
+        //   updateTemporaryAnnotation(tldrawEditor, editor, from, to, shape)
+        //   // debouncedTriggerZoom();
 
-        }
+        // }
 
       }
       else if (nodes && nodes.length === 0) {
         const tempAnnotationId = createShapeId('temp-annotation')
         console.log("MAKING TEMP ANNOTATION INVISIBLE", tempAnnotationId)
-        setJournalMode({...journalMode, position: 'right'})
-        tldrawEditor.updateShape({
-          id: tempAnnotationId,
-          type: 'annotation',
-          opacity: 0,
-          props: {
-            selected: false
-          }
-        })
+        // setJournalMode({...journalMode, position: 'right'})
+        // tldrawEditor.updateShape({
+        //   id: tempAnnotationId,
+        //   type: 'annotation',
+        //   opacity: 0,
+        //   props: {
+        //     selected: false
+        //   }
+        // })
 
         // the shape doesn't automatically deselect normally
-        tldrawEditor.deselect(tempAnnotationId)
+        // tldrawEditor.deselect(tempAnnotationId)
       }
 
     }
@@ -291,8 +293,11 @@ export function ModernJournal({ shape, contentRef, tldrawEditor }) {
           </div>
         </div>
         {journalMode.position === 'left' &&
-          <JournalCovenants shape={shape} />
-        }
+          <JournalCovenants 
+            shape={shape} 
+            selectionFragment={selectionFragment}
+            />
+        } 
         <div style={{
           height: '100%',
           width: '100%',

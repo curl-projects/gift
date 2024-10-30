@@ -35,6 +35,7 @@
     height: 100%;
     justify-content: flex-start;
     border: 2px solid green;
+    gap: 20px;
   }
 
 
@@ -47,6 +48,7 @@
     justify-content: center;
     cursor: pointer;
     transition: transform 0.3s ease; /* Smooth transition */
+    overflow: hidden;
 
   }
 
@@ -65,4 +67,23 @@
     padding-left: 16px;
     padding-right: 16px;
     box-sizing: border-box;
+
+    overflow: scroll;
   }
+
+
+.clauseTitleContainer{
+    display: flex;
+    font-family: "IBM Plex Mono", sans-serif;
+    font-size: 14px;
+
+    color: rgb(201, 198, 213);
+    text-transform: uppercase;
+    font-weight: 500;
+    align-items: flex-end;
+}
+
+.clauseContainer{
+    display: flex;
+    flex-direction: column;
+}   

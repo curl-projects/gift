@@ -1,0 +1,10 @@
+.connectCard {
+    /* height: 100%; */
+    width: 100%;
+    overflow: hidden;
+    overflow-y: scroll;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    border: 2px solid red;
+    max-height: 30%;
+}
