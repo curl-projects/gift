@@ -134,7 +134,10 @@ export class AnnotationShapeUtil extends BaseBoxShapeUtil<AnnotationShape> {
 			<div 
 				id={shape.id}
 				className={styles.container}	
-				ref={scope}			
+				ref={scope}		
+				style={{
+					transform: 'scale(var(--tl-scale))',
+				}}	
 				>
 			{
 				{

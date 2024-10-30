@@ -12,6 +12,7 @@ import { BsArrowBarLeft } from "react-icons/bs";
 import { getRandomLepchaCharacter } from '~/components/canvas/helpers/language-funcs';
 import { createShapeId } from 'tldraw';
 import { journalRightOffset, journalLeftOffset } from '../JournalShapeUtil';
+import { JournalCovenants } from '../journal-covenants/JournalCovenants';
 
 const pages = [
   {
@@ -289,10 +290,22 @@ export function ModernJournal({ shape, contentRef, tldrawEditor }) {
             <BsArrowBarLeft />
           </div>
         </div>
-        <EditorContent
-          editor={editor}
-          className="journal-tiptap"
-        />
+        {journalMode.position === 'left' &&
+          <JournalCovenants shape={shape} />
+        }
+        <div style={{
+          height: '100%',
+          width: '100%',
+          overflow: 'hidden',
+          overflowY: 'scroll',
+          whiteSpace: 'pre-wrap',
+          wordWrap: 'break-word',
+        }}>
+          <EditorContent
+            editor={editor}
+            className="journal-tiptap"
+          />
+        </div>
       </motion.div>
 
       <motion.svg 
