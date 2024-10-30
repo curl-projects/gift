@@ -73,16 +73,7 @@ export function ConstellationCovenants({ animationCommenced, constellationLabel 
     useEffect(()=>{
         console.log('LABEL DATA:', data)
     }, [data])
-
-    const covenantPlaceholders = [
-        {
-            name: "Covenant 1",
-        },
-        {
-            name: "Covenant 2",
-        },
-    ]
-
+    
     return (
         <div className={styles.covenantsContainer}>
             {
@@ -91,11 +82,6 @@ export function ConstellationCovenants({ animationCommenced, constellationLabel 
                     <Covenant 
                         key={index}
                         covenant={covenant}
-
-                        animationCommenced={animationCommenced}
-                        constellationLabel={constellationLabel}
-
-                        name={covenant.name}
                     />
                 ))
                 : <p>No covenants found</p>
@@ -140,30 +126,46 @@ export function CovenantTooltip({ children, tooltipText, variant }){
     )
 }
 
-export function Covenant({ covenant, animationCommenced, constellationLabel }){
-    const { cloudDarkeningControls } = useStarFireSync();
-
+export function CovenantMainClause({ covenant, currentCount }){
     const toWords = new ToWords();
-    const [currentCount, setCurrentCount] = useState(covenant.times);
-
-    const handleClick = () => {
-        console.log('clicked')
-        setCurrentCount(prevCount => (prevCount > 0 ? prevCount - 1 : covenant.times));
-    };
-
 
     const covenantMap = {
         "CONNECT_TO_OWN_WORK": {
             text: 
-                <span>Connect 
-                    <span className={styles.covenantNumberContainer}>
-                        <span className={styles.covenantNumberTracker}>
-                            {englishToLepchaMap["A"]}
+                <CovenantTooltip tooltipText={"Connect to your own work"} variant={"mainClause"}>
+                        <span style={{ display: 'flex'}}>
+                        <span 
+                            className={styles.covenantSuperscriptContainer} 
+                            style={{ 
+                                paddingLeft: "0px",
+                                paddingRight: currentCount === 0 ? "0px" : "0.6em"
+                            }}> 
+                            {Array.from({ length: covenant.times }).map((_, index) => (
+                                <span 
+                                    key={index} 
+                                    className={styles.covenantSuperscript} 
+                                    data-char={englishToLepchaMap[String.fromCharCode(65 + index)]} 
+                                    data-style={index < currentCount ? "inactive" : "active"} 
+                                    style={{
+                                        marginLeft: `${index * 1}em`
+                                    }}
+                                />
+                            ))}
+                            Connect
                         </span>
-                        {toWords.convert(currentCount)}
-                    </span> 
-                    {currentCount === 1 ? "idea" : "ideas"} to your own work
-                </span>,
+                            {currentCount === 0 ? "ed" : " "} {currentCount === 0 ? toWords.convert(covenant.times) : toWords.convert(currentCount)} 
+                            <span className={styles.covenantSuperscriptContainer} style={{
+                                paddingRight: "0px",
+                            }}>
+                                <span className={styles.covenantSuperscript} data-char={
+                                    currentCount === 1 || covenant.times === 1
+                                    ? "idea".split('').map(char => englishToLepchaMap[char] || char).join('') 
+                                    : "ideas".split('').map(char => englishToLepchaMap[char] || char).join('')
+                                    } />
+                                {(currentCount === 1 || covenant.times === 1 ) ? "idea" : "ideas"} to your own work
+                            </span> 
+                        </span>
+                    </CovenantTooltip>,
             icon: "💡",
             helperComponent: <p>Connect to your own work</p>
         },
@@ -205,11 +207,11 @@ export function Covenant({ covenant, animationCommenced, constellationLabel }){
                             paddingRight: "0px",
                         }}>
                             <span className={styles.covenantSuperscript} data-char={
-                                currentCount === 1 
+                                currentCount === 1 || covenant.times === 1
                                 ? "thought".split('').map(char => englishToLepchaMap[char] || char).join('') 
                                 : "thoughts".split('').map(char => englishToLepchaMap[char] || char).join('')
                                 } />
-                            {currentCount === 1 ? "thought" : "thoughts"}
+                            {(currentCount === 1 || covenant.times === 1) ? "thought" : "thoughts"}
                         </span> 
                     </span>
                 </CovenantTooltip>
@@ -218,24 +220,33 @@ export function Covenant({ covenant, animationCommenced, constellationLabel }){
             helperComponent: <p>Attach a new thought</p>
         }
     }
+    return(
+        <p className={styles.covenantLabel}>
+            {covenantMap[covenant.covenantType].text}
+        </p>
+    )
+}
+
+export function Covenant({ covenant }){
+    const { cloudDarkeningControls } = useStarFireSync();
+
+    const [currentCount, setCurrentCount] = useState(covenant.times);
+
+    const handleClick = () => {
+        console.log('clicked')
+        setCurrentCount(prevCount => (prevCount > 0 ? prevCount - 1 : covenant.times));
+    };
+
+
 
     return(
         <div className={styles.covenantWrapper} onClick={handleClick}>
-            <p className={styles.covenantLabel}>
-                {covenantMap[covenant.covenantType].text}
-                {/* <LabelTranslate
-                    constellationLabel={constellationLabel}
-                    animationCommenced={animationCommenced}
-                    text={covenantMap[covenant.covenantType].text}
-                    delay={300}
-                /> */}
-            </p>
+            <CovenantMainClause covenant={covenant} currentCount={currentCount} />
             {covenant.modifiers.map((modifier, index) => (
                 <CovenantModifier
                     key={index}
                     modifier={modifier}
-                    constellationLabel={constellationLabel}
-                    animationCommenced={animationCommenced}
+                    currentCount={currentCount}
                 />
             ))
         }
@@ -253,7 +264,7 @@ blocked={true}
 />
 </p> */}
 
-export function CovenantModifier({ modifier, constellationLabel, animationCommenced }){
+export function CovenantConjunction({ modifier }){
     const modifierCategoryMap = {
         "AND": {
             text: "and",
@@ -262,44 +273,59 @@ export function CovenantModifier({ modifier, constellationLabel, animationCommen
             text: "with",
         }
     }
+    return(
+        <CovenantTooltip tooltipText={"This is a tooltip"} variant={"connector"}>
+        <span className={styles.clauseJoiner}>
+            {modifierCategoryMap[modifier.modifierCategory].text}
+            </span>
+        </CovenantTooltip> 
+    )
+}
 
+export function CovenantClause({ modifier, currentCount }){
     const modifierMap = {
         "JUSTIFY": {
-            text: "justify the connection",
-            helperComponent: <p>Justify the connection</p>
+            text: <span style={{ display: 'flex', alignItems: 'flex-end'}}>
+                    <span className={styles.covenantSuperscriptContainer}>
+                        <span className={styles.covenantSuperscript} data-char={
+                            currentCount === 0 
+                            ? "justified".split('').map(char => englishToLepchaMap[char] || char).join('') 
+                            : "justify".split('').map(char => englishToLepchaMap[char] || char).join('')
+                        } />
+                        {currentCount === 0 ? "justified" : "justify"}
+                    </span>
+                    <span style={{ whiteSpace: 'nowrap'}}>the connection</span>
+                </span>,
+            tooltipText: "Justify the connection"
         },
         "FEWER_WORDS": {
             text: `fewer than ${modifier.params ? modifier.params.words : 0} words`,
-            helperComponent: <p>Use fewer words</p>
+            tooltipText: <p>Use fewer words</p>
         },
         "MORE_WORDS": {
-            text: <span style={{ display: 'flex'}}>more than 
+            text: <span style={{ display: 'flex', alignItems: 'flex-end'}}>more than 
                     <span className={styles.covenantSuperscriptContainer}>
                         <span className={styles.covenantSuperscript} data-char={modifier.params ? modifier.params.words : 0} />
                         {modifier.params ? modifier.params.words : 0}
                     </span>
-                    words
+                    <span style={{ whiteSpace: 'nowrap'}}>words</span>
                 </span>,
             helperComponent: <p>Use more words</p>
         }
     }
 
     return(
+        <CovenantTooltip tooltipText={"This is also a tooltip"} variant={"subclause"}>
+            {modifierMap[modifier.modifier].text}
+        </CovenantTooltip>
+    )
+}
+
+export function CovenantModifier({ modifier, currentCount }){
+    return(
         <p className={styles.clauseContainer}>
-            <CovenantTooltip tooltipText={"This is a tooltip"} variant={"connector"}>
-                <span className={styles.clauseJoiner}>
-                    {modifierCategoryMap[modifier.modifierCategory].text}
-                </span>
-            </CovenantTooltip>
-            <CovenantTooltip tooltipText={"This is also a tooltip"} variant={"subclause"}>
-                {modifierMap[modifier.modifier].text}
-            </CovenantTooltip>
-                {/* <LabelTranslate
-                constellationLabel={constellationLabel}
-                animationCommenced={animationCommenced}
-                text={modifierMap[modifier.modifier].text}
-                delay={600}
-            /> */}
+            <CovenantConjunction modifier={modifier} />
+            <CovenantClause modifier={modifier} currentCount={currentCount} />
         </p>    
     )
 }
