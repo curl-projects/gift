@@ -39,7 +39,6 @@ export function MinimapPainter() {
         }
     ]
     
-    console.log("MINIMAP!", data.user)
     const people = allPeople.filter(person => person.uniqueName !== data.user.uniqueName);
 
     const radius = 70; // Base radius for distribution

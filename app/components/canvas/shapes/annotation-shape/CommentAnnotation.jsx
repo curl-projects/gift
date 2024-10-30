@@ -1,9 +1,9 @@
 import styles from './AnnotationShapeUtil.module.css';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
+import { EditorContent, useEditor } from '@tiptap/react';
 
 export function CommentAnnotation({ 
     data,
@@ -14,7 +14,9 @@ export function CommentAnnotation({
     tldrawEditor, 
     fetcher 
     }){
+	const ringSize = {width: 20, height: 20}
     const [charCount, setCharCount] = useState(0)
+	const [isHovered, setIsHovered] = useState(false)
 
     // TEXT EDITOR
     const editor = useEditor({

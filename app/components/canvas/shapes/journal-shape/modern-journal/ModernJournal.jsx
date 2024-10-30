@@ -11,6 +11,7 @@ import { useStarFireSync } from '~/components/synchronization/StarFireSync';
 import { BsArrowBarLeft } from "react-icons/bs";
 import { getRandomLepchaCharacter } from '~/components/canvas/helpers/language-funcs';
 import { createShapeId } from 'tldraw';
+import { journalRightOffset, journalLeftOffset } from '../JournalShapeUtil';
 
 const pages = [
   {
@@ -24,8 +25,6 @@ const pages = [
 function updateTemporaryAnnotation(tldrawEditor, editor, fromPos, toPos, excerpt, glyphChange = false) {
   const tempAnnotationId = createShapeId('temp-annotation')
   const startCoords = editor.view.coordsAtPos(fromPos);
-
-  console.log("UPDATING TEMPORARY ANNOTATION")
 
   if (fromPos && toPos) {
 
@@ -64,6 +63,7 @@ export function ModernJournal({ shape, contentRef, tldrawEditor }) {
   const converter = new showdown.Converter();
   const [selectionPosition, setSelectionPosition] = useState({from: null, to: null})
   const [htmlContent, setHtmlContent] = useState("");
+  const [scrollChange, setScrollChange] = useState(null)
 
   // ANIMATION CONTEXT
   const [isInitialLoad, setIsInitialLoad] = useState(true);
@@ -76,35 +76,47 @@ export function ModernJournal({ shape, contentRef, tldrawEditor }) {
 
   useEffect(() => {
     if (isInitialLoad) return;
-    const offsetX = journalMode.position === 'left' ? window.innerWidth * 0.2 : -window.innerWidth * 0.2;
-    
+    const offsetX = journalMode.position === 'left' ? window.innerWidth * (journalRightOffset - journalLeftOffset) : -window.innerWidth * (journalRightOffset - journalLeftOffset);
+    const animationDuration = 0.2;
     // animate the editor
     animate(contentRef.current, { x: offsetX }, { duration: 0, ease: 'easeInOut' }).then(() => {
-      animate(contentRef.current, { x: 0 }, { duration: 0.5, ease: 'easeInOut' })
+      animate(contentRef.current, { x: 0 }, { duration: animationDuration, ease: 'easeInOut' })
     })
 
     // animate the intro line
     animate(scope.current, { x: offsetX }, { duration: 0, ease: 'easeInOut' }).then(() => {
-      animate(scope.current, { x: 0 }, { duration: 0.5, ease: 'easeInOut' })
+      animate(scope.current, { x: 0 }, { duration: animationDuration, ease: 'easeInOut' })
     })
   }, [journalMode.position, animate]);
 
-
-  // const controls = useAnimation();
-
-  // // Determine the initial offset based on the previous position
-  // const initialOffsetX = previousPosition === 'left'
-  //   ? window.innerWidth * -0.2 // Move from left to right
-  //   : window.innerWidth * 0.2;  // Move from right to left
-
-  // // Trigger animation on position change
+  // ANNOTATION POSITIONS:
   // useEffect(() => {
-  //   const offsetX = journalMode.position === 'left' ? window.innerWidth * 0.2 : -window.innerWidth * 0.2;
-  //   controls.start({
-  //     x: 0,
-  //     transition: { duration: 0.5, ease: 'easeInOut' }
-  //   });
-  // }, [journalMode.position, controls]);
+  //   const handleResize = () => {
+  //       // update annotation positions on resize
+  //       // updateAnnotationPositions(tldrawEditor, editor, annotations, excerpt)
+  //       updateTemporaryAnnotation(tldrawEditor, editor, selectionPosition.from, selectionPosition.to, shape)
+
+  //   };
+
+  //   const resizeObserver = new ResizeObserver(handleResize);
+  //   if (contentRef?.current) {
+  //     resizeObserver.observe(contentRef.current);
+  //   }
+
+  //   return () => {
+  //     if (contentRef?.current) {
+  //       resizeObserver.unobserve(contentRef.current);
+  //     }
+  //     resizeObserver.disconnect();
+  //   };
+  // }, [contentRef.current, tldrawEditor, shape]);
+  
+  // UPDATE POSITIONS ON SCROLL
+  useEffect(()=>{
+    console.log("UPDATING ANNOTATION SCROLL")
+    // updateAnnotationPositions(tldrawEditor, editor, annotations, excerpt)
+    updateTemporaryAnnotation(tldrawEditor, editor, selectionPosition.from, selectionPosition.to, shape)
+  }, [scrollChange])
 
 
   // load data
@@ -174,7 +186,7 @@ export function ModernJournal({ shape, contentRef, tldrawEditor }) {
             props: {
               w: 56,
               h: 56,
-              annotationType: "glyph",
+              annotationType: "comment",
               from: from,
               to: to,
               temporary: true,
@@ -253,7 +265,10 @@ export function ModernJournal({ shape, contentRef, tldrawEditor }) {
         onPointerDown={(e) => {
           e.stopPropagation();
         }}
-        onScrollCapture={(e) => e.stopPropagation()}
+        onScrollCapture={(e) => {
+          setScrollChange(e.target.scrollTop)
+          e.stopPropagation()
+        }}
         onWheelCapture={(e) => {
           e.stopPropagation();
         }}
