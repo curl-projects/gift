@@ -20,7 +20,7 @@ export function ToolsMenu(){
     const handleJournalClick = () => {
         console.log("JOURNAL CLICK MODE:", journalMode);
         // setJournalMode({ active: !journalMode.active, page: journalMode.page || "elevator-pitch", variant: journalMode.variant || 'modern'});
-        setJournalMode({ active: !journalMode.active, page: "elevator-pitch", variant: "modern", position: 'right'});
+        setJournalMode({ active: !journalMode.active, variant: "modern", position: 'right', content: "Hello"});
     };
 
     const handleAstrolabeClick = () => {

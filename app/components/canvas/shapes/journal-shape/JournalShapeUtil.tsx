@@ -219,7 +219,11 @@ export class JournalShapeUtil extends BaseBoxShapeUtil<JournalShape> {
                                 journalMode.variant === 'parchment' ?
                                 <ParchmentJournal shape={shape} journalMode={journalMode} contentRef={contentRef}/>
                                 :
-                                <ModernJournal shape={shape} journalMode={journalMode} contentRef={contentRef}/>
+                                <ModernJournal 
+                                    shape={shape} 
+                                    contentRef={contentRef}
+                                    tldrawEditor={this.editor}
+                                />
                             }
                         </motion.div>
                     }
