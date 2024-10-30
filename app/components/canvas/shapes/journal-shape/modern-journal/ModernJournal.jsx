@@ -66,12 +66,26 @@ export function ModernJournal({ shape, contentRef, tldrawEditor }) {
   const [htmlContent, setHtmlContent] = useState("");
 
   // ANIMATION CONTEXT
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+
   const [scope, animate] = useAnimate();
 
+  useEffect(()=>{
+    setIsInitialLoad(false);
+  }, [])
+
   useEffect(() => {
+    if (isInitialLoad) return;
     const offsetX = journalMode.position === 'left' ? window.innerWidth * 0.2 : -window.innerWidth * 0.2;
+    
+    // animate the editor
     animate(contentRef.current, { x: offsetX }, { duration: 0, ease: 'easeInOut' }).then(() => {
       animate(contentRef.current, { x: 0 }, { duration: 0.5, ease: 'easeInOut' })
+    })
+
+    // animate the intro line
+    animate(scope.current, { x: offsetX }, { duration: 0, ease: 'easeInOut' }).then(() => {
+      animate(scope.current, { x: 0 }, { duration: 0.5, ease: 'easeInOut' })
     })
   }, [journalMode.position, animate]);
 
@@ -266,7 +280,11 @@ export function ModernJournal({ shape, contentRef, tldrawEditor }) {
         />
       </motion.div>
 
-      <svg className={styles.animatedLine} viewBox={`0 0 ${shape.props.w} ${shape.props.h}`}>
+      <motion.svg 
+        className={styles.animatedLine} 
+        viewBox={`0 0 ${shape.props.w} ${shape.props.h}`}
+        ref={scope}
+        >
         <JournalThread
           d={`M -5 -5 L ${shape.props.w + 5} -5 L ${shape.props.w + 5} ${shape.props.h + 5} L -5 ${shape.props.h + 5} Z`}
           delay={0}
@@ -274,7 +292,7 @@ export function ModernJournal({ shape, contentRef, tldrawEditor }) {
           strokeWidth={1}
           pageContainer
         />
-      </svg>
+      </motion.svg>
     </>
   )
 }
