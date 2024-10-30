@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import styles from './ModernJournal.module.css';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
@@ -9,6 +9,7 @@ import { JournalThread } from '~/components/canvas/shapes/journal-shape/parchmen
 import { motion, useAnimate } from 'framer-motion';
 import { useStarFireSync } from '~/components/synchronization/StarFireSync';
 import { BsArrowBarLeft } from "react-icons/bs";
+import { FaExpand } from "react-icons/fa";
 import { getRandomLepchaCharacter } from '~/components/canvas/helpers/language-funcs';
 import { createShapeId } from 'tldraw';
 import { journalRightOffset, journalLeftOffset } from '../JournalShapeUtil';
@@ -23,37 +24,37 @@ const pages = [
 
 
 
-function updateTemporaryAnnotation(tldrawEditor, editor, fromPos, toPos, excerpt, glyphChange = false) {
-  const tempAnnotationId = createShapeId('temp-annotation')
-  const startCoords = editor.view.coordsAtPos(fromPos);
+// function updateTemporaryAnnotation(tldrawEditor, editor, fromPos, toPos, excerpt, glyphChange = false) {
+//   const tempAnnotationId = createShapeId('temp-annotation')
+//   const startCoords = editor.view.coordsAtPos(fromPos);
 
-  if (fromPos && toPos) {
+//   if (fromPos && toPos) {
 
-    tldrawEditor.deselect(tempAnnotationId)
+//     tldrawEditor.deselect(tempAnnotationId)
 
-    const tempAnnotation = tldrawEditor.getShape({ type: "annotation", id: tempAnnotationId })
+//     const tempAnnotation = tldrawEditor.getShape({ type: "annotation", id: tempAnnotationId })
 
 
-    console.log("TEMP ANNOTATION:", tempAnnotation)
+//     console.log("TEMP ANNOTATION:", tempAnnotation)
 
-    if (tempAnnotation) {
-      tldrawEditor.updateShape({
-        id: tempAnnotationId,
-        type: 'annotation',
-        opacity: 1,
-        x: excerpt.x + excerpt.props.w + 40,
-        y: tldrawEditor.screenToPage({ x: 0, y: startCoords.top }).y,
-        props: {
-          from: fromPos,
-          to: toPos,
-          selected: true,
-          glyph: glyphChange ? getRandomLepchaCharacter() : tempAnnotation.props.glyph, // 
-        }
-      })
-    }
+//     if (tempAnnotation) {
+//       tldrawEditor.updateShape({
+//         id: tempAnnotationId,
+//         type: 'annotation',
+//         opacity: 1,
+//         x: excerpt.x + excerpt.props.w + 40,
+//         y: tldrawEditor.screenToPage({ x: 0, y: startCoords.top }).y,
+//         props: {
+//           from: fromPos,
+//           to: toPos,
+//           selected: true,
+//           glyph: glyphChange ? getRandomLepchaCharacter() : tempAnnotation.props.glyph, // 
+//         }
+//       })
+//     }
 
-  }
-}
+//   }
+// }
 
 export function ModernJournal({ shape, contentRef, tldrawEditor }) {
   // DATA CONTEXT
@@ -66,11 +67,18 @@ export function ModernJournal({ shape, contentRef, tldrawEditor }) {
   const [htmlContent, setHtmlContent] = useState("");
   const [scrollChange, setScrollChange] = useState(null)
   const [selectionFragment, setSelectionFragment] = useState(null)
+  const [annotationsExpanded, setAnnotationsExpanded] = useState(false);
+  const journalCovenantsRef = useRef(null);
 
   // ANIMATION CONTEXT
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   const [scope, animate] = useAnimate();
+
+
+  useEffect(() => {
+    console.log("ANNOTATIONS EXPANDED:", annotationsExpanded)
+  }, [annotationsExpanded])
 
   useEffect(()=>{
     setIsInitialLoad(false);
@@ -90,6 +98,13 @@ export function ModernJournal({ shape, contentRef, tldrawEditor }) {
       animate(scope.current, { x: 0 }, { duration: animationDuration, ease: 'easeInOut' })
     })
   }, [journalMode.position, animate]);
+
+  // useEffect(()=>{
+  //   if(contentRef.current && journalCovenantsRef.current){
+  //     animate(contentRef.current, { width: annotationsExpanded ? '20%' : '100%', minWidth: annotationsExpanded ? '20%' : '100%' }, { duration: 0.3, ease: 'easeInOut' })
+  //     animate(journalCovenantsRef.current, { width: annotationsExpanded ? '100%' : '80%', x: annotationsExpanded ? "-80%" : "0%" }, { duration: 0.3, ease: 'linear' })
+  //   }
+  // }, [annotationsExpanded, journalCovenantsRef, contentRef])
 
   // ANNOTATION POSITIONS:
   // useEffect(() => {
@@ -114,11 +129,11 @@ export function ModernJournal({ shape, contentRef, tldrawEditor }) {
   // }, [contentRef.current, tldrawEditor, shape]);
   
   // UPDATE POSITIONS ON SCROLL
-  useEffect(()=>{
-    console.log("UPDATING ANNOTATION SCROLL")
-    // updateAnnotationPositions(tldrawEditor, editor, annotations, excerpt)
-    updateTemporaryAnnotation(tldrawEditor, editor, selectionPosition.from, selectionPosition.to, shape)
-  }, [scrollChange])
+  // useEffect(()=>{
+  //   console.log("UPDATING ANNOTATION SCROLL")
+  //   // updateAnnotationPositions(tldrawEditor, editor, annotations, excerpt)
+  //   updateTemporaryAnnotation(tldrawEditor, editor, selectionPosition.from, selectionPosition.to, shape)
+  // }, [scrollChange])
 
 
   // load data
@@ -253,6 +268,9 @@ export function ModernJournal({ shape, contentRef, tldrawEditor }) {
         transition={{
           opacity: { duration: 0.5, ease: 'easeInOut' },
         }}
+        style={{
+          width: journalMode.position === 'left' ? '150%' : '100%',
+        }}
 
         // initial={{ opacity: 0, x: 0 }}
         // animate={{
@@ -276,6 +294,7 @@ export function ModernJournal({ shape, contentRef, tldrawEditor }) {
           e.stopPropagation();
         }}
       >
+        <div className={styles.journalContainer}>
         <div className={styles.journalTools}>
           <div
             className={styles.journalToolButton}
@@ -291,13 +310,17 @@ export function ModernJournal({ shape, contentRef, tldrawEditor }) {
             }}>
             <BsArrowBarLeft />
           </div>
+          <div
+            className={styles.journalToolButton}
+            style={{
+            }}
+            onPointerDown={() => {
+              console.log("clicked")
+              setAnnotationsExpanded(!annotationsExpanded)
+            }}>
+            <FaExpand />
+          </div>
         </div>
-        {journalMode.position === 'left' &&
-          <JournalCovenants 
-            shape={shape} 
-            selectionFragment={selectionFragment}
-            />
-        } 
         <div style={{
           height: '100%',
           width: '100%',
@@ -311,8 +334,16 @@ export function ModernJournal({ shape, contentRef, tldrawEditor }) {
             className="journal-tiptap"
           />
         </div>
-      </motion.div>
-
+      </div>
+      {journalMode.position === 'left' &&
+          <JournalCovenants 
+            shape={shape} 
+            selectionFragment={selectionFragment}
+            annotationsExpanded={annotationsExpanded}
+            journalCovenantsRef={journalCovenantsRef}
+            />
+      }
+      </motion.div> 
       <motion.svg 
         className={styles.animatedLine} 
         viewBox={`0 0 ${shape.props.w} ${shape.props.h}`}

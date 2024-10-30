@@ -151,17 +151,29 @@ function ModifierCard({ modifier, currentCount }){
     )
 }
 
-export function JournalCovenants({ shape, selectionFragment }) {
+export function JournalCovenants({ shape, selectionFragment, journalCovenantsRef, annotationsExpanded }) {
   const { data } = useDataContext();
   const [activeCovenant, setActiveCovenant] = useState(data.user.covenants[0]);
 
+  const { flex } = useSpring({
+    flex: annotationsExpanded ? 1 : 0.5,
+    config: { tension: 100, friction: 15 }
+});
+
   return (
-    <div className={styles.journalCovenants}>
+    <animated.div 
+        className={styles.journalCovenants}
+        style={{
+            flex: flex,
+        }}
+        ref={journalCovenantsRef}
+        
+        >
         <CovenantCards 
           activeCovenant={activeCovenant}
           selectionFragment={selectionFragment}
         />
-    </div>
+    </animated.div>
   )
 }
 
