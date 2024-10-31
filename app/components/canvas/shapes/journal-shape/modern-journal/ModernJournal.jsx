@@ -14,6 +14,7 @@ import { getRandomLepchaCharacter } from '~/components/canvas/helpers/language-f
 import { createShapeId } from 'tldraw';
 import { journalRightOffset, journalLeftOffset } from '../JournalShapeUtil';
 import { JournalCovenants } from '../journal-covenants/JournalCovenants';
+import { useCovenantContext } from "~/components/synchronization/CovenantContext"
 
 const pages = [
   {
@@ -63,11 +64,11 @@ export function ModernJournal({ shape, contentRef, tldrawEditor }) {
 
   // TEXT EDITOR CONTEXT
   const converter = new showdown.Converter();
+  const { annotationsExpanded, setAnnotationsExpanded } = useCovenantContext()
   const [selectionPosition, setSelectionPosition] = useState({from: null, to: null})
   const [htmlContent, setHtmlContent] = useState("");
   const [scrollChange, setScrollChange] = useState(null)
   const [selectionFragment, setSelectionFragment] = useState(null)
-  const [annotationsExpanded, setAnnotationsExpanded] = useState(false);
   const journalCovenantsRef = useRef(null);
 
   // ANIMATION CONTEXT

@@ -10,17 +10,16 @@ import { englishToLepchaMap } from "~/components/canvas/helpers/language-funcs.j
 
 import { ConnectCard } from './clause-cards/ConnectCard.jsx'
 import { JustifyCard } from './clause-cards/JustifyCard.jsx'
+import { useCovenantContext } from "~/components/synchronization/CovenantContext"
 
 function CovenantCards({ activeCovenant, selectionFragment }) {
     const [currentCount, setCurrentCount] = useState(activeCovenant.times);
-    const [expandedIndex, setExpandedIndex] = useState(null);
+    const { expandedIndex, setExpandedIndex, isAnyExpanded } = useCovenantContext()
 
     const handleClick = (index) => {
         console.log("INDEX CLICKED:", index)
         setExpandedIndex(expandedIndex === index ? null : index);
     };
-
-    const isAnyExpanded = expandedIndex !== null;
 
     // Calculate the total vertical offset
     const totalOffsetY = 180;
@@ -106,24 +105,24 @@ function CovenantCard({ i, x, y, rot, scale, clauseData, type, trans, currentCou
 
             }}>
             {type === "mainClause" 
-            ? <MainClauseCard covenant={clauseData} currentCount={currentCount} handleClick={handleClick} selectionFragment={selectionFragment} /> 
-            : <ModifierCard modifier={clauseData} currentCount={currentCount} />}
+            ? <MainClauseCard index={i} covenant={clauseData} currentCount={currentCount} handleClick={handleClick} selectionFragment={selectionFragment} /> 
+            : <ModifierCard index={i} modifier={clauseData} currentCount={currentCount} />}
         </animated.div>
        </animated.div> 
     )
 }
 
-function MainClauseCard({ covenant, currentCount, handleClick, selectionFragment }){
+function MainClauseCard({ index, covenant, currentCount, handleClick, selectionFragment }){
 
     const cardMap = {
-        CONNECT_TO_OWN_WORK: <ConnectCard covenant={covenant} selectionFragment={selectionFragment} />,
+        CONNECT_TO_OWN_WORK: <ConnectCard index={index} covenant={covenant} selectionFragment={selectionFragment} />,
         CONNECT_TO_FOUND_ITEM: <ConnectCard />,
         CONNECT_TO_INTERESTING_PERSON: <ConnectCard />,
         ATTACH_NOVEL_THOUGHT: <ConnectCard />,
     }
 
     return(
-        <div onClick={handleClick}>
+        <div className={styles.mainClauseContainer} onClick={handleClick}>
         <CovenantMainClause covenant={covenant} currentCount={currentCount} />
         {cardMap[covenant.covenantType]}
        </div>

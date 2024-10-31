@@ -7,10 +7,10 @@ import * as showdown from 'showdown';
 import Placeholder from '@tiptap/extension-placeholder'
 import { useCovenantContext } from "~/components/synchronization/CovenantContext"
 
-export function ConnectCard({ selectionFragment, covenant }){
+export function ConnectCard({ index, selectionFragment, covenant }){
     const [htmlContent, setHtmlContent] = useState("");
     const converter = new showdown.Converter();
-    const { covenantCompletion, setCovenantCompletion } = useCovenantContext()
+    const { covenantCompletion, setCovenantCompletion, setExpandedIndex } = useCovenantContext()
 
     // load data
     useEffect(() => {
@@ -25,6 +25,7 @@ export function ConnectCard({ selectionFragment, covenant }){
                 completionPercentage: 50
             }
             setCovenantCompletion(covenantCompletion.map(covenant => covenant.id === covenant.id ? newCovenant : covenant))
+            setExpandedIndex(index)
         }
         else {
         setHtmlContent("")
@@ -33,6 +34,7 @@ export function ConnectCard({ selectionFragment, covenant }){
             completionPercentage: 0
         }
         setCovenantCompletion(covenantCompletion.map(covenant => covenant.id === covenant.id ? newCovenant : covenant))
+        setExpandedIndex(null)
     }
   }, [selectionFragment])  
 
@@ -57,6 +59,7 @@ export function ConnectCard({ selectionFragment, covenant }){
           Link,
           Placeholder.configure({
             placeholder: "Select something...",
+            showOnlyWhenEditable: false,
         }),
         ],
         content: htmlContent,
@@ -75,12 +78,18 @@ export function ConnectCard({ selectionFragment, covenant }){
       }, [htmlContent, editor]);
 
     return(
-        <div className={styles.connectCard}>
+        <div className={styles.connectCardContainer}>
+            <div className={styles.connectCardSelection}>
             <EditorContent 
                 editor={editor} 
                 className="journal-tiptap"
             />
-        
+            </div>
+            {htmlContent !== "" &&
+                <div className={styles.connectToThoughtBox}>
+                    Attach thought
+                </div>
+            }
         </div>
     )
 }

@@ -8,6 +8,10 @@ export const useCovenantContext = () => {
 
 export const CovenantProvider = ({ children }) => {
     const [covenantCompletion, setCovenantCompletion] = useState(null);
+    const [expandedIndex, setExpandedIndex] = useState(null);
+    const [annotationsExpanded, setAnnotationsExpanded] = useState(false);
+
+    const isAnyExpanded = expandedIndex !== null;
     const { data } = useDataContext();
 
     useEffect(()=>{
@@ -29,7 +33,13 @@ export const CovenantProvider = ({ children }) => {
     }, [data])
 
     return (
-        <CovenantContext.Provider value={{covenantCompletion, setCovenantCompletion}}>
+        <CovenantContext.Provider 
+            value={{
+                covenantCompletion, setCovenantCompletion, 
+                expandedIndex, setExpandedIndex, 
+                isAnyExpanded,
+                annotationsExpanded, setAnnotationsExpanded
+            }}>
             {children}
         </CovenantContext.Provider>
     );
