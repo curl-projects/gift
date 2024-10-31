@@ -7,15 +7,15 @@ import * as showdown from 'showdown';
 import Placeholder from '@tiptap/extension-placeholder'
 import { useCovenantContext } from "~/components/synchronization/CovenantContext"
 import { useEditor as useTldrawEditor } from "tldraw"
-import { zoomToFrameDiv } from "~/components/canvas/helpers/zoomToFrameDiv"
 import { useStarFireSync } from "~/components/synchronization/StarFireSync"
+import { ConnectCardFunctionality } from './ConnectCardFunctionality'
 
 export function ConnectCard({ index, selectionFragment, covenant, covenantCardRef }){
     const [htmlContent, setHtmlContent] = useState("");
     const converter = new showdown.Converter();
     const { covenantCompletion, setCovenantCompletion, setExpandedIndex, annotationsExpanded, setAnnotationsExpanded } = useCovenantContext()
     const tldrawEditor = useTldrawEditor();
-    const { setJournalZooms } = useStarFireSync()
+    const { setJournalZooms, focusOnComponent, setFocusOnComponent } = useStarFireSync()
     // load data
     useEffect(() => {
     console.log("SELECTION FRAGMENT:", selectionFragment)
@@ -42,8 +42,8 @@ export function ConnectCard({ index, selectionFragment, covenant, covenantCardRe
     }
   }, [selectionFragment])  
 
-
   
+
   useEffect(() => {
     console.log("HTML CONTENT:", htmlContent)
   }, [htmlContent])
@@ -91,16 +91,10 @@ export function ConnectCard({ index, selectionFragment, covenant, covenantCardRe
             />
             </div>
             {htmlContent !== "" &&
-                <div className={styles.connectToThoughtBox} onClick={(e) => {
-                    setJournalZooms(true)
-                    zoomToFrameDiv(covenantCardRef, tldrawEditor)
-                    // setAnnotationsExpanded(!annotationsExpanded)
-
-                    e.stopPropagation()
-                    console.log("CLICKED")
-                }}>
-                    Attach thought
-                </div>
+                <ConnectCardFunctionality 
+                    covenantCardRef={covenantCardRef} 
+                    tldrawEditor={tldrawEditor}
+                />
             }
         </div>
     )

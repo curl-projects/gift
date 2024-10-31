@@ -52,7 +52,7 @@ export function ConnectLabel({ currentCount, covenant }){
                         data-style={index < activeCharsCount ? "active" : "inactive"} 
                         style={{
                             position: 'relative',
-                            left: index === 0 ? '-5px' : `${-9 + index * 12}px`, // Apply left only to characters after the first
+                            left: index === 0 ? '-6px' : `${-9 + index * 11}px`, // Apply left only to characters after the first
                             // textShadow: index < 2 ? "0 0 5px rgba(255, 255, 255, 0.8), 0 0 10px rgba(255, 255, 255, 0.6), 0 0 15px rgba(255, 255, 255, 0.4)" : "inherit",
                             // color: index < 2 ? "white" : "inherit"
                         }}

@@ -60,7 +60,7 @@ const pages = [
 export function ModernJournal({ shape, contentRef, tldrawEditor }) {
   // DATA CONTEXT
   const { data } = useDataContext();
-  const { journalMode, setJournalMode, journalZooms, setJournalZooms } = useStarFireSync();
+  const { journalMode, setJournalMode, journalZooms, setJournalZooms, focusOnComponent } = useStarFireSync();
 
   // TEXT EDITOR CONTEXT
   const converter = new showdown.Converter();
@@ -75,11 +75,6 @@ export function ModernJournal({ shape, contentRef, tldrawEditor }) {
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   const [scope, animate] = useAnimate();
-
-
-  useEffect(() => {
-    console.log("ANNOTATIONS EXPANDED:", annotationsExpanded)
-  }, [annotationsExpanded])
 
   useEffect(()=>{
     setIsInitialLoad(false);
@@ -140,7 +135,7 @@ export function ModernJournal({ shape, contentRef, tldrawEditor }) {
   useEffect(()=>{
     console.log("JOURNAL ZOOMS:", journalZooms)
   }, [journalZooms])
-  
+
   // load data
   useEffect(() => {
     console.log("DATA:", data.journalEntries)
@@ -302,7 +297,12 @@ export function ModernJournal({ shape, contentRef, tldrawEditor }) {
       >
         
 
-        <div className={styles.journalContainer}>
+        <div 
+          className={styles.journalContainer}
+          style={{
+            filter: (focusOnComponent.active && focusOnComponent.component !== 'journal') ? `opacity(${focusOnComponent.opacity})` : 'none'
+          }}
+          >
         <motion.div 
           className={styles.journalBackground}
           initial={{ opacity: 0}}

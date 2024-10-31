@@ -12,7 +12,7 @@ import { ToWords } from 'to-words';
 import { ConnectLabel } from "~/components/canvas/custom-ui/utilities/constellation-label-components/ConnectLabel"
 
 export function ConstellationLabelPainter({ name }){
-    const { triggerWarp, setTriggerWarp, constellationLabel } = useStarFireSync()
+    const { triggerWarp, setTriggerWarp, constellationLabel, focusOnComponent } = useStarFireSync()
     const editor = useEditor()
     const textRef = useRef(null);
     const { data } = useDataContext();
@@ -30,6 +30,7 @@ export function ConstellationLabelPainter({ name }){
             }}
             style={{
                 pointerEvents: constellationLabel.visible ? 'all' : 'none',
+                filter: focusOnComponent.active && focusOnComponent.component !== 'label' ? `opacity(${focusOnComponent.opacity})` : 'none'
             }}
             // onAnimationStart = {() => {
             //     console.log('started')

@@ -1,8 +1,10 @@
 import styles from './GoalPainter.module.css'
 import { motion } from 'framer-motion'
 import { useState } from 'react'
+import { useStarFireSync } from '~/components/synchronization/StarFireSync'
 
 export function GoalPainter(){
+    const { focusOnComponent } = useStarFireSync()
     const [isFilled, setIsFilled] = useState(false);
     const [isComplete, setIsComplete] = useState(false);
 
@@ -15,6 +17,9 @@ export function GoalPainter(){
         <div 
             className={styles.goal}
             onClick={toggleComplete}
+            style={{
+                filter: (focusOnComponent.active && focusOnComponent.component !== 'goal') ? `opacity(${focusOnComponent.opacity})` : 'none'
+            }}
             >
                <motion.svg
                 width="100"

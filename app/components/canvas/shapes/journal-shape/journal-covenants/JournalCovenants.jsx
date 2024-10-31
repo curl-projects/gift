@@ -11,6 +11,7 @@ import { englishToLepchaMap } from "~/components/canvas/helpers/language-funcs.j
 import { ConnectCard } from './clause-cards/ConnectCard.jsx'
 import { JustifyCard } from './clause-cards/JustifyCard.jsx'
 import { useCovenantContext } from "~/components/synchronization/CovenantContext"
+import { useStarFireSync } from '~/components/synchronization/StarFireSync'
 
 function CovenantCards({ activeCovenant, selectionFragment }) {
     const [currentCount, setCurrentCount] = useState(activeCovenant.times);
@@ -84,6 +85,7 @@ function CovenantCards({ activeCovenant, selectionFragment }) {
 
 function CovenantCard({ i, x, y, rot, scale, clauseData, type, trans, currentCount, handleClick, isExpanded, isAnyExpanded, selectionFragment }){
     const covenantCardRef = useRef(null);
+    const { focusOnComponent } = useStarFireSync()
     const { flex, height } = useSpring({
         flex: !isAnyExpanded ? 1 : (isExpanded ? 1 : 0.2),
         height: !isAnyExpanded ? 200 : (isExpanded ? 200 : 50),
@@ -96,8 +98,9 @@ function CovenantCard({ i, x, y, rot, scale, clauseData, type, trans, currentCou
             key={i} 
             ref={covenantCardRef}
             style={{ 
-                flex: flex, // Use the spring value for flex
-                height: height
+                // flex: flex, // Use the spring value for flex
+                // height: height,
+                filter: (focusOnComponent.active && focusOnComponent.component !== type) ? `opacity(${focusOnComponent.opacity})` : 'none'
              }}
             // onMouseEnter={() => setHoverProps({ scale: 1.1, rot: 0 })}
             // onMouseLeave={() => setHoverProps({ scale: 1, rot: (isExpanded || isAnyExpanded) ? 0 : rot })}
@@ -172,7 +175,7 @@ export function JournalCovenants({ shape, selectionFragment, journalCovenantsRef
     <animated.div 
         className={styles.journalCovenants}
         style={{
-            // flex: flex,
+            flex: 0.5,
         }}
         ref={journalCovenantsRef}
         

@@ -32,6 +32,7 @@ import { MainMenuPainter } from "~/components/canvas/custom-ui/utilities/MainMen
 import { GraphLayoutCollection } from "~/components/canvas/custom-ui/graph/GraphLayoutCollection";
 import { AnnotationLayoutCollection } from "~/components/canvas/custom-ui/graph/AnnotationLayoutCollection";
 import { GraphUi } from "~/components/canvas/custom-ui/graph/GraphUi";
+import FocusOnComponentPainter from "~/components/canvas/custom-ui/utilities/FocusOnComponentPainter";
 import { GraphTrigger } from "~/components/canvas/custom-ui/graph/GraphTrigger";
 import { SelectionListener } from "~/components/canvas/custom-ui/listeners/SelectionListener";
 import { Stars } from '~/components/canvas/custom-ui/aesthetics/stars/Stars';
@@ -219,6 +220,7 @@ export default function WorldCanvas() {
                             {/* <MainMenuPainter /> */}
                             <GoalPainter />
                             <MinimapPainter />
+                            <FocusOnComponentPainter />
                             <MediaArticlePainter />
                             <ResizePainter />
                             <NarrationPainter />

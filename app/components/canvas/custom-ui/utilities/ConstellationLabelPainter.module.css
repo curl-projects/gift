@@ -97,7 +97,6 @@
 
 .covenantSuperscript[data-style="active"]::before {
     color: white; /* Example: Red color */
-    font-size: 0.9em; /* Slightly larger */
     text-shadow: 0 0 5px rgba(255, 255, 255, 0.8), /* Outer glow */
                  0 0 10px rgba(255, 255, 255, 0.6), /* Middle glow */
                  0 0 15px rgba(255, 255, 255, 0.4); /* Inner glow */
@@ -106,7 +105,6 @@
 
 .covenantSuperscript[data-style="inactive"]::before {
     color: #b2b3b8; /* Example: Green color */
-    font-size: 0.9em; /* Slightly smaller */
 }
 
 
