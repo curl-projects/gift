@@ -1,17 +1,21 @@
 import styles from './ConnectCard.module.css'
 import { EditorContent, useEditor } from '@tiptap/react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import StarterKit from '@tiptap/starter-kit';
 import Link from "@tiptap/extension-link";
 import * as showdown from 'showdown';
 import Placeholder from '@tiptap/extension-placeholder'
 import { useCovenantContext } from "~/components/synchronization/CovenantContext"
+import { useEditor as useTldrawEditor } from "tldraw"
+import { zoomToFrameDiv } from "~/components/canvas/helpers/zoomToFrameDiv"
+import { useStarFireSync } from "~/components/synchronization/StarFireSync"
 
-export function ConnectCard({ index, selectionFragment, covenant }){
+export function ConnectCard({ index, selectionFragment, covenant, covenantCardRef }){
     const [htmlContent, setHtmlContent] = useState("");
     const converter = new showdown.Converter();
     const { covenantCompletion, setCovenantCompletion, setExpandedIndex, annotationsExpanded, setAnnotationsExpanded } = useCovenantContext()
-
+    const tldrawEditor = useTldrawEditor();
+    const { setJournalZooms } = useStarFireSync()
     // load data
     useEffect(() => {
     console.log("SELECTION FRAGMENT:", selectionFragment)
@@ -78,7 +82,8 @@ export function ConnectCard({ index, selectionFragment, covenant }){
       }, [htmlContent, editor]);
 
     return(
-        <div className={styles.connectCardContainer}>
+        <div 
+            className={styles.connectCardContainer}>
             <div className={styles.connectCardSelection}>
             <EditorContent 
                 editor={editor} 
@@ -87,7 +92,9 @@ export function ConnectCard({ index, selectionFragment, covenant }){
             </div>
             {htmlContent !== "" &&
                 <div className={styles.connectToThoughtBox} onClick={(e) => {
-                    setAnnotationsExpanded(!annotationsExpanded)
+                    setJournalZooms(true)
+                    zoomToFrameDiv(covenantCardRef, tldrawEditor)
+                    // setAnnotationsExpanded(!annotationsExpanded)
 
                     e.stopPropagation()
                     console.log("CLICKED")

@@ -33,6 +33,7 @@ const StarFireSyncProvider = ({ children }) => {
 
     const [constellationLabel, _setConstellationLabel] = useState({ visible: false, immediate: true });
     const [journalZooms, setJournalZooms] = useState(false)
+    const [enableTLDrawZoom, setEnableTLDrawZoom] = useState(true)
 
     const [overlayControls, _setOverlayControls] = useState({ startColor: '#1E4D60', endColor: '#101C3E', immediate: true, duration: 2, delay: 0 }); // Consolidated state;
     const [cloudDarkeningControls, _setCloudDarkeningControls] = useState({ visible: false, colors: [] });
@@ -135,6 +136,7 @@ const StarFireSyncProvider = ({ children }) => {
                 minimapMode, setMinimapMode,
                 cloudDarkeningControls, setCloudDarkeningControls,
                 journalZooms, setJournalZooms,
+                enableTLDrawZoom, setEnableTLDrawZoom,
             }}>
             {children}
         </StarFireSyncContext.Provider>

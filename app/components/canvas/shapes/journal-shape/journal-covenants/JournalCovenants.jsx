@@ -3,7 +3,7 @@ import labelStyles from '~/components/canvas/custom-ui/utilities/ConstellationLa
 import { motion, useAnimation } from 'framer-motion';
 import { useSprings, animated, to as interpolate, useSpring } from '@react-spring/web'
 import { useDrag } from 'react-use-gesture'
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Covenant, CovenantMainClause, CovenantConjunction, CovenantClause } from "~/components/canvas/custom-ui/utilities/ConstellationLabelPainter.jsx"
 import { useDataContext } from "~/components/synchronization/DataContext"
 import { englishToLepchaMap } from "~/components/canvas/helpers/language-funcs.js"
@@ -83,6 +83,7 @@ function CovenantCards({ activeCovenant, selectionFragment }) {
 
 
 function CovenantCard({ i, x, y, rot, scale, clauseData, type, trans, currentCount, handleClick, isExpanded, isAnyExpanded, selectionFragment }){
+    const covenantCardRef = useRef(null);
     const { flex, height } = useSpring({
         flex: !isAnyExpanded ? 1 : (isExpanded ? 1 : 0.2),
         height: !isAnyExpanded ? 200 : (isExpanded ? 200 : 50),
@@ -93,6 +94,7 @@ function CovenantCard({ i, x, y, rot, scale, clauseData, type, trans, currentCou
        <animated.div 
             className={styles.covenantCard} 
             key={i} 
+            ref={covenantCardRef}
             style={{ 
                 flex: flex, // Use the spring value for flex
                 height: height
@@ -107,17 +109,24 @@ function CovenantCard({ i, x, y, rot, scale, clauseData, type, trans, currentCou
 
             }}>
             {type === "mainClause" 
-            ? <MainClauseCard index={i} covenant={clauseData} currentCount={currentCount} handleClick={handleClick} selectionFragment={selectionFragment} /> 
+            ? <MainClauseCard 
+                index={i} 
+                covenant={clauseData} 
+                currentCount={currentCount} 
+                handleClick={handleClick} 
+                selectionFragment={selectionFragment} 
+                covenantCardRef={covenantCardRef}
+            /> 
             : <ModifierCard index={i} modifier={clauseData} currentCount={currentCount} />}
         </animated.div>
        </animated.div> 
     )
 }
 
-function MainClauseCard({ index, covenant, currentCount, handleClick, selectionFragment }){
+function MainClauseCard({ index, covenant, currentCount, handleClick, selectionFragment, covenantCardRef }){
 
     const cardMap = {
-        CONNECT_TO_OWN_WORK: <ConnectCard index={index} covenant={covenant} selectionFragment={selectionFragment} />,
+        CONNECT_TO_OWN_WORK: <ConnectCard index={index} covenant={covenant} selectionFragment={selectionFragment} covenantCardRef={covenantCardRef} />,
         CONNECT_TO_FOUND_ITEM: <ConnectCard />,
         CONNECT_TO_INTERESTING_PERSON: <ConnectCard />,
         ATTACH_NOVEL_THOUGHT: <ConnectCard />,
@@ -125,7 +134,7 @@ function MainClauseCard({ index, covenant, currentCount, handleClick, selectionF
 
     return(
         <div className={styles.mainClauseContainer} onClick={handleClick}>
-        <CovenantMainClause covenant={covenant} currentCount={currentCount} />
+        <CovenantMainClause covenant={covenant} currentCount={currentCount} covenantCardRef={covenantCardRef} />
         {cardMap[covenant.covenantType]}
        </div>
     )
@@ -163,7 +172,7 @@ export function JournalCovenants({ shape, selectionFragment, journalCovenantsRef
     <animated.div 
         className={styles.journalCovenants}
         style={{
-            flex: flex,
+            // flex: flex,
         }}
         ref={journalCovenantsRef}
         
