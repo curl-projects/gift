@@ -73,7 +73,8 @@ const FocusOnComponentPainter = track(() => {
                console.log("BOUNDS:", bounds)
 
                const newBounds = {
-                x: bounds.x + 0.30*bounds.w - 1,
+                // x: bounds.x + 0.30*bounds.w - 1,
+                x: bounds.x + (journalRightOffset - journalLeftOffset)*bounds.w - 2,
                 y: bounds.y,
                 w: bounds.w,
                 h: bounds.h,
