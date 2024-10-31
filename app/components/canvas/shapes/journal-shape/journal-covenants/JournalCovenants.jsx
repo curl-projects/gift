@@ -83,8 +83,9 @@ function CovenantCards({ activeCovenant, selectionFragment }) {
 
 
 function CovenantCard({ i, x, y, rot, scale, clauseData, type, trans, currentCount, handleClick, isExpanded, isAnyExpanded, selectionFragment }){
-    const { flex } = useSpring({
+    const { flex, height } = useSpring({
         flex: !isAnyExpanded ? 1 : (isExpanded ? 1 : 0.2),
+        height: !isAnyExpanded ? 200 : (isExpanded ? 200 : 50),
         config: { tension: 100, friction: 15 }
     });
 
@@ -94,6 +95,7 @@ function CovenantCard({ i, x, y, rot, scale, clauseData, type, trans, currentCou
             key={i} 
             style={{ 
                 flex: flex, // Use the spring value for flex
+                height: height
              }}
             // onMouseEnter={() => setHoverProps({ scale: 1.1, rot: 0 })}
             // onMouseLeave={() => setHoverProps({ scale: 1, rot: (isExpanded || isAnyExpanded) ? 0 : rot })}
@@ -153,7 +155,7 @@ export function JournalCovenants({ shape, selectionFragment, journalCovenantsRef
   const [activeCovenant, setActiveCovenant] = useState(data.user.covenants[0]);
 
   const { flex } = useSpring({
-    flex: annotationsExpanded ? 2 : 0.5,
+    flex: annotationsExpanded ? 6 : 0.5,
     config: { tension: 100, friction: 15 }
 });
 

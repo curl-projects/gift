@@ -22,6 +22,34 @@
     gap: 20px;
 }
 
+.journalBackground{
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    /* background-color: rgba(0, 0, 0, 0.2); */
+
+}
+
+.journalBackground::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    background-color: rgba(0, 0, 0, 0.4);
+    box-sizing: border-box;
+    box-shadow: 0px 0px 20px 10px rgba(0, 0, 0, 0.4);
+
+    border-radius: 6px;
+    filter: url('./journal-filters/page-roughness.svg#combined');
+    pointer-events: none;
+    z-index: -1;
+}
+
+
 .journalContainer{
     min-width: 0%;
     position: relative;
@@ -34,7 +62,7 @@
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
-    background-color: rgba(0, 0, 0, 0.2);
+    /* background-color: rgba(0, 0, 0, 0.2); */
 
     overflow: visible;
     flex: 1;

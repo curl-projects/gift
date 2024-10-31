@@ -11,7 +11,7 @@ import { useStarFireSync } from '~/components/synchronization/StarFireSync';
 import { BsArrowBarLeft } from "react-icons/bs";
 import { FaExpand } from "react-icons/fa";
 import { getRandomLepchaCharacter } from '~/components/canvas/helpers/language-funcs';
-import { createShapeId } from 'tldraw';
+import { createShapeId, GeoStylePickerSet } from 'tldraw';
 import { journalRightOffset, journalLeftOffset } from '../JournalShapeUtil';
 import { JournalCovenants } from '../journal-covenants/JournalCovenants';
 import { useCovenantContext } from "~/components/synchronization/CovenantContext"
@@ -60,7 +60,7 @@ const pages = [
 export function ModernJournal({ shape, contentRef, tldrawEditor }) {
   // DATA CONTEXT
   const { data } = useDataContext();
-  const { journalMode, setJournalMode } = useStarFireSync();
+  const { journalMode, setJournalMode, journalZooms, setJournalZooms } = useStarFireSync();
 
   // TEXT EDITOR CONTEXT
   const converter = new showdown.Converter();
@@ -137,6 +137,10 @@ export function ModernJournal({ shape, contentRef, tldrawEditor }) {
   // }, [scrollChange])
 
 
+  useEffect(()=>{
+    console.log("JOURNAL ZOOMS:", journalZooms)
+  }, [journalZooms])
+  
   // load data
   useEffect(() => {
     console.log("DATA:", data.journalEntries)
@@ -261,6 +265,7 @@ export function ModernJournal({ shape, contentRef, tldrawEditor }) {
 
   return (
     <>
+
       <motion.div className={styles.shapeContent}
         ref={contentRef}
         initial={{ opacity: 0}}
@@ -295,7 +300,18 @@ export function ModernJournal({ shape, contentRef, tldrawEditor }) {
           e.stopPropagation();
         }}
       >
+        
+
         <div className={styles.journalContainer}>
+        <motion.div 
+          className={styles.journalBackground}
+          initial={{ opacity: 0}}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{
+            opacity: { duration: 0.5, ease: 'easeInOut' },
+          }}  
+          />
         <div className={styles.journalTools}>
           <div
             className={styles.journalToolButton}
@@ -320,6 +336,14 @@ export function ModernJournal({ shape, contentRef, tldrawEditor }) {
               setAnnotationsExpanded(!annotationsExpanded)
             }}>
             <FaExpand />
+          </div>
+          <div
+            className={styles.journalToolButton}
+            onPointerDown={() => {
+              console.log("clicked")
+              setJournalZooms(!journalZooms)
+            }}>
+            Z
           </div>
         </div>
         <div style={{

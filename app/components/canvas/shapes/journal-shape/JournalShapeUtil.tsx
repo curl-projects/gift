@@ -79,7 +79,7 @@ export class JournalShapeUtil extends BaseBoxShapeUtil<JournalShape> {
 		const bounds = this.editor.getShapeGeometry(shape).bounds
 		const { data } = useDataContext();
         const contentRef = useRef<HTMLDivElement>(null);
-        const { journalMode, setJournalMode } = useStarFireSync()
+        const { journalMode, setJournalMode, journalZooms } = useStarFireSync()
         const { person } = useParams();
         const selectedShapeIds = this.editor.getSelectedShapeIds();
 
@@ -168,35 +168,44 @@ export class JournalShapeUtil extends BaseBoxShapeUtil<JournalShape> {
         //   triggers on animation frame -- this should be conditional on journalMode.position
           useEffect(() => {
             const margin = window.innerHeight * 0.1;
+            let animationId: number;
 
             const updateShapePosition = () => {
-                // console.log("UPDDATE journalMode.position", journalMode.position)
-                const offset = journalMode.position === 'left' ? window.innerWidth * journalLeftOffset : window.innerWidth * journalRightOffset
-                const { x, y } = this.editor.screenToPage({ x: offset - margin, y: margin });
-                this.editor.updateShape({
-                    type: shape.type,
-                    id: shape.id,
-                    x: x,
-                    y: y,
-                    props: {
-                        w: window.innerWidth * journalWidthScaling,
-                        h: window.innerHeight * journalHeightScaling,
-                    }
-                });
-                requestAnimationFrame(updateShapePosition);
+                if (!journalZooms) {
+                    const offset = journalMode.position === 'left' ? window.innerWidth * journalLeftOffset : window.innerWidth * journalRightOffset;
+                    const { x, y } = this.editor.screenToPage({ x: offset - margin, y: margin });
+                    this.editor.updateShape({
+                        type: shape.type,
+                        id: shape.id,
+                        x: x,
+                        y: y,
+                        props: {
+                            w: window.innerWidth * journalWidthScaling,
+                            h: window.innerHeight * journalHeightScaling,
+                        }
+                    });
+                    animationId = requestAnimationFrame(updateShapePosition);
+                }
             };
 
-            const animationId = requestAnimationFrame(updateShapePosition);
+            if (!journalZooms) {
+                animationId = requestAnimationFrame(updateShapePosition);
+            }
 
-            return () => cancelAnimationFrame(animationId);
-          }, [journalMode.position]);   
+            return () => {
+                if (animationId) {
+                    cancelAnimationFrame(animationId);
+                }
+            };
+          }, [journalMode.position, journalZooms]);   
 
 		return (
             <HTMLContainer style={{
                 width: shape.props.w,
                 height: shape.props.h,
-                transform: 'scale(var(--tl-scale))',
-                }}>
+                transform: journalZooms ? 'unset' : 'scale(var(--tl-scale))',
+                }}
+                >
                 <AnimatePresence>
                     {shape.props.expanded &&
                         <motion.div 

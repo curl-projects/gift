@@ -10,7 +10,7 @@ import { useCovenantContext } from "~/components/synchronization/CovenantContext
 export function ConnectCard({ index, selectionFragment, covenant }){
     const [htmlContent, setHtmlContent] = useState("");
     const converter = new showdown.Converter();
-    const { covenantCompletion, setCovenantCompletion, setExpandedIndex } = useCovenantContext()
+    const { covenantCompletion, setCovenantCompletion, setExpandedIndex, annotationsExpanded, setAnnotationsExpanded } = useCovenantContext()
 
     // load data
     useEffect(() => {
@@ -86,7 +86,12 @@ export function ConnectCard({ index, selectionFragment, covenant }){
             />
             </div>
             {htmlContent !== "" &&
-                <div className={styles.connectToThoughtBox}>
+                <div className={styles.connectToThoughtBox} onClick={(e) => {
+                    setAnnotationsExpanded(!annotationsExpanded)
+
+                    e.stopPropagation()
+                    console.log("CLICKED")
+                }}>
                     Attach thought
                 </div>
             }
