@@ -378,7 +378,7 @@ export function ModernJournal({ shape, contentRef, tldrawEditor }) {
           d={`M -5 -5 L ${shape.props.w + 5} -5 L ${shape.props.w + 5} ${shape.props.h + 5} L -5 ${shape.props.h + 5} Z`}
           delay={0}
           duration={1}
-          strokeWidth={1}
+          strokeWidth={2}
           pageContainer
         />
       </motion.svg>

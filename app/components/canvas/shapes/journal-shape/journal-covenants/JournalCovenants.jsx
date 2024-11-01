@@ -81,16 +81,17 @@ function CovenantCard({ i, clauseData, type, currentCount, isExpanded, isAnyExpa
         x: 0,
         y: 0,
         scale: 1,
-        rot: -10 + Math.random() * 20,
-        delay: i * 100,
+        rot: (i % 2 === 0 ? -4 : 4), // Alternating rotation
+        delay: i * 150,
       })
     
-    const trans = (x, y, r, s) =>
-        `translateX(${x}px) translateY(${y}px) perspective(1500px) rotateX(30deg) rotateY(${r / 10}deg) rotateZ(${r}deg) scale(${s})`
+      const trans = (x, y, r, s) =>
+        `translateX(${x}px) translateY(${y}px) perspective(1500px) rotateX(0deg) rotateY(0deg) rotateZ(${r}deg) scale(${s})`;
 
     const props = useSpring({
         to: to(i),
         from: from(i),
+        config: { tension: 185, friction: 26 }, // Configure the spring animation
       });
 
     const animatedStyle = {
