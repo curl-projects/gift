@@ -55,21 +55,12 @@ const FocusOnComponentPainter = track(() => {
            
            
             const animationDuration = 300
-            console.log("PREV BOUNDS:", focusOnComponent.prevBounds, "PREV ZOOM:", focusOnComponent.prevZoom, "PREV VIEWPORT CENTER:", focusOnComponent.prevViewportCenter)
 
-            const bounds = {
-                x: focusOnComponent.prevBounds.x,
-                y: focusOnComponent.prevBounds.y,
-                w: focusOnComponent.prevBounds.w,
-                h: focusOnComponent.prevBounds.h,
-                z: 1,
-            }
             const journal = editor.getShape({type: 'journal', id: createShapeId('journal')})
 
             editor.run(() => {
 
                 const bounds = editor.getShapePageBounds(journal)
-
 
                console.log("BOUNDS:", bounds)
 
@@ -77,7 +68,6 @@ const FocusOnComponentPainter = track(() => {
                const offset = journalMode.position === 'left' ? window.innerWidth * journalLeftOffset : window.innerWidth * journalRightOffset;
 
                const newBounds = {
-                // x: bounds.x + 0.30*bounds.w - 1,
                 x: bounds.x + offset + margin,
                 y: bounds.y,
                 w: bounds.w,
@@ -99,14 +89,6 @@ const FocusOnComponentPainter = track(() => {
 
             setTimeout(() => {
                 setJournalZooms(false)
-                setTimeout(() => {
-                    const journalLeftFinal = editor.getShapePageBounds(journal)
-                    console.log("WINDOW:", window.innerWidth, window.innerHeight)
-                    console.log("MARGIN:", window.innerHeight * 0.1)
-                    console.log("OFFSET:", window.innerWidth * journalLeftOffset, window.innerWidth * journalRightOffset)
-                    console.log("JOURNAL LEFT OFFSET:", journalLeftOffset, "JOURNAL RIGHT OFFSET:", journalRightOffset)
-                    console.log("JOURNAL LEFT INITIAL:", journalLeftInitial, "JOURNAL LEFT FINAL:", journalLeftFinal)
-                }, 100)
             }, animationDuration+20)
         }
 
@@ -117,14 +99,3 @@ const FocusOnComponentPainter = track(() => {
 })
 
 export default FocusOnComponentPainter
-
-// partially closed
-// x: -498.8925  -> -.485.9925 = 12.9
-
-
-// fully open
-// x: -175.4999 -> - 136.8399 = 38.66
-
-// UNADJUSTED
-// x: -175.49999 - -408.99997 = 233.5
-

@@ -14,10 +14,7 @@ export function ConnectCardFunctionality({ covenantCardRef, tldrawEditor }){
 
                 
                 // setJournalZooms(false)
-                setFocusOnComponent({ 
-                        active: false, restoreBounds: true,
-                        prevBounds: focusOnComponent.prevBounds, prevZoom: focusOnComponent.prevZoom, 
-                        prevViewportCenter: focusOnComponent.prevViewportCenter })
+                setFocusOnComponent({ active: false, restoreBounds: true })
     
                 // remove event listener
             }
@@ -39,15 +36,8 @@ export function ConnectCardFunctionality({ covenantCardRef, tldrawEditor }){
                 console.log("GETTING INITIAL VIEWPORT PAGE BOUNDS: ", tldrawEditor.getViewportPageBounds(), "ZOOM LEVEL: ", tldrawEditor.getZoomLevel())
                 setJournalZooms(true)
 
-                setTimeout(() => {
-                    console.log("GETTING VIEWPORT PAGE BOUNDS: ", tldrawEditor.getViewportPageBounds(), "ZOOM LEVEL: ", tldrawEditor.getZoomLevel())
-                    setFocusOnComponent({ active: true, component: 'mainClause', componentRef: covenantCardRef, 
-                        opacity: 0.1, 
-                        prevBounds: tldrawEditor.getViewportPageBounds(), 
-                        prevZoom: tldrawEditor.getZoomLevel(),
-                        prevViewportCenter: tldrawEditor.getViewportScreenCenter()
-                    })
-                }, 100)
+                console.log("GETTING VIEWPORT PAGE BOUNDS: ", tldrawEditor.getViewportPageBounds(), "ZOOM LEVEL: ", tldrawEditor.getZoomLevel())
+                setFocusOnComponent({ active: true, component: 'mainClause', componentRef: covenantCardRef, opacity: 0.1})
 
                 e.stopPropagation()
                 console.log("CLICKED")

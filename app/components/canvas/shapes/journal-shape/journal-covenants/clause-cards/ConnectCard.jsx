@@ -9,13 +9,15 @@ import { useCovenantContext } from "~/components/synchronization/CovenantContext
 import { useEditor as useTldrawEditor } from "tldraw"
 import { useStarFireSync } from "~/components/synchronization/StarFireSync"
 import { ConnectCardFunctionality } from './ConnectCardFunctionality'
+import { motion, AnimatePresence } from "framer-motion"
+import { CovenantMainClause } from "~/components/canvas/custom-ui/utilities/ConstellationLabelPainter.jsx"
 
-export function ConnectCard({ index, selectionFragment, covenant, covenantCardRef }){
+export function ConnectCard({ index, selectionFragment, covenant, covenantCardRef, currentCount }){
     const [htmlContent, setHtmlContent] = useState("");
     const converter = new showdown.Converter();
-    const { covenantCompletion, setCovenantCompletion, setExpandedIndex, annotationsExpanded, setAnnotationsExpanded } = useCovenantContext()
+    const { covenantCompletion, setCovenantCompletion, setExpandedIndex } = useCovenantContext()
     const tldrawEditor = useTldrawEditor();
-    const { setJournalZooms, focusOnComponent, setFocusOnComponent } = useStarFireSync()
+
     // load data
     useEffect(() => {
     console.log("SELECTION FRAGMENT:", selectionFragment)
@@ -83,7 +85,8 @@ export function ConnectCard({ index, selectionFragment, covenant, covenantCardRe
 
     return(
         <div 
-            className={styles.connectCardContainer}>
+            className={styles.connectCardContainer}
+            >
             <div className={styles.connectCardSelection}>
             <EditorContent 
                 editor={editor} 

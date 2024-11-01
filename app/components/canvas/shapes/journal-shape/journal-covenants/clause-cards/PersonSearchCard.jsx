@@ -1,22 +1,27 @@
-import styles from './JustifyCard.module.css';
+import styles from "./PersonSearchCard.module.css"
 import { EditorContent, useEditor } from '@tiptap/react';
-import { useState, useEffect } from 'react';
-import StarterKit from '@tiptap/starter-kit';
-import Link from "@tiptap/extension-link";
-import * as showdown from 'showdown';
-import Placeholder from '@tiptap/extension-placeholder'
-import { useStarFireSync } from "~/components/synchronization/StarFireSync"
+import { useEffect, useState } from 'react';
+import { Node } from "@tiptap/core";
+import { Heading } from '@tiptap/extension-heading';
+import { Paragraph } from '@tiptap/extension-paragraph';
+import { Text } from '@tiptap/extension-text';
 
-export function JustifyCard({ covenant }){
+const OneLiner = Node.create({
+  name: "oneLiner",
+  topNode: true,
+  content: "block",
+});
+
+export function PersonSearchCard(){
     const [htmlContent, setHtmlContent] = useState("");
     const converter = new showdown.Converter();
 
     const editor = useEditor({
         extensions: [
-          StarterKit.configure({
-            heading: true,
-            paragraph: true
-          }),
+          OneLiner,
+          Text,
+          Paragraph,
+          Heading,
           // ColorHighlighter.configure({
           //   data: ['Hello'],
           //   tldrawEditor: tldrawEditor,
@@ -25,14 +30,14 @@ export function JustifyCard({ covenant }){
           //   CustomParagraph,
           Link,
           Placeholder.configure({
-            placeholder: "Offer up something...",
+            placeholder: "Search for a person...",
+            showOnlyWhenEditable: false,
         }),
         ],
         content: htmlContent,
         editable: true,
-        // onUpdate: ({ editor }) => {
-        //   setHtmlContent(editor.getHTML());
-        // },
+        onUpdate: ({ editor }) => {
+        },
         onSelectionUpdate: ({ editor }) => {
         }
     })
@@ -43,13 +48,12 @@ export function JustifyCard({ covenant }){
         }
       }, [htmlContent, editor]);
 
-
     return(
-        <div className={styles.justifyCard}>
-           <EditorContent 
+        <div className={styles.personSearchCard}>
+            <EditorContent 
                 editor={editor} 
                 className="journal-tiptap"
             />
-        </div>
+        </div>   
     )
 }
