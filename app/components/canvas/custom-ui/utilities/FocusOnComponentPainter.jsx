@@ -75,12 +75,10 @@ const FocusOnComponentPainter = track(() => {
 
                const margin = window.innerHeight * 0.1;
                const offset = journalMode.position === 'left' ? window.innerWidth * journalLeftOffset : window.innerWidth * journalRightOffset;
-               const { x, y } = editor.screenToPage({ x: offset - margin, y: margin });
-
 
                const newBounds = {
                 // x: bounds.x + 0.30*bounds.w - 1,
-                x: bounds.x + window.innerWidth * journalLeftOffset + margin,
+                x: bounds.x + offset + margin,
                 y: bounds.y,
                 w: bounds.w,
                 h: bounds.h,
