@@ -41,8 +41,8 @@ type JournalShape = TLBaseShape<
 	}
 >
 
-const journalWidthScaling = 0.6
-const journalHeightScaling = 0.8
+export const journalWidthScaling = 0.6
+export const journalHeightScaling = 0.8
 export const journalRightOffset = 0.4
 export const journalLeftOffset = 0.1
 

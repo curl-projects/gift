@@ -16,7 +16,7 @@ const customScreenToPage = (editor, point) => {
 const FocusOnComponentPainter = track(() => {
     const editor = useEditor()
 
-    const { focusOnComponent, setJournalZooms } = useStarFireSync()
+    const { focusOnComponent, setJournalZooms, journalMode } = useStarFireSync()
 
     useEffect(() => {
         if(!focusOnComponent.componentRef || !focusOnComponent.active){
@@ -64,17 +64,23 @@ const FocusOnComponentPainter = track(() => {
                 h: focusOnComponent.prevBounds.h,
                 z: 1,
             }
+            const journal = editor.getShape({type: 'journal', id: createShapeId('journal')})
 
             editor.run(() => {
-                const journal = editor.getShape({type: 'journal', id: createShapeId('journal')})
 
                 const bounds = editor.getShapePageBounds(journal)
 
+
                console.log("BOUNDS:", bounds)
+
+               const margin = window.innerHeight * 0.1;
+               const offset = journalMode.position === 'left' ? window.innerWidth * journalLeftOffset : window.innerWidth * journalRightOffset;
+               const { x, y } = editor.screenToPage({ x: offset - margin, y: margin });
+
 
                const newBounds = {
                 // x: bounds.x + 0.30*bounds.w - 1,
-                x: bounds.x + (journalRightOffset - journalLeftOffset)*bounds.w - 2,
+                x: bounds.x + window.innerWidth * journalLeftOffset + margin,
                 y: bounds.y,
                 w: bounds.w,
                 h: bounds.h,
@@ -89,9 +95,20 @@ const FocusOnComponentPainter = track(() => {
                     targetZoom: 1,
                 })
             })
-            
+
+            const journalLeftInitial = editor.getShapePageBounds(journal)
+
+
             setTimeout(() => {
                 setJournalZooms(false)
+                setTimeout(() => {
+                    const journalLeftFinal = editor.getShapePageBounds(journal)
+                    console.log("WINDOW:", window.innerWidth, window.innerHeight)
+                    console.log("MARGIN:", window.innerHeight * 0.1)
+                    console.log("OFFSET:", window.innerWidth * journalLeftOffset, window.innerWidth * journalRightOffset)
+                    console.log("JOURNAL LEFT OFFSET:", journalLeftOffset, "JOURNAL RIGHT OFFSET:", journalRightOffset)
+                    console.log("JOURNAL LEFT INITIAL:", journalLeftInitial, "JOURNAL LEFT FINAL:", journalLeftFinal)
+                }, 100)
             }, animationDuration+20)
         }
 
@@ -102,3 +119,14 @@ const FocusOnComponentPainter = track(() => {
 })
 
 export default FocusOnComponentPainter
+
+// partially closed
+// x: -498.8925  -> -.485.9925 = 12.9
+
+
+// fully open
+// x: -175.4999 -> - 136.8399 = 38.66
+
+// UNADJUSTED
+// x: -175.49999 - -408.99997 = 233.5
+
