@@ -1,6 +1,6 @@
 import styles from './JournalCovenants.module.css';
 import labelStyles from '~/components/canvas/custom-ui/utilities/ConstellationLabelPainter.module.css';
-import { motion, useAnimation, AnimatePresence } from 'framer-motion';
+import { motion, useAnimation, AnimatePresence, LayoutGroup } from 'framer-motion';
 import { useSprings, animated, to as interpolate, useSpring } from '@react-spring/web'
 import { useDrag } from 'react-use-gesture'
 import { useState, useEffect, useRef } from 'react';
@@ -12,6 +12,7 @@ import { ConnectCard } from './clause-cards/ConnectCard.jsx'
 import { JustifyCard } from './clause-cards/JustifyCard.jsx'
 import { useCovenantContext } from "~/components/synchronization/CovenantContext"
 import { useStarFireSync } from '~/components/synchronization/StarFireSync'
+import useMeasure from 'react-use-measure';
 
 
 export function JournalCovenants({ shape, selectionFragment, journalCovenantsRef, annotationsExpanded }) {
@@ -63,14 +64,14 @@ export function JournalCovenants({ shape, selectionFragment, journalCovenantsRef
 
 function CovenantCard({ i, clauseData, type, currentCount, isExpanded, isAnyExpanded, selectionFragment }){
     const id = clauseData.id
-   
     const covenantCardRef = useRef(null);
+    const [ref, { height: contentHeight }] = useMeasure();
     const { focusOnComponent, setFocusOnComponent, setJournalZooms } = useStarFireSync()
-    // const { flex, height } = useSpring({
-    //     flex: !isAnyExpanded ? 1 : (isExpanded ? 1 : 0.2),
-    //     height: !isAnyExpanded ? 200 : (isExpanded ? 200 : 50),
-    //     config: { tension: 100, friction: 15 }
-    // });
+
+    const expand = useSpring({
+        config: { friction: 10 },
+        height: contentHeight ? contentHeight : 'fit-content'
+    });
 
     useEffect(() => {
         function handleClickOutside(event) {
@@ -105,11 +106,11 @@ function CovenantCard({ i, clauseData, type, currentCount, isExpanded, isAnyExpa
     }
 
     return(
-       <animated.div 
+       <motion.div 
             className={styles.covenantCard} 
             key={i} 
             ref={covenantCardRef}
-
+        
             style={{ 
                 filter: (focusOnComponent.active && focusOnComponent.componentId !== id) ? `opacity(${focusOnComponent.opacity})` : 'none'
              }}
@@ -119,46 +120,45 @@ function CovenantCard({ i, clauseData, type, currentCount, isExpanded, isAnyExpa
             <animated.div 
                 className={styles.covenantCardInner}
                 onClick={handleClickInside}
+                style={{
+                    height: expand.height
+                }}
                 >
-            {/* CREATE CARD TEMPLATE HERE */}
-            
-            {/* COLLAPSED CARD */}
-            <AnimatePresence>
-                {focusOnComponent.componentId !== id &&
-                    <>
-                    {type === "mainClause" 
-                        ? <MainClauseCard 
-                            index={i} 
-                            covenant={clauseData} 
-                            currentCount={currentCount} 
-                            selectionFragment={selectionFragment} 
-                            covenantCardRef={covenantCardRef}
-                        /> 
-                        : <ModifierCard index={i} modifier={clauseData} currentCount={currentCount} />}
-                    </>
-                }
-            </AnimatePresence>
-            
-            {/* EXPANDED CARD */}
-            <AnimatePresence>
-                {focusOnComponent.componentId === id &&
-                    <>
-                    {type === "mainClause" 
-                        ? <ExpandedMainClauseCard 
-                            index={i} 
-                            covenant={clauseData} 
-                            currentCount={currentCount} 
-                            selectionFragment={selectionFragment} 
-                            covenantCardRef={covenantCardRef}
-                        /> 
-                        : <ExpandedModifierCard index={i} modifier={clauseData} currentCount={currentCount} />}
-                    </>
-                }
-            </AnimatePresence>
-
-            
-        </animated.div>
-       </animated.div> 
+                <div ref={ref} className={styles.covenantCardHeightController} >
+                    {/* COLLAPSED CARD */}
+                    <AnimatePresence mode="wait">
+                        <LayoutGroup>
+                            {focusOnComponent.componentId !== id &&
+                                <div className={styles.cardContainer} key="collapsedCard">
+                                    {type === "mainClause"
+                                        ? <MainClauseCard
+                                            index={i}
+                                            covenant={clauseData}
+                                            currentCount={currentCount}
+                                            selectionFragment={selectionFragment}
+                                            covenantCardRef={covenantCardRef}
+                                        />
+                                        : <ModifierCard index={i} modifier={clauseData} currentCount={currentCount} />}
+                                </div>
+                            }
+                            {focusOnComponent.componentId === id &&
+                                <div className={styles.cardContainer} key="expandedCard">
+                                    {type === "mainClause"
+                                        ? <ExpandedMainClauseCard
+                                            index={i}
+                                            covenant={clauseData}
+                                            currentCount={currentCount}
+                                            selectionFragment={selectionFragment}
+                                            covenantCardRef={covenantCardRef}
+                                        />
+                                        : <ExpandedModifierCard index={i} modifier={clauseData} currentCount={currentCount} />}
+                                </div>
+                            }
+                        </LayoutGroup>
+                    </AnimatePresence>
+                </div>
+            </animated.div>
+       </motion.div> 
     )
 }
 
@@ -188,7 +188,14 @@ function MainClauseCard({ index, covenant, currentCount, selectionFragment, cove
 
 function ExpandedMainClauseCard({}){
     return(
-        <h1>Hi!</h1>
+        <motion.div
+            className={styles.expandedCardContainer}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+        >
+            <h1>Hi!</h1>
+        </motion.div>
     )
 }
    
@@ -217,6 +224,13 @@ function ModifierCard({ modifier, currentCount }){
 
 function ExpandedModifierCard({}){
     return(
-        <h1>Hi!</h1>
+        <motion.div
+            className={styles.expandedCardContainer}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+        >
+            <h1>Hi!</h1>
+        </motion.div>
     )
 }
