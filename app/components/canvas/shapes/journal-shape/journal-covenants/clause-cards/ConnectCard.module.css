@@ -16,4 +16,6 @@
     padding-top: 10px;
     width: 100%;
     height: fit-content;
+    max-height: 150px;
+    overflow-y: scroll;
 }

@@ -34,6 +34,7 @@ export function ConnectCardFunctionality({ covenantCardRef, tldrawEditor }){
         <div 
             className={styles.connectToThoughtBox} 
             onClick={(e) => {
+                if(!focusOnComponent.component === 'mainClause'){
                 console.log("INITIAL JOURNAL POSITION:", tldrawEditor.getShapePageBounds(tldrawEditor.getShape({type: 'journal', id: createShapeId('journal')})))
                 console.log("GETTING INITIAL VIEWPORT PAGE BOUNDS: ", tldrawEditor.getViewportPageBounds(), "ZOOM LEVEL: ", tldrawEditor.getZoomLevel())
                 setJournalZooms(true)
@@ -50,6 +51,7 @@ export function ConnectCardFunctionality({ covenantCardRef, tldrawEditor }){
 
                 e.stopPropagation()
                 console.log("CLICKED")
+            }
             }}>
             Attach thought
         </div>
