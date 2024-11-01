@@ -31,23 +31,20 @@ const FocusOnComponentPainter = track(() => {
         console.log("BOUNDING RECT:", boundingRect)
         console.log("PAGE COORDS:", pageCoords)
         console.log("EDITOR:", editor)
-        let customInset = 40
+        let customInset = -2
         const bounds = {
             x: pageCoords.x - customInset,
             y: pageCoords.y - customInset,
             w: boundingRect.width + customInset,
-            h: boundingRect.height + customInset
+            h: focusOnComponent.finalHeight + customInset
         }
 
-        setTimeout(() => {
         editor.zoomToBounds(bounds, {
         animation: {
                 duration: 300,
                 },
                 // targetZoom: 1,
-            })
-            
-        }, 10)
+        })
     }, [focusOnComponent, editor])
 
 
@@ -77,12 +74,14 @@ const FocusOnComponentPainter = track(() => {
 
                console.log("LEFT ALIGN OFFSET:", window.innerWidth * journalLeftOffset, "JOURNAL LEFT OFFSET:", journalLeftOffset, "RIGHT ALIGN OFFSET:", window.innerWidth * journalRightOffset, "JOURNAL RIGHT OFFSET:", journalRightOffset)
 
+               setTimeout(() => {
                 editor.zoomToBounds(newBounds, {
                     animation: {
                     duration: animationDuration,
                 },
                     targetZoom: 1,
                 })
+               }, 100)
             })
 
             const journalLeftInitial = editor.getShapePageBounds(journal)

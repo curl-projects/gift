@@ -1,5 +1,5 @@
-import styles from "./PersonSearchCard.module.css"
 import { useEffect, useState } from 'react';
+import styles from './ExpandedConnectCard.module.css'
 import { EditorContent, useEditor } from '@tiptap/react';
 import { Node } from "@tiptap/core";
 import { Heading } from '@tiptap/extension-heading';
@@ -15,7 +15,8 @@ const OneLiner = Node.create({
   content: "block",
 });
 
-export function PersonSearchCard(){
+export function ExpandedConnectCard() {
+    const [height, setHeight] = useState(0);
     const [htmlContent, setHtmlContent] = useState("");
     const converter = new showdown.Converter();
 
@@ -33,7 +34,7 @@ export function PersonSearchCard(){
           //   CustomParagraph,
           Link,
           Placeholder.configure({
-            placeholder: "Search for a person...",
+            placeholder: "Search for something you've written",
             showOnlyWhenEditable: false,
         }),
         ],
@@ -51,12 +52,40 @@ export function PersonSearchCard(){
         }
       }, [htmlContent, editor]);
 
-    return(
-        <div className={styles.personSearchCard}>
+    useEffect(() => {
+        const updateHeight = () => {
+            const aspectRatio = window.innerHeight / window.innerWidth;
+            const width = document.querySelector(`.${styles.expandedConnectCard}`).offsetWidth;
+            setHeight(width * aspectRatio);
+        };
+
+        updateHeight();
+        window.addEventListener('resize', updateHeight);
+
+        return () => window.removeEventListener('resize', updateHeight);
+    }, []);
+
+    return (
+        <div className={styles.expandedConnectCard} style={{ height }}>
+           {/* <div className={styles.covenantTitle}>
+            <h1>Expanded Connect Card</h1>
+            <p></p>
+           </div> */}
+           <div className={styles.covenantEntrySearch}>
             <EditorContent 
                 editor={editor} 
-                className="journal-tiptap"
+                className={styles.searchText}
             />
-        </div>   
+           </div>
+        </div>
+    );
+}
+
+export function ConnectItem(){
+    return(
+        <div className={styles.connectItem}>
+            <p className={styles.connectItemTitle}>Connect Item Title</p>
+            <p className={styles.connectItemDescription}>Connect Item Description</p>
+        </div>
     )
 }

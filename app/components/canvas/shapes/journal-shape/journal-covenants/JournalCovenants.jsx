@@ -8,12 +8,13 @@ import { Covenant, CovenantMainClause, CovenantConjunction, CovenantClause } fro
 import { useDataContext } from "~/components/synchronization/DataContext"
 import { englishToLepchaMap } from "~/components/canvas/helpers/language-funcs.js"
 
-import { ConnectCard } from './clause-cards/ConnectCard.jsx'
+import { ConnectCard } from './clause-cards/connect-card/ConnectCard.jsx'
+import { ExpandedConnectCard } from './clause-cards/connect-card/ExpandedConnectCard.jsx'
+
 import { JustifyCard } from './clause-cards/JustifyCard.jsx'
 import { useCovenantContext } from "~/components/synchronization/CovenantContext"
 import { useStarFireSync } from '~/components/synchronization/StarFireSync'
 import useMeasure from 'react-use-measure';
-
 
 export function JournalCovenants({ shape, selectionFragment, journalCovenantsRef, annotationsExpanded }) {
     const { data } = useDataContext();
@@ -67,11 +68,56 @@ function CovenantCard({ i, clauseData, type, currentCount, isExpanded, isAnyExpa
     const covenantCardRef = useRef(null);
     const [ref, { height: contentHeight }] = useMeasure();
     const { focusOnComponent, setFocusOnComponent, setJournalZooms } = useStarFireSync()
+    const [isExpanding, setIsExpanding] = useState(false);
+
+    // Measure the expanded content
+    const expandedContentRef = useRef();
+    const [expandedBoundsRef, { height: expandedContentHeight }] = useMeasure();
+
+    // // Entrance animation with perspective and rotation
+    const from = (i) => ({ x: 0, y: -1000, rot: 0, scale: 1.5 })
+
+    const to = (i) => ({
+        x: 0,
+        y: 0,
+        scale: 1,
+        rot: -10 + Math.random() * 20,
+        delay: i * 100,
+      })
+    
+    const trans = (x, y, r, s) =>
+        `translateX(${x}px) translateY(${y}px) perspective(1500px) rotateX(30deg) rotateY(${r / 10}deg) rotateZ(${r}deg) scale(${s})`
+
+    const props = useSpring({
+        to: to(i),
+        from: from(i),
+      });
+
+    const animatedStyle = {
+        transform: interpolate(
+            [props.x, props.y, props.rot, props.scale],
+            (x, y, r, s) => trans(x, y, r, s)
+        )
+    };
 
     const expand = useSpring({
-        config: { friction: 10 },
-        height: contentHeight ? contentHeight : 'fit-content'
-    });
+        config: { tension: 120, friction: 14 },
+        height: contentHeight || 'fit-content',
+    });  
+
+    useEffect(() => {
+        if (isExpanding && expandedContentHeight) {
+            setFocusOnComponent({
+                active: true,
+                component: type,
+                componentId: id,
+                componentRef: covenantCardRef,
+                opacity: 0.1,
+                finalHeight: expandedContentHeight, // Use the measured expanded content height
+            });
+            setIsExpanding(false);
+        }
+    }, [isExpanding, expandedContentHeight]);
 
     useEffect(() => {
         function handleClickOutside(event) {
@@ -98,20 +144,19 @@ function CovenantCard({ i, clauseData, type, currentCount, isExpanded, isAnyExpa
         console.log("CLICKED INSIDE", focusOnComponent.component, type, focusOnComponent.component !== type)
         if(focusOnComponent.componentId !== id){
             setJournalZooms(true)
-            setFocusOnComponent({ active: true, component: type, 
-                                  componentId: id,
-                                  componentRef: covenantCardRef, 
-                                  opacity: 0.1})
+            setIsExpanding(true)
         }
     }
 
     return(
-       <motion.div 
+       <animated.div 
             className={styles.covenantCard} 
             key={i} 
             ref={covenantCardRef}
         
             style={{ 
+                ...animatedStyle,
+                // ...entranceAnimation, // Apply the entrance animation
                 filter: (focusOnComponent.active && focusOnComponent.componentId !== id) ? `opacity(${focusOnComponent.opacity})` : 'none'
              }}
             // onMouseEnter={() => setHoverProps({ scale: 1.1, rot: 0 })}
@@ -124,7 +169,10 @@ function CovenantCard({ i, clauseData, type, currentCount, isExpanded, isAnyExpa
                     height: expand.height
                 }}
                 >
-                <div ref={ref} className={styles.covenantCardHeightController} >
+                <div 
+                    ref={ref} 
+                    className={styles.covenantCardHeightController} 
+                    key={focusOnComponent.componentId === id ? 'expanded' : 'collapsed'}>
                     {/* COLLAPSED CARD */}
                     <AnimatePresence mode="wait">
                         <LayoutGroup>
@@ -151,14 +199,39 @@ function CovenantCard({ i, clauseData, type, currentCount, isExpanded, isAnyExpa
                                             selectionFragment={selectionFragment}
                                             covenantCardRef={covenantCardRef}
                                         />
-                                        : <ExpandedModifierCard index={i} modifier={clauseData} currentCount={currentCount} />}
+                                        : <ExpandedModifierCard index={i} modifier={clauseData} currentCount={currentCount} ref={expandedContentRef} />}
                                 </div>
                             }
                         </LayoutGroup>
                     </AnimatePresence>
                 </div>
             </animated.div>
-       </motion.div> 
+
+            {/* Hidden expanded content for measurement */}
+            <div
+                ref={expandedBoundsRef}
+                style={{
+                    position: 'absolute',
+                    visibility: 'hidden',
+                    pointerEvents: 'none',
+                    height: 'auto',
+                    width: '100%',
+                    overflow: 'hidden',
+                }}
+            >
+                {type === 'mainClause' ? (
+                    <ExpandedMainClauseCard
+                        index={i}
+                        covenant={clauseData}
+                        currentCount={currentCount}
+                        selectionFragment={selectionFragment}
+                        covenantCardRef={covenantCardRef}
+                    />
+                ) : (
+                    <ExpandedModifierCard index={i} modifier={clauseData} currentCount={currentCount} />
+                )}
+            </div>
+       </animated.div> 
     )
 }
 
@@ -186,7 +259,15 @@ function MainClauseCard({ index, covenant, currentCount, selectionFragment, cove
     )
 }
 
-function ExpandedMainClauseCard({}){
+function ExpandedMainClauseCard({ index, covenant, selectionFragment, covenantCardRef, currentCount }){
+
+    const cardMap = {
+        CONNECT_TO_OWN_WORK: <ExpandedConnectCard index={index} covenant={covenant} selectionFragment={selectionFragment} covenantCardRef={covenantCardRef} currentCount={currentCount} />,
+        CONNECT_TO_FOUND_ITEM: <ExpandedConnectCard />,
+        CONNECT_TO_INTERESTING_PERSON: <ExpandedConnectCard />,
+        ATTACH_NOVEL_THOUGHT: <ExpandedConnectCard />,
+    }
+
     return(
         <motion.div
             className={styles.expandedCardContainer}
@@ -194,7 +275,7 @@ function ExpandedMainClauseCard({}){
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
         >
-            <h1>Hi!</h1>
+            {cardMap[covenant.covenantType]}
         </motion.div>
     )
 }
