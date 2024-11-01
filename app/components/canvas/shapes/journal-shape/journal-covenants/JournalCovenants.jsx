@@ -74,14 +74,15 @@ function CovenantCard({ i, clauseData, type, currentCount, isExpanded, isAnyExpa
 
     useEffect(() => {
         function handleClickOutside(event) {
-            if (focusOnComponent.active && focusOnComponent.component === 'modifier' && covenantCardRef.current && !covenantCardRef.current.contains(event.target)) {
-                // Trigger your new functionality here
-                    
-                // setJournalZooms(false)
-                setFocusOnComponent({ active: false, restoreBounds: true })
+            if (focusOnComponent.active && 
+                focusOnComponent.componentId === id && 
+                covenantCardRef.current && 
+                !covenantCardRef.current.contains(event.target)) {
+
+                    setFocusOnComponent({ active: false, restoreBounds: true })
     
-                // remove event listener
-                document.removeEventListener("mousedown", handleClickOutside);
+                    // remove event listener
+                    document.removeEventListener("mousedown", handleClickOutside);
             }
         }
         // Bind the event listener
@@ -94,10 +95,12 @@ function CovenantCard({ i, clauseData, type, currentCount, isExpanded, isAnyExpa
 
     function handleClickInside(){
         console.log("CLICKED INSIDE", focusOnComponent.component, type, focusOnComponent.component !== type)
-        if(focusOnComponent.component !== type){
-            console.log("SETTING JOURNAL ZOOMS TRUE")
+        if(focusOnComponent.componentId !== id){
             setJournalZooms(true)
-            setFocusOnComponent({ active: true, component: type, componentRef: covenantCardRef, opacity: 0.1})
+            setFocusOnComponent({ active: true, component: type, 
+                                  componentId: id,
+                                  componentRef: covenantCardRef, 
+                                  opacity: 0.1})
         }
     }
 
@@ -108,7 +111,7 @@ function CovenantCard({ i, clauseData, type, currentCount, isExpanded, isAnyExpa
             ref={covenantCardRef}
 
             style={{ 
-                filter: (focusOnComponent.active && focusOnComponent.component !== type) ? `opacity(${focusOnComponent.opacity})` : 'none'
+                filter: (focusOnComponent.active && focusOnComponent.componentId !== id) ? `opacity(${focusOnComponent.opacity})` : 'none'
              }}
             // onMouseEnter={() => setHoverProps({ scale: 1.1, rot: 0 })}
             // onMouseLeave={() => setHoverProps({ scale: 1, rot: (isExpanded || isAnyExpanded) ? 0 : rot })}
@@ -121,7 +124,7 @@ function CovenantCard({ i, clauseData, type, currentCount, isExpanded, isAnyExpa
             
             {/* COLLAPSED CARD */}
             <AnimatePresence>
-                {focusOnComponent !== 'type' &&
+                {focusOnComponent.componentId !== id &&
                     <>
                     {type === "mainClause" 
                         ? <MainClauseCard 
@@ -138,7 +141,7 @@ function CovenantCard({ i, clauseData, type, currentCount, isExpanded, isAnyExpa
             
             {/* EXPANDED CARD */}
             <AnimatePresence>
-                {focusOnComponent === 'type' &&
+                {focusOnComponent.componentId === id &&
                     <>
                     {type === "mainClause" 
                         ? <ExpandedMainClauseCard 
