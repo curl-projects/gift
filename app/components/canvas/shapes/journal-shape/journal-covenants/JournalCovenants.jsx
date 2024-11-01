@@ -69,20 +69,20 @@ function CovenantCard({ i, clauseData, type, currentCount, isExpanded, isAnyExpa
     const [ref, { height: contentHeight }] = useMeasure();
     const { focusOnComponent, setFocusOnComponent, setJournalZooms } = useStarFireSync()
     const [isExpanding, setIsExpanding] = useState(false);
+    const [isHovered, setIsHovered] = useState(false);
 
     // Measure the expanded content
     const expandedContentRef = useRef();
     const [expandedBoundsRef, { height: expandedContentHeight }] = useMeasure();
 
     // // Entrance animation with perspective and rotation
-    const from = (i) => ({ x: 0, y: -1000, rot: 0, scale: 1.5 })
+    const from = (i) => ({ x: 0, y: -80, rot: 0, scale: 1.5 })
 
     const to = (i) => ({
         x: 0,
         y: 0,
         scale: 1,
         rot: (i % 2 === 0 ? -4 : 4), // Alternating rotation
-        delay: i * 150,
       })
     
       const trans = (x, y, r, s) =>
@@ -91,7 +91,8 @@ function CovenantCard({ i, clauseData, type, currentCount, isExpanded, isAnyExpa
     const props = useSpring({
         to: to(i),
         from: from(i),
-        config: { tension: 185, friction: 26 }, // Configure the spring animation
+        config: { tension: 190, friction: 22 }, // Configure the spring animation
+        // delay: i * 100 // Add delay here
       });
 
     const animatedStyle = {
@@ -160,8 +161,8 @@ function CovenantCard({ i, clauseData, type, currentCount, isExpanded, isAnyExpa
                 // ...entranceAnimation, // Apply the entrance animation
                 filter: (focusOnComponent.active && focusOnComponent.componentId !== id) ? `opacity(${focusOnComponent.opacity})` : 'none'
              }}
-            // onMouseEnter={() => setHoverProps({ scale: 1.1, rot: 0 })}
-            // onMouseLeave={() => setHoverProps({ scale: 1, rot: (isExpanded || isAnyExpanded) ? 0 : rot })}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
             >
             <animated.div 
                 className={styles.covenantCardInner}

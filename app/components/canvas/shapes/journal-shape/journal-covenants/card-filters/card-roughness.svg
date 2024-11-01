@@ -7,8 +7,8 @@
             <feDisplacementMap in="SourceGraphic" scale="4" />
         </filter>
         <filter id="combined">
-            <feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="4" />
+            <feTurbulence type="fractalNoise" baseFrequency=".05" numOctaves="4" />
             <feDisplacementMap in="SourceGraphic" scale="4" />
-        </filter>`
+        </filter>
     </defs>
 </svg>
