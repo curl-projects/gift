@@ -73,16 +73,18 @@ export function ExpandedConnectCard() {
         <div className={styles.expandedConnectCard} style={{ height }}>
             <div className={styles.covenantTitle}>
                 <p>
-                    <ConstellationLabelSuperscript 
-                    times={1} 
-                    currentCount={0}
-                    textData={(currentCount) => Array.from({ length: 1 })}
-                    charMapper={(item, index) => englishToLepchaMap[String.fromCharCode(65 + index)]}
-                    styleMapper={(item, index, currentCount) => index < currentCount ? "inactive" : "active"}
-                    rightSpace
-                >
-                    Connect 
-                </ConstellationLabelSuperscript>
+                    <ConstellationLabelTooltip tooltipText="Connect" variant="mainClause">
+                        <ConstellationLabelSuperscript 
+                        times={1} 
+                        currentCount={0}
+                        textData={(currentCount) => Array.from({ length: 1 })}
+                        charMapper={(item, index) => englishToLepchaMap[String.fromCharCode(65 + index)]}
+                        styleMapper={(item, index, currentCount) => index < currentCount ? "inactive" : "active"}
+                        rightSpace
+                    >
+                        Connect 
+                    </ConstellationLabelSuperscript>
+                </ConstellationLabelTooltip>
                     one 
                 <ConstellationLabelSuperscript
                     times={1}
