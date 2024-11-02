@@ -1,0 +1,45 @@
+.tooltipContainer {
+    position: relative;
+    display: inline; /* Keep it inline */
+    padding-top: 14px; /* Adjust if necessary */
+}
+
+.textWithUnderline {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.underline {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    width: 100%;
+    background-color: #EB5757;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease-in-out;
+}
+
+.underlineActive {
+    transform: scaleX(1); /* Show underline on hover */
+}
+
+.tooltipBox {
+    position: absolute;
+    bottom: 100%; /* Position above */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(135, 131, 120, 0.9);
+    color: white;
+    padding: 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    font-size: 12px;
+    z-index: 10;
+    margin-bottom: 8px;
+    opacity: 1; /* Set to 1 to show */
+    pointer-events: none;
+    transition: opacity 0.3s ease-in-out;
+}

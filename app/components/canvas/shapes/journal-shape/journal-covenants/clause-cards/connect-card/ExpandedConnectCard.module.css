@@ -12,6 +12,12 @@
     width: 100%;
     padding: 6px 20px;
     font-size: 10px;
+    
+    font-family: "IBM Plex Mono", sans-serif;
+    font-size: 14px;
+    color: rgb(201, 198, 213);
+    text-transform: uppercase;
+    font-weight: 500;
 }
 
 .covenantEntrySearch{

@@ -8,11 +8,15 @@ import { Text } from '@tiptap/extension-text';
 import Link from "@tiptap/extension-link";
 import Placeholder from '@tiptap/extension-placeholder'
 import * as showdown from 'showdown';
+import { englishToLepchaMap } from "~/components/canvas/helpers/language-funcs.js"
+
+import { ConstellationLabelSuperscript } from "~/components/canvas/custom-ui/utilities/ConstellationLabelSuperscript.jsx"
+import { ConstellationLabelTooltip } from "~/components/canvas/custom-ui/utilities/ConstellationLabelTooltip.jsx"
 
 const OneLiner = Node.create({
-  name: "oneLiner",
-  topNode: true,
-  content: "block",
+    name: "oneLiner",
+    topNode: true,
+    content: "block",
 });
 
 export function ExpandedConnectCard() {
@@ -22,21 +26,21 @@ export function ExpandedConnectCard() {
 
     const editor = useEditor({
         extensions: [
-          OneLiner,
-          Text,
-          Paragraph,
-          Heading,
-          // ColorHighlighter.configure({
-          //   data: ['Hello'],
-          //   tldrawEditor: tldrawEditor,
-          // }),
-          //   CustomHeading,
-          //   CustomParagraph,
-          Link,
-          Placeholder.configure({
-            placeholder: "Search for something you've written",
-            showOnlyWhenEditable: false,
-        }),
+            OneLiner,
+            Text,
+            Paragraph,
+            Heading,
+            // ColorHighlighter.configure({
+            //   data: ['Hello'],
+            //   tldrawEditor: tldrawEditor,
+            // }),
+            //   CustomHeading,
+            //   CustomParagraph,
+            Link,
+            Placeholder.configure({
+                placeholder: "Search for something you've written",
+                showOnlyWhenEditable: false,
+            }),
         ],
         content: htmlContent,
         editable: true,
@@ -48,9 +52,9 @@ export function ExpandedConnectCard() {
 
     useEffect(() => {
         if (editor) {
-          editor.commands.setContent(htmlContent);
+            editor.commands.setContent(htmlContent);
         }
-      }, [htmlContent, editor]);
+    }, [htmlContent, editor]);
 
     useEffect(() => {
         const updateHeight = () => {
@@ -67,22 +71,58 @@ export function ExpandedConnectCard() {
 
     return (
         <div className={styles.expandedConnectCard} style={{ height }}>
-           {/* <div className={styles.covenantTitle}>
-            <h1>Expanded Connect Card</h1>
-            <p></p>
-           </div> */}
-           <div className={styles.covenantEntrySearch}>
-            <EditorContent 
-                editor={editor} 
-                className={styles.searchText}
-            />
-           </div>
+            <div className={styles.covenantTitle}>
+                <p>
+                    <ConstellationLabelSuperscript 
+                    times={1} 
+                    currentCount={0}
+                    textData={(currentCount) => Array.from({ length: 1 })}
+                    charMapper={(item, index) => englishToLepchaMap[String.fromCharCode(65 + index)]}
+                    styleMapper={(item, index, currentCount) => index < currentCount ? "inactive" : "active"}
+                    rightSpace
+                >
+                    Connect 
+                </ConstellationLabelSuperscript>
+                    one 
+                <ConstellationLabelSuperscript
+                    times={1}
+                    currentCount={0}
+                    textData={(currentCount, times) =>
+                        Array.from(currentCount === 1 || times === 1 ? "idea" : "ideas")
+                    }
+                    charMapper={(item, index) => englishToLepchaMap[item] || item}
+                    styleMapper={(item, index, currentCount) =>
+                        index < currentCount ? "inactive" : "active"
+                    }
+                    superscriptStyles={(index) => ({
+                        position: 'relative',
+                        left: index === 0 ? '-6px' : `${-9 + index * 11}px`,
+                    })}
+                    leftSpace
+                    rightSpace
+                >
+                    idea
+                </ConstellationLabelSuperscript>
+
+                    to your 
+                    <ConstellationLabelTooltip tooltipText="to your own work" variant="mainClause">
+                        own work
+                    </ConstellationLabelTooltip>
+                </p>
+
+            </div>
+            <div className={styles.covenantEntrySearch}>
+                <EditorContent
+                    editor={editor}
+                    className={styles.searchText}
+                />
+            </div>
         </div>
     );
 }
 
-export function ConnectItem(){
-    return(
+export function ConnectItem() {
+    return (
         <div className={styles.connectItem}>
             <p className={styles.connectItemTitle}>Connect Item Title</p>
             <p className={styles.connectItemDescription}>Connect Item Description</p>

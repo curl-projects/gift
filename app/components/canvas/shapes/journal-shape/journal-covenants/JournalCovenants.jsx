@@ -91,7 +91,7 @@ function CovenantCard({ i, clauseData, type, currentCount, isExpanded, isAnyExpa
     const props = useSpring({
         to: to(i),
         from: from(i),
-        config: { tension: 190, friction: 22 }, // Configure the spring animation
+        config: { mass: 1, tension: 190, friction: 22 }, // Configure the spring animation
         delay: i * 100 // Add delay here
       });
 
@@ -310,6 +310,8 @@ function ModifierCard({ modifier, currentCount }){
 }
 
 function ExpandedModifierCard({}){
+
+    
     return(
         <motion.div
             className={styles.expandedCardContainer}

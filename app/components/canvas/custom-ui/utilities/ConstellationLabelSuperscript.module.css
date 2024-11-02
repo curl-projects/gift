@@ -1,0 +1,34 @@
+.covenantSuperscriptContainer{
+    padding: 0em 0.6em;
+}
+
+.covenantSuperscript {
+    position: relative; /* Enable relative positioning for the pseudo-element */
+    /* display: inline-block;  */
+    /* margin-right: 0.6em;  */
+}
+
+.covenantSuperscript::before {
+    content: attr(data-char); /* Use the data attribute to specify the character */
+    position: absolute;
+    top: -14px; /* Adjust this value to move the character upwards */
+    left: 2px;
+    font-size: 0.8em; /* Optionally adjust the size */
+    color: #b2b3b8;
+    font-family: "IBM Plex Mono", sans-serif;
+    cursor: pointer;
+    font-weight: 800;
+    transition: color 0.3s ease-in-out, font-size 0.3s ease-in-out, text-shadow 0.3s ease-in-out;
+}
+
+.covenantSuperscript[data-style="active"]::before {
+    color: white; /* Example: Red color */
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.8), /* Outer glow */
+                 0 0 10px rgba(255, 255, 255, 0.6), /* Middle glow */
+                 0 0 15px rgba(255, 255, 255, 0.4); /* Inner glow */
+
+}
+
+.covenantSuperscript[data-style="inactive"]::before {
+    color: #b2b3b8; /* Example: Green color */
+}
