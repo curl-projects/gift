@@ -1,11 +1,23 @@
 .covenantSuperscriptContainer{
     padding: 0em 0.6em;
+    position: relative;
 }
 
 .covenantSuperscript {
-    position: relative; /* Enable relative positioning for the pseudo-element */
+    position: absolute; /* Enable relative positioning for the pseudo-element */
     /* display: inline-block;  */
+    top: -14px;
+    left: 2px;
     /* margin-right: 0.6em;  */
+}
+
+.covenantSuperscriptText {
+    font-size: 0.8em; /* Optionally adjust the size */
+    color: #b2b3b8;
+    font-family: "IBM Plex Mono", sans-serif;
+    cursor: pointer;
+    font-weight: 800;
+    transition: color 0.3s ease-in-out, font-size 0.3s ease-in-out, text-shadow 0.3s ease-in-out;
 }
 
 .covenantSuperscript::before {
@@ -21,7 +33,7 @@
     transition: color 0.3s ease-in-out, font-size 0.3s ease-in-out, text-shadow 0.3s ease-in-out;
 }
 
-.covenantSuperscript[data-style="active"]::before {
+.covenantSuperscript .active {
     color: white; /* Example: Red color */
     text-shadow: 0 0 5px rgba(255, 255, 255, 0.8), /* Outer glow */
                  0 0 10px rgba(255, 255, 255, 0.6), /* Middle glow */
@@ -29,6 +41,6 @@
 
 }
 
-.covenantSuperscript[data-style="inactive"]::before {
+.covenantSuperscript .inactive {
     color: #b2b3b8; /* Example: Green color */
 }

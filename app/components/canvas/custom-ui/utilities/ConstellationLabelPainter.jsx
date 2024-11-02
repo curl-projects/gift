@@ -10,6 +10,10 @@ import { englishToLepchaMap } from "~/components/canvas/helpers/language-funcs.j
 import { useDataContext } from "~/components/synchronization/DataContext"
 import { ToWords } from 'to-words';
 import { ConnectLabel } from "~/components/canvas/custom-ui/utilities/constellation-label-components/ConnectLabel"
+import { JustifyLabel } from "~/components/canvas/custom-ui/utilities/constellation-label-components/JustifyLabel"
+
+import { ConstellationLabelSuperscript } from "~/components/canvas/custom-ui/utilities/constellation-label-components/ConstellationLabelSuperscript.jsx"
+import { ConstellationLabelTooltip } from "~/components/canvas/custom-ui/utilities/constellation-label-components/ConstellationLabelTooltip.jsx"
 
 export function ConstellationLabelPainter({ name }){
     const { triggerWarp, setTriggerWarp, constellationLabel, focusOnComponent } = useStarFireSync()
@@ -92,41 +96,41 @@ export function ConstellationCovenants({ animationCommenced, constellationLabel 
     )
 }
 
-export function CovenantTooltip({ children, tooltipText, variant }){
+// export function CovenantTooltip({ children, tooltipText, variant }){
 
-    const variants = {
-        'mainClause': {
-            underlineColor: "rgba(231, 229, 237, 1)",
-        },
-        'connector': {
-            underlineColor: "#EB5757",
-        },
-        'subclause': {
-            underlineColor: "rgb(201, 198, 213)",
-        }
-    }
-    const [isHovered, setIsHovered] = useState(false)
-    return(
-        <span 
-        className={styles.tooltipContainer}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-    >
-        <span className={styles.textWithUnderline}>
-            {children}
-            <span 
-                className={`${styles.underline} ${isHovered ? styles.underlineActive : ''}`} 
-                style={{ backgroundColor: variants[variant].underlineColor }}
-            ></span>
-        </span>
-        {isHovered && (
-            <span className={styles.tooltipBox}>
-                {tooltipText}
-            </span>
-        )}
-    </span>
-    )
-}
+//     const variants = {
+//         'mainClause': {
+//             underlineColor: "rgba(231, 229, 237, 1)",
+//         },
+//         'connector': {
+//             underlineColor: "#EB5757",
+//         },
+//         'subclause': {
+//             underlineColor: "rgb(201, 198, 213)",
+//         }
+//     }
+//     const [isHovered, setIsHovered] = useState(false)
+//     return(
+//         <span 
+//         className={styles.tooltipContainer}
+//         onMouseEnter={() => setIsHovered(true)}
+//         onMouseLeave={() => setIsHovered(false)}
+//     >
+//         <span className={styles.textWithUnderline}>
+//             {children}
+//             <span 
+//                 className={`${styles.underline} ${isHovered ? styles.underlineActive : ''}`} 
+//                 style={{ backgroundColor: variants[variant].underlineColor }}
+//             ></span>
+//         </span>
+//         {isHovered && (
+//             <span className={styles.tooltipBox}>
+//                 {tooltipText}
+//             </span>
+//         )}
+//     </span>
+//     )
+// }
 
 export function CovenantMainClause({ covenant, currentCount }){
     const toWords = new ToWords();
@@ -148,41 +152,41 @@ export function CovenantMainClause({ covenant, currentCount }){
             helperComponent: <p>Connect to interesting people</p>
         },
         "ATTACH_NOVEL_THOUGHT": {
-            text: 
-                <CovenantTooltip tooltipText={"Create a new thought"} variant={"mainClause"}>
-                    <span style={{ display: 'flex'}}>
-                    <span 
-                        className={styles.covenantSuperscriptContainer} 
-                        style={{ 
-                            paddingLeft: "0px",
-                            paddingRight: currentCount === 0 ? "0px" : "0.6em"
-                        }}> 
-                        {Array.from({ length: covenant.times }).map((_, index) => (
-                            <span 
-                                key={index} 
-                                className={styles.covenantSuperscript} 
-                                data-char={englishToLepchaMap[String.fromCharCode(65 + index)]} 
-                                data-style={index < currentCount ? "inactive" : "active"} 
-                                style={{
-                                    marginLeft: `${index * 1}em`
-                                }}
-                            />
-                        ))}
-                        Create
-                    </span>
-                        {currentCount === 0 ? "d" : " "} {currentCount === 0 ? toWords.convert(covenant.times) : toWords.convert(currentCount)} new 
-                        <span className={styles.covenantSuperscriptContainer} style={{
-                            paddingRight: "0px",
-                        }}>
-                            <span className={styles.covenantSuperscript} data-char={
-                                currentCount === 1 || covenant.times === 1
-                                ? "thought".split('').map(char => englishToLepchaMap[char] || char).join('') 
-                                : "thoughts".split('').map(char => englishToLepchaMap[char] || char).join('')
-                                } />
-                            {(currentCount === 1 || covenant.times === 1) ? "thought" : "thoughts"}
-                        </span> 
-                    </span>
-                </CovenantTooltip>
+            text: <span>Attach novel thought </span>
+                // <CovenantTooltip tooltipText={"Create a new thought"} variant={"mainClause"}>
+                //     <span style={{ display: 'flex'}}>
+                //     <span 
+                //         className={styles.covenantSuperscriptContainer} 
+                //         style={{ 
+                //             paddingLeft: "0px",
+                //             paddingRight: currentCount === 0 ? "0px" : "0.6em"
+                //         }}> 
+                //         {Array.from({ length: covenant.times }).map((_, index) => (
+                //             <span 
+                //                 key={index} 
+                //                 className={styles.covenantSuperscript} 
+                //                 data-char={englishToLepchaMap[String.fromCharCode(65 + index)]} 
+                //                 data-style={index < currentCount ? "inactive" : "active"} 
+                //                 style={{
+                //                     marginLeft: `${index * 1}em`
+                //                 }}
+                //             />
+                //         ))}
+                //         Create
+                //     </span>
+                //         {currentCount === 0 ? "d" : " "} {currentCount === 0 ? toWords.convert(covenant.times) : toWords.convert(currentCount)} new 
+                //         <span className={styles.covenantSuperscriptContainer} style={{
+                //             paddingRight: "0px",
+                //         }}>
+                //             <span className={styles.covenantSuperscript} data-char={
+                //                 currentCount === 1 || covenant.times === 1
+                //                 ? "thought".split('').map(char => englishToLepchaMap[char] || char).join('') 
+                //                 : "thoughts".split('').map(char => englishToLepchaMap[char] || char).join('')
+                //                 } />
+                //             {(currentCount === 1 || covenant.times === 1) ? "thought" : "thoughts"}
+                //         </span> 
+                //     </span>
+                // </CovenantTooltip>
                 ,
             icon: "💡",
             helperComponent: <p>Attach a new thought</p>
@@ -242,28 +246,29 @@ export function CovenantConjunction({ modifier }){
         }
     }
     return(
-        <CovenantTooltip tooltipText={"This is a tooltip"} variant={"connector"}>
+        <ConstellationLabelTooltip tooltipText={"This is a tooltip"} variant={"connector"}>
         <span className={styles.clauseJoiner}>
             {modifierCategoryMap[modifier.modifierCategory].text}
             </span>
-        </CovenantTooltip> 
+        </ConstellationLabelTooltip> 
     )
 }
 
 export function CovenantClause({ modifier, currentCount }){
     const modifierMap = {
         "JUSTIFY": {
-            text: <span style={{ display: 'flex', alignItems: 'flex-end'}}>
-                    <span className={styles.covenantSuperscriptContainer}>
-                        <span className={styles.covenantSuperscript} data-char={
-                            currentCount === 0 
-                            ? "justified".split('').map(char => englishToLepchaMap[char] || char).join('') 
-                            : "justify".split('').map(char => englishToLepchaMap[char] || char).join('')
-                        } />
-                        {currentCount === 0 ? "justified" : "justify"}
-                    </span>
-                    <span style={{ whiteSpace: 'nowrap'}}>the connection</span>
-                </span>,
+            text: <JustifyLabel currentCount={currentCount} modifier={modifier} />,
+            // <span style={{ display: 'flex', alignItems: 'flex-end'}}>
+            //         <span className={styles.covenantSuperscriptContainer}>
+            //             <span className={styles.covenantSuperscript} data-char={
+            //                 currentCount === 0 
+            //                 ? "justified".split('').map(char => englishToLepchaMap[char] || char).join('') 
+            //                 : "justify".split('').map(char => englishToLepchaMap[char] || char).join('')
+            //             } />
+            //             {currentCount === 0 ? "justified" : "justify"}
+            //         </span>
+            //         <span style={{ whiteSpace: 'nowrap'}}>the connection</span>
+            //     </span>,
             tooltipText: "Justify the connection"
         },
         "FEWER_WORDS": {
@@ -283,9 +288,9 @@ export function CovenantClause({ modifier, currentCount }){
     }
 
     return(
-        <CovenantTooltip tooltipText={"This is also a tooltip"} variant={"subclause"}>
+        <ConstellationLabelTooltip tooltipText={"This is also a tooltip"} variant={"subclause"}>
             {modifierMap[modifier.modifier].text}
-        </CovenantTooltip>
+        </ConstellationLabelTooltip>
     )
 }
 

@@ -10,8 +10,8 @@ import Placeholder from '@tiptap/extension-placeholder'
 import * as showdown from 'showdown';
 import { englishToLepchaMap } from "~/components/canvas/helpers/language-funcs.js"
 
-import { ConstellationLabelSuperscript } from "~/components/canvas/custom-ui/utilities/ConstellationLabelSuperscript.jsx"
-import { ConstellationLabelTooltip } from "~/components/canvas/custom-ui/utilities/ConstellationLabelTooltip.jsx"
+import { ConstellationLabelSuperscript } from "~/components/canvas/custom-ui/utilities/constellation-label-components/ConstellationLabelSuperscript.jsx"
+import { ConstellationLabelTooltip } from "~/components/canvas/custom-ui/utilities/constellation-label-components/ConstellationLabelTooltip.jsx"
 
 const OneLiner = Node.create({
     name: "oneLiner",
