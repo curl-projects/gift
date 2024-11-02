@@ -66,7 +66,7 @@ export function JournalCovenants({ shape, selectionFragment, journalCovenantsRef
 function CovenantCard({ i, clauseData, type, currentCount, isExpanded, isAnyExpanded, selectionFragment }){
     const id = clauseData.id
     const covenantCardRef = useRef(null);
-    const [ref, { height: contentHeight }] = useMeasure();
+    const [measureRef, { height: contentHeight }] = useMeasure({offsetSize: true});
     const { focusOnComponent, setFocusOnComponent, setJournalZooms } = useStarFireSync()
     const [isExpanding, setIsExpanding] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
@@ -76,7 +76,7 @@ function CovenantCard({ i, clauseData, type, currentCount, isExpanded, isAnyExpa
     const [expandedBoundsRef, { height: expandedContentHeight }] = useMeasure();
 
     // // Entrance animation with perspective and rotation
-    const from = (i) => ({ x: 0, y: -80, rot: 0, scale: 1.5 })
+    const from = (i) => ({ x: 0, y: -1000, rot: 0, scale: 1.5 })
 
     const to = (i) => ({
         x: 0,
@@ -92,7 +92,7 @@ function CovenantCard({ i, clauseData, type, currentCount, isExpanded, isAnyExpa
         to: to(i),
         from: from(i),
         config: { tension: 190, friction: 22 }, // Configure the spring animation
-        // delay: i * 100 // Add delay here
+        delay: i * 100 // Add delay here
       });
 
     const animatedStyle = {
@@ -102,8 +102,12 @@ function CovenantCard({ i, clauseData, type, currentCount, isExpanded, isAnyExpa
         )
     };
 
+    useEffect(() => {
+        console.log("CONTENT HEIGHT", contentHeight)
+    }, [contentHeight])
+
     const expand = useSpring({
-        config: { tension: 120, friction: 14 },
+        config: { tension: 190, friction: 22 },
         height: contentHeight || 'fit-content',
     });  
 
@@ -172,7 +176,7 @@ function CovenantCard({ i, clauseData, type, currentCount, isExpanded, isAnyExpa
                 }}
                 >
                 <div 
-                    ref={ref} 
+                    ref={measureRef} 
                     className={styles.covenantCardHeightController} 
                     key={focusOnComponent.componentId === id ? 'expanded' : 'collapsed'}>
                     {/* COLLAPSED CARD */}

@@ -82,6 +82,7 @@
 
   .covenantCardHeightController{
     height: fit-content;
+    border: 2px solid red;
   }
 
 
@@ -98,6 +99,7 @@
     box-sizing: border-box;
 
     overflow: hidden;
+    border: 2px solid brown;
   }
 
 
