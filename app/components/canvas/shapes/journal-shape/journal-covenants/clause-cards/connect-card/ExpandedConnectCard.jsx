@@ -20,7 +20,6 @@ const OneLiner = Node.create({
 });
 
 export function ExpandedConnectCard() {
-    const [height, setHeight] = useState(0);
     const [htmlContent, setHtmlContent] = useState("");
     const converter = new showdown.Converter();
 
@@ -56,21 +55,8 @@ export function ExpandedConnectCard() {
         }
     }, [htmlContent, editor]);
 
-    useEffect(() => {
-        const updateHeight = () => {
-            const aspectRatio = window.innerHeight / window.innerWidth;
-            const width = document.querySelector(`.${styles.expandedConnectCard}`).offsetWidth;
-            setHeight(width * aspectRatio);
-        };
-
-        updateHeight();
-        window.addEventListener('resize', updateHeight);
-
-        return () => window.removeEventListener('resize', updateHeight);
-    }, []);
-
     return (
-        <div className={styles.expandedConnectCard} style={{ height }}>
+        <>
             <div className={styles.covenantTitle}>
                 <p>
                     <ConstellationLabelTooltip tooltipText="Connect" variant="mainClause">
@@ -119,7 +105,7 @@ export function ExpandedConnectCard() {
                     className={styles.searchText}
                 />
             </div>
-        </div>
+        </>
     );
 }
 

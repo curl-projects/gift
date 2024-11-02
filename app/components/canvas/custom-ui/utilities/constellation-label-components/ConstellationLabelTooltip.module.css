@@ -6,7 +6,7 @@
 
 .textWithUnderline {
     position: relative;
-    display: inline-block;
+    display: inline;
     cursor: pointer;
 }
 

@@ -1,9 +1,0 @@
-.justifyCard {
-    /* height: 100%; */
-    width: 100%;
-    overflow: hidden;
-    overflow-y: scroll;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    max-height: 30%;
-}

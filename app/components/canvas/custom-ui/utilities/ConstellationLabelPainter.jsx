@@ -247,8 +247,8 @@ export function CovenantConjunction({ modifier }){
     }
     return(
         <ConstellationLabelTooltip tooltipText={"This is a tooltip"} variant={"connector"}>
-        <span className={styles.clauseJoiner}>
-            {modifierCategoryMap[modifier.modifierCategory].text}
+            <span className={styles.clauseJoiner}>
+                {modifierCategoryMap[modifier.modifierCategory].text}
             </span>
         </ConstellationLabelTooltip> 
     )

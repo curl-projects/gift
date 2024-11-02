@@ -11,7 +11,9 @@ import { englishToLepchaMap } from "~/components/canvas/helpers/language-funcs.j
 import { ConnectCard } from './clause-cards/connect-card/ConnectCard.jsx'
 import { ExpandedConnectCard } from './clause-cards/connect-card/ExpandedConnectCard.jsx'
 
-import { JustifyCard } from './clause-cards/JustifyCard.jsx'
+import { JustifyCard } from './clause-cards/justify-card/JustifyCard.jsx'
+import { ExpandedJustifyCard } from './clause-cards/justify-card/ExpandedJustifyCard.jsx'
+
 import { useCovenantContext } from "~/components/synchronization/CovenantContext"
 import { useStarFireSync } from '~/components/synchronization/StarFireSync'
 import useMeasure from 'react-use-measure';
@@ -73,7 +75,7 @@ function CovenantCard({ i, clauseData, type, currentCount, isExpanded, isAnyExpa
 
     // Measure the expanded content
     const expandedContentRef = useRef();
-    const [expandedBoundsRef, { height: expandedContentHeight }] = useMeasure();
+    const [expandedBoundsRef, { height: expandedContentHeight }] = useMeasure({ offsetSize: true });
 
     // // Entrance animation with perspective and rotation
     const from = (i) => ({ x: 0, y: -1000, rot: 0, scale: 1.5 })
@@ -205,7 +207,12 @@ function CovenantCard({ i, clauseData, type, currentCount, isExpanded, isAnyExpa
                                             selectionFragment={selectionFragment}
                                             covenantCardRef={covenantCardRef}
                                         />
-                                        : <ExpandedModifierCard index={i} modifier={clauseData} currentCount={currentCount} ref={expandedContentRef} />}
+                                        : <ExpandedModifierCard 
+                                            index={i} 
+                                            modifier={clauseData} 
+                                            currentCount={currentCount} 
+                                            covenantCardRef={covenantCardRef}
+                                        />}
                                 </div>
                             }
                         </LayoutGroup>
@@ -215,6 +222,8 @@ function CovenantCard({ i, clauseData, type, currentCount, isExpanded, isAnyExpa
 
             {/* Hidden expanded content for measurement */}
             <div
+                className={styles.cardContainer} 
+                key="expandedCard"
                 ref={expandedBoundsRef}
                 style={{
                     position: 'absolute',
@@ -266,6 +275,7 @@ function MainClauseCard({ index, covenant, currentCount, selectionFragment, cove
 }
 
 function ExpandedMainClauseCard({ index, covenant, selectionFragment, covenantCardRef, currentCount }){
+    const [height, setHeight] = useState(0);
 
     const cardMap = {
         CONNECT_TO_OWN_WORK: <ExpandedConnectCard index={index} covenant={covenant} selectionFragment={selectionFragment} covenantCardRef={covenantCardRef} currentCount={currentCount} />,
@@ -274,6 +284,21 @@ function ExpandedMainClauseCard({ index, covenant, selectionFragment, covenantCa
         ATTACH_NOVEL_THOUGHT: <ExpandedConnectCard />,
     }
 
+    useEffect(() => {
+        const updateHeight = () => {
+            const aspectRatio = window.innerHeight / window.innerWidth;
+            const width = document.querySelector(`.${styles.expandedCardInner}`).offsetWidth;
+            setHeight(width * aspectRatio);
+        };
+
+        updateHeight();
+        window.addEventListener('resize', updateHeight);
+
+        return () => window.removeEventListener('resize', updateHeight);
+    }, []);
+
+
+
     return(
         <motion.div
             className={styles.expandedCardContainer}
@@ -281,7 +306,9 @@ function ExpandedMainClauseCard({ index, covenant, selectionFragment, covenantCa
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
         >
-            {cardMap[covenant.covenantType]}
+            <div className={styles.expandedCardInner} style={{ height }}>
+                {cardMap[covenant.covenantType]}
+            </div>
         </motion.div>
     )
 }
@@ -299,19 +326,37 @@ function ModifierCard({ modifier, currentCount }){
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             >
-            <div className={styles.clauseTitleContainer}>
+            <p className={styles.clauseTitleContainer}>
                 <CovenantConjunction modifier={modifier} />
                 <CovenantClause modifier={modifier} currentCount={currentCount} />
-            </div>
+            </p>
             {modifierMap[modifier.modifier]}
         </motion.div>
 
     )
 }
 
-function ExpandedModifierCard({}){
+function ExpandedModifierCard({ modifier }){
+    const [height, setHeight] = useState(0);
 
-    
+    const modifierMap = {
+        JUSTIFY: <ExpandedJustifyCard />,
+    }
+
+    useEffect(() => {
+        const updateHeight = () => {
+            const aspectRatio = window.innerHeight / window.innerWidth;
+            const width = document.querySelector(`.${styles.expandedCardInner}`).offsetWidth;
+            setHeight(width * aspectRatio);
+        };
+
+        updateHeight();
+        window.addEventListener('resize', updateHeight);
+
+        return () => window.removeEventListener('resize', updateHeight);
+    }, []);
+
+
     return(
         <motion.div
             className={styles.expandedCardContainer}
@@ -319,7 +364,9 @@ function ExpandedModifierCard({}){
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
         >
-            <h1>Hi!</h1>
+             <div className={styles.expandedCardInner} style={{ height }}>
+                {modifierMap[modifier.modifier]}
+            </div>
         </motion.div>
     )
 }
