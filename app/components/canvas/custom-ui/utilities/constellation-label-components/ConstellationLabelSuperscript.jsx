@@ -4,7 +4,7 @@ import { englishToLepchaMap } from "~/components/canvas/helpers/language-funcs.j
 
 export function ConstellationLabelSuperscript({ children, covenant, currentCount,
     textData, charMapper, styleMapper, styleMapperArgs = [], // Add a prop for dynamic arguments
-    containerStyles, superscriptStyles, leftSpace, rightSpace
+    containerStyles, leftSpace, rightSpace
 }) {
 
     return (
@@ -19,11 +19,15 @@ export function ConstellationLabelSuperscript({ children, covenant, currentCount
                 ...containerStyles,
             }}
         >
-            <div className={styles.covenantSuperscript}>
+            <span className={styles.covenantSuperscript}>
                 {textData(currentCount, covenant).map((item, index) => (
                     <span
                         key={index}
-                        className={`${styles.covenantSuperscriptText} ${styleMapper ? styleMapper(item, index, ...styleMapperArgs) : (index < currentCount ? styles.inactive : styles.active)}`}
+                        className={`${styles.covenantSuperscriptText} ${styleMapper ? styleMapper(item, index, styles, ...styleMapperArgs) : (index < currentCount ? styles.inactive : styles.active)}`}
+                        style={{
+                            position: 'relative',
+                            left: leftSpace ? `0.6em` : "0px",
+                        }}
                         // data-style
                         // data-char={charMapper ? charMapper(item, index) : englishToLepchaMap[item] || item}
                         // data-style={styleMapper ? styleMapper(item, index, ...styleMapperArgs) : (index < currentCount ? "inactive" : "active")}
@@ -35,7 +39,7 @@ export function ConstellationLabelSuperscript({ children, covenant, currentCount
                         {charMapper ? charMapper(item, index) : englishToLepchaMap[item] || item}
                     </span>
                 ))}
-        </div>
+        </span>
             {children}
             
         </span>

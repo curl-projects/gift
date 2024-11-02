@@ -31,7 +31,7 @@ export function ConnectLabel({ currentCount, covenant }) {
                     currentCount={0}
                     textData={(currentCount, covenant) => Array.from({ length: covenant.times })}
                     charMapper={(item, index) => englishToLepchaMap[String.fromCharCode(65 + index)]}
-                    styleMapper={(item, index, currentCount) => index < currentCount ? "inactive" : "active"}
+                    styleMapper={(item, index, styles, currentCount) => index < currentCount ? "inactive" : "active"}
                     styleMapperArgs={[currentCount]} // Pass currentCount as an argument
                     rightSpace
                 >
@@ -48,14 +48,11 @@ export function ConnectLabel({ currentCount, covenant }) {
                     Array.from(currentCount === 1 || covenant.times === 1 ? "idea" : "ideas")
                 }
                 charMapper={(item, index) => englishToLepchaMap[item] || item}
-                styleMapper={(item, index, activeCharsCount) =>
-                    index < activeCharsCount ? "active" : "inactive"
-                }
+                styleMapper={(item, index, styles, activeCharsCount) => {
+                    console.log("INDEX:", index, "ACTIVE CHARS COUNT:", activeCharsCount)
+                    return index < activeCharsCount ? styles.active : styles.inactive
+                }}
                 styleMapperArgs={[activeCharsCount]} // Pass activeCharsCount as an argument
-                superscriptStyles={(index) => ({
-                    position: 'relative',
-                    left: index === 0 ? '-6px' : `${-9 + index * 11}px`,
-                })}
                 leftSpace
                 rightSpace
             >
