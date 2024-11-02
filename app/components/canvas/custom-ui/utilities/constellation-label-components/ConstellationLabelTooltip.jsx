@@ -41,6 +41,9 @@ export function ConstellationLabelTooltip({ children, tooltipText, variant, left
             {isHovered && (
                 <motion.span 
                     className={styles.tooltipBox}
+                    style={{
+                        border: `2px solid ${variants[variant].underlineColor}`,
+                    }}
                     initial={{ opacity: 0, y: 10, x: "-50%" }}
                     animate={{ opacity: 1, y: 0, x: "-50%" }}
                     exit={{ opacity: 0, y: 10, x: "-50%" }}

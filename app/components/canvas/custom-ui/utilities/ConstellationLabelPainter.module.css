@@ -109,14 +109,12 @@
 
 
 .clauseContainer{
-    display: flex;
     font-family: "IBM Plex Mono", sans-serif;
     font-size: 14px;
 
     color: rgb(201, 198, 213);
     text-transform: uppercase;
     font-weight: 500;
-    align-items: flex-end;
 }
 
 .constellationMetadataValue{
