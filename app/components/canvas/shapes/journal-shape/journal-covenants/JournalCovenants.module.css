@@ -98,7 +98,7 @@
     
     box-sizing: border-box;
 
-    overflow: hidden;
+    overflow: visible;
     border: 2px solid brown;
   }
 

@@ -105,7 +105,7 @@ export function ExpandedConnectCard() {
                 </ConstellationLabelSuperscript>
 
                     to your 
-                    <ConstellationLabelTooltip tooltipText="to your own work" variant="mainClause">
+                    <ConstellationLabelTooltip tooltipText="to your own work" variant="mainClause" leftSpace>
                         own work
                     </ConstellationLabelTooltip>
                 </p>

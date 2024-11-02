@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import styles from "./ConstellationLabelTooltip.module.css";
-
-export function ConstellationLabelTooltip({ children, tooltipText, variant }) {
+import { motion } from "framer-motion";
+export function ConstellationLabelTooltip({ children, tooltipText, variant, leftSpace, rightSpace }) {
     const [isHovered, setIsHovered] = useState(false);
 
     useEffect(() => {
@@ -25,6 +25,10 @@ export function ConstellationLabelTooltip({ children, tooltipText, variant }) {
             className={styles.tooltipContainer}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
+            style={{
+                paddingLeft: leftSpace ? "0.6em" : "0px",
+                paddingRight: rightSpace ? "0.6em" : "0px",
+            }}
         >
             <span className={styles.textWithUnderline}>
                 {children}
@@ -35,9 +39,15 @@ export function ConstellationLabelTooltip({ children, tooltipText, variant }) {
             </span>
             
             {isHovered && (
-                <span className={styles.tooltipBox}>
+                <motion.span 
+                    className={styles.tooltipBox}
+                    initial={{ opacity: 0, y: 10, x: "-50%" }}
+                    animate={{ opacity: 1, y: 0, x: "-50%" }}
+                    exit={{ opacity: 0, y: 10, x: "-50%" }}
+                    transition={{ duration: 0.3 }}
+                >
                     {tooltipText}
-                </span>
+                </motion.span>
             )}
         </span>
     );
