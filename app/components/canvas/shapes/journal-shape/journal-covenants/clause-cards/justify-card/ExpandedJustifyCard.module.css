@@ -1,0 +1,55 @@
+.expandedJustifyCard {
+    padding: 20px;
+    /* will-change: transform; */
+}
+
+.justifyCardEditor p {
+    margin: 0;
+    background: linear-gradient(to right, rgba(255, 255, 255, 0.8), rgba(200, 200, 200, 0.7));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    font-family: "IBM Plex", sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.006em;
+    /* line-height: 22px; */
+    margin-bottom: 10px;
+    font-size: 12px;
+    backface-visibility: hidden;
+    /* transform: perspective(1px); */
+    line-height: 1.5em;
+  }
+  
+  .clauseTitleContainer{
+    font-family: "IBM Plex Mono", sans-serif;
+    font-size: 14px;
+
+    color: rgb(201, 198, 213);
+    text-transform: uppercase;
+    font-weight: 500;
+}
+
+/* .justifyCardEditor p.is-editor-empty:first-child::before {
+    content: attr(data-placeholder);
+    float: left;
+    height: 0;
+    pointer-events: none;
+    opacity: 0.5 !important;
+    color: rgba(255, 255, 255, 0.3) !important;
+    white-space: nowrap;
+  } */
+
+  .justifyCardEditor p.isEmpty:first-child::before {
+    content: attr(data-placeholder);
+    float: left;
+    height: 0;
+    pointer-events: none;
+    white-space: nowrap;
+    background: unset;
+    -webkit-background-clip: border-box; /* Default value */
+    -webkit-text-fill-color: initial; /* Default value */
+    color: rgba(255, 255, 255, 0.2);
+    filter: opacity(0.3);
+  }
+  
+  

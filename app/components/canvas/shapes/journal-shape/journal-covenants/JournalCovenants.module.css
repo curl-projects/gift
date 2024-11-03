@@ -42,13 +42,12 @@
 .covenantCard {
     width: 100%;
     /* max-height: 200px; */
-    will-change: transform;
+    /* will-change: transform; */
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 10px;
     cursor: pointer;
-    transition: transform 0.3s ease; /* Smooth transition */
     /* overflow: hidden; */
     /* box-shadow: 0px 0px 20px 10px rgba(0, 0, 0, 0.4); */
     margin-bottom: 40px;
@@ -90,7 +89,7 @@
     /* background-color: rgba(0, 0, 0, 0.2); */
     width: 100%;
     height: 100%;
-    will-change: transform;
+    /* will-change: transform; */
     border-radius: 10px;
     /* box-shadow: 0 12.5px 100px -10px rgba(50, 50, 73, 0.4), 0 10px 10px -10px rgba(50, 50, 73, 0.3);  */
 

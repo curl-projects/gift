@@ -31,10 +31,10 @@ const FocusOnComponentPainter = track(() => {
         console.log("BOUNDING RECT:", boundingRect)
         console.log("PAGE COORDS:", pageCoords)
         console.log("EDITOR:", editor)
-        let customInset = 20
+        let customInset = 40
         const bounds = {
-            x: pageCoords.x,
-            y: pageCoords.y,
+            x: pageCoords.x - customInset / 4,
+            y: pageCoords.y - customInset / 4 ,
             w: boundingRect.width + customInset,
             h: focusOnComponent.finalHeight + customInset
         }
@@ -45,6 +45,7 @@ const FocusOnComponentPainter = track(() => {
                 },
                 // targetZoom: 1,
         })
+
     }, [focusOnComponent, editor])
 
 

@@ -10,9 +10,9 @@ import { Text } from '@tiptap/extension-text';
 import Link from "@tiptap/extension-link";
 import Placeholder from '@tiptap/extension-placeholder'
 import * as showdown from 'showdown';
+import { CovenantConjunction, CovenantClause } from "~/components/canvas/custom-ui/utilities/ConstellationLabelPainter.jsx"
 
-
-export function ExpandedJustifyCard() {
+export function ExpandedJustifyCard({ modifier, currentCount = 1, titleScale=0.6}) {
     const [htmlContent, setHtmlContent] = useState("");
     const converter = new showdown.Converter();
 
@@ -22,7 +22,7 @@ export function ExpandedJustifyCard() {
             heading: true,
             paragraph: true
             }),
-          // ColorHighlighter.configure({
+          // ColorHighlighter.configure({ 
           //   data: ['Hello'],
           //   tldrawEditor: tldrawEditor,
           // }),
@@ -32,6 +32,8 @@ export function ExpandedJustifyCard() {
           Placeholder.configure({
             placeholder: "Capture your thoughts",
             showOnlyWhenEditable: false,
+            emptyNodeClass: styles.isEmpty,
+            emptyEditorClass: styles.empty,
         }),
         ],
         content: htmlContent,
@@ -45,6 +47,7 @@ export function ExpandedJustifyCard() {
     useEffect(() => {
         if (editor) {
           editor.commands.setContent(htmlContent);
+        //   editor.commands.focus(); // Automatically focus the editor
         }
       }, [htmlContent, editor]);
 
@@ -52,9 +55,20 @@ export function ExpandedJustifyCard() {
 
     return (
         <div className={styles.expandedJustifyCard}>
+             <p className={styles.clauseTitleContainer} style={{
+                transform: `scale(${titleScale})`,
+                width: `${100/titleScale}%`,
+                transformOrigin: 'top left',
+             }}>
+                <CovenantConjunction modifier={modifier} />
+                <CovenantClause modifier={modifier} currentCount={currentCount} />
+            </p>
             <EditorContent 
                 editor={editor} 
                 className={styles.justifyCardEditor}
+                style={{
+                    transform: `perspective(1px)`,
+                }}
             />
         </div>
     )

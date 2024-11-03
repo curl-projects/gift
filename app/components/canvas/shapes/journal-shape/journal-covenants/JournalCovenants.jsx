@@ -165,7 +165,8 @@ function CovenantCard({ i, clauseData, type, currentCount, isExpanded, isAnyExpa
             style={{ 
                 ...animatedStyle,
                 // ...entranceAnimation, // Apply the entrance animation
-                filter: (focusOnComponent.active && focusOnComponent.componentId !== id) ? `opacity(${focusOnComponent.opacity})` : 'none'
+                filter: (focusOnComponent.active && focusOnComponent.componentId !== id) ? `opacity(${focusOnComponent.opacity})` : 'none',
+                display: focusOnComponent.componentId === id ? 'initial' : 'block', // used to prevent component blurring during scaling
              }}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
@@ -340,7 +341,7 @@ function ExpandedModifierCard({ modifier }){
     const [height, setHeight] = useState(0);
 
     const modifierMap = {
-        JUSTIFY: <ExpandedJustifyCard />,
+        JUSTIFY: <ExpandedJustifyCard modifier={modifier} currentCount={0} />,
     }
 
     useEffect(() => {
