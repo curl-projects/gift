@@ -31,19 +31,19 @@ const FocusOnComponentPainter = track(() => {
         console.log("BOUNDING RECT:", boundingRect)
         console.log("PAGE COORDS:", pageCoords)
         console.log("EDITOR:", editor)
-        let customInset = 40
+        let customInset = 10
         const bounds = {
-            x: pageCoords.x - customInset / 4,
-            y: pageCoords.y - customInset / 4 ,
+            x: pageCoords.x ,
+            y: pageCoords.y + customInset,
             w: boundingRect.width + customInset,
-            h: focusOnComponent.finalHeight + customInset
+            h: focusOnComponent.finalHeight + customInset,
         }
 
         editor.zoomToBounds(bounds, {
         animation: {
                 duration: 300,
                 },
-                // targetZoom: 1,
+        inset: 150
         })
 
     }, [focusOnComponent, editor])

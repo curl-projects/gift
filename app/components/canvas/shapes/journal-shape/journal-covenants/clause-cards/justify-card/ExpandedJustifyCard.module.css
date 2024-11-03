@@ -1,5 +1,6 @@
 .expandedJustifyCard {
     padding: 20px;
+    overflow-y: scroll;
     /* will-change: transform; */
 }
 

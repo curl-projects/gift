@@ -51,25 +51,38 @@ export function ExpandedJustifyCard({ modifier, currentCount = 1, titleScale=0.6
         }
       }, [htmlContent, editor]);
 
-
-
     return (
-        <div className={styles.expandedJustifyCard}>
-             <p className={styles.clauseTitleContainer} style={{
-                transform: `scale(${titleScale})`,
-                width: `${100/titleScale}%`,
-                transformOrigin: 'top left',
-             }}>
-                <CovenantConjunction modifier={modifier} />
-                <CovenantClause modifier={modifier} currentCount={currentCount} />
-            </p>
-            <EditorContent 
-                editor={editor} 
-                className={styles.justifyCardEditor}
-                style={{
-                    transform: `perspective(1px)`,
-                }}
-            />
+        <div style={{
+            height: '100%',
+            width: '100%',
+            overflow: 'scroll',
+        }}>
+            <div className={styles.expandedJustifyCard} style={{
+                // this is completely necessary to avoid subpixel antialiasing issues with chrome and other wekbit browsers
+                display: 'table', 
+                tableLayout: 'fixed',
+                width: '100%',
+                height: '100%',
+                border: '2px solid black',
+                // overflow: 'scroll',
+                
+            }}>
+                <p className={styles.clauseTitleContainer} style={{
+                    transform: `scale(${titleScale})`,
+                    width: `${100/titleScale}%`,
+                    transformOrigin: 'top left',
+                }}>
+                    <CovenantConjunction modifier={modifier} />
+                    <CovenantClause modifier={modifier} currentCount={currentCount} />
+                </p>
+                <EditorContent 
+                    editor={editor} 
+                    className={styles.justifyCardEditor}
+                    style={{
+                        transform: `perspective(1px)`,
+                    }}
+                />
+            </div>
         </div>
     )
 }

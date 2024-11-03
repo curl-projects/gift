@@ -84,11 +84,13 @@ function CovenantCard({ i, clauseData, type, currentCount, isExpanded, isAnyExpa
         x: 0,
         y: 0,
         scale: 1,
-        rot: (i % 2 === 0 ? -4 : 4), // Alternating rotation
+        // rot: 0,
+        rot: (i % 2 === 0 ? -6 : 6), // Alternating rotation
       })
     
       const trans = (x, y, r, s) =>
-        `translateX(${x}px) translateY(${y}px) perspective(1500px) rotateX(0deg) rotateY(0deg) rotateZ(${r}deg) scale(${s})`;
+        // `translateX(${x}px) translateY(${y}px) perspective(1500px) rotateX(0deg) rotateY(0deg) rotateZ(${r}deg) scale(${s})`;
+      `translateX(${x}px) perspective(4px) translateY(${y}px) rotate(${r}deg) scale(${s})`;
 
     const props = useSpring({
         to: to(i),
@@ -166,7 +168,7 @@ function CovenantCard({ i, clauseData, type, currentCount, isExpanded, isAnyExpa
                 ...animatedStyle,
                 // ...entranceAnimation, // Apply the entrance animation
                 filter: (focusOnComponent.active && focusOnComponent.componentId !== id) ? `opacity(${focusOnComponent.opacity})` : 'none',
-                display: focusOnComponent.componentId === id ? 'initial' : 'block', // used to prevent component blurring during scaling
+                // display: focusOnComponent.componentId === id ? 'initial' : 'block', // used to prevent component blurring during scaling
              }}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
