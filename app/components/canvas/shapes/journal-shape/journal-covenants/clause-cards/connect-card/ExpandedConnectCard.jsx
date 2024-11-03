@@ -9,6 +9,7 @@ import Link from "@tiptap/extension-link";
 import Placeholder from '@tiptap/extension-placeholder'
 import * as showdown from 'showdown';
 import { englishToLepchaMap } from "~/components/canvas/helpers/language-funcs.js"
+import StarterKit from '@tiptap/starter-kit';
 
 import { CovenantMainClause } from "~/components/canvas/custom-ui/utilities/ConstellationLabelPainter.jsx"
 
@@ -43,16 +44,17 @@ export function ExpandedConnectCard({ covenant, selectionFragment, currentCount 
     const [selectionHtmlContent, setSelectionHtmlContent] = useState("");
     const [searchResults, setSearchResults] = useState([]);
     const [itemPositions, setItemPositions] = useState([]);
+    const [displayedItems, setDisplayedItems] = useState(new Set());
     const converter = new showdown.Converter();
     const searchContainerRef = useRef(null);
     const searchTextRef = useRef(null);
 
     const editor = useEditor({
         extensions: [
-            OneLiner,
-            Text,
-            Paragraph,
-            Heading,
+            StarterKit.configure({
+                heading: true,
+                paragraph: true
+              }),
             Link,
             Placeholder.configure({
                 placeholder: "Search for something you've written",
@@ -65,9 +67,9 @@ export function ExpandedConnectCard({ covenant, selectionFragment, currentCount 
         editable: true,
         onUpdate: ({ editor }) => {
             const textContent = editor.getText();
-            const content = editor.getHTML();
+            // const content = editor.getHTML();
             debouncedSearch(textContent);
-            setHtmlContent(content);
+            // setHtmlContent(content);
         },
         onSelectionUpdate: ({ editor }) => {
         }
@@ -142,7 +144,11 @@ export function ExpandedConnectCard({ covenant, selectionFragment, currentCount 
             const boxWidth = 10; // Updated to match .connectItem width
             const boxHeight = 10; // Updated to match .connectItem height
 
-            const newPositions = searchResults.map(() => {
+            const newPositions = searchResults.map((article, index) => {
+                if (displayedItems.has(article.title)) {
+                    return itemPositions[index] || { x: 0, y: 0 };
+                }
+
                 let x, y;
                 let attempts = 0;
                 const maxAttempts = 100; // limit the number of attempts to find a position
@@ -164,6 +170,8 @@ export function ExpandedConnectCard({ covenant, selectionFragment, currentCount 
             });
 
             setItemPositions(newPositions);
+
+            setDisplayedItems(new Set(searchResults.map(article => article.title)));
         }
     }, [searchResults]); // Recalculate positions only when searchResults change
 
