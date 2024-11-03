@@ -49,7 +49,6 @@ export function ConnectLabel({ currentCount, covenant }) {
                 }
                 charMapper={(item, index) => englishToLepchaMap[item] || item}
                 styleMapper={(item, index, styles, activeCharsCount) => {
-                    console.log("INDEX:", index, "ACTIVE CHARS COUNT:", activeCharsCount)
                     return index < activeCharsCount ? styles.active : styles.inactive
                 }}
                 styleMapperArgs={[activeCharsCount]} // Pass activeCharsCount as an argument

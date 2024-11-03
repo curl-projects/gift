@@ -66,6 +66,8 @@ export function ConnectCard({ index, selectionFragment, covenant, covenantCardRe
           Placeholder.configure({
             placeholder: "Select something...",
             showOnlyWhenEditable: false,
+            emptyNodeClass: styles.isEmpty,
+            emptyEditorClass: styles.empty,
         }),
         ],
         content: htmlContent,
@@ -90,7 +92,7 @@ export function ConnectCard({ index, selectionFragment, covenant, covenantCardRe
             <div className={styles.connectCardSelection}>
             <EditorContent 
                 editor={editor} 
-                className="journal-tiptap"
+                className={styles.connectCardEditor}
             />
             </div>
             {htmlContent !== "" &&

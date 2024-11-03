@@ -232,16 +232,5 @@ WITH:
 - more than X words
 - an [image, pdf, etc]
 
-
-<!-- JOURNAL SPACING CALCULATIONS -->
-INITIAL:
-- x: -129.29
-- y: -321.2
-- h: 658.4
-- w: 630
-
-SUBSEQUENT:
-- x: -129.29
-- y: -321.2
-- h: 658.4
-- w: 630
+<!-- SEMANTIC SEARCH -->
+- add content to pinecone
