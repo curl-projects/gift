@@ -32,6 +32,7 @@ export function ExpandedJustifyCard({ modifier, currentCount = 1, titleScale = 0
     useEffect(() => {
         if (editor) {
             editor.commands.setContent(htmlContent);
+            editor.commands.focus()
         }
     }, [htmlContent, editor]);
 

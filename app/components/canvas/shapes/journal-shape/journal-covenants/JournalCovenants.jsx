@@ -77,35 +77,41 @@ function CovenantCard({ i, clauseData, type, currentCount, isExpanded, isAnyExpa
     const expandedContentRef = useRef();
     const [expandedBoundsRef, { height: expandedContentHeight }] = useMeasure({ offsetSize: true });
 
-    // Determine if the card is focused
-    const isFocused = focusOnComponent.componentId === id;
-    
-    // Calculate rotation based on hover or focus state
-    const rotation = (isHovered || isFocused) ? 0 : ((i % 2 === 0 ? -6 : 6));
+    // Define initial rotation for entrance animation
+    const initialRot = i % 2 === 0 ? -6 : 6;
 
-    // Define the spring animation
-    const [props, api] = useSpring(() => ({
+    // Entrance animation with perspective and rotation
+    const from = (i) => ({ x: 0, y: -1000, rot: initialRot * 5, scale: 1.5 });
+
+    const to = (i) => ({
         x: 0,
         y: 0,
         scale: 1,
-        rot: rotation,
-        config: { mass: 1, tension: 190, friction: 22 },
-        delay: i * 100,
-    }));
-
-    // Update rotation when hover or focus state changes
-    useEffect(() => {
-        api.start({ rot: rotation });
-    }, [rotation]);
+        rot: initialRot,
+    });
 
     const trans = (x, y, r, s) =>
         `translateX(${x}px) perspective(4px) translateY(${y}px) rotate(${r}deg) scale(${s})`;
+
+    const [props, api] = useSpring(() => ({
+        from: from(i),
+        to: to(i),
+        config: { mass: 1, tension: 190, friction: 22 }, // Configure the spring animation
+        delay: i * 100, // Add delay here
+    }));
+
+    // Update rotation based on hover and focus state
+    useEffect(() => {
+        api.start({
+            rot: (isHovered && focusOnComponent.componentId !== id) ? 0 : initialRot,
+        });
+    }, [isHovered, focusOnComponent.componentId]);
 
     const animatedStyle = {
         transform: interpolate(
             [props.x, props.y, props.rot, props.scale],
             (x, y, r, s) => trans(x, y, r, s)
-        )
+        ),
     };
 
     useEffect(() => {
@@ -168,6 +174,7 @@ function CovenantCard({ i, clauseData, type, currentCount, isExpanded, isAnyExpa
         
             style={{ 
                 ...animatedStyle,
+                // ...entranceAnimation, // Apply the entrance animation
                 filter: (focusOnComponent.active && focusOnComponent.componentId !== id) ? `opacity(${focusOnComponent.opacity})` : 'none',
                 // display: focusOnComponent.componentId === id ? 'initial' : 'block', // used to prevent component blurring during scaling
              }}

@@ -31,7 +31,20 @@
     font-size: 8px;
     animation: fadeIn 1s ease-in-out; /* Added animation */
   }
-  
+
+
+  .justifyCardEditor p.isEmpty:first-child::before {
+    content: attr(data-placeholder);
+    float: left;
+    height: 0;
+    pointer-events: none;
+    white-space: nowrap;
+    background: unset;
+    -webkit-background-clip: border-box; /* Default value */
+    -webkit-text-fill-color: initial; /* Default value */
+    color: rgba(255, 255, 255, 0.2);
+    filter: opacity(0.3);
+}
 
 .connectItem{
     font-size: 4px;
