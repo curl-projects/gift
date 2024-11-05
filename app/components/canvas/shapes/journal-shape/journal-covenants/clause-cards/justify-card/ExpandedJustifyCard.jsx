@@ -7,7 +7,7 @@ import Placeholder from '@tiptap/extension-placeholder';
 import * as showdown from 'showdown';
 import { CovenantConjunction, CovenantClause } from "~/components/canvas/custom-ui/utilities/ConstellationLabelPainter.jsx";
 
-export function ExpandedJustifyCard({ modifier, currentCount = 1, titleScale = 0.6 }) {
+export function ExpandedJustifyCard({ modifier, titleScale = 0.6 }) {
     const [htmlContent, setHtmlContent] = useState("");
     const converter = new showdown.Converter();
 
@@ -48,7 +48,7 @@ export function ExpandedJustifyCard({ modifier, currentCount = 1, titleScale = 0
                     }}
                 >
                     <CovenantConjunction modifier={modifier} />
-                    <CovenantClause modifier={modifier} currentCount={currentCount} />
+                    <CovenantClause modifier={modifier} />
                 </p>
                 <EditorContent editor={editor} className={styles.justifyCardEditor} />
             </div>

@@ -1,0 +1,96 @@
+.container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+  }
+
+
+.dud {
+    color: #757575;
+}
+
+.containerText {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: rgba(242, 242, 242, 0.7);
+    font-family: "Handjet", sans-serif;
+    text-transform: uppercase;
+    font-weight: 800;
+    font-size: 20px;
+    margin: 0;
+}
+
+  .starsSvg {
+    width: 100%;
+    height: 100%;
+  }
+  
+  .star {
+    fill: white;
+    filter: drop-shadow(0 0 2px white);
+    opacity: 0;
+    animation: starFadeIn 1s forwards;
+  }
+  
+  @keyframes starFadeIn {
+    to {
+      opacity: 0.6;
+    }
+  }
+  
+  .line {
+    stroke: white;
+    stroke-width: 1.5;
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    opacity: 0.3;
+    animation: lineDraw 2s forwards;
+    transition: opacity 1s;
+  }
+  
+  @keyframes lineDraw {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  
+  /* Exit Animations */
+  .starExit {
+    animation: starFadeOut 1s forwards;
+  }
+  
+  @keyframes starFadeOut {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+  
+  .lineExit {
+    opacity: 0;
+  }
+  
+
+  /* Initial Line Animation */
+  .initialLine {
+    /* stroke: white; */
+    stroke-width: 1.5;
+    stroke-dasharray: 50; /* Length of the line */
+    stroke-dashoffset: 50;
+    animation: initialLineDraw 1s forwards;
+/* 
+    mask-image: linear-gradient(to bottom, transparent, white);
+    mask-size: 100% 100%; */
+  }
+  
+  @keyframes initialLineDraw {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  

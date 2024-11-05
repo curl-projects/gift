@@ -68,7 +68,6 @@
     bottom: -5px;
     background-color: rgba(0, 0, 0, 0.4);
     box-sizing: border-box;
-    /* border: 2px solid red; */
     box-shadow: 0px 0px 20px 10px rgba(0, 0, 0, 0.4);
 
     border-radius: 6px;
@@ -80,6 +79,11 @@
     
 }
 
+.covenantCard.inProgress::before {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.4), 0 0 20px rgba(255, 255, 255, 0.3);
+
+}
+
   .cardContainer{
     width: 100%;
 
@@ -87,7 +91,6 @@
 
   .covenantCardHeightController{
     height: fit-content;
-    border: 2px solid red;
   }
 
 
@@ -104,7 +107,6 @@
     box-sizing: border-box;
 
     overflow: visible;
-    border: 2px solid brown;
   }
 
 

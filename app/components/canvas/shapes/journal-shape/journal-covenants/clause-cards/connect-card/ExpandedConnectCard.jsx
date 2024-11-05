@@ -10,7 +10,8 @@ import Placeholder from '@tiptap/extension-placeholder'
 import * as showdown from 'showdown';
 import { englishToLepchaMap } from "~/components/canvas/helpers/language-funcs.js"
 import StarterKit from '@tiptap/starter-kit';
-
+import { useCovenantContext } from "~/components/synchronization/CovenantContext"
+import { useCardState } from "~/components/canvas/shapes/journal-shape/journal-covenants/CardStateContext.jsx"
 import { CovenantMainClause } from "~/components/canvas/custom-ui/utilities/ConstellationLabelPainter.jsx"
 
 const OneLiner = Node.create({
@@ -27,6 +28,18 @@ const mockArticles = [
     {
         title: "Article 2",
         content: "This is the content of article 2",
+    },
+    {
+        title: "Article 3",
+        content: "This is the content of article 3",
+    },
+    {
+        title: "Article 4",
+        content: "This is the content of article 4",
+    },
+    {
+        title: "Article 5",
+        content: "This is the content of article 5",
     }
 ]
 
@@ -39,15 +52,18 @@ function debounce(func, wait) {
     };
 }
 
-export function ExpandedConnectCard({ covenant, selectionFragment, currentCount = 0, titleScale = 0.6 }) {
+export function ExpandedConnectCard({ covenant, titleScale = 0.6 }) {
     const [htmlContent, setHtmlContent] = useState("");
     const [selectionHtmlContent, setSelectionHtmlContent] = useState("");
     const [searchResults, setSearchResults] = useState([]);
     const [itemPositions, setItemPositions] = useState([]);
     const [displayedItems, setDisplayedItems] = useState(new Set());
+
     const converter = new showdown.Converter();
     const searchContainerRef = useRef(null);
     const searchTextRef = useRef(null);
+    const { covenantCompletion, setCovenantCompletion } = useCovenantContext();
+    const { selectedText, connectedItem, setConnectedItem } = useCardState();
 
     const editor = useEditor({
         extensions: [
@@ -97,6 +113,12 @@ export function ExpandedConnectCard({ covenant, selectionFragment, currentCount 
     const debouncedSearch = useCallback(
         debounce((searchText) => {
             console.log("SEARCH TEXT", searchText);
+            if (!searchText.trim()) {
+                // If the search term is empty, clear the search results
+                setSearchResults([]);
+                return;
+            }
+
             const keywords = searchText.toLowerCase().split(' ');
             const results = mockArticles.filter(article =>
                 keywords.some(keyword =>
@@ -117,12 +139,12 @@ export function ExpandedConnectCard({ covenant, selectionFragment, currentCount 
     }, [htmlContent, editor]);
 
     useEffect(() => {
-        if (selectionFragment && selectionFragment.textContent) {
-            setSelectionHtmlContent(converter.makeHtml(selectionFragment.textContent) || "");
+        if (selectedText.value?.textContent) {
+            setSelectionHtmlContent(converter.makeHtml(selectedText.value.textContent) || "");
         } else {
             setSelectionHtmlContent("");
         }
-    }, [selectionFragment]);
+    }, [selectedText]);
 
     useEffect(()=>{
         console.log("SEARCH RESULTS", searchResults)
@@ -182,7 +204,7 @@ export function ExpandedConnectCard({ covenant, selectionFragment, currentCount 
                 transformOrigin: 'top left',
                 width: `${100 / titleScale}%`,
             }}>
-                <CovenantMainClause covenant={covenant} currentCount={currentCount} />
+                <CovenantMainClause covenant={covenant} />
             </div>
             <div className={styles.selectionFragmentEditor}>
                 <EditorContent
@@ -191,31 +213,40 @@ export function ExpandedConnectCard({ covenant, selectionFragment, currentCount 
                 />
             </div>
             <div className={styles.covenantEntrySearch} ref={searchContainerRef}>
-                <div ref={searchTextRef}>
+                {connectedItem.value 
+                ? <div className={styles.attachedIdea}>{connectedItem.value.title}</div>
+                : <>
+                    <div ref={searchTextRef} className={styles.editorContentWrapper}>
                     <EditorContent
                         editor={editor}
                         className={styles.searchText}
                     />
-                </div>
-                <div className={styles.searchResults}>
-                    {searchResults.map((article, index) => (
-                        <ConnectItem 
+                    </div>
+                    <div className={styles.searchResults}>
+                        {searchResults.map((article, index) => (
+                            <ConnectItem 
                             key={index} 
-                            article={article} 
+                            article={article}
                             transform={itemPositions[index] || { x: 0, y: 0 }} // Use stored positions
                         />
-                    ))}
-                </div>
+                        ))}
+                    </div>
+                    </>
+                }
+                
             </div>
         </div>
     );
 }
 
 export function ConnectItem({ article, transform={x: 0, y: 0} }) {
+    const { setConnectedItem } = useCardState();
     return (
-        <div className={styles.connectItem} style={{
-            top: `${transform.y}px`,
-            left: `${transform.x}px`
+        <div className={styles.connectItem}
+            onClick={() => setConnectedItem({ value: article })}
+            style={{
+                top: `${transform.y}px`,
+                left: `${transform.x}px`
         }}>
             <p className={styles.connectItemTitle}>{article.title}</p>
         </div>

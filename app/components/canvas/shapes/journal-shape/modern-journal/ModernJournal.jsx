@@ -16,47 +16,6 @@ import { journalRightOffset, journalLeftOffset } from '../JournalShapeUtil';
 import { JournalCovenants } from '../journal-covenants/JournalCovenants';
 import { useCovenantContext } from "~/components/synchronization/CovenantContext"
 
-const pages = [
-  {
-    page: 'elevator-pitch',
-    content: 'elevator-pitch'
-  },
-]
-
-
-
-// function updateTemporaryAnnotation(tldrawEditor, editor, fromPos, toPos, excerpt, glyphChange = false) {
-//   const tempAnnotationId = createShapeId('temp-annotation')
-//   const startCoords = editor.view.coordsAtPos(fromPos);
-
-//   if (fromPos && toPos) {
-
-//     tldrawEditor.deselect(tempAnnotationId)
-
-//     const tempAnnotation = tldrawEditor.getShape({ type: "annotation", id: tempAnnotationId })
-
-
-//     console.log("TEMP ANNOTATION:", tempAnnotation)
-
-//     if (tempAnnotation) {
-//       tldrawEditor.updateShape({
-//         id: tempAnnotationId,
-//         type: 'annotation',
-//         opacity: 1,
-//         x: excerpt.x + excerpt.props.w + 40,
-//         y: tldrawEditor.screenToPage({ x: 0, y: startCoords.top }).y,
-//         props: {
-//           from: fromPos,
-//           to: toPos,
-//           selected: true,
-//           glyph: glyphChange ? getRandomLepchaCharacter() : tempAnnotation.props.glyph, // 
-//         }
-//       })
-//     }
-
-//   }
-// }
-
 export function ModernJournal({ shape, contentRef, tldrawEditor }) {
   // DATA CONTEXT
   const { data } = useDataContext();
@@ -64,11 +23,10 @@ export function ModernJournal({ shape, contentRef, tldrawEditor }) {
 
   // TEXT EDITOR CONTEXT
   const converter = new showdown.Converter();
-  const { annotationsExpanded, setAnnotationsExpanded } = useCovenantContext()
+  const { annotationsExpanded, setAnnotationsExpanded, setSelectedText } = useCovenantContext()
   const [selectionPosition, setSelectionPosition] = useState({from: null, to: null})
   const [htmlContent, setHtmlContent] = useState("");
   const [scrollChange, setScrollChange] = useState(null)
-  const [selectionFragment, setSelectionFragment] = useState(null)
   const journalCovenantsRef = useRef(null);
 
   // ANIMATION CONTEXT
@@ -95,50 +53,9 @@ export function ModernJournal({ shape, contentRef, tldrawEditor }) {
     })
   }, [journalMode.position, animate]);
 
-  // useEffect(()=>{
-  //   if(contentRef.current && journalCovenantsRef.current){
-  //     animate(contentRef.current, { width: annotationsExpanded ? '20%' : '100%', minWidth: annotationsExpanded ? '20%' : '100%' }, { duration: 0.3, ease: 'easeInOut' })
-  //     animate(journalCovenantsRef.current, { width: annotationsExpanded ? '100%' : '80%', x: annotationsExpanded ? "-80%" : "0%" }, { duration: 0.3, ease: 'linear' })
-  //   }
-  // }, [annotationsExpanded, journalCovenantsRef, contentRef])
-
-  // ANNOTATION POSITIONS:
-  // useEffect(() => {
-  //   const handleResize = () => {
-  //       // update annotation positions on resize
-  //       // updateAnnotationPositions(tldrawEditor, editor, annotations, excerpt)
-  //       updateTemporaryAnnotation(tldrawEditor, editor, selectionPosition.from, selectionPosition.to, shape)
-
-  //   };
-
-  //   const resizeObserver = new ResizeObserver(handleResize);
-  //   if (contentRef?.current) {
-  //     resizeObserver.observe(contentRef.current);
-  //   }
-
-  //   return () => {
-  //     if (contentRef?.current) {
-  //       resizeObserver.unobserve(contentRef.current);
-  //     }
-  //     resizeObserver.disconnect();
-  //   };
-  // }, [contentRef.current, tldrawEditor, shape]);
   
-  // UPDATE POSITIONS ON SCROLL
-  // useEffect(()=>{
-  //   console.log("UPDATING ANNOTATION SCROLL")
-  //   // updateAnnotationPositions(tldrawEditor, editor, annotations, excerpt)
-  //   updateTemporaryAnnotation(tldrawEditor, editor, selectionPosition.from, selectionPosition.to, shape)
-  // }, [scrollChange])
-
-
-  useEffect(()=>{
-    console.log("JOURNAL ZOOMS:", journalZooms)
-  }, [journalZooms])
-
   // load data
   useEffect(() => {
-    console.log("DATA:", data.journalEntries)
     const content = journalMode.content || "";
     // const page = data.journalEntries.filter(entry => entry.type === 'journalPage').find(page => page.url === journalMode.page)
     if (content) {
@@ -180,7 +97,7 @@ export function ModernJournal({ shape, contentRef, tldrawEditor }) {
         nodes.push(node.toJSON());
       });
 
-      setSelectionFragment(fragment)
+      setSelectedText(fragment)
 
       const startCoords = editor.view.coordsAtPos(from);
       const endCoords = editor.view.coordsAtPos(to);
@@ -188,64 +105,11 @@ export function ModernJournal({ shape, contentRef, tldrawEditor }) {
       if (nodes && nodes.length !== 0) {
         // set visible if not visible 
         setJournalMode({...journalMode, position: 'left'})
-        // const tempAnnotation = tldrawEditor.getShape({ type: "annotation", id: tempAnnotationId })
-        // if (!tempAnnotation) {
-        //   console.log("CREATING TEMP ANNOTATION")
-        //   tldrawEditor.createShape({
-        //     id: tempAnnotationId,
-        //     // figrure out what x and y need to be
-        //     x: shape.x + shape.props.w + 40,
-        //     y: tldrawEditor.screenToPage({ x: 0, y: startCoords.top }).y, // convert this to page space
-        //     // currently only working with glyph annotations
-
-        //     type: 'annotation',
-        //     isLocked: false,
-        //     opacity: 1,
-        //     props: {
-        //       w: 56,
-        //       h: 56,
-        //       annotationType: "comment",
-        //       from: from,
-        //       to: to,
-        //       temporary: true,
-        //       selected: true,
-        //       glyph: getRandomLepchaCharacter(),
-
-        //     }
-        //   }).createBinding({ // the binding is only for the persistent selections
-        //     fromId: tempAnnotationId,
-        //     toId: shape.id,
-        //     type: "annotation",
-        //     props: {
-        //     }
-        //   })
-
-        //   // debouncedTriggerZoom();
-
-        // }
-        // else {
-        //   console.log("UPDATING TEMP ANNOTATION")
-        //   updateTemporaryAnnotation(tldrawEditor, editor, from, to, shape)
-        //   // debouncedTriggerZoom();
-
-        // }
-
+     
       }
       else if (nodes && nodes.length === 0) {
         const tempAnnotationId = createShapeId('temp-annotation')
         console.log("MAKING TEMP ANNOTATION INVISIBLE", tempAnnotationId)
-        // setJournalMode({...journalMode, position: 'right'})
-        // tldrawEditor.updateShape({
-        //   id: tempAnnotationId,
-        //   type: 'annotation',
-        //   opacity: 0,
-        //   props: {
-        //     selected: false
-        //   }
-        // })
-
-        // the shape doesn't automatically deselect normally
-        // tldrawEditor.deselect(tempAnnotationId)
       }
 
     }
@@ -272,17 +136,6 @@ export function ModernJournal({ shape, contentRef, tldrawEditor }) {
         style={{
           width: journalMode.position === 'left' ? '150%' : '100%',
         }}
-
-        // initial={{ opacity: 0, x: 0 }}
-        // animate={{
-        //   opacity: 1,
-        //   x: journalMode.position === 'left' ? '-20vw' : '0vw',
-        // }}
-        // transition={{ duration: 0.5 }} // Adjust duration as needed
-        // exit={{
-        //   opacity: 0,
-        // }}
-
 
         onPointerDown={(e) => {
           e.stopPropagation();
@@ -363,7 +216,6 @@ export function ModernJournal({ shape, contentRef, tldrawEditor }) {
       {journalMode.position === 'left' &&
           <JournalCovenants 
             shape={shape} 
-            selectionFragment={selectionFragment}
             annotationsExpanded={annotationsExpanded}
             journalCovenantsRef={journalCovenantsRef}
             />

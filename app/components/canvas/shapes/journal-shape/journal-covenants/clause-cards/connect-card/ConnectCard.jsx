@@ -8,44 +8,15 @@ import Placeholder from '@tiptap/extension-placeholder'
 import { useCovenantContext } from "~/components/synchronization/CovenantContext"
 import { useEditor as useTldrawEditor } from "tldraw"
 import { useStarFireSync } from "~/components/synchronization/StarFireSync"
-import { ConnectCardFunctionality } from './ConnectCardFunctionality'
 import { motion, AnimatePresence } from "framer-motion"
 import { CovenantMainClause } from "~/components/canvas/custom-ui/utilities/ConstellationLabelPainter.jsx"
+import { useCardState } from "~/components/canvas/shapes/journal-shape/journal-covenants/CardStateContext.jsx"
+import { ConnectCardStars } from "./ConnectCardStars.jsx"
 
-export function ConnectCard({ index, selectionFragment, covenant, covenantCardRef, currentCount }){
+export function ConnectCard(){
     const [htmlContent, setHtmlContent] = useState("");
     const converter = new showdown.Converter();
-    const { covenantCompletion, setCovenantCompletion, setExpandedIndex } = useCovenantContext()
-    const tldrawEditor = useTldrawEditor();
-
-    // load data
-    useEffect(() => {
-    console.log("SELECTION FRAGMENT:", selectionFragment)
-
-    const existingCovenant = covenantCompletion.find(covenant => covenant.id === covenant.id)
-
-        if (selectionFragment && selectionFragment.textContent) {
-            setHtmlContent(converter.makeHtml(selectionFragment.textContent) || "")
-            const newCovenant = {
-                ...existingCovenant,
-                completionPercentage: 50
-            }
-            setCovenantCompletion(covenantCompletion.map(covenant => covenant.id === covenant.id ? newCovenant : covenant))
-            setExpandedIndex(index)
-        }
-        else {
-        setHtmlContent("")
-        const newCovenant = {
-            ...existingCovenant,
-            completionPercentage: 0
-        }
-        setCovenantCompletion(covenantCompletion.map(covenant => covenant.id === covenant.id ? newCovenant : covenant))
-        setExpandedIndex(null)
-    }
-  }, [selectionFragment])  
-
   
-
   useEffect(() => {
     console.log("HTML CONTENT:", htmlContent)
   }, [htmlContent])
@@ -96,10 +67,9 @@ export function ConnectCard({ index, selectionFragment, covenant, covenantCardRe
             />
             </div>
             {htmlContent !== "" &&
-                <ConnectCardFunctionality 
-                    covenantCardRef={covenantCardRef} 
-                    tldrawEditor={tldrawEditor}
-                />
+              <div className={styles.connectToThoughtBox}>
+                  <ConnectCardStars />
+              </div>
             }
         </div>
     )

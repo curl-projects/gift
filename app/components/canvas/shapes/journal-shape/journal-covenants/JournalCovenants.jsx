@@ -17,18 +17,12 @@ import { ExpandedJustifyCard } from './clause-cards/justify-card/ExpandedJustify
 import { useCovenantContext } from "~/components/synchronization/CovenantContext"
 import { useStarFireSync } from '~/components/synchronization/StarFireSync'
 import useMeasure from 'react-use-measure';
+import { CardStateProvider, useCardState } from './CardStateContext';
 
-export function JournalCovenants({ shape, selectionFragment, journalCovenantsRef, annotationsExpanded }) {
+export function JournalCovenants({ journalCovenantsRef }) {
     const { data } = useDataContext();
     const [activeCovenant, setActiveCovenant] = useState(data.user.covenants[0]);
-    const [currentCount, setCurrentCount] = useState(activeCovenant.times);
-    const { expandedIndex, setExpandedIndex, isAnyExpanded } = useCovenantContext();
-  
-    const { flex } = useSpring({
-      flex: annotationsExpanded ? 6 : 0.5,
-      config: { tension: 100, friction: 15 }
-  });
-  
+    
     return (
       <animated.div 
           className={styles.journalCovenants}
@@ -36,8 +30,7 @@ export function JournalCovenants({ shape, selectionFragment, journalCovenantsRef
               flex: 0.5,
           }}
           ref={journalCovenantsRef}
-          
-          >
+        >
           <div className={styles.container}>
             <div className={styles.journalCovenantSwitcher}>
             {data.user.covenants.map((covenant, index) => (
@@ -47,31 +40,34 @@ export function JournalCovenants({ shape, selectionFragment, journalCovenantsRef
             ))}
             </div>
             {Array.from({ length: activeCovenant.modifiers.length + 1 }).map((_, i) => (
-                <CovenantCard 
-                    key={i} 
-                    i={i} 
-
-                    clauseData={i === 0 ? activeCovenant : activeCovenant.modifiers[i-1]} 
-                    type={i === 0 ? "mainClause" : "modifier"} 
-                    
-                    currentCount={currentCount}
-                    isExpanded={expandedIndex === i}
-                    isAnyExpanded={isAnyExpanded}
-                    selectionFragment={selectionFragment}
-                />
+                <CardStateProvider 
+                    key={i}
+                    card={i === 0 ? activeCovenant : activeCovenant.modifiers[i-1]}
+                    cardType={i === 0 ? "mainClause" : "modifier"}
+                    cardId={i === 0 ? activeCovenant.id : activeCovenant.modifiers[i-1].id}
+                    >
+                    <CovenantCard 
+                        i={i} 
+                        clauseData={i === 0 ? activeCovenant : activeCovenant.modifiers[i-1]} 
+                        type={i === 0 ? "mainClause" : "modifier"} 
+                    />
+                </CardStateProvider>
             ))}
         </div>
       </animated.div>
     )
   }
 
-function CovenantCard({ i, clauseData, type, currentCount, isExpanded, isAnyExpanded, selectionFragment }){
+function CovenantCard({ i, clauseData, type }){
     const id = clauseData.id
     const covenantCardRef = useRef(null);
     const [measureRef, { height: contentHeight }] = useMeasure({offsetSize: true});
     const { focusOnComponent, setFocusOnComponent, setJournalZooms } = useStarFireSync()
+
+    const { cardState, setCardState, cardClicked, setCardClicked } = useCardState();
     const [isExpanding, setIsExpanding] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
+    const { covenantCompletion } = useCovenantContext()
 
     // Measure the expanded content
     const expandedContentRef = useRef();
@@ -159,23 +155,35 @@ function CovenantCard({ i, clauseData, type, currentCount, isExpanded, isAnyExpa
     }, [covenantCardRef, focusOnComponent]);
 
     function handleClickInside(){
+        setCardClicked(p => !p)
         console.log("CLICKED INSIDE", focusOnComponent.component, type, focusOnComponent.component !== type)
-        if(focusOnComponent.componentId !== id){
-            setJournalZooms(true)
-            setIsExpanding(true)
+        if(cardState === "disabled"){
+            return
+        }
+        else{
+            if(focusOnComponent.componentId !== id){
+                setJournalZooms(true)
+                setIsExpanding(true)
+            }
         }
     }
 
     return(
        <animated.div 
-            className={styles.covenantCard} 
+            className={`${styles.covenantCard} ${cardState === 'inProgress' ? styles.inProgress : ''}`} 
             key={i} 
             ref={covenantCardRef}
         
             style={{ 
                 ...animatedStyle,
                 // ...entranceAnimation, // Apply the entrance animation
-                filter: (focusOnComponent.active && focusOnComponent.componentId !== id) ? `opacity(${focusOnComponent.opacity})` : 'none',
+                filter: {
+                    neutral: 'none',
+                    inProgress: 'none',
+                    completed: 'none',
+                    disabled: 'opacity(0.5)',
+                    unfocused: `opacity(${focusOnComponent.opacity})`,
+                }[cardState],
                 // display: focusOnComponent.componentId === id ? 'initial' : 'block', // used to prevent component blurring during scaling
              }}
             onMouseEnter={() => setIsHovered(true)}
@@ -201,11 +209,9 @@ function CovenantCard({ i, clauseData, type, currentCount, isExpanded, isAnyExpa
                                         ? <MainClauseCard
                                             index={i}
                                             covenant={clauseData}
-                                            currentCount={currentCount}
-                                            selectionFragment={selectionFragment}
                                             covenantCardRef={covenantCardRef}
                                         />
-                                        : <ModifierCard index={i} modifier={clauseData} currentCount={currentCount} />}
+                                        : <ModifierCard index={i} modifier={clauseData} />}
                                 </div>
                             }
                             {focusOnComponent.componentId === id &&
@@ -214,14 +220,11 @@ function CovenantCard({ i, clauseData, type, currentCount, isExpanded, isAnyExpa
                                         ? <ExpandedMainClauseCard
                                             index={i}
                                             covenant={clauseData}
-                                            currentCount={currentCount}
-                                            selectionFragment={selectionFragment}
                                             covenantCardRef={covenantCardRef}
                                         />
                                         : <ExpandedModifierCard 
                                             index={i} 
                                             modifier={clauseData} 
-                                            currentCount={currentCount} 
                                             covenantCardRef={covenantCardRef}
                                         />}
                                 </div>
@@ -249,22 +252,20 @@ function CovenantCard({ i, clauseData, type, currentCount, isExpanded, isAnyExpa
                     <ExpandedMainClauseCard
                         index={i}
                         covenant={clauseData}
-                        currentCount={currentCount}
-                        selectionFragment={selectionFragment}
                         covenantCardRef={covenantCardRef}
                     />
                 ) : (
-                    <ExpandedModifierCard index={i} modifier={clauseData} currentCount={currentCount} />
+                    <ExpandedModifierCard index={i} modifier={clauseData} />
                 )}
             </div>
        </animated.div> 
     )
 }
 
-function MainClauseCard({ index, covenant, currentCount, selectionFragment, covenantCardRef }){
+function MainClauseCard({ index, covenant, covenantCardRef }){
 
     const cardMap = {
-        CONNECT_TO_OWN_WORK: <ConnectCard index={index} covenant={covenant} selectionFragment={selectionFragment} covenantCardRef={covenantCardRef} currentCount={currentCount} />,
+        CONNECT_TO_OWN_WORK: <ConnectCard index={index} covenant={covenant} covenantCardRef={covenantCardRef} />,
         CONNECT_TO_FOUND_ITEM: <ConnectCard />,
         CONNECT_TO_INTERESTING_PERSON: <ConnectCard />,
         ATTACH_NOVEL_THOUGHT: <ConnectCard />,
@@ -278,18 +279,18 @@ function MainClauseCard({ index, covenant, currentCount, selectionFragment, cove
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
             >
-                <CovenantMainClause covenant={covenant} currentCount={currentCount} covenantCardRef={covenantCardRef} />
+                <CovenantMainClause covenant={covenant} covenantCardRef={covenantCardRef} />
                 {cardMap[covenant.covenantType]}
             </motion.div>
         </>
     )
 }
 
-function ExpandedMainClauseCard({ index, covenant, selectionFragment, covenantCardRef, currentCount }){
+function ExpandedMainClauseCard({ index, covenant, covenantCardRef }){
     const [height, setHeight] = useState(0);
 
     const cardMap = {
-        CONNECT_TO_OWN_WORK: <ExpandedConnectCard index={index} covenant={covenant} selectionFragment={selectionFragment} covenantCardRef={covenantCardRef} currentCount={currentCount} />,
+        CONNECT_TO_OWN_WORK: <ExpandedConnectCard index={index} covenant={covenant} covenantCardRef={covenantCardRef} />,
         CONNECT_TO_FOUND_ITEM: <ExpandedConnectCard />,
         CONNECT_TO_INTERESTING_PERSON: <ExpandedConnectCard />,
         ATTACH_NOVEL_THOUGHT: <ExpandedConnectCard />,
@@ -324,7 +325,22 @@ function ExpandedMainClauseCard({ index, covenant, selectionFragment, covenantCa
     )
 }
    
-function ModifierCard({ modifier, currentCount }){
+function ModifierCard({ modifier }){
+
+    const { covenantCompletion } = useCovenantContext()
+
+    const findCovenantAndModifier = (modifierId) => {
+        console.log("COVENANT COMPLETION:")
+        for (const covenant of covenantCompletion) {
+            const foundModifier = covenant.modifiers.find(mod => mod.id === modifierId);
+            if (foundModifier) {
+                return { covenant, modifier };
+            }
+        }
+        return null; // Return null if no matching covenant or modifier is found
+    };
+
+    const { covenant: covenantCompletionStatus, modifier: modifierCompletionStatus } = findCovenantAndModifier(modifier.id)
 
     const modifierMap = {
         JUSTIFY: <JustifyCard modifier={modifier} />,
@@ -336,10 +352,13 @@ function ModifierCard({ modifier, currentCount }){
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            style={{
+                filter: covenantCompletionStatus ? (modifierCompletionStatus.completionPercentage !== 100 ? "opacity(0.5)" : "none") : "none",
+            }}
             >
             <p className={styles.clauseTitleContainer}>
                 <CovenantConjunction modifier={modifier} />
-                <CovenantClause modifier={modifier} currentCount={currentCount} />
+                <CovenantClause modifier={modifier} />
             </p>
             {modifierMap[modifier.modifier]}
         </motion.div>
@@ -351,7 +370,7 @@ function ExpandedModifierCard({ modifier }){
     const [height, setHeight] = useState(0);
 
     const modifierMap = {
-        JUSTIFY: <ExpandedJustifyCard modifier={modifier} currentCount={0} />,
+        JUSTIFY: <ExpandedJustifyCard modifier={modifier} />,
     }
 
     useEffect(() => {

@@ -16,5 +16,26 @@
         letter-spacing: -0.006em;
         /* line-height: 22px; */
         margin-bottom: 10px;
-        font-size: 8px;
+        font-size: 12px;
+}
+
+.justifyCardEditor p.isEmpty:first-child::before {
+    content: attr(data-placeholder);
+    float: left;
+    height: 0;
+    pointer-events: none;
+    white-space: nowrap;
+    background: unset;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+
+
+.justifyCardDisabledPrompt{
+    color: rgb(242, 242, 242);
+    font-family: "IBM Plex Mono", monospace;
+    font-weight: 400;
+    letter-spacing: -0.006em;
+    font-size: 12px;
+    margin-bottom: 10px;
 }
