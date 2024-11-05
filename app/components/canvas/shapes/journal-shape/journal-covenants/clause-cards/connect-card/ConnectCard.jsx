@@ -16,7 +16,17 @@ import { ConnectCardStars } from "./ConnectCardStars.jsx"
 export function ConnectCard(){
     const [htmlContent, setHtmlContent] = useState("");
     const converter = new showdown.Converter();
+    const { selectedText, connectedItem } = useCardState()
   
+    useEffect(() => {
+      console.log("CONNECT CARD SELECTED TEXT", selectedText)
+      if (selectedText.value?.textContent) {
+          setHtmlContent(converter.makeHtml(selectedText.value.textContent) || "");
+      } else {
+          setHtmlContent("");
+      }
+  }, [selectedText]);
+
   useEffect(() => {
     console.log("HTML CONTENT:", htmlContent)
   }, [htmlContent])
@@ -66,9 +76,14 @@ export function ConnectCard(){
                 className={styles.connectCardEditor}
             />
             </div>
-            {htmlContent !== "" &&
+            {(htmlContent !== "" && connectedItem.value === null) &&
               <div className={styles.connectToThoughtBox}>
                   <ConnectCardStars />
+              </div>
+            }
+            {connectedItem.value !== null &&
+              <div className={styles.connectedItemBox}>
+                  {connectedItem.value.title}
               </div>
             }
         </div>

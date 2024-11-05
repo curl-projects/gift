@@ -42,14 +42,26 @@ export const CovenantProvider = ({ children }) => {
     }, [covenantCompletion])
 
     function calculateCompletionPercentage(type, id){
-        const card = covenantCompletion.find(covenant => covenant.id === id)
-        if(card && type === "mainClause"){
-            return card.completionPercentage
-        } else if (card && type === "modifier"){
-            return card.modifiers.find(modifier => modifier.id === id).completionPercentage
+        if(!covenantCompletion){
+            return 0
+        }
+        if(type === "mainClause"){
+            const covenant = covenantCompletion.find(covenant => covenant.id === id)
+            if(!covenant){
+                console.error("NO COVENANT FOUND", covenant, type, id, covenantCompletion)
+                return 0
+            }
+            return covenant.completionPercentage
+        } else if (type === "modifier"){
+            const modifier = covenantCompletion.flatMap(covenant => covenant.modifiers).find(modifier => modifier.id === id);
+            if(!modifier){
+                console.error("NO MODIFIER FOUND", modifier, type, id, covenantCompletion)
+                return 0
+            }
+            return modifier.completionPercentage
         }
         else{
-            console.log("NO CARD FOUND", card)
+            console.log("NO CARD FOUND", type, id)
         }
     }
 
@@ -72,13 +84,17 @@ export const CovenantProvider = ({ children }) => {
         return activeCharsCount
     }
 
+    function findCovenantForModifier(modifierId){
+        return covenantCompletion.find(covenant => covenant.modifiers.find(modifier => modifier.id === modifierId))
+    }
+
     return (
         <CovenantContext.Provider 
             value={{
                 covenantCompletion, setCovenantCompletion, 
                 annotationsExpanded, setAnnotationsExpanded,
                 completedCovenants, totalCovenants,
-                calculateCompletionPercentage, calculateActiveChars,
+                calculateCompletionPercentage, calculateActiveChars, findCovenantForModifier,
                 selectedText, setSelectedText,
             }}>
             {children}

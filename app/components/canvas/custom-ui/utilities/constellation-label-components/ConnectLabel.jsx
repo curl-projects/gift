@@ -15,10 +15,15 @@ export function ConnectLabel({ covenant }) {
     const completionPercentage = calculateCompletionPercentage("mainClause", covenant.id)
     const activeCharsCount = calculateActiveChars("mainClause", covenant.covenantType, completionPercentage)
 
+    useEffect(()=>{
+        console.log("COMPLETION PERCENTAGE", completionPercentage)
+        console.log("ACTIVE CHARS COUNT", activeCharsCount)
+    }, [activeCharsCount])
+
     return (
         <span>
             <ConstellationLabelTooltip tooltipText={"Connect to your own work"} variant="mainClause">
-            {completionPercentage === 100 ? "Connect" : "Connected"} an
+            {completionPercentage === 100 ? "Connected" : "Connect"} an
             <ConstellationLabelSuperscript
                 covenant={covenant}
                 textData={Array.from("idea")}

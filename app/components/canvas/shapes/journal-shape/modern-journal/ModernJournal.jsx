@@ -97,7 +97,7 @@ export function ModernJournal({ shape, contentRef, tldrawEditor }) {
         nodes.push(node.toJSON());
       });
 
-      setSelectedText(fragment)
+      setSelectedText({value: fragment})
 
       const startCoords = editor.view.coordsAtPos(from);
       const endCoords = editor.view.coordsAtPos(to);

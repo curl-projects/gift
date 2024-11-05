@@ -16,7 +16,7 @@ export function JustifyCard({ covenant }){
     const [showPrompt, setShowPrompt] = useState(false);
 
     useEffect(() => {
-        if (cardClicked && cardState === "disabled") {
+        if (cardClicked && cardState.state === "disabled") {
             setShowPrompt(true);
             const timer = setTimeout(() => {
                 setShowPrompt(false);
@@ -24,10 +24,6 @@ export function JustifyCard({ covenant }){
             return () => clearTimeout(timer);
         }
     }, [cardClicked]);
-
-    useEffect(() => {
-        console.log('CARD STATE', cardState)
-    }, [cardState])
 
     const editor = useEditor({
         extensions: [

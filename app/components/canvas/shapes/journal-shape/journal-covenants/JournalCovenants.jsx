@@ -156,8 +156,8 @@ function CovenantCard({ i, clauseData, type }){
 
     function handleClickInside(){
         setCardClicked(p => !p)
-        console.log("CLICKED INSIDE", focusOnComponent.component, type, focusOnComponent.component !== type)
-        if(cardState === "disabled"){
+        if(!cardState.expandable){
+            console.warn("CARD IS NOT EXPANDABLE", cardState)
             return
         }
         else{
@@ -168,23 +168,27 @@ function CovenantCard({ i, clauseData, type }){
         }
     }
 
+    useEffect(()=>{
+        if(focusOnComponent.componentId === id){
+            covenantCardRef.current.focus();
+        }
+    }, [focusOnComponent])
+
     return(
        <animated.div 
-            className={`${styles.covenantCard} ${cardState === 'inProgress' ? styles.inProgress : ''}`} 
+            className={`${styles.covenantCard} ${cardState.state === 'inProgress' ? styles.inProgress : ''}`} 
             key={i} 
             ref={covenantCardRef}
         
             style={{ 
                 ...animatedStyle,
-                // ...entranceAnimation, // Apply the entrance animation
                 filter: {
                     neutral: 'none',
                     inProgress: 'none',
                     completed: 'none',
                     disabled: 'opacity(0.5)',
                     unfocused: `opacity(${focusOnComponent.opacity})`,
-                }[cardState],
-                // display: focusOnComponent.componentId === id ? 'initial' : 'block', // used to prevent component blurring during scaling
+                }[cardState.state],
              }}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
@@ -300,7 +304,8 @@ function ExpandedMainClauseCard({ index, covenant, covenantCardRef }){
         const updateHeight = () => {
             const aspectRatio = window.innerHeight / window.innerWidth;
             const width = document.querySelector(`.${styles.expandedCardInner}`).offsetWidth;
-            setHeight(width * aspectRatio);
+            console.log("WIDTH", Math.round(width * aspectRatio))
+            setHeight(Math.round(width * aspectRatio));
         };
 
         updateHeight();
@@ -327,20 +332,6 @@ function ExpandedMainClauseCard({ index, covenant, covenantCardRef }){
    
 function ModifierCard({ modifier }){
 
-    const { covenantCompletion } = useCovenantContext()
-
-    const findCovenantAndModifier = (modifierId) => {
-        console.log("COVENANT COMPLETION:")
-        for (const covenant of covenantCompletion) {
-            const foundModifier = covenant.modifiers.find(mod => mod.id === modifierId);
-            if (foundModifier) {
-                return { covenant, modifier };
-            }
-        }
-        return null; // Return null if no matching covenant or modifier is found
-    };
-
-    const { covenant: covenantCompletionStatus, modifier: modifierCompletionStatus } = findCovenantAndModifier(modifier.id)
 
     const modifierMap = {
         JUSTIFY: <JustifyCard modifier={modifier} />,
@@ -352,9 +343,7 @@ function ModifierCard({ modifier }){
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            style={{
-                filter: covenantCompletionStatus ? (modifierCompletionStatus.completionPercentage !== 100 ? "opacity(0.5)" : "none") : "none",
-            }}
+            
             >
             <p className={styles.clauseTitleContainer}>
                 <CovenantConjunction modifier={modifier} />

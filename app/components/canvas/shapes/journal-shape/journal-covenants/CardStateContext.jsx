@@ -6,7 +6,7 @@ const CardStateContext = createContext();
 
 // Create a provider component for card state
 export function CardStateProvider({ children, cardType, cardId, card }) {
-    const { covenantCompletion, setCovenantCompletion, selectedText: globalSelectedText } = useCovenantContext();
+    const { covenantCompletion, setCovenantCompletion, selectedText: globalSelectedText, findCovenantForModifier } = useCovenantContext();
     const [cardState, setCardState] = useState({state: "neutral", expandable: false });
     const [cardClicked, setCardClicked] = useState(false);
 
@@ -20,13 +20,16 @@ export function CardStateProvider({ children, cardType, cardId, card }) {
 
     // update covenantCompletion in response to events occurring
     function updateCovenantState(key, value){
+        console.log("UPDATING COVENANT STATE", key, value)
         if(cardType === 'mainClause'){
             const covenant = covenantCompletion.find(covenant => covenant.id === cardId)
             const newCovenant = {
                 ...covenant,
                 [key]: value
             }
-            setCovenantCompletion(covenantCompletion.map(covenant => covenant.id === cardId ? newCovenant : covenant))
+            const newCovenantCompletion = covenantCompletion.map(covenant => covenant.id === cardId ? newCovenant : covenant)
+            console.log("NEW COVENANT COMPLETION", newCovenantCompletion, "UPDATED:", key, value)
+            setCovenantCompletion(newCovenantCompletion)
         }
         else if(cardType === 'modifier'){
             const modifier = covenantCompletion.flatMap(covenant => covenant.modifiers).find(modifier => modifier.id === cardId);
@@ -34,7 +37,9 @@ export function CardStateProvider({ children, cardType, cardId, card }) {
                 ...modifier,
                 [key]: value
             }
-            setCovenantCompletion(covenantCompletion.map(covenant => covenant.modifiers.map(modifier => modifier.id === cardId ? newModifier : modifier)))
+            const newCovenantCompletion = covenantCompletion.map(covenant => covenant.modifiers.map(modifier => modifier.id === cardId ? newModifier : modifier))
+            console.log("NEW MODIFIER COVENANT COMPLETION", newCovenantCompletion, "UPDATED:", key, value)
+            setCovenantCompletion(newCovenantCompletion)
         }
     }
 
@@ -61,41 +66,53 @@ export function CardStateProvider({ children, cardType, cardId, card }) {
 
     // update card rendering whenever covenantCompletion changes -- there can't be any covenantState dependings in here
     useEffect(()=>{
+        console.log("SELECTED TEXT", selectedText)
+        console.log("CONNECTED ITEM", connectedItem)
         if(cardType === 'mainClause'){
-
             // card update variants go here
             if(card.covenantType === "CONNECT_TO_OWN_WORK"){
-                if(selectedText.value && !connectedItem.value){
+
+                console.log("CONNECT TO OWN WORK")
+                if(!selectedText.value?.textContent && !connectedItem.value){
                     setCardState({state: "neutral", expandable: false})
                     updateCovenantState("completionPercentage", 0)
                 }
-                else if(selectedText.value && !connectedItem.value){
+                else if(selectedText.value?.textContent && !connectedItem.value){
                     setCardState({state: "inProgress", expandable: true})
                     updateCovenantState("completionPercentage", 50)
                 }
-                else if(!selectedText.value && connectedItem.value){
+                else if(!selectedText.value?.textContent && connectedItem.value){
                     setCardState({state: "inProgress", expandable: true})
                     updateCovenantState("completionPercentage", 50)
                 }
-                else if(selectedText.value && connectedItem.value){
+                else if(selectedText.value?.textContent && connectedItem.value){
                     setCardState({state: "complete", expandable: true})
                     updateCovenantState("completionPercentage", 100)
                 }
             }
-
         }
         else if(cardType === 'modifier'){
+            const covenant = findCovenantForModifier(cardId)
 
+            // check if the main covenant is complete and disable the modifier if not
+            if(covenant.completionPercentage < 100){
+                setCardState({state: "disabled", expandable: true})
+            }
         }
         else{
             console.error("CARD TYPE NOT FOUND", card)
         }
     }, [selectedText, connectedItem])
 
-
+    // logic for updating the card's selected text
     useEffect(()=>{
-        if(globalSelectedText.value){
-            setSelectedText(globalSelectedText.value)
+        console.log("GLOBAL SELECTED TEXT", globalSelectedText)
+        if(globalSelectedText.value?.textContent 
+            && cardType === 'mainClause'
+            && card.covenantType === "CONNECT_TO_OWN_WORK"
+            && connectedItem.value === null // only update if we haven't already set a new item
+        ){
+            setSelectedText({value: globalSelectedText.value})
         }
     }, [globalSelectedText])
 

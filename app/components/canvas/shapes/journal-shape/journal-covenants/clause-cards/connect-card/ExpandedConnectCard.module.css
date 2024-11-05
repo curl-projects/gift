@@ -21,24 +21,20 @@
 
 .selectionText p{
     margin: 0;
-    /* background: linear-gradient(to right, rgba(255, 255, 255, 0.8), rgba(200, 200, 200, 0.7));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent; */
     color: white;
 
 
     font-family: "IBM Plex Mono", sans-serif;
     font-weight: 400;
     letter-spacing: -0.006em;
-    /* margin-bottom: 10px; */
     font-size: 8px;
     line-height: 1.5em;
     max-width: 100%;
 }
 
 .editorContentWrapper{
-    /* position: relative;
-    top: 20px; */
+    position: relative;
+    z-index: 10;
 }
 
 
@@ -48,7 +44,6 @@
     font-family: "IBM Plex Mono", monospace;
     font-weight: 400;
     letter-spacing: -0.006em;
-    /* line-height: 22px; */
     margin-bottom: 10px;
     font-size: 8px;
   }
@@ -74,11 +69,11 @@
 .covenantEntrySearch{
     position: relative;
     flex: 1;
-    border: 2px solid red;
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
 }
 
 .connectItem{
@@ -102,4 +97,64 @@
 
 .connectItemDescription{
     font-weight: 400;
+}
+
+.starsSvg {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.star {
+    fill: white;
+    filter: drop-shadow(0 0 2px white);
+    opacity: 0;
+    animation: starFadeIn 1s forwards;
+}
+
+@keyframes starFadeIn {
+    to {
+        opacity: 0.6;
+    }
+}
+
+.line {
+    stroke: white;
+    stroke-width: 0.5;
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    opacity: 0.3;
+    animation: lineDraw 2s forwards;
+    transition: opacity 1s;
+}
+
+@keyframes lineDraw {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+.starText {
+    fill: white;
+    font-size: 1.5px;
+    font-family: "IBM Plex Mono", monospace;
+}
+
+.starExit {
+    animation: starFadeOut 1s forwards;
+}
+
+@keyframes starFadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+.lineExit {
+    opacity: 0;
 }

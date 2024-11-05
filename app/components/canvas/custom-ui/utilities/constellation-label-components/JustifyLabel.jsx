@@ -5,9 +5,8 @@ import { useCovenantContext } from "~/components/synchronization/CovenantContext
 
 export function JustifyLabel({ modifier }){
     const { calculateCompletionPercentage, calculateActiveChars } = useCovenantContext()
-    const completionPercentage = calculateCompletionPercentage("mainClause", modifier.id)
+    const completionPercentage = calculateCompletionPercentage("modifier", modifier.id)
     const activeCharsCount = calculateActiveChars("modifier", modifier.modifier, completionPercentage)
-
 
     return(
         <span>
