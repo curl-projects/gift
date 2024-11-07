@@ -57,6 +57,11 @@
     /* filter: blur(.0px); */
     /* -webkit-filter: blur(0); */
     /* -webkit-font-smoothing: subpixel-antialiased; */
+    -webkit-font-smoothing: antialiased; /* For WebKit (Chrome, Safari) */
+    -moz-osx-font-smoothing: grayscale;  /* For Firefox on macOS */
+    backface-visibility: hidden;         /* Prevents flickering */
+    transform-style: preserve-3d;        /* Ensures 3D transforms are preserved */ 
+    will-change: transform;              /* Hints the browser to optimize for transformations */
   }
 
 .covenantCard::before {

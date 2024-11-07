@@ -46,6 +46,7 @@ const StarFireSyncProvider = ({ children }) => {
 
     const [minimapMode, _setMinimapMode] = useState({ active: true });
 
+
     const useStateWithPromise = (setter) => (value) => {
         return new Promise((resolve) => {
             setter({
@@ -139,6 +140,7 @@ const StarFireSyncProvider = ({ children }) => {
                 journalZooms, setJournalZooms,
                 enableTLDrawZoom, setEnableTLDrawZoom,
                 focusOnComponent, setFocusOnComponent,
+                
             }}>
             {children}
         </StarFireSyncContext.Provider>

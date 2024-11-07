@@ -203,7 +203,7 @@ export class JournalShapeUtil extends BaseBoxShapeUtil<JournalShape> {
             <HTMLContainer style={{
                 width: shape.props.w,
                 height: shape.props.h,
-                transform: journalZooms ? "scale(1)" : "scale(var(--tl-scale))",
+                transform: journalZooms ? "initial" : "scale(var(--tl-scale))",
                 }}
                 >
                 <AnimatePresence>

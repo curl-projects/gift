@@ -86,8 +86,13 @@ function CovenantCard({ i, clauseData, type }){
         rot: initialRot,
     });
 
-    const trans = (x, y, r, s) =>
-        `translateX(${x}px) perspective(4px) translateY(${y}px) rotate(${r}deg) scale(${s})`;
+    // Define the trans function using separate transforms
+    const trans = (x, y, r, s) => {
+        const translate = `translate(${Math.round(x)}px, ${Math.round(y)}px)`;
+        const rotate = `rotate(${r}deg)`;
+        const scale = `scale(${s})`;
+        return `${translate} ${rotate} ${scale}`;
+    };
 
     const [props, api] = useSpring(() => ({
         from: from(i),
@@ -97,16 +102,16 @@ function CovenantCard({ i, clauseData, type }){
     }));
 
     // Update rotation based on hover and focus state
-    useEffect(() => {
-        api.start({
-            rot: (isHovered && focusOnComponent.componentId !== id) ? 0 : initialRot,
-        });
-    }, [isHovered, focusOnComponent.componentId]);
+    // useEffect(() => {
+    //     api.start({
+    //         scale: focusOnComponent.componentId === id ? 2.8 : 1, // Animate scale to 2.8 if focused
+    //     });
+    // }, [focusOnComponent.componentId]);
 
     const animatedStyle = {
         transform: interpolate(
             [props.x, props.y, props.rot, props.scale],
-            (x, y, r, s) => trans(x, y, r, s)
+            (x, y, r, s) => `perspective(1px) ${trans(x, y, r, s)}`
         ),
     };
 
@@ -126,7 +131,7 @@ function CovenantCard({ i, clauseData, type }){
                 component: type,
                 componentId: id,
                 componentRef: covenantCardRef,
-                opacity: 0.1,
+                opacity: 0.001,
                 finalHeight: expandedContentHeight, // Use the measured expanded content height
             });
             setIsExpanding(false);
@@ -186,7 +191,7 @@ function CovenantCard({ i, clauseData, type }){
                     neutral: 'none',
                     inProgress: 'none',
                     completed: 'none',
-                    disabled: 'opacity(0.5)',
+                    disabled: (focusOnComponent.active && focusOnComponent.componentId !== id) ? `opacity(${focusOnComponent.opacity})` : 'opacity(0.5)',
                     unfocused: `opacity(${focusOnComponent.opacity})`,
                 }[cardState.state],
              }}

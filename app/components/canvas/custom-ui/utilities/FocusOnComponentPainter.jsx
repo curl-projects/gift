@@ -25,16 +25,16 @@ const FocusOnComponentPainter = track(() => {
         }
 
         console.log("SOMETHING'S ACTIVE", focusOnComponent)
-
+    
         const boundingRect = focusOnComponent.componentRef.current.getBoundingClientRect()
         const pageCoords = editor.screenToPage({x: boundingRect.left, y: boundingRect.top})
         console.log("BOUNDING RECT:", boundingRect)
         console.log("PAGE COORDS:", pageCoords)
         console.log("EDITOR:", editor)
-        let verticalDisplacement = 10
+        let verticalDisplacement = 0
         const bounds = {
             x: pageCoords.x,
-            y: pageCoords.y - verticalDisplacement,
+            y: pageCoords.y + verticalDisplacement,
             w: boundingRect.width,
             h: focusOnComponent.finalHeight + verticalDisplacement,
         }
@@ -43,7 +43,8 @@ const FocusOnComponentPainter = track(() => {
         animation: {
                 duration: 300,
                 },
-        inset: 180
+        // targetZoom: 1,
+        inset: 180,
         })
 
     }, [focusOnComponent, editor])
