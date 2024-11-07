@@ -27,7 +27,7 @@ export function shouldRevalidate(){
 
 export default function PitchDeck(){
 
-    const { campfireView } = useStarFireSync();
+    const { campfireView, enableFire, setEnableFire } = useStarFireSync();
 
     const { person } = useParams();
     const [data, setData] = useState(null);
@@ -100,7 +100,7 @@ export default function PitchDeck(){
                         overflow: 'hidden',
                         pointerEvents: campfireView?.active ? 'unset' : 'none',
                         }}>
-                            <PitchScene/>
+                            {/* <PitchScene/> */}
                         </div>  
                     </CovenantProvider> 
                 </DataProvider>     

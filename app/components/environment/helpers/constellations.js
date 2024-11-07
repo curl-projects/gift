@@ -326,14 +326,7 @@ export function addConstellationCanvas(scene, canvasZoneRef, RenderingGroups) {
 
         scene.clearColor = new BABYLON.Color4(32 / 255, 40 / 255, 56 / 255, 0);
 
-        const planeWidth = document.documentElement.clientWidth;
-        const planeHeight = document.documentElement.clientHeight;
-
-        plane = BABYLON.MeshBuilder.CreatePlane("constellationCanvas", {
-            width: planeWidth,
-            height: planeHeight,
-        }, scene);
-
+        plane = BABYLON.MeshBuilder.CreatePlane("constellationCanvas", { width: 1, height: 1 }, scene);
         plane.material = // this should be an error but for some insane reason it's required for it to work.
         plane.scaling.x = document.documentElement.clientWidth / 4;
         plane.scaling.y = document.documentElement.clientHeight / 4;
@@ -369,6 +362,7 @@ export function addConstellationCanvas(scene, canvasZoneRef, RenderingGroups) {
                 }
             }
         }
+
 
         // window.addEventListener('pointermove', listener);
         // window.addEventListener('pointerdown', listener);

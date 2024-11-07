@@ -16,7 +16,7 @@ const customScreenToPage = (editor, point) => {
 const FocusOnComponentPainter = track(() => {
     const editor = useEditor()
 
-    const { focusOnComponent, setJournalZooms, journalMode } = useStarFireSync()
+    const { focusOnComponent, setJournalZooms, journalMode, setEnableFire } = useStarFireSync()
 
     useEffect(() => {
         if(!focusOnComponent.componentRef || !focusOnComponent.active){
@@ -31,6 +31,9 @@ const FocusOnComponentPainter = track(() => {
         console.log("BOUNDING RECT:", boundingRect)
         console.log("PAGE COORDS:", pageCoords)
         console.log("EDITOR:", editor)
+
+        setEnableFire(false);
+
         let verticalDisplacement = 0
         const bounds = {
             x: pageCoords.x,

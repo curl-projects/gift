@@ -24,7 +24,8 @@ export default function SceneRenderer({
             preserveDrawingBuffer: true,
             alpha: true,
             ...engineOptions
-        }, adaptToDeviceRatio);
+        }, true);
+        
         const scene = new Scene(engine, sceneOptions);
 
         if (scene.isReady()) {

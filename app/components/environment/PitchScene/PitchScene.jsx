@@ -70,7 +70,12 @@ export function PitchScene(){
         scene.onReadyObservable.addOnce(async () => {
             console.warn('scene ready')
             addConstellationCanvas(scene, canvasZoneRef, RenderingGroups);
+
+        
+
             setSceneLoaded(true)
+
+            
     
             });
 
