@@ -149,7 +149,7 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
         };
 
         useEffect(()=>{
-            console.log("ACTIVE EFFECT TRIGGERED:", activeEffect)
+            console.log("ACTIVE EFFECT TRIGGERED:", activeEffect, shape.id)
             if(activeEffect && 
                activeEffect.domain === "canvas" && 
                activeEffect.selector.type === "shape" && 

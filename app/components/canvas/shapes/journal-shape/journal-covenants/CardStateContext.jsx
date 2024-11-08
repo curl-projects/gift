@@ -13,6 +13,7 @@ export function CardStateProvider({ children, cardType, cardId, card }) {
     // sync updates -- handled by third party components
     const [selectedText, _setSelectedText] = useState({ value: null });
     const [connectedItem, _setConnectedItem] = useState({ value: null });
+    const [content, _setContent] = useState({ value: null });
 
     // don't sync updates -- handled within the component
     const [completionPercentage, setCompletionPercentage] = useState(0);
@@ -32,12 +33,22 @@ export function CardStateProvider({ children, cardType, cardId, card }) {
             setCovenantCompletion(newCovenantCompletion)
         }
         else if(cardType === 'modifier'){
-            const modifier = covenantCompletion.flatMap(covenant => covenant.modifiers).find(modifier => modifier.id === cardId);
-            const newModifier = {
-                ...modifier,
-                [key]: value
-            }
-            const newCovenantCompletion = covenantCompletion.map(covenant => covenant.modifiers.map(modifier => modifier.id === cardId ? newModifier : modifier))
+            const newCovenantCompletion = covenantCompletion.map(covenant => {
+                const modifierIndex = covenant.modifiers.findIndex(modifier => modifier.id === cardId);
+                if(modifierIndex !== -1){
+                    const newModifiers = [...covenant.modifiers];
+                    newModifiers[modifierIndex] = {
+                        ...newModifiers[modifierIndex],
+                        [key]: value
+                    };
+                    return {
+                        ...covenant,
+                        modifiers: newModifiers
+                    };
+                } else {
+                    return covenant;
+                }
+            });
             console.log("NEW MODIFIER COVENANT COMPLETION", newCovenantCompletion, "UPDATED:", key, value)
             setCovenantCompletion(newCovenantCompletion)
         }
@@ -50,6 +61,7 @@ export function CardStateProvider({ children, cardType, cardId, card }) {
 
     const setSelectedText = createSetterWrapper(_setSelectedText, 'selectedText');
     const setConnectedItem = createSetterWrapper(_setConnectedItem, 'connectedItem');
+    const setContent = createSetterWrapper(_setContent, 'content');
 
     // whenever the covenant completion changes, update the completion percentage for the card
     useEffect(()=>{
@@ -92,17 +104,28 @@ export function CardStateProvider({ children, cardType, cardId, card }) {
             }
         }
         else if(cardType === 'modifier'){
-            const covenant = findCovenantForModifier(cardId)
-
-            // check if the main covenant is complete and disable the modifier if not
-            if(covenant.completionPercentage < 100){
-                setCardState({state: "disabled", expandable: true})
+            if(card.modifier === "JUSTIFY"){
+                const maxCharacters = 100;
+                const completionPercentage = Math.min(((content.value?.length || 0) / maxCharacters) * 100, 100);
+                console.log("JUSTIFY COMPLETION PERCENTAGE", completionPercentage)
+                updateCovenantState("completionPercentage", completionPercentage);
             }
         }
-        else{
-            console.error("CARD TYPE NOT FOUND", card)
+    }, [selectedText, connectedItem, content])
+
+    useEffect(() => {
+        if (cardType === 'modifier') {
+            const covenant = findCovenantForModifier(cardId)
+    
+            // Check if the main covenant is complete and disable the modifier if not
+            console.log("MODIFIER COVENANT", covenant)
+            if (covenant.completionPercentage < 100) {
+                setCardState({ state: "disabled", expandable: true })
+            } else {
+                setCardState({ state: "inProgress", expandable: true })
+            }
         }
-    }, [selectedText, connectedItem])
+    }, [covenantCompletion])
 
     // logic for updating the card's selected text
     useEffect(()=>{
@@ -142,7 +165,8 @@ export function CardStateProvider({ children, cardType, cardId, card }) {
                      cardClicked, setCardClicked, 
                      selectedText, setSelectedText, 
                      connectedItem, setConnectedItem,
-                     completionPercentage, activeCharsCount
+                     content, setContent,
+                     completionPercentage, activeCharsCount,
                      }}>
             {children}
         </CardStateContext.Provider>

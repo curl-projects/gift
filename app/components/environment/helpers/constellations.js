@@ -62,6 +62,8 @@ export function addConstellationCanvas(scene, canvasZoneRef, RenderingGroups) {
         var createCSSobject = function (mesh, scene, videoID, renderer) {
             let width = document.documentElement.clientWidth;
             let height = document.documentElement.clientHeight;
+            const pixelRatio = window.devicePixelRatio || 1;
+
             scene.onBeforeRenderObservable.add(() => {
                 renderer.render(scene, camera);
             });
@@ -69,6 +71,7 @@ export function addConstellationCanvas(scene, canvasZoneRef, RenderingGroups) {
             var div = document.createElement('div');
             div.style.width = `${width}px`;
             div.style.height = `${height}px`;
+          
             div.style.zIndex = '1';
             div.style.pointerEvents = 'auto'; // Ensure it can receive mouse events
             CSSobject = new CSS3DObject(div, scene);
@@ -257,6 +260,7 @@ export function addConstellationCanvas(scene, canvasZoneRef, RenderingGroups) {
                     innerMatrix[15] = camMatrix.m[15] * 0.00001;
 
                     objectMatrixWorld = BABYLON.Matrix.FromArray(innerMatrix);
+                    // console.log("OBJECT MATRIX WORLD:", objectMatrixWorld);
                     objectMatrixWorld = objectMatrixWorld.scale(100);
                     style = this.getObjectCSSMatrix(objectMatrixWorld, cameraCSSMatrix);
                     var element = object.element;
@@ -308,8 +312,21 @@ export function addConstellationCanvas(scene, canvasZoneRef, RenderingGroups) {
                 innerMatrix[8] = -rotation.m[8];
                 innerMatrix[9] = -rotation.m[9];
 
+                // console.log("INNER MATRIX:", innerMatrix);
+
+                // Round small values in innerMatrix to zero
+                for (var i = 0; i < innerMatrix.length; i++) {
+                    if (Math.abs(innerMatrix[i]) < 1e-5) {
+                        innerMatrix[i] = 0;
+                    }
+                }
+
+                // console.log("INNER MATRIX ROUNDED:", innerMatrix);
+
                 matrixWorld = BABYLON.Matrix.FromArray(innerMatrix);
 
+                // console.log("MATRIX WORLD:", matrixWorld);
+                
                 var cameraCSSMatrix = 'translateZ(' + fov + 'px)' + this.getCameraCSSMatrix(matrixWorld);
 
                 var style = cameraCSSMatrix + 'translate(' + this.widthHalf + 'px,' + this.heightHalf + 'px)';

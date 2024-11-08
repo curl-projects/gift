@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useDataContext } from './DataContext';
+import { useStarFireSync } from '~/components/synchronization/StarFireSync'
+
 const CovenantContext = createContext();
 
 export const useCovenantContext = () => {
@@ -12,6 +14,7 @@ export const CovenantProvider = ({ children }) => {
     const [completedCovenants, setCompletedCovenants] = useState(0)
     const [totalCovenants, setTotalCovenants] = useState(0)
     const [selectedText, setSelectedText] = useState({ value: null })
+    const { setGlyphControls, setTextEvent } = useStarFireSync()
 
     const { data } = useDataContext();
 
@@ -64,6 +67,37 @@ export const CovenantProvider = ({ children }) => {
             console.log("NO CARD FOUND", type, id)
         }
     }
+
+    useEffect(()=>{
+        if(covenantCompletion){
+            const allCovenantsCompleted = covenantCompletion.every(covenant => covenant.completionPercentage === 100);
+            const allModifiersCompleted = covenantCompletion.every(covenant => 
+                covenant.modifiers.every(modifier => modifier.completionPercentage === 100)
+            );
+    
+            if (allCovenantsCompleted && allModifiersCompleted) {
+                setGlyphControls({ visible: true, immediate: false, duration: 4 })
+                setTextEvent({
+                    type: "narrator",
+                    visible: true,
+                    overlay: false,
+                    text: "Covenants completed",
+                    requiresInteraction: false,
+                    darkeningVisible: true,
+                }).then(()=>{
+                    setTimeout(()=>{
+                        setTextEvent({
+                            type: "narrator",
+                            visible: false,
+                            overlay: false,
+                        })
+                    }, 3000)
+                })   
+        }
+        } else {
+            console.log("Some covenants or modifiers are not completed.");
+        }
+    }, [covenantCompletion])
 
     function calculateActiveChars(type, mappingType, completionPercentage){
         const mainClauseMapping = {

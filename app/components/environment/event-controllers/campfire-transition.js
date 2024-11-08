@@ -305,6 +305,7 @@ export function focusWithoutMovingToConstellationCanvas(scene, camera, triggerEf
 export function unfocusFromConstellationCanvas(scene, camera, triggerEffect, onRender, person, treeScale=true, targetMeshName = 'campfire', targetPosition = null, targetFov = 0.8, useTargetPosition = false) {
     return new Promise((resolve) => {
 
+        console.log("UNFOCUSING FROM CANVAS PERSON INNER:", person)
         var target;
         
         if(useTargetPosition){
@@ -315,6 +316,8 @@ export function unfocusFromConstellationCanvas(scene, camera, triggerEffect, onR
             target = targetMesh.position;
             console.warn("TARGET MESH POSITION:", target)
         }
+
+        console.log("TARGET:", target)
 
         if (target) {
 
@@ -375,6 +378,7 @@ export function unfocusFromConstellationCanvas(scene, camera, triggerEffect, onR
             console.log("SCENE MESHES:", scene.meshes);
         
             triggerEffect({domain: "canvas", selector: {type: "shape", id: createShapeId(person)}, effect: "ripple", callback: () => {
+                console.log("EFFECT TRIGGERED")
                 const redwoodMeshes = scene.meshes.filter(mesh => mesh.name && mesh.name.includes('redwood'));
 
                 console.log("REDWOOD MESHES:", redwoodMeshes);

@@ -102,11 +102,11 @@ function CovenantCard({ i, clauseData, type }){
     }));
 
     // Update rotation based on hover and focus state
-    // useEffect(() => {
-    //     api.start({
-    //         scale: focusOnComponent.componentId === id ? 2.8 : 1, // Animate scale to 2.8 if focused
-    //     });
-    // }, [focusOnComponent.componentId]);
+    useEffect(() => {
+        api.start({
+             rot: (isHovered && focusOnComponent.componentId !== id) ? 0 : initialRot,
+        });
+    }, [isHovered, focusOnComponent.componentId]);
 
     const animatedStyle = {
         transform: interpolate(

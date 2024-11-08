@@ -24,7 +24,8 @@ export default function SceneRenderer({
             preserveDrawingBuffer: true,
             alpha: true,
             ...engineOptions
-        }, true);
+        }, adaptToDeviceRatio);
+        // engine.setHardwareScalingLevel(1 / window.devicePixelRatio);
         
         const scene = new Scene(engine, sceneOptions);
 
@@ -64,6 +65,7 @@ export default function SceneRenderer({
                 ref={canvasRef}
                 {...rest}
                 style={{
+                    
                     height: '100%',
                     width: '100%',
                     outline: 'none',

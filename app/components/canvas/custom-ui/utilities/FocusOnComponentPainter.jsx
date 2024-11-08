@@ -32,7 +32,7 @@ const FocusOnComponentPainter = track(() => {
         console.log("PAGE COORDS:", pageCoords)
         console.log("EDITOR:", editor)
 
-        setEnableFire(false);
+        // setEnableFire(false);
 
         let verticalDisplacement = 0
         const bounds = {

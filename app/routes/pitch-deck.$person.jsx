@@ -98,9 +98,10 @@ export default function PitchDeck(){
                         left: 0,
                         zIndex: 0,
                         overflow: 'hidden',
+                        willChange: 'transform',
                         pointerEvents: campfireView?.active ? 'unset' : 'none',
                         }}>
-                            {/* <PitchScene/> */}
+                            <PitchScene/>
                         </div>  
                     </CovenantProvider> 
                 </DataProvider>     

@@ -6,12 +6,6 @@ export function ConstellationLabelSuperscript({ children, covenant,
     textData, charMapper, styleMapper, styleMapperArgs = [], // Add a prop for dynamic arguments
     containerStyles, leftSpace, rightSpace
 }) {
-
-    useEffect(() => {
-        console.log("TEXT DATA: ", textData)
-    }, [textData])
-    
-
     return (
         <span
             className={styles.covenantSuperscriptContainer}

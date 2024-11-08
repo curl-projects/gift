@@ -15,6 +15,8 @@ import { useCardState } from "~/components/canvas/shapes/journal-shape/journal-c
 import { CovenantMainClause } from "~/components/canvas/custom-ui/utilities/ConstellationLabelPainter.jsx";
 import { motion } from "framer-motion";
 
+const STAR_RADIUS = 1.2;
+
 const OneLiner = Node.create({
   name: "oneLiner",
   topNode: true,
@@ -44,7 +46,6 @@ const mockArticles = [
     }
 ]
 
-
 function debounce(func, wait) {
   let timeout;
   return function (...args) {
@@ -63,12 +64,13 @@ export function ExpandedConnectCard({ covenant, titleScale = 0.6 }) {
   const [isExiting, setIsExiting] = useState(false);
   const [showCentralStar, setShowCentralStar] = useState(false);
   const [animationComplete, setAnimationComplete] = useState(false);
+  const [hoveredStarId, setHoveredStarId] = useState(null);
 
   const converter = new showdown.Converter();
   const searchContainerRef = useRef(null);
   const searchTextRef = useRef(null);
   const { covenantCompletion, setCovenantCompletion } = useCovenantContext();
-  const { selectedText, connectedItem } = useCardState();
+  const { selectedText, connectedItem, setConnectedItem } = useCardState();
 
   const centralStar = {
     id: 'central',
@@ -137,6 +139,10 @@ export function ExpandedConnectCard({ covenant, titleScale = 0.6 }) {
     }, 100),
     []
   );
+
+  useEffect(() => {
+    console.log("HOVERED STAR ID", hoveredStarId);
+  }, [hoveredStarId]);
 
   useEffect(() => {
     if (editor) {
@@ -245,6 +251,16 @@ export function ExpandedConnectCard({ covenant, titleScale = 0.6 }) {
     return Math.hypot(a.x - b.x, a.y - b.y);
   };
 
+  const getOpacity = (elementId) => {
+    if (connectedItem.value) {
+      return connectedItem.value.title === elementId ? 1 : 0.1;
+    } else if (hoveredStarId) {
+      return hoveredStarId === elementId ? 1 : 0.1;
+    } else {
+      return 1;
+    }
+  };
+
   return (
     <div className={styles.expandedConnectCard}>
       <div className={styles.covenantTitle} style={{
@@ -260,11 +276,16 @@ export function ExpandedConnectCard({ covenant, titleScale = 0.6 }) {
           className={styles.selectionText}
         />
       </div>
-      <div className={styles.covenantEntrySearch} ref={searchContainerRef}>
-        {connectedItem.value
-          ? <div className={styles.attachedIdea}>{connectedItem.value.title}</div>
-          : <>
-            <div ref={searchTextRef} className={styles.editorContentWrapper}>
+      <div
+        className={styles.covenantEntrySearch}
+        ref={searchContainerRef}
+        onClick={() => setConnectedItem({value: null})}
+      >
+          <>
+            <div
+              ref={searchTextRef}
+              className={styles.editorContentWrapper}
+            >
               <EditorContent
                 editor={editor}
                 className={styles.searchText}
@@ -273,47 +294,75 @@ export function ExpandedConnectCard({ covenant, titleScale = 0.6 }) {
             <svg viewBox="0 0 100 100" className={styles.starsSvg}>
               {/* Render central star */}
               {showCentralStar && (
-                <circle
+                <motion.circle
                   cx={centralStar.x}
                   cy={centralStar.y}
-                  r={1.8}
+                  r={STAR_RADIUS}
                   className={styles.star}
+                  animate={{
+                    opacity: hoveredStarId || connectedItem?.value ? 0.1 : 0.7,
+                  }}
                 />
               )}
 
               {/* Render other stars with attached text */}
               {Object.values(positions).map((star) => (
-                <g key={star.id}>
-                  <circle
+                <motion.g
+                  key={star.id}
+                  onMouseEnter={() => setHoveredStarId(star.id)}
+                  onMouseLeave={() => setHoveredStarId(null)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setConnectedItem({value: star.article});
+                  }}
+                  initial={{
+                    x: 0,
+                    y: 0,
+                    opacity: 0,
+                  }}
+                  animate={{
+                    x: connectedItem?.value && connectedItem.value.title === star.id ? 1 - star.x : 0,
+                    y: connectedItem?.value && connectedItem.value.title === star.id ? 10 - star.y : 0,
+                    opacity: getOpacity(star.id),
+                  }}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                >
+                  <motion.circle
                     cx={star.x}
                     cy={star.y}
-                    r={1.8}
+                    r={STAR_RADIUS}
                     className={`${styles.star} ${isExiting ? styles.starExit : ''}`}
                   />
-                  <text
+                  <motion.text
                     x={star.x + 2}
                     y={star.y - 2}
                     className={styles.starText}
                   >
                     {star.article.title}
-                  </text>
-                </g>
+                  </motion.text>
+                </motion.g>
               ))}
 
               {/* Render the lines */}
               {lines.map((line) => (
-                <line
+                <motion.line
                   key={line.id}
                   x1={line.x1}
                   y1={line.y1}
                   x2={line.x2}
                   y2={line.y2}
                   className={`${styles.line} ${isExiting ? styles.lineExit : ''}`}
+                  initial={{
+                    strokeOpacity: 0,
+                  }}
+                  animate={{
+                    strokeOpacity: hoveredStarId || connectedItem.value ? 0.1 : 0.6,
+                  }}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
                 />
               ))}
             </svg>
           </>
-        }
       </div>
     </div>
   );

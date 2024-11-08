@@ -11,6 +11,8 @@ export function CampfireSyncListener({ scene, onRender }){
     const { triggerEffect, activeEffect, setTriggerWarp, campfireView, setCampfireView, sceneLoaded } = useStarFireSync();
     const { person } = useParams();
 
+    console.log("PERSON:", person)
+
 
     useEffect(() => {
 
@@ -38,7 +40,8 @@ export function CampfireSyncListener({ scene, onRender }){
                     
                 }
                 else{
-                    unfocusFromConstellationCanvas(scene, camera, triggerEffect, person, onRender, treeScale, targetMeshName, targetPosition, 0.8, useTargetPosition).then(()=>
+                    console.log("UNFOCUSING FROM CANVAS PERSON:", person)
+                    unfocusFromConstellationCanvas(scene, camera, triggerEffect, onRender,person, treeScale, targetMeshName, targetPosition, 0.8, useTargetPosition).then(()=>
                         campfireView.onComplete && campfireView.onComplete()
                     )
                 }

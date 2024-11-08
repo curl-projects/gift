@@ -6,16 +6,44 @@ import { IoTelescope } from "react-icons/io5";
 import { createShapeId, useEditor } from 'tldraw';
 import { useStarFireSync } from "~/components/synchronization/StarFireSync";
 import { useEffect } from 'react';
+import * as BABYLON from '@babylonjs/core';
 
 export function ToolsMenu(){
     const editor = useEditor();
-    const { drifting, setDrifting, journalMode, setJournalMode, minimapMode, setMinimapMode, constellationLabel, setConstellationLabel } = useStarFireSync();
+    const { drifting, setDrifting, 
+            journalMode, setJournalMode, 
+            minimapMode, setMinimapMode, 
+            constellationLabel, setConstellationLabel,
+            campfireView, setCampfireView
+        } = useStarFireSync();
     const [tooltipVisible, setTooltipVisible] = useState(false);
     const [tooltipText, setTooltipText] = useState('');
 
     useEffect(()=>{
         console.log('journalMode', journalMode);
     }, [journalMode]);
+
+    const handleTestClick = () => {
+        setCampfireView({ 
+            active: true, 
+            immediate: false,  
+            useTargetPosition: false,
+            targetMeshName: 'ground',
+            // targetPosition: new BABYLON.Vector3(0.17, -3.25, 4.22),
+            treeScale: true,
+
+
+        })
+
+        // setCampfireView({ 
+        //     active: true, 
+        //     immediate: true, 
+        //     useTargetPosition: true,
+        //     targetMeshName: 'ground',
+        //     targetPosition: new BABYLON.Vector3(0.17, -3.25, 4.22),
+        //     })
+
+    }
 
     const handleJournalClick = () => {
         console.log("JOURNAL CLICK MODE:", journalMode);
@@ -46,6 +74,14 @@ export function ToolsMenu(){
 
     const items = [
         {
+            id: 'middle',
+            tool: 'astrolate',
+            icon: <FaJournalWhills />,
+            active: journalMode.active,
+            onClick: handleTestClick,
+            tooltip: 'Test'
+        },
+        {
             id: 'left',
             tool: 'journal',
             icon: <FaJournalWhills />,
@@ -53,14 +89,14 @@ export function ToolsMenu(){
             onClick: handleJournalClick,
             tooltip: 'Journal'
         },
-        {
-            id: 'middle',
-            tool: "astrolabe",
-            icon: <GiAstrolabe />,
-            active: minimapMode.active,
-            onClick: handleAstrolabeClick,
-            tooltip: 'Minimap'
-        },
+        // {
+        //     id: 'middle',
+        //     tool: "astrolabe",
+        //     icon: <GiAstrolabe />,
+        //     active: minimapMode.active,
+        //     onClick: handleAstrolabeClick,
+        //     tooltip: 'Minimap'
+        // },
         {
             id: 'right',
             tool: 'telescope',
