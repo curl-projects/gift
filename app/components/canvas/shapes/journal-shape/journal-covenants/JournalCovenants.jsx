@@ -145,6 +145,8 @@ function CovenantCard({ i, clauseData, type }){
                 covenantCardRef.current && 
                 !covenantCardRef.current.contains(event.target)) {
 
+                    console.log("TRIGGERING")
+
                     setFocusOnComponent({ active: false, restoreBounds: true })
     
                     // remove event listener

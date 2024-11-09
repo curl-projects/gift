@@ -18,7 +18,8 @@ export function JustifyLabel({ modifier }){
         <span>
             <ConstellationLabelSuperscript
                 modifier={modifier}
-                textData={completionPercentage === 100 ? Array.from("justified") : Array.from("justify")}
+                // textData={completionPercentage === 100 ? Array.from("justified") : Array.from("justify")}
+                textData={Array.from("justify")}
                 charMapper={(item, index) => englishToLepchaMap[item] || item}
                 styleMapper={(item, index, styles, activeCharsCount) => index < activeCharsCount ? styles.active : styles.inactive}
                 styleMapperArgs={[activeCharsCount]}

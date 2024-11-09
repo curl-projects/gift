@@ -14,7 +14,8 @@ export const CovenantProvider = ({ children }) => {
     const [completedCovenants, setCompletedCovenants] = useState(0)
     const [totalCovenants, setTotalCovenants] = useState(0)
     const [selectedText, setSelectedText] = useState({ value: null })
-    const { setGlyphControls, setTextEvent } = useStarFireSync()
+    const [allCompleted, setAllCompleted] = useState(false)
+    const { setGlyphControls, setTextEvent, focusOnComponent, setJournalMode } = useStarFireSync()
 
     const { data } = useDataContext();
 
@@ -74,30 +75,46 @@ export const CovenantProvider = ({ children }) => {
             const allModifiersCompleted = covenantCompletion.every(covenant => 
                 covenant.modifiers.every(modifier => modifier.completionPercentage === 100)
             );
+
+            if(allCovenantsCompleted && allModifiersCompleted){
+                setAllCompleted(true)
+            } else {
+                setAllCompleted(false)
+            }
+
+            console.log("FOCUS ON COMPONENT:", focusOnComponent.active, focusOnComponent)
     
-            if (allCovenantsCompleted && allModifiersCompleted) {
-                setGlyphControls({ visible: true, immediate: false, duration: 4 })
-                setTextEvent({
-                    type: "narrator",
-                    visible: true,
-                    overlay: false,
-                    text: "Covenants completed",
-                    requiresInteraction: false,
-                    darkeningVisible: true,
-                }).then(()=>{
-                    setTimeout(()=>{
-                        setTextEvent({
-                            type: "narrator",
-                            visible: false,
-                            overlay: false,
-                        })
-                    }, 3000)
-                })   
+            if (allCovenantsCompleted && allModifiersCompleted && !focusOnComponent.active
+                ) {
+                // close the journal
+                console.log("TRIGGERING JOURNAL CLOSE EFFECT")
+                setJournalMode({ active: false }).then(()=>{
+                    setGlyphControls({ visible: true, immediate: false, duration: 4 })
+                    setTextEvent({
+                        type: "narrator",
+                        visible: true,
+                        overlay: false,
+                        text: "Covenants completed",
+                        requiresInteraction: false,
+                        darkeningVisible: true,
+                        duration: 2000,
+                    }).then(()=>{
+                        setTimeout(()=>{
+                            setTextEvent({
+                                type: "narrator",
+                                visible: false,
+                                overlay: false,
+                            })
+                        }, 3000)
+                    })   
+                })
+
+        
         }
         } else {
             console.log("Some covenants or modifiers are not completed.");
         }
-    }, [covenantCompletion])
+    }, [covenantCompletion, focusOnComponent])
 
     function calculateActiveChars(type, mappingType, completionPercentage){
         const mainClauseMapping = {
@@ -129,7 +146,7 @@ export const CovenantProvider = ({ children }) => {
                 annotationsExpanded, setAnnotationsExpanded,
                 completedCovenants, totalCovenants,
                 calculateCompletionPercentage, calculateActiveChars, findCovenantForModifier,
-                selectedText, setSelectedText,
+                selectedText, setSelectedText, allCompleted, setAllCompleted
             }}>
             {children}
         </CovenantContext.Provider>

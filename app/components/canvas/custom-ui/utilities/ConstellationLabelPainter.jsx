@@ -15,6 +15,7 @@ import { JustifyLabel } from "~/components/canvas/custom-ui/utilities/constellat
 import { ConstellationLabelSuperscript } from "~/components/canvas/custom-ui/utilities/constellation-label-components/ConstellationLabelSuperscript.jsx"
 import { ConstellationLabelTooltip } from "~/components/canvas/custom-ui/utilities/constellation-label-components/ConstellationLabelTooltip.jsx"
 import { useCovenantContext } from "~/components/synchronization/CovenantContext"
+import * as BABYLON from '@babylonjs/core';
 
 export function ConstellationLabelPainter({ name }){
     const { triggerWarp, setTriggerWarp, constellationLabel, focusOnComponent } = useStarFireSync()
@@ -22,6 +23,20 @@ export function ConstellationLabelPainter({ name }){
     const textRef = useRef(null);
     const { data } = useDataContext();
     const [animationCommenced, setAnimationCommenced] = useState(false)
+    const { setCampfireView } = useStarFireSync()
+    const { allCompleted } = useCovenantContext()
+
+
+    function handleNameClick(){
+        if(allCompleted){
+            setCampfireView({
+                active: true,
+                immediate: false,
+                useTargetPosition: true,
+                targetPosition: new BABYLON.Vector3(0.17, -3.25, 4.22),
+        })
+    }
+    }
     
     return(
         <motion.div 
@@ -67,6 +82,7 @@ export function ConstellationLabelPainter({ name }){
                     constellationLabel={constellationLabel} 
                     animationCommenced={animationCommenced}
                     text={data.user.name}
+                    onClick={handleNameClick}
                 />
             </motion.p>
             <ConstellationCovenants animationCommenced={animationCommenced} constellationLabel={constellationLabel}/>
@@ -246,8 +262,9 @@ export function CovenantModifier({ modifier }){
     )
 }
 
-export function LabelTranslate({ constellationLabel, animationCommenced, text, delay, blocked=false }){
+export function LabelTranslate({ constellationLabel, animationCommenced, text, delay, blocked=false, onClick=() => {}}){
     const textRef = useRef(null);
+    const { allCompleted } = useCovenantContext()
 
     useEffect(() => {
         if (constellationLabel.visible && textRef.current) {
@@ -272,6 +289,13 @@ export function LabelTranslate({ constellationLabel, animationCommenced, text, d
 
 
     return(
-        <span ref={textRef}></span>
+        <span 
+            ref={textRef}
+            onClick={onClick}
+            style={{
+            textShadow: allCompleted ? "0 0 10px white, 0 0 20px white, 0 0 30px white, 0 0 40px white" : "none",
+            }}
+        >
+        </span>
     )
 }
