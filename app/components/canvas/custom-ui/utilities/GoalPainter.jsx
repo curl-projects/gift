@@ -2,15 +2,32 @@ import styles from './GoalPainter.module.css'
 import { motion } from 'framer-motion'
 import { useState } from 'react'
 import { useStarFireSync } from '~/components/synchronization/StarFireSync'
+import { useGoalContext } from '~/components/synchronization/GoalContext'
 
 export function GoalPainter(){
+    const { goals } = useGoalContext()
+
+    return(
+        <div className={styles.goals}>
+            {goals.map((goal, index) => (
+                <Goal key={index} goal={goal} />
+            ))}
+        </div>
+    )
+}
+
+function Goal({ goal }){
     const { focusOnComponent } = useStarFireSync()
-    const [isFilled, setIsFilled] = useState(false);
-    const [isComplete, setIsComplete] = useState(false);
+    const { setGoals } = useGoalContext()
+
+    const isComplete = goal.complete
 
     const toggleComplete = () => {
-        setIsFilled(!isFilled);
-        setIsComplete(!isComplete);
+        setGoals(prevGoals => 
+            prevGoals.map(g => 
+                g.title === goal.title ? { ...g, complete: !g.complete } : g
+            )
+        );
     };
 
     return(
@@ -31,7 +48,7 @@ export function GoalPainter(){
                         d="M50 10 L90 50 L50 90 L10 50 Z"
                         stroke={isComplete ? "rgba(255, 255, 255, 0.7)" : "rgba(255, 255, 255, 1)"}
                         strokeWidth="20px"
-                        fill={isFilled ? "rgba(255, 255, 255, 0.7)" : "transparent"}
+                        fill={isComplete ? "rgba(255, 255, 255, 0.7)" : "transparent"}
                         initial={{ pathLength: 0 }}
                         animate={{ pathLength: 1 }}
                         transition={{
@@ -51,7 +68,7 @@ export function GoalPainter(){
                     }}
                     style={{ color: isComplete ? "rgba(255, 255, 255, 0.7)" : "inherit"}}
                 >
-                    Make a new friend
+                    {goal.title}
                 </motion.p>
                 {isComplete && (
                     <motion.div

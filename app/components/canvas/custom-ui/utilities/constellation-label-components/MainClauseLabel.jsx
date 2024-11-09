@@ -8,9 +8,9 @@ import { useCardState } from "~/components/canvas/shapes/journal-shape/journal-c
 
 import { ConstellationLabelSuperscript } from "~/components/canvas/custom-ui/utilities/constellation-label-components/ConstellationLabelSuperscript.jsx"
 import { ConstellationLabelTooltip } from "~/components/canvas/custom-ui/utilities/constellation-label-components/ConstellationLabelTooltip.jsx"
+import { mainClauseMapping } from "~/components/synchronization/CovenantContext.jsx"
 
-
-export function ConnectLabel({ covenant }) {
+export function MainClauseLabel({ covenant, preScriptIncomplete, preScriptCompleted, postScript }) {
     const { calculateCompletionPercentage, calculateActiveChars } = useCovenantContext()
     const completionPercentage = calculateCompletionPercentage("mainClause", covenant.id)
     const activeCharsCount = calculateActiveChars("mainClause", covenant.covenantType, completionPercentage)
@@ -22,22 +22,22 @@ export function ConnectLabel({ covenant }) {
 
     return (
         <span>
-            <ConstellationLabelTooltip tooltipText={"Connect to your own work"} variant="mainClause">
-            {completionPercentage === 100 ? "Connected" : "Connect"} an
+            <ConstellationLabelTooltip tooltipText={"Main clause tooltip"} variant="mainClause">
+            {completionPercentage === 100 ? preScriptCompleted : preScriptIncomplete}
             <ConstellationLabelSuperscript
                 covenant={covenant}
-                textData={Array.from("idea")}
+                textData={Array.from(mainClauseMapping[covenant.covenantType])}
                 charMapper={(item, index) => englishToLepchaMap[item] || item}
                 styleMapper={(item, index, styles, activeCharsCount) => {
                     return index < activeCharsCount ? styles.active : styles.inactive
                 }}
                 styleMapperArgs={[activeCharsCount]} // Pass activeCharsCount as an argument
                 leftSpace
-                rightSpace
+                rightSpace={postScript ? true : false}
             >
-                idea
+                {mainClauseMapping[covenant.covenantType]}
             </ConstellationLabelSuperscript>
-                to your own work
+                {postScript}
             </ConstellationLabelTooltip>
         </span>
     )

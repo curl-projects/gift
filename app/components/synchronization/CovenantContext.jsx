@@ -8,6 +8,27 @@ export const useCovenantContext = () => {
     return useContext(CovenantContext);
 };
 
+
+export const mainClauseMapping = {
+    "CONNECT_TO_OWN_WORK": "idea",
+    "CONNECT_TO_FOUND_ITEM": "idea",
+    "CONNECT_TO_INTERESTING_PERSON": "idea",
+    "ATTACH_NOVEL_THOUGHT": "novel thought"
+}
+
+export const modifierMapping = {
+    "JUSTIFY": "justify",
+    "FEWER_WORDS": "fewer words",
+    "MORE_WORDS": "more words",
+}
+
+export const mainClauseTooltips = {
+    "CONNECT_TO_OWN_WORK": "Connect to your own work",
+    "CONNECT_TO_FOUND_ITEM": "Connect to your found items",
+    "CONNECT_TO_INTERESTING_PERSON": "Connect to interesting people",
+    "ATTACH_NOVEL_THOUGHT": "Attach a new thought"
+}
+
 export const CovenantProvider = ({ children }) => {
     const [covenantCompletion, setCovenantCompletion] = useState(null);
     const [annotationsExpanded, setAnnotationsExpanded] = useState(false);
@@ -97,7 +118,7 @@ export const CovenantProvider = ({ children }) => {
                         text: "Covenants completed",
                         requiresInteraction: false,
                         darkeningVisible: true,
-                        duration: 2000,
+                        duration: 4000,
                     }).then(()=>{
                         setTimeout(()=>{
                             setTextEvent({
@@ -117,18 +138,6 @@ export const CovenantProvider = ({ children }) => {
     }, [covenantCompletion, focusOnComponent])
 
     function calculateActiveChars(type, mappingType, completionPercentage){
-        const mainClauseMapping = {
-            "CONNECT_TO_OWN_WORK": "idea",
-            "CONNECT_TO_FOUND_ITEM": "item",
-            "CONNECT_TO_INTERESTING_PERSON": "person",
-            "ATTACH_NOVEL_THOUGHT": "thought"
-        }
-    
-        const modifierMapping = {
-            "JUSTIFY": "justify",
-            "FEWER_WORDS": "fewer words",
-            "MORE_WORDS": "more words",
-        }
 
         const text = type === "mainClause" ? mainClauseMapping[mappingType] : modifierMapping[mappingType]
         const activeCharsCount = Math.ceil((completionPercentage / 100) * text.length);

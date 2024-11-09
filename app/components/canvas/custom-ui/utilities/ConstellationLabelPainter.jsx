@@ -9,9 +9,9 @@ import { TextScramble } from "~/components/canvas/custom-ui/post-processing-effe
 import { englishToLepchaMap } from "~/components/canvas/helpers/language-funcs.js"
 import { useDataContext } from "~/components/synchronization/DataContext"
 import { ToWords } from 'to-words';
-import { ConnectLabel } from "~/components/canvas/custom-ui/utilities/constellation-label-components/ConnectLabel"
+import { MainClauseLabel } from "~/components/canvas/custom-ui/utilities/constellation-label-components/MainClauseLabel"
 import { JustifyLabel } from "~/components/canvas/custom-ui/utilities/constellation-label-components/JustifyLabel"
-
+import { WithLabel } from "~/components/canvas/custom-ui/utilities/constellation-label-components/WithLabel"
 import { ConstellationLabelSuperscript } from "~/components/canvas/custom-ui/utilities/constellation-label-components/ConstellationLabelSuperscript.jsx"
 import { ConstellationLabelTooltip } from "~/components/canvas/custom-ui/utilities/constellation-label-components/ConstellationLabelTooltip.jsx"
 import { useCovenantContext } from "~/components/synchronization/CovenantContext"
@@ -23,19 +23,26 @@ export function ConstellationLabelPainter({ name }){
     const textRef = useRef(null);
     const { data } = useDataContext();
     const [animationCommenced, setAnimationCommenced] = useState(false)
-    const { setCampfireView } = useStarFireSync()
-    const { allCompleted } = useCovenantContext()
+    const { setCampfireView, setCommandEvent } = useStarFireSync()
+    const { allCompleted, setCampfireDialogue } = useCovenantContext()
 
 
     function handleNameClick(){
-        if(allCompleted){
+        // if(allCompleted){
             setCampfireView({
                 active: true,
                 immediate: false,
                 useTargetPosition: true,
                 targetPosition: new BABYLON.Vector3(0.17, -3.25, 4.22),
         })
-    }
+        setCommandEvent({
+            eventType: 'mesh-visible',
+            props: {
+                meshName: 'narrator'
+            }
+        }).then(()=>{
+            console.log("NARRATOR MESH VISIBLE")
+        })
     }
     
     return(
@@ -52,12 +59,6 @@ export function ConstellationLabelPainter({ name }){
                 pointerEvents: constellationLabel.visible ? 'all' : 'none',
                 filter: focusOnComponent.active && focusOnComponent.component !== 'label' ? `opacity(${focusOnComponent.opacity})` : 'none'
             }}
-            // onAnimationStart = {() => {
-            //     console.log('started')
-            //     setTimeout(()=>{
-            //         setAnimationCommenced(true)
-            //     }, 7000)
-            // }}
             onAnimationComplete={(animation) => {
                 // manual text scramble delay
 
@@ -154,22 +155,42 @@ export function CovenantMainClause({ covenant }){
 
     const covenantMap = {
         "CONNECT_TO_OWN_WORK": {
-            text: <ConnectLabel covenant={covenant} />,
+            text: <MainClauseLabel 
+                        covenant={covenant} 
+                        preScriptIncomplete="Connect an"
+                        preScriptCompleted="Connected an"
+                        postScript="to your own work"
+                    />,
             icon: "💡",
             helperComponent: <p>Connect to your own work</p>
         },
         "CONNECT_TO_FOUND_ITEM": {
-            text: <span>Connect an idea to something that you've collected in your journal</span>,
+            text: <MainClauseLabel 
+                        covenant={covenant} 
+                        preScriptIncomplete="Connect an"
+                        preScriptCompleted="Connected an"
+                        postScript="to something that you've found"
+                    />,
             icon: "💡",
             helperComponent: <p>Connect to your found items</p>
         },
         "CONNECT_TO_INTERESTING_PERSON": {
-            text: <span>Connect an idea to someone that will resonate with it</span>,
+            text: <MainClauseLabel 
+                        covenant={covenant} 
+                        preScriptIncomplete="Connect an"
+                        preScriptCompleted="Connected an"
+                        postScript="to someone that will resonate with it"
+                    />,
             icon: "💡",
             helperComponent: <p>Connect to interesting people</p>
         },
         "ATTACH_NOVEL_THOUGHT": {
-            text: <span>Attach novel thought </span>,
+            text: <MainClauseLabel 
+                        covenant={covenant} 
+                        preScriptIncomplete="Attach a"
+                        preScriptCompleted="Attached a"
+                        postScript=""
+                    />,
             icon: "💡",
             helperComponent: <p>Attach a new thought</p>
         }
@@ -196,16 +217,6 @@ export function Covenant({ covenant }){
     )
 }
 
-{/* <p className={styles.constellationMetadataValue}>
-<LabelTranslate
-constellationLabel={constellationLabel}
-animationCommenced={animationCommenced}
-text="Finn"
-delay={600}
-blocked={true}
-/>
-</p> */}
-
 export function CovenantConjunction({ modifier }){
     const modifierCategoryMap = {
         "AND": {
@@ -231,18 +242,12 @@ export function CovenantClause({ modifier }){
             tooltipText: "Justify the connection"
         },
         "FEWER_WORDS": {
-            text: `fewer than ${modifier.params ? modifier.params.words : 0} words`,
+            text: <WithLabel modifier={modifier} preScript={"fewer than"} />,
             tooltipText: <p>Use fewer words</p>
         },
         "MORE_WORDS": {
-            text: <span style={{ display: 'flex', alignItems: 'flex-end'}}>more than 
-                    <span className={styles.covenantSuperscriptContainer}>
-                        <span className={styles.covenantSuperscript} data-char={modifier.params ? modifier.params.words : 0} />
-                        {modifier.params ? modifier.params.words : 0}
-                    </span>
-                    <span style={{ whiteSpace: 'nowrap'}}>words</span>
-                </span>,
-            helperComponent: <p>Use more words</p>
+            text: <WithLabel modifier={modifier} preScript={"more than"} />,
+            tooltipText: <p>Use more words</p>
         }
     }
 
@@ -291,6 +296,7 @@ export function LabelTranslate({ constellationLabel, animationCommenced, text, d
     return(
         <span 
             ref={textRef}
+            className={styles.userName}
             onClick={onClick}
             style={{
             textShadow: allCompleted ? "0 0 10px white, 0 0 20px white, 0 0 30px white, 0 0 40px white" : "none",

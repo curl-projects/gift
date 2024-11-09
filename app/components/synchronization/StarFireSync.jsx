@@ -48,6 +48,8 @@ const StarFireSyncProvider = ({ children }) => {
 
     const [enableFire, setEnableFire] = useState(true);
 
+    const [campfireDialogue, setCampfireDialogue] = useState({ active: false });
+
     const useStateWithPromise = (setter) => (value) => {
         return new Promise((resolve) => {
             setter({
@@ -142,6 +144,7 @@ const StarFireSyncProvider = ({ children }) => {
                 enableTLDrawZoom, setEnableTLDrawZoom,
                 focusOnComponent, setFocusOnComponent,
                 enableFire, setEnableFire,
+                campfireDialogue, setCampfireDialogue,
             }}>
             {children}
         </StarFireSyncContext.Provider>

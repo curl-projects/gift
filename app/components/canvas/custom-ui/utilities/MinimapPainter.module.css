@@ -25,6 +25,17 @@
     background-color: rgba(0, 0, 0, 0.2);
 }
 
+.clusterName{
+    font-family: "IBM Plex Mono", sans-serif;
+    font-size: 10px;
+    color: rgba(231, 229, 237, 1);
+    text-transform: uppercase;
+    font-weight: 500;
+    position: absolute;
+    top: -20px;
+    left: 0px;
+}
+
 /* .innerMinimap:hover > *{
     transform: scale(0.7143)
 } */
@@ -116,4 +127,64 @@
     text-shadow: 0 0 5px rgba(255, 255, 255, 0.8), /* Outer glow */
                  0 0 10px rgba(255, 255, 255, 0.6), /* Middle glow */
                  0 0 15px rgba(255, 255, 255, 0.4); /* Inner glow */
+}
+
+/* Common styles for stars */
+.starText,
+.newStarText {
+    font-family: "Mingzat", sans-serif;
+    color: white;
+    font-size: 10px;
+    position: relative;
+    top: -2px;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.8),
+                 0 0 10px rgba(255, 255, 255, 0.6),
+                 0 0 15px rgba(255, 255, 255, 0.4);
+}
+
+/* Styles for individual stars */
+.newStar {
+    position: absolute;
+    transform-origin: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Styles to highlight the active star */
+.activeStarContainer {
+    border: 1.8px solid rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    box-shadow: 0px 0px 10px 0px rgba(255, 255, 255, 0.7);
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.hoverDescription {
+    position: absolute;
+    bottom: 120%;
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: fit-content;
+    max-width: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: rgb(242, 242, 242);
+    font-family: "IBM Plex Mono", monospace;
+    font-weight: 400;
+    background-color: rgba(0, 0, 0, 0.4);
+    line-height: 1.3em;
+    font-size: 8px;
+    padding: 8px;
+    overflow: hidden;
+    margin-bottom: 4px;
+    box-shadow: 0px 36px 42px -4px rgba(77, 77, 77, 0.15);
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }

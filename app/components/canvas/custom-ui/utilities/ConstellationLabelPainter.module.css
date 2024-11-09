@@ -70,6 +70,10 @@
 
 }
 
+.userName{
+    cursor: pointer;
+}
+
 .covenantSuperscriptContainer{
     display: flex;
     flex-direction: column;

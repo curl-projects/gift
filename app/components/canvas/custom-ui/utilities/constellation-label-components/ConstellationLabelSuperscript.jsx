@@ -17,17 +17,27 @@ export function ConstellationLabelSuperscript({ children, covenant,
             }}
         >
             <span className={styles.covenantSuperscript}>
-                {textData && textData.map((item, index) => (
+                {textData && (typeof textData === 'number' ? (
                     <span
-                        key={index}
-                        className={`${styles.covenantSuperscriptText} ${styleMapper(item, index, styles, ...styleMapperArgs)}`}
-                        style={{
-                            position: 'relative',
-                            left: leftSpace ? `0.6em` : "0px",
-                        }}
-                    >
-                        {charMapper ? charMapper(item, index) : englishToLepchaMap[item] || item}
+                     className={styles.covenantSuperscriptText} style={{
+                        position: 'relative',
+                        left: "7px",
+                    }}>
+                        {textData}
                     </span>
+                ) : (
+                    textData.map((item, index) => (
+                        <span
+                            key={index}
+                            className={`${styles.covenantSuperscriptText} ${styleMapper(item, index, styles, ...styleMapperArgs)}`}
+                            style={{
+                                position: 'relative',
+                                left: leftSpace ? `0.6em` : "0px",
+                            }}
+                        >
+                            {charMapper ? charMapper(item, index) : englishToLepchaMap[item] || item}
+                        </span>
+                    ))
                 ))}
         </span>
             {children}
