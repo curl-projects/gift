@@ -11,10 +11,12 @@ export const GoalProvider = ({ children }) => {
         {
             title: "Make a new friend",
             complete: false,
+            tooltip: "Get started by clicking on someone's star"
         },
         {
             title: "Explore the stars",
             complete: false,
+            tooltip: "Use the minimap to navigate between stars"
         }
     ])
     

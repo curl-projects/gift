@@ -19,6 +19,7 @@ export function GoalPainter(){
 function Goal({ goal }){
     const { focusOnComponent } = useStarFireSync()
     const { setGoals } = useGoalContext()
+    const [isHovered, setIsHovered] = useState(false)
 
     const isComplete = goal.complete
 
@@ -34,6 +35,8 @@ function Goal({ goal }){
         <div 
             className={styles.goal}
             onClick={toggleComplete}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
             style={{
                 filter: (focusOnComponent.active && focusOnComponent.component !== 'goal') ? `opacity(${focusOnComponent.opacity})` : 'none'
             }}
@@ -77,6 +80,17 @@ function Goal({ goal }){
                         animate={{ width: '100%' }}
                         transition={{ duration: 0.5 }}
                     />
+                )}
+                {isHovered && (
+                    <motion.div 
+                        className={styles.tooltipBox}
+                        initial={{ opacity: 0, y: 10, x: "-50%" }}
+                        animate={{ opacity: 1, y: 0, x: "-50%" }}
+                        exit={{ opacity: 0, y: 10, x: "-50%" }}
+                        transition={{ duration: 0.3 }}
+                    >
+                        {goal.tooltip}
+                    </motion.div>
                 )}
             </div>
         </div>
