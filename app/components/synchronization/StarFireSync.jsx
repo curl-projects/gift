@@ -42,7 +42,7 @@ const StarFireSyncProvider = ({ children }) => {
     // set this true initially to cover everything
     const [trueOverlayControls, _setTrueOverlayControls] = useState({ visible: true, immediate: true }); // Consolidated state
 
-    const [journalMode, _setJournalMode] = useState({ active: false, page: ""});
+    const [journalMode, _setJournalMode] = useState({ active: false, page: "article"});
 
     const [minimapMode, _setMinimapMode] = useState({ active: true });
 

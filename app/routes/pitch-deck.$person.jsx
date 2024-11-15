@@ -103,7 +103,7 @@ export default function PitchDeck(){
                             willChange: 'transform',
                             pointerEvents: campfireView?.active ? 'unset' : 'none',
                             }}>
-                                <PitchScene/>
+                                {/* <PitchScene/> */}
                             </div>  
                         </CovenantProvider> 
                     </GoalProvider>

@@ -1,31 +1,25 @@
 import { useState, useEffect, useRef } from 'react';
 import styles from './ModernJournal.module.css';
-import { EditorContent, useEditor } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
-import Link from "@tiptap/extension-link";
-import * as showdown from 'showdown';
-import { useDataContext } from '~/components/synchronization/DataContext';
 import { JournalThread } from '~/components/canvas/shapes/journal-shape/parchment-journal/journal-thread/JournalThread.jsx'
 import { motion, useAnimate } from 'framer-motion';
 import { useStarFireSync } from '~/components/synchronization/StarFireSync';
 import { BsArrowBarLeft } from "react-icons/bs";
 import { FaExpand } from "react-icons/fa";
-import { getRandomLepchaCharacter } from '~/components/canvas/helpers/language-funcs';
-import { createShapeId, GeoStylePickerSet } from 'tldraw';
 import { journalRightOffset, journalLeftOffset } from '../JournalShapeUtil';
 import { JournalCovenants } from '../journal-covenants/JournalCovenants';
+import { JournalArticle } from './JournalArticle';
+import { JournalEntries } from './journal-entries/JournalEntries';
 import { useCovenantContext } from "~/components/synchronization/CovenantContext"
+
 
 export function ModernJournal({ shape, contentRef, tldrawEditor }) {
   // DATA CONTEXT
-  const { data } = useDataContext();
   const { journalMode, setJournalMode, journalZooms, setJournalZooms, focusOnComponent } = useStarFireSync();
 
   // TEXT EDITOR CONTEXT
-  const converter = new showdown.Converter();
-  const { annotationsExpanded, setAnnotationsExpanded, setSelectedText } = useCovenantContext()
-  const [selectionPosition, setSelectionPosition] = useState({from: null, to: null})
-  const [htmlContent, setHtmlContent] = useState("");
+  const { annotationsExpanded, setAnnotationsExpanded } = useCovenantContext()
+
+  
   const [scrollChange, setScrollChange] = useState(null)
   const journalCovenantsRef = useRef(null);
 
@@ -37,6 +31,22 @@ export function ModernJournal({ shape, contentRef, tldrawEditor }) {
   useEffect(()=>{
     setIsInitialLoad(false);
   }, [])
+
+  const journalModePages = [
+    {
+      name: "article",
+      displayName: "Article",
+    },
+    {
+      name: 'entries',
+      displayName: "Entries",
+    }
+  ]
+
+  useEffect(()=>{
+    console.log("journalMode.page", journalMode.page)
+  }, [journalMode.page])
+
 
   useEffect(() => {
     if (isInitialLoad) return;
@@ -54,73 +64,12 @@ export function ModernJournal({ shape, contentRef, tldrawEditor }) {
   }, [journalMode.position, animate]);
 
   
-  // load data
-  useEffect(() => {
-    const content = journalMode.content || "";
-    // const page = data.journalEntries.filter(entry => entry.type === 'journalPage').find(page => page.url === journalMode.page)
-    if (content) {
-      setHtmlContent(converter.makeHtml(content) || "")
-    }
-    else {
-      setHtmlContent("")
-    }
-  }, [data, journalMode])
+ 
 
-  // configure editor
-  const editor = useEditor({
-    extensions: [
-      StarterKit.configure({
-        heading: true,
-        paragraph: true
-      }),
-      // ColorHighlighter.configure({
-      //   data: ['Hello'],
-      //   tldrawEditor: tldrawEditor,
-      // }),
-      //   CustomHeading,
-      //   CustomParagraph,
-      Link,
-    ],
-    content: htmlContent,
-    onUpdate: ({ editor }) => {
-      setHtmlContent(editor.getHTML());
-    },
-    onSelectionUpdate: ({ editor }) => {
-      const { from, to } = editor.state.selection;
-      setSelectionPosition({ from: from, to: to })
 
-      const tempAnnotationId = createShapeId('temp-annotation')
+  const journalModes = {
 
-      const fragment = editor.state.doc.cut(from, to);
-      const nodes = [];
-      fragment.forEach(node => {
-        nodes.push(node.toJSON());
-      });
-
-      setSelectedText({value: fragment})
-
-      const startCoords = editor.view.coordsAtPos(from);
-      const endCoords = editor.view.coordsAtPos(to);
-
-      if (nodes && nodes.length !== 0) {
-        // set visible if not visible 
-        setJournalMode({...journalMode, position: 'left'})
-     
-      }
-      else if (nodes && nodes.length === 0) {
-        const tempAnnotationId = createShapeId('temp-annotation')
-        console.log("MAKING TEMP ANNOTATION INVISIBLE", tempAnnotationId)
-      }
-
-    }
-  })
-
-  // update editor content
-  useEffect(() => {
-    if (editor) {
-      editor.commands.setContent(htmlContent);
-    }
-  }, [htmlContent, editor]);
+  }  
 
   return (
     <>
@@ -148,8 +97,6 @@ export function ModernJournal({ shape, contentRef, tldrawEditor }) {
           e.stopPropagation();
         }}
       >
-        
-
         <div 
           className={styles.journalContainer}
           style={{
@@ -199,18 +146,20 @@ export function ModernJournal({ shape, contentRef, tldrawEditor }) {
             Z
           </div>
         </div>
-        <div style={{
-          height: '100%',
-          width: '100%',
-          overflow: 'hidden',
-          overflowY: 'scroll',
-          whiteSpace: 'pre-wrap',
-          wordWrap: 'break-word',
-        }}>
-          <EditorContent
-            editor={editor}
-            className="journal-tiptap"
-          />
+        <div className={styles.journalContentContainer}>
+          <div className={styles.journalController}>
+            {journalModePages.map((page, index) => (
+              <p key={index} className={styles.journalControllerButton} onClick={() => {
+                setJournalMode({...journalMode, page: page.name})
+              }}>{page.displayName}</p>
+            ))}
+          </div>
+            {
+              {
+                'article': <JournalArticle />,
+                'entries': <JournalEntries />
+              }[journalMode.page] || <JournalArticle />
+            }
         </div>
       </div>
       {journalMode.position === 'left' &&

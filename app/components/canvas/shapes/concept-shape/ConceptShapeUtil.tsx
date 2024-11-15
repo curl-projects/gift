@@ -22,6 +22,7 @@ import { generateExcerpts, tearDownExcerpts, excerptsExist } from "~/components/
 import { applyProgressiveBlur, removeProgressiveBlur } from '~/components/canvas/helpers/distribution-funcs';
 import { updateThreadBindingProps } from '~/components/canvas/bindings/thread-binding/ThreadBindingUtil';
 import { useConstellationMode } from '~/components/canvas/custom-ui/utilities/ConstellationModeContext';
+import { ConceptStar } from './ConceptStar';
 
 const conceptShapeProps = {
 	w: T.number,
@@ -77,10 +78,10 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
 	}
 
 	component(shape: ConceptShape) {
-        const [scope, animate] = useAnimate();
 		const bounds = this.editor.getShapeGeometry(shape).bounds
 		const {data } = useDataContext();
         const { expandExcerpts } = useConstellationMode();
+        const [pulseTrigger, setPulseTrigger] = useState(0);
 
 		const shapeRef = useRef<HTMLDivElement>(null);
 
@@ -99,9 +100,6 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
 
                 // Update thread binding props
                 updateThreadBindingProps(this.editor, shape.id);
-
-
-
               }
             };
         
@@ -121,38 +119,7 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
 	
 		const [isHovered, setIsHovered] = useState(false)
 
-        const randomDelay = 1;    
-        const ringVariants = {
-            hidden: { scale: 0, x: "-50%", y: "-50%" },
-            visible: (delay = 0) => ({
-                scale: 1,
-                x: "-50%", 
-                y: "-50%",
-                transition: { duration: 0.5, ease: "easeOut", delay }
-            })
-        };    
-        
-        const dashedRingVariants = {
-            hidden: { scale: 0, rotate: 0, x: "-50%", y: "-50%" },
-            visible: {
-                scale: 1.5, // Larger than the largest outer ring
-                rotate: 360,
-                x: "-50%",
-                y: "-50%",
-                transition: { duration: 1, ease: "easeOut" }
-            },
-            rotate: {
-                rotate: [0, 360],
-                transition: { repeat: Infinity, duration: 30, ease: "linear" }
-            },
-            exit: {
-                scale: 0,
-                x: "-50%",
-                y: "-50%",
-                transition: { duration: 0.3, ease: "easeIn" }
-            }
-        };
-
+    
         const selectedShapeIds = this.editor.getSelectedShapeIds();
         const memoizedSelectedShapeIds = useMemo(() => selectedShapeIds, [selectedShapeIds]);
 
@@ -215,12 +182,7 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
             
             if(shape.props.expanded){
                 // Trigger ripple animation
-                animate(".conceptCircle", { scale: 0.9 }, { duration: 0.2, ease: 'easeInOut' })
-                    .then(() => animate(".conceptCircle", { scale: 1.1 }, { duration: 0.2, ease: 'easeInOut' }))
-                    .then(() => {
-                        animate(".conceptCircle", { scale: 1 }, { duration: 0.2, ease: 'easeInOut' });
-                        animate(`.ripple`, { scale: [0, 8], opacity: [1, 0], x: "-50%", y: "-50%" }, { duration: 1.5, ease: "easeOut", delay: 0 });
-                    });
+                setPulseTrigger(prev => prev + 1)
 
                 // Create excerpts if they don't exist
                 if(!excerptsExist(this.editor, concept)){
@@ -253,7 +215,7 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
 					<motion.div 
 						className={styles.hoverDescription}
 						initial={{ opacity: 0, }}
-						animate={{ opacity: 1,}}
+						animate={{ opacity: 1 }}
 						exit={{ opacity: 0 }}
 						transition={{ duration: 0.3, ease: "linear" }}
 						style={{ transform: 'translateX(-50%)', overflow: 'hidden' }}
@@ -273,62 +235,10 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
                     onMouseEnter={() => setIsHovered(true)}
                     onMouseLeave={() => setIsHovered(false)}
                     >
-                <div className={styles.circleContainer} ref={scope}>
-                <AnimatePresence>
-                    {this.editor.getOnlySelectedShapeId() === shape.id && (
-                            <motion.div
-                                key='selectionRing'
-                                className={styles.selectionRing}
-                                initial="hidden"
-                                animate={["visible", "rotate"]}
-                                exit="exit"
-                                variants={dashedRingVariants}
-                            />
-                        )}
-                </AnimatePresence>
-
-                <motion.div
-                        className={`${styles.outerRing} conceptCircle`}
-                        initial="hidden"
-                        animate="visible"
-                        custom={randomDelay + 1.0} // Delay for outer ring
-                        variants={ringVariants}
-                    />
-                    <motion.div
-                        className={`${styles.innerRing} conceptCircle`}
-                        initial="hidden"
-                        animate="visible"
-                        custom={randomDelay + 0.75} // Delay for inner ring
-                        variants={ringVariants}
-                    />
-                    <motion.div
-                        className={`${styles.glow} conceptCircle`}
-                        initial="hidden"
-                        animate="visible"
-                        custom={randomDelay + 0.5} // Delay for glow
-                        variants={ringVariants}
-                    />
-                    <motion.div
-                        className={`${styles.innerGlow} conceptCircle`}
-                        initial="hidden"
-                        animate="visible"
-                        custom={randomDelay + 0.25} // Delay for inner glow
-                        variants={ringVariants}
-                    />
-                    <motion.div
-                        className={`${styles.circle} conceptCircle`}
-                        initial="hidden"
-                        animate="visible"
-                        custom={randomDelay} // No delay for circle
-                        variants={ringVariants}
-                    />
-                    <motion.div
-                    initial="hidden"
-                    className={`${styles.ripple} ripple`}
-                     variants={ringVariants}
-                    transition={{ delay: 0 }}
+                <ConceptStar 
+                    selected={this.editor.getOnlySelectedShapeId() === shape.id}
+                    pulseTrigger={pulseTrigger}
                 />
-				</div>
                     <motion.p 
                         className={styles.editorContent} 
                         initial={{ opacity: 0 }} 
