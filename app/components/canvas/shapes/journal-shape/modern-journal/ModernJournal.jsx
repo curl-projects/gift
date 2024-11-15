@@ -158,7 +158,7 @@ export function ModernJournal({ shape, contentRef, tldrawEditor }) {
               {
                 'article': <JournalArticle />,
                 'entries': <JournalEntries />
-              }[journalMode.page] || <JournalArticle />
+              }[journalMode.page] || <JournalEntries />
             }
         </div>
       </div>

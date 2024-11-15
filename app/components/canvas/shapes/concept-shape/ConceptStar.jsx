@@ -1,41 +1,9 @@
 import styles from './ConceptStar.module.css'
 import { motion, useAnimate, AnimatePresence } from 'framer-motion';
 import { useEffect, useState } from 'react';
-const randomDelay = 1;    
 
 
-const ringVariants = {
-    hidden: { scale: 0, x: "-50%", y: "-50%" },
-    visible: (delay = 0) => ({
-        scale: 1,
-        x: "-50%", 
-        y: "-50%",
-        transition: { duration: 0.5, ease: "easeOut", delay }
-    })
-};    
-
-const dashedRingVariants = {
-    hidden: { scale: 0, rotate: 0, x: "-50%", y: "-50%" },
-    visible: {
-        scale: 1.5, // Larger than the largest outer ring
-        rotate: 360,
-        x: "-50%",
-        y: "-50%",
-        transition: { duration: 1, ease: "easeOut" }
-    },
-    rotate: {
-        rotate: [0, 360],
-        transition: { repeat: Infinity, duration: 30, ease: "linear" }
-    },
-    exit: {
-        scale: 0,
-        x: "-50%",
-        y: "-50%",
-        transition: { duration: 0.3, ease: "easeIn" }
-    }
-};
-
-export function ConceptStar({ selected, pulseTrigger }){
+export function ConceptStar({ selected, pulseTrigger, onClick, scale }){
 
     const [scope, animate] = useAnimate();
 
@@ -48,9 +16,44 @@ export function ConceptStar({ selected, pulseTrigger }){
         });
     }, [pulseTrigger])
 
+    const randomDelay = 1;    
+
+    const ringVariants = {
+        hidden: { scale: 0, x: "-50%", y: "-50%" },
+        visible: (delay = 0) => ({
+            scale: 1,
+            x: "-50%", 
+            y: "-50%",
+            transition: { duration: 0.5, ease: "easeOut", delay }
+        })
+    };    
+
+    const dashedRingVariants = {
+        hidden: { scale: 0, rotate: 0, x: "-50%", y: "-50%" },
+        visible: {
+            scale: 1.5, // Larger than the largest outer ring
+            rotate: 360,
+            x: "-50%",
+            y: "-50%",
+            transition: { duration: 1, ease: "easeOut" }
+        },
+        rotate: {
+            rotate: [0, 360],
+            transition: { repeat: Infinity, duration: 30, ease: "linear" }
+        },
+        exit: {
+            scale: 0,
+            x: "-50%",
+            y: "-50%",
+            transition: { duration: 0.3, ease: "easeIn" }
+        }
+    };
+
     
     return(
-        <div className={styles.circleContainer} ref={scope}>
+        <div className={styles.circleContainer} ref={scope} onClick={onClick} style={{ 
+            transform: scale ? `scale(${scale})` : undefined
+         }}>
         <AnimatePresence>
             {selected && (
                     <motion.div
