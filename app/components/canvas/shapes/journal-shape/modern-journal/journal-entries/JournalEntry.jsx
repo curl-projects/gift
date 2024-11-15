@@ -3,6 +3,7 @@ import { JournalThread } from '~/components/canvas/shapes/journal-shape/parchmen
 import { motion } from 'framer-motion'
 import { useRef, useEffect, useState } from 'react';
 import { ConceptStar } from '~/components/canvas/shapes/concept-shape/ConceptStar';
+import { EntryArticle } from './EntryArticle';
 
 export function JournalEntry({ type, entry }){
     const specimenRef = useRef(null);
@@ -26,6 +27,9 @@ export function JournalEntry({ type, entry }){
                         onClick={()=>setPulseTrigger(pulseTrigger+1)}
                         scale={1.2}
                     />
+                }
+                {type === 'article' &&
+                    <EntryArticle content={entry.html} />
                 }
                     <motion.svg className={styles.animatedContainer}>
                         <JournalThread

@@ -1,0 +1,86 @@
+.entryArticle {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 20px;
+}
+
+.tiptap li {
+    color: pink;
+  }
+
+.articleContent{
+    box-sizing: border-box; /* Include padding and border in the element's total width */
+    transform: scale(0.4);
+    transform-origin: top left;
+    min-width: fit-content;
+}
+
+/* required for transform scale to work */
+.articleContent > * {
+    width: calc(100% / 0.4);
+}
+
+/* JOURNAL TIPTAP */
+.articleContent p {
+margin: 0;
+color: rgb(242, 242, 242);
+font-family: "IBM Plex Mono", monospace;
+font-weight: 400;
+letter-spacing: -0.003em;
+line-height: 1em;
+font-size: 14px;
+animation: fadeIn 1s ease-in-out; /* Added animation */
+}
+
+.articleContent a {
+border-bottom: 0.05em solid;
+border-color: rgba(255, 255, 255, 0.283);
+opacity: 0.7;
+cursor: pointer;
+}
+
+.articleContent code {
+    background: rgba(135, 131, 120, .15);
+    color: #EB5757;
+    border-radius: 4px;
+    font-size: 85%;
+    padding: 0.2em 0.4em;
+}
+
+.articleContent h1 {
+font-family: "IBM Plex Mono", monospace;
+font-weight: 700;
+color: rgb(242, 242, 242);
+letter-spacing: -0.04em;
+line-height: 1em;
+font-size: 30px;
+animation: fadeIn 1s ease-in-out; /* Added animation */
+margin-bottom: 0px;
+}
+
+.articleContent h2 {
+font-family: "IBM Plex Mono", monospace;
+font-weight: 700;
+color: rgb(242, 242, 242);
+font-size: 30px;
+letter-spacing: -0.04em;
+line-height: 1em;
+font-size: 20px;
+animation: fadeIn 1s ease-in-out; /* Added animation */
+}
+
+
+.articleContent hr {
+    border-bottom: 0px solid rgba(255, 255, 255, 1);
+    margin-top: 14px;
+    margin-bottom: 14px;
+    opacity: 0.13;
+}
+
+.articleContent ul li {
+color: #EB5757;
+}
+

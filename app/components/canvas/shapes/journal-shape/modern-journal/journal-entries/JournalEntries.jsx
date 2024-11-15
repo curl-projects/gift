@@ -16,7 +16,8 @@ const mockEntries = [
         title: "Game Design in Software v2",
         content: "...we must move beyond the current paradigm of software...",
         author: "Finn Macken",
-        date: "2024-03-05"
+        date: "2024-03-05",
+        html: "<h1>Hello</h1><p>My name is Finn"
     }
 ]
 export function JournalEntries(){
@@ -33,7 +34,7 @@ export function JournalEntries(){
                         style={{ transformOrigin: 'left' }}
                         initial={{ scaleX: 0 }}
                         animate={{ scaleX: 1 }}
-                        transition={{ duration: 0.5 }}
+                        transition={{ duration: 0.5, ease: "easeInOut",}}
                     />
                     <div className={styles.innerIconContainer}>
                         <motion.svg
@@ -62,7 +63,7 @@ export function JournalEntries(){
                         style={{ transformOrigin: 'right' }}
                         initial={{ scaleX: 0 }}
                         animate={{ scaleX: 1 }}
-                        transition={{ duration: 0.5 }}
+                        transition={{ duration: 0.5, ease: "easeInOut",}}
                     />
                 </div>
             </React.Fragment>
