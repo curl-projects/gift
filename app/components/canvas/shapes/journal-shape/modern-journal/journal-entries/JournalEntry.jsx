@@ -5,7 +5,7 @@ import { useRef, useEffect, useState } from 'react';
 import { ConceptStar } from '~/components/canvas/shapes/concept-shape/ConceptStar';
 import { EntryArticle } from './EntryArticle';
 
-export function JournalEntry({ type, entry, shouldAnimate, opacity = 1, onMouseEnter, onMouseLeave }) {
+export function JournalEntry({ type, entry, shouldAnimate, opacity = 1, onMouseEnter, onMouseLeave, isHovered, isOtherHovered }) {
     const specimenRef = useRef(null);
     const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
     const [pulseTrigger, setPulseTrigger] = useState(0);
@@ -24,7 +24,7 @@ export function JournalEntry({ type, entry, shouldAnimate, opacity = 1, onMouseE
                 initial={{ opacity: shouldAnimate ? 0 : opacity, x: shouldAnimate ? -100 : 0 }}
                 animate={{ opacity: opacity, x: 0 }}
                 transition={{
-                    opacity: { duration: 0.2, ease: "easeInOut", delay: 0},
+                    opacity: { duration: 0.3, ease: "easeInOut", delay: 0},
                     x: { duration: 0.5, ease: "easeInOut", delay: 0.5 }
                 }}
                 onMouseEnter={onMouseEnter}
@@ -38,6 +38,7 @@ export function JournalEntry({ type, entry, shouldAnimate, opacity = 1, onMouseE
                                 pulseTrigger={pulseTrigger}
                                 onClick={() => setPulseTrigger(pulseTrigger + 1)}
                                 scale={1.2}
+                                animationDelay={0.55}
                             />
                         }
                         {type === 'article' &&
@@ -56,7 +57,11 @@ export function JournalEntry({ type, entry, shouldAnimate, opacity = 1, onMouseE
                         </motion.svg>
                     </div>
                 </div>
-                <div className={styles.entryContent}>
+                <motion.div 
+                    className={styles.entryContent}
+                    animate={{ scale: isHovered ? 1.01 : 1 }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                    >
                     <motion.div className={styles.entryTitle}
                         initial={{ opacity: shouldAnimate ? 0 : 1, x: shouldAnimate ? -100 : 0 }}
                         animate={{ opacity: 1, x: 0 }}
@@ -78,7 +83,7 @@ export function JournalEntry({ type, entry, shouldAnimate, opacity = 1, onMouseE
                     >
                         {entry.content}
                     </motion.div>
-                </div>
+                </motion.div>
             </motion.div>
             <div className={styles.divider}>
                 <motion.div

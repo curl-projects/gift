@@ -33,6 +33,8 @@ export function JournalEntries(){
                             entry={entry} 
                             shouldAnimate={isNewEntryAdded ? (index === 0 ? true : false) : true}
                             opacity={opacityForEntry}
+                            isHovered={isHovered}
+                            isOtherHovered={isOtherHovered}
                             onMouseEnter={() => setHoveredIndex(index)}
                             onMouseLeave={() => setHoveredIndex(null)}
                         />
