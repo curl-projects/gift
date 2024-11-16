@@ -1,15 +1,46 @@
 import { createShapeId } from "tldraw";
 
-export function generatePointsAroundCircle(centerX, centerY, radius, numPoints, stochasticFactor) {
-    const points = [];
-    const angleStep = (2 * Math.PI) / numPoints;
+export function generatePointsAroundCircle(centerX, centerY, radius, numPoints, stochasticFactor, itemWidth = 0, itemHeight = 0, radiusIncrement = radius) {
 
-    for (let i = 0; i < numPoints; i++) {
-        const angle = i * angleStep;
-        const stochasticRadius = radius + (Math.random() - 0.5) * stochasticFactor;
-        const x = centerX + stochasticRadius * Math.cos(angle);
-        const y = centerY + stochasticRadius * Math.sin(angle);
-        points.push({ x, y });
+    console.log("GENERATING POINTS AROUND CIRCLES", centerX, centerY, radius, numPoints, stochasticFactor, itemWidth, itemHeight, radiusIncrement);
+
+    const points = [];
+    let totalPointsGenerated = 0;
+    let circleNum = 0;
+    const initialPointsPerCircle = 4;
+    let previousPointsInCircle = initialPointsPerCircle;
+
+    while (totalPointsGenerated < numPoints) {
+        // Calculate the number of points for this circle
+        let pointsInThisCircle = initialPointsPerCircle * Math.pow(2, circleNum);
+
+        // Adjust if we're exceeding the total number of points
+        if (totalPointsGenerated + pointsInThisCircle > numPoints) {
+            pointsInThisCircle = numPoints - totalPointsGenerated;
+        }
+
+        // Calculate the radius for this circle
+        const currentRadius = radius + circleNum * radiusIncrement;
+
+        const angleStep = (2 * Math.PI) / pointsInThisCircle;
+
+        // Calculate the angle offset
+        let angleOffset = 0;
+        if (circleNum > 0) {
+            angleOffset = Math.PI / previousPointsInCircle;
+        }
+
+        for (let i = 0; i < pointsInThisCircle; i++) {
+            const angle = i * angleStep + angleOffset;
+            const stochasticRadius = currentRadius + (Math.random() - 0.5) * stochasticFactor;
+            const x = centerX + stochasticRadius * Math.cos(angle) - itemWidth / 2;
+            const y = centerY + stochasticRadius * Math.sin(angle) - itemHeight / 2;
+            points.push({ x, y });
+        }
+
+        totalPointsGenerated += pointsInThisCircle;
+        previousPointsInCircle = pointsInThisCircle;
+        circleNum += 1; // Move to the next circle
     }
 
     return points;

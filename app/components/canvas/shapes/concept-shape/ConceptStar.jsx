@@ -16,7 +16,7 @@ export function ConceptStar({ selected, pulseTrigger, onClick, scale }){
         });
     }, [pulseTrigger])
 
-    const randomDelay = 1;    
+    const randomDelay = 3;    
 
     const ringVariants = {
         hidden: { scale: 0, x: "-50%", y: "-50%" },
@@ -51,7 +51,11 @@ export function ConceptStar({ selected, pulseTrigger, onClick, scale }){
 
     
     return(
-        <div className={styles.circleContainer} ref={scope} onClick={onClick} style={{ 
+        <div 
+            className={styles.circleContainer} 
+            ref={scope} 
+            onClick={onClick} 
+            style={{ 
             transform: scale ? `scale(${scale})` : undefined
          }}>
         <AnimatePresence>
@@ -106,8 +110,8 @@ export function ConceptStar({ selected, pulseTrigger, onClick, scale }){
             initial="hidden"
             className={`${styles.ripple} ripple`}
              variants={ringVariants}
-            transition={{ delay: 0 }}
-        />
+                transition={{ delay: 0 }}
+            />
         </div>
     )
 }

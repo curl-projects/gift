@@ -23,6 +23,7 @@ import { applyProgressiveBlur, removeProgressiveBlur } from '~/components/canvas
 import { updateThreadBindingProps } from '~/components/canvas/bindings/thread-binding/ThreadBindingUtil';
 import { useConstellationMode } from '~/components/canvas/custom-ui/utilities/ConstellationModeContext';
 import { ConceptStar } from './ConceptStar';
+import { useStarFireSync } from '~/components/synchronization/StarFireSync';
 
 const conceptShapeProps = {
 	w: T.number,
@@ -82,8 +83,13 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
 		const {data } = useDataContext();
         const { expandExcerpts } = useConstellationMode();
         const [pulseTrigger, setPulseTrigger] = useState(0);
+        const { entries, setEntries, setJournalMode } = useStarFireSync()
 
 		const shapeRef = useRef<HTMLDivElement>(null);
+
+        useEffect(()=>{
+            console.log("CONCEPT POSITIONS:", shape)
+        }, [])
 
 
         useEffect(() => {
@@ -99,7 +105,7 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
                 });
 
                 // Update thread binding props
-                updateThreadBindingProps(this.editor, shape.id);
+                // updateThreadBindingProps(this.editor, shape.id);
               }
             };
         
@@ -138,6 +144,10 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
             ){
                 // if the concept is selected and its excerpts don't exist, create its excerpts
                 if(memoizedSelectedShapeIds.includes(shape.id)){
+
+                    // move the concept to the top of the page
+
+
                     // zoom to the concept
                     this.editor.zoomToBounds(this.editor.getShapePageBounds(shape), {
                         animation: {
@@ -186,7 +196,7 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
 
                 // Create excerpts if they don't exist
                 if(!excerptsExist(this.editor, concept)){
-                    generateExcerpts(this.editor, concept);
+                    // generateExcerpts(this.editor, concept);
                     // applyProgressiveBlur(this.editor, shape, [...excerptIds, createShapeId(data.user.uniqueName)]);
 
                     setTimeout(()=>{
@@ -247,6 +257,25 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
                     >
                         {shape.props.plainText}
                     </motion.p>
+                    <motion.div 
+                        className={styles.entryButton}
+                        onPointerDown={(e)=>{
+                            console.log("ENTRY CREATED")
+                            setJournalMode({ active: true, variant: "modern", page: 'entries'})
+                            setEntries(prevState => [...prevState, {
+                                type: "concept",
+                                id: shape.id,
+                                title: shape.props.plainText,
+                                content: shape.props.description,
+                                author: data.user.uniqueName,
+                                date: new Date().toLocaleDateString(),
+                            }])
+
+                            e.stopPropagation()
+                        }}
+                    >
+                        +
+                    </motion.div>
 					{/* <EditorContent 
 						editor={editor}
 						// onKeyDown={stopEventPropagation}

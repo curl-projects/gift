@@ -72,5 +72,15 @@ export function JournalArticle(){
       }, [htmlContent, editor]);
 
 
-    return <EditorContent editor={editor} className="journal-tiptap" />
+    return (
+        <div style={{
+            width: '100%',
+            height: '100%',
+            overflow: 'scroll',
+            whiteSpace: 'pre-wrap',
+            wordWrap: 'break-word',
+        }}>
+        <EditorContent editor={editor} className="journal-tiptap" />
+        </div>
+    )
 }

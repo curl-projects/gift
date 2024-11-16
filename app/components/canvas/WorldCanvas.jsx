@@ -84,8 +84,8 @@ export default function WorldCanvas() {
     const components = {
         Toolbar: null,
         MainMenu: null,
-        DebugMenu: null,
-        DebugPanel: null,
+        // DebugMenu: null,
+        // DebugPanel: null,
         Minimap: null,
         PageMenu: null,
         ActionsMenu: null,

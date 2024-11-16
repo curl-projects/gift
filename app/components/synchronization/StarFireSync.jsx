@@ -50,6 +50,77 @@ const StarFireSyncProvider = ({ children }) => {
 
     const [campfireDialogue, setCampfireDialogue] = useState({ active: false });
 
+    const [entries, setEntries] = useState([
+        {
+            id: "1",
+            type: 'concept',
+            title: "Immersive Storytelling",
+            content: "Software, to be transformative, must manifest the emotive tools of game design.",
+            author: "Andre Vacha",
+            date: "2024-02-20"
+        },
+        {
+            id: "2",
+            type: "article",
+            title: "Game Design in Software v2",
+            content: "...we must move beyond the current paradigm of software...",
+            author: "Finn Macken",
+            date: "2024-03-05",
+            html: "<h1>Hello</h1><p>My name is Finn"
+        },
+        {
+            id: "3",
+            type: 'concept',
+            title: "Immersive Storytelling",
+            content: "Software, to be transformative, must manifest the emotive tools of game design.",
+            author: "Andre Vacha",
+            date: "2024-02-20"
+        },
+        {
+            id: "4",
+            type: "article",
+            title: "Game Design in Software v2",
+            content: "...we must move beyond the current paradigm of software...",
+            author: "Finn Macken",
+            date: "2024-03-05",
+            html: "<h1>Hello</h1><p>My name is Finn"
+        },
+        {
+            id: "5",
+            type: 'concept',
+            title: "Immersive Storytelling",
+            content: "Software, to be transformative, must manifest the emotive tools of game design.",
+            author: "Andre Vacha",
+            date: "2024-02-20"
+        },
+        {
+            id: "6",
+            type: "article",
+            title: "Game Design in Software v2",
+            content: "...we must move beyond the current paradigm of software...",
+            author: "Finn Macken",
+            date: "2024-03-05",
+            html: "<h1>Hello</h1><p>My name is Finn"
+        }
+        ,{
+            id: "7",
+            type: 'concept',
+            title: "Immersive Storytelling",
+            content: "Software, to be transformative, must manifest the emotive tools of game design.",
+            author: "Andre Vacha",
+            date: "2024-02-20"
+        },
+        {
+            id: "8",
+            type: "article",
+            title: "Game Design in Software v2",
+            content: "...we must move beyond the current paradigm of software...",
+            author: "Finn Macken",
+            date: "2024-03-05",
+            html: "<h1>Hello</h1><p>My name is Finn"
+        }
+    ])
+
     const useStateWithPromise = (setter) => (value) => {
         return new Promise((resolve) => {
             setter({
@@ -145,6 +216,7 @@ const StarFireSyncProvider = ({ children }) => {
                 focusOnComponent, setFocusOnComponent,
                 enableFire, setEnableFire,
                 campfireDialogue, setCampfireDialogue,
+                entries, setEntries,
             }}>
             {children}
         </StarFireSyncContext.Provider>

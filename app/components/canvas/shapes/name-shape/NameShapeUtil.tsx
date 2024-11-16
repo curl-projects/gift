@@ -206,10 +206,10 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
                         generateConcepts(this.editor, shape.id, data.user.concepts)
                     }
                 }).then(() => {
-                    collection.startSimulation();
+                    // collection.startSimulation();
                     setTimeout(() => {
                         // Do something else here after waiting for 0.5 seconds
-                        generateConceptLinks(this.editor, data.user.concepts)
+                        // generateConceptLinks(this.editor, data.user.concepts)
 
                         setTimeout(()=>{
                             expandConcepts?.onComplete && expandConcepts.onComplete()

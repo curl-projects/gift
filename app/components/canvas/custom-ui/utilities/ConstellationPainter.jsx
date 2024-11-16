@@ -127,10 +127,13 @@ export function ConstellationPainter({ user, isLoading, isSuccess }){
             if (isSuccess) {
                 console.log("SETTING OVERLAY CONTROLS:", user.startColor, user.endColor)
                 console.log("isLoading transitioned from true to false, creating constellation star", user);
-                createConstellationStar(editor, collection, createShapeId(user.uniqueName));
 
                 setOverlayControls({ startColor: user.startColor, endColor: user.endColor, immediate: false, duration: 0.5, delay: 0}),
                 setCloudDarkeningControls({ visible: true, colors: user.darkeningColors, immediate: false, duration: 0.5, delay: 0}),
+
+                setTimeout(()=>{
+                    createConstellationStar(editor, collection, createShapeId(user.uniqueName));
+                }, 200)
 
                 // Dispose of the listener
                 setStartListening(false);

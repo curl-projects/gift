@@ -119,6 +119,7 @@ export function generateExcerpts(editor, concept) {
         const { x: centerX, y: centerY } = conceptShape;
         const points = generatePointsAroundCircle(centerX, centerY, 200, concept.excerpts.length, 0);
 
+
         for (let i = 0; i < concept.excerpts.length; i++) {
             const excerpt = concept.excerpts[i];
             const excerptShape = editor.getShape(createShapeId(excerpt.id));
@@ -229,13 +230,22 @@ export function conceptsExist(editor, concepts) {
 
 export function generateConcepts(editor, centralShapeId, concepts) {
     if (concepts && concepts.length > 0) {
-        const points = generatePointsAroundCircle(0, 0, 300, concepts.length, 0);
+        const centralShape = editor.getShape(centralShapeId);
+
+        const { x: centerX, y: centerY } = centralShape;
+        const points = generatePointsAroundCircle(centerX, centerY, 300, concepts.length, 20, 50, 20, 150);
+
+
+        console.log("POINTS:", points)
 
         for (let i = 0; i < concepts.length; i++) {
             const concept = concepts[i];
             const conceptShape = editor.getShape(createShapeId(concept.id));
             const { x, y } = points[i];
             let conceptShapeId = createShapeId(concept.id)
+
+            console.log("CONCEPT SHAPE POINTS:", x, y)
+
             if (!conceptShape) {
                 editor.createShape({
                     id: conceptShapeId,
@@ -250,7 +260,7 @@ export function generateConcepts(editor, centralShapeId, concepts) {
                     }
                 });
 
-                createBoundThread(editor, centralShapeId, conceptShapeId)
+                // createBoundThread(editor, centralShapeId, conceptShapeId)
             }
         }
     } else {
