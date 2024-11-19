@@ -40,9 +40,17 @@ export async function getWorldContent(uniqueName){
                 include: {
                     modifiers: true
                 }
-            },
+            }
         }
-    })
+    });
+
+    const mediaCount = await prisma.media.count({
+        where: {
+            userId: uniqueName
+        }
+    });
+
+    user.mediaCount = mediaCount;
 
     if (!user) {
         throw new Error(`User with name '${uniqueName}' not found`);

@@ -17,6 +17,49 @@ import { ConstellationLabelTooltip } from "~/components/canvas/custom-ui/utiliti
 import { useCovenantContext } from "~/components/synchronization/CovenantContext"
 import * as BABYLON from '@babylonjs/core';
 
+
+{/* <div className={styles.metadataRow}>
+<div className={styles.constellationMetadataWrapper}>
+    <p className={styles.constellationMetadataLabel}>
+        <LabelTranslate 
+            constellationLabel={constellationLabel} 
+            animationCommenced={animationCommenced} 
+            text="Concepts"
+            delay={300}
+        />
+    </p>
+    <p className={styles.constellationMetadataValue}>
+        <LabelTranslate 
+            constellationLabel={constellationLabel} 
+            animationCommenced={animationCommenced} 
+            text={`${data.user?.concepts?.length || 0} in total`}
+            delay={600}
+            blocked={true}
+        />
+    </p>
+</div>
+<div className={styles.constellationMetadataWrapper}>
+    <p className={styles.constellationMetadataLabel}>
+        <LabelTranslate 
+            constellationLabel={constellationLabel} 
+            animationCommenced={animationCommenced} 
+            text="Media"
+            delay={300}
+        />
+    </p>
+    <p className={styles.constellationMetadataValue}>
+        <LabelTranslate 
+            constellationLabel={constellationLabel} 
+            animationCommenced={animationCommenced} 
+            text={`${data.user?.mediaCount || 0} remaining`}
+            delay={600}
+            blocked={true}
+        />
+    </p>
+</div>
+</div> */}
+
+
 export function ConstellationLabelPainter({ name }){
     const { triggerWarp, setTriggerWarp, constellationLabel, focusOnComponent } = useStarFireSync()
     const editor = useEditor()

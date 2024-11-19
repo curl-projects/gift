@@ -34,8 +34,7 @@ export function ToolsMenu(){
 
     const handleAstrolabeClick = () => {
         // setDrifting({ active: !drifting.active });
-        // setMinimapMode({ active: !minimapMode.active });
-        setConceptList({ active: !conceptList.active })
+        setMinimapMode({ active: !minimapMode.active });
         console.log("astrolabe")
 
     };

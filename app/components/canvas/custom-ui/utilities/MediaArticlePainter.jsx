@@ -18,22 +18,18 @@ const MediaArticlePainter = track(() => {
 
     useEffect(()=>{
         // deal with the case where the selected shape is an excerpt
-        if(selectedShapeIds.length === 1){
-            const shape = editor.getShape(selectedShapeIds[0]);
-            if(shape.type === 'excerpt'){
-                setJournalMode({ active: true, variant: 'modern', page: 'technical-foundations', content: shape.props.media?.content || "", position: 'right' })
-            }
-            else if(shape.type === 'annotation'){
-                // do nothing
-                // setJournalMode({ active: true, variant: 'modern', page: 'technical-foundations' })
-            }
-        }
-        else{
+        if(selectedShapeIds.length !== 1){
             // close the journal
-            setJournalMode({ active: false, variant: 'modern', page: 'technical-foundations' })
+            setJournalMode({ active: false, variant: 'modern', position: 'right' })
         }
     }, [selectedShapeIds])
-    // open the journal with associated content whenever an excerpt is clicked
+
+
+    useEffect(()=>{
+        if(journalMode.active){
+            // configure opacity logic
+        }
+    }, [journalMode])
 
     return null;
 })

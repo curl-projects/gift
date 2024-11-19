@@ -19,6 +19,7 @@ import { TypeAnimation } from 'react-type-animation';
 import { useDataContext } from '~/components/synchronization/DataContext';
 import ExcerptMediaEditor from './ExcerptMediaEditor';
 import { updateThreadBindingProps } from '~/components/canvas/bindings/thread-binding/ThreadBindingUtil';
+import { useStarFireSync } from '~/components/synchronization/StarFireSync';
 
 const excerptShapeProps = {
 	w: T.number,
@@ -81,6 +82,8 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 		const [scope, animate] = useAnimate(); // Use animation controls
 		const [scrollChange, setScrollChange] = useState(null)
 		const controls = useAnimationControls();
+		const [isDragging, setIsDragging] = useState(false);
+		const { setJournalMode } = useStarFireSync();
 
 		const excerpt = data.user.concepts.flatMap(concept => concept.excerpts).find(excerpt => excerpt.id === shape.props.databaseId) || null
 
@@ -144,6 +147,30 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
           }, [shapeRef.current, this.editor, shape]);
 
 
+		  const handleMouseDown = (e: React.MouseEvent) => {
+			setIsDragging(false);
+			const startX = e.clientX;
+			const startY = e.clientY;
+
+			const handleMouseMove = (moveEvent: MouseEvent) => {
+				if (Math.abs(moveEvent.clientX - startX) > 5 || Math.abs(moveEvent.clientY - startY) > 5) {
+					setIsDragging(true);
+				}
+			};
+
+			const handleMouseUp = (upEvent: MouseEvent) => {
+				if (!isDragging) {
+					setJournalMode({ active: true, variant: 'modern', page: 'technical-foundations', content: shape.props.media?.content || "", position: 'right' })
+				}
+				document.removeEventListener('mousemove', handleMouseMove);
+				document.removeEventListener('mouseup', handleMouseUp);
+			};
+
+			document.addEventListener('mousemove', handleMouseMove);
+			document.addEventListener('mouseup', handleMouseUp);
+		};
+
+
 		return (
 			<div
 				id={shape.id}
@@ -152,7 +179,7 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 				style={{
 					pointerEvents: 'all',
 				}}
-			>
+				onMouseDown={handleMouseDown}>
 				<div 
 				className={styles.excerptBox}
 				ref={shapeRef}>
@@ -171,7 +198,7 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 						className={styles.excerptText}
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
-						transition={{ duration: 0.5, delay: 0.3, ease: "easeInOut" }}
+						transition={{ duration: 1, delay: 0, ease: "easeInOut" }}
 						style={{
 							minWidth: '300px',
 							cursor: "pointer",

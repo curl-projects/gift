@@ -83,7 +83,7 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
 		const {data } = useDataContext();
         const { expandExcerpts } = useConstellationMode();
         const [pulseTrigger, setPulseTrigger] = useState(0);
-        const { entries, setEntries, setJournalMode, conceptList, setConceptList } = useStarFireSync()
+        const { entries, setEntries, setJournalMode, conceptList, setConceptList, setDrifting } = useStarFireSync()
 
 		const shapeRef = useRef<HTMLDivElement>(null);
 
@@ -123,21 +123,21 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
 
 	
 		const [isHovered, setIsHovered] = useState(false)
+		const [isDragging, setIsDragging] = useState(false);
 
     
         const selectedShapeIds = this.editor.getSelectedShapeIds();
         const memoizedSelectedShapeIds = useMemo(() => selectedShapeIds, [selectedShapeIds]);
         
-		let isDragging = false;
 
 		const handleMouseDown = (e: React.MouseEvent) => {
-			isDragging = false;
+			setIsDragging(false);
 			const startX = e.clientX;
 			const startY = e.clientY;
 
 			const handleMouseMove = (moveEvent: MouseEvent) => {
 				if (Math.abs(moveEvent.clientX - startX) > 5 || Math.abs(moveEvent.clientY - startY) > 5) {
-					isDragging = true;
+					setIsDragging(true);
                     console.log("DRAGGING")
 
                 }
@@ -162,11 +162,20 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
                         }
                         })
                     }
-                    else{
+                    else if(conceptList.active && conceptList.focusedConcept !== shape.id){
+                        console.log("CHANGING FOCUSED CONCEPT", conceptList, shape.id)
                         setConceptList(prevState => ({
                             ...prevState, 
-                            focusedConcept: prevState.focusedConcept === shape.id ? null : shape.id
+                            focusedConcept: shape.id,
                         }))
+                    }
+                    else if(conceptList.active && conceptList.focusedConcept === shape.id){
+                        console.log("CLOSING CONCEPT LIST")
+                        setConceptList(prevState => ({
+                            ...prevState, 
+                            focusedConcept: null
+                        }))
+                        setDrifting({active: true })
                     }
 
 				}
@@ -184,8 +193,7 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
 				className={styles.container}		
                 style={{
                     transform: conceptList.active ? 'scale(var(--tl-scale))' : 'initial', 
-                }}	
-                onMouseDown={handleMouseDown} >
+                }}>
 					
 				{
 				isHovered && shape.props.description && (
@@ -220,7 +228,7 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
                     onMouseDown={handleMouseDown}
                     >
                 <ConceptStar 
-                    selected={this.editor.getOnlySelectedShapeId() === shape.id}
+                    selected={(this.editor.getOnlySelectedShapeId() === shape.id) || (conceptList.focusedConcept === shape.id)}
                     pulseTrigger={pulseTrigger}
                     collapsed={conceptList.active}
                 />
@@ -232,7 +240,7 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
                             left: conceptList.active ? -16 : 0
                         }}
                         animate={{ 
-                            opacity: conceptList.active && (conceptList.focusedConcept !== shape.id || !isHovered)  ? 0.5 : 0.8,
+                            opacity: conceptList.active && (conceptList.focusedConcept !== shape.id && !isHovered)  ? 0.5 : 0.8,
                         }} 
                         transition={{ 
                             delay: 2, 

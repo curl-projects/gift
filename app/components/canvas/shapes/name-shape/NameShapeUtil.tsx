@@ -341,13 +341,6 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
                     style={{ cursor: 'pointer' }}
                     onMouseEnter={() => setIsHovered(true)}
                     onMouseLeave={() => setIsHovered(false)}
-                    // onPointerDown={() => this.editor.updateShape({
-                    //     id: shape.id,
-                    //     type: shape.type,
-                    //     props: {
-                    //         expanded: !shape.props.expanded
-                    //     }
-                    // })}
                     onPointerDown={(e) => {
                         e.stopPropagation() // required so that the central shape isn't selected
                         if(collection && data){
@@ -376,8 +369,10 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
 
                             // if the concepts are in list mode and none of them are active, revert back to the expanded state
                             else if(conceptList.active && !conceptList.focusedConcept){
-                                setConceptList({active: false})
                                 setDrifting({active: false})
+                                
+                                setConceptList({active: false, focusedConcept: null})
+                                
 
                             }
 

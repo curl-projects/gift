@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from "react"
 import { useEditor, track } from "tldraw"
 import { animateShapeProperties } from "~/components/canvas/helpers/animation-funcs"
 import { useCollection } from "~/components/canvas/custom-ui/collections";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 export const ConceptListPainter = track(() => {
     const { conceptList } = useStarFireSync()
@@ -16,19 +16,22 @@ export const ConceptListPainter = track(() => {
     const conceptsRef = useRef([]) // To store concepts
     const animTime = 300 // Animation duration in milliseconds
 
+
+    const yOffset = 135
+
     useEffect(() => {
         const prevActive = prevActiveRef.current
 
-        if (conceptList.active && !prevActive) {
+        if (conceptList.active) {
             // Move concepts
             const concepts = editor.getCurrentPageShapes().filter(shape => shape.type === 'concept')
-
+ 
             // Store original positions
             const positions = {}
             concepts.forEach(concept => {
                 positions[concept.id] = { x: concept.x, y: concept.y }
             })
-            setOriginalPositions(positions)
+            !prevActive && setOriginalPositions(positions)
             conceptsRef.current = concepts // Store concepts for later use
 
             // Animate their positions
@@ -38,13 +41,16 @@ export const ConceptListPainter = track(() => {
             // Start animating to target positions
             animateToPositions()
         } else if (!conceptList.active) {
+            console.log("CLOSING CONCEPT LIST")
             // Move the concepts back to where they were before
             const concepts = editor.getCurrentPageShapes().filter(shape => shape.type === 'concept')
             editor.setSelectedShapes(concepts.map(c => c.id))
             concepts.forEach(concept => {
                 const originalPosition = originalPositions[concept.id]
                 if (originalPosition) {
-                    animateShapeProperties(editor, concept.id, originalPosition, 300, t => t * t)
+                    animateShapeProperties(editor, concept.id, originalPosition, 300, t => t * t).then(()=>{
+                        editor.setSelectedShapes([])
+                    })
                 }
             })
             // Cancel any ongoing animation frame updates
@@ -66,7 +72,7 @@ export const ConceptListPainter = track(() => {
         // Get starting position in screen coordinates
         const pageHeight = window.innerHeight
         const startXScreen = 20
-        const startYScreen = pageHeight - 130
+        const startYScreen = pageHeight - yOffset
 
         // Convert starting position to page coordinates
         const pageCoords = editor.screenToPage({ x: startXScreen, y: startYScreen })
@@ -92,7 +98,7 @@ export const ConceptListPainter = track(() => {
                 // Update starting position in case of screen changes
                 const pageHeight = window.innerHeight
                 const startXScreen = 20
-                const startYScreen = pageHeight - 130
+                const startYScreen = pageHeight - yOffset
                 const pageCoords = editor.screenToPage({ x: startXScreen, y: startYScreen })
 
                 // Recalculate verticalSpacing in case of zoom changes
@@ -129,17 +135,20 @@ export const ConceptListPainter = track(() => {
 
     return (
         <div className={styles.conceptListPainter}>
-            {conceptList.active && conceptList.focusedConcept &&
-                <motion.p
-                    key={conceptList.focusedConcept}
-                    className={styles.painterText}
-                    initial={{ opacity: 0}}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.8, ease: "easeInOut" }}
-                >
-                    {editor.getShape(conceptList.focusedConcept).props.plainText}
-                </motion.p>
-            }
+            <AnimatePresence>
+                {conceptList.active && conceptList.focusedConcept &&
+                    <motion.p
+                        key={conceptList.focusedConcept}
+                        className={styles.painterText}
+                        initial={{ opacity: 0}}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.8, ease: "easeInOut" }}
+                    >
+                        {editor.getShape(conceptList.focusedConcept).props.plainText}
+                    </motion.p>
+                }
+            </AnimatePresence>
         </div>
     )
 })

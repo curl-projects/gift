@@ -8,12 +8,21 @@ export function ConceptStar({ selected, pulseTrigger, onClick, scale, animationD
 
     useEffect(()=>{
         if(pulseTrigger > 0){
-        animate(".conceptCircle", { scale: 0.9 }, { duration: 0.2, ease: 'easeInOut' })
-        .then(() => animate(".conceptCircle", { scale: 1.1 }, { duration: 0.2, ease: 'easeInOut' }))
-        .then(() => {
-            animate(".conceptCircle", { scale: 1 }, { duration: 0.2, ease: 'easeInOut' });
-            animate(`.ripple`, { scale: [0, 8], opacity: [1, 0], x: "-50%", y: "-50%" }, { duration: 1.5, ease: "easeOut" });
-            });
+            if (collapsed) {
+                animate(".conceptCircle", { scale: 0.675 }, { duration: 0.2, ease: 'easeInOut' }) // 0.75 * 0.9
+                .then(() => animate(".conceptCircle", { scale: 0.825 }, { duration: 0.2, ease: 'easeInOut' })) // 0.75 * 1.1
+                .then(() => {
+                    animate(".conceptCircle", { scale: 0.75 }, { duration: 0.2, ease: 'easeInOut' }); // Baseline 0.75
+                    animate(`.ripple`, { scale: [0, 8], opacity: [1, 0], x: "-50%", y: "-50%" }, { duration: 1.5, ease: "easeOut" });
+                });
+            } else {
+                animate(".conceptCircle", { scale: 0.9 }, { duration: 0.2, ease: 'easeInOut' })
+                .then(() => animate(".conceptCircle", { scale: 1.1 }, { duration: 0.2, ease: 'easeInOut' }))
+                .then(() => {
+                    animate(".conceptCircle", { scale: 1 }, { duration: 0.2, ease: 'easeInOut' });
+                    animate(`.ripple`, { scale: [0, 8], opacity: [1, 0], x: "-50%", y: "-50%" }, { duration: 1.5, ease: "easeOut" });
+                });
+            }
         }
     }, [pulseTrigger])
 

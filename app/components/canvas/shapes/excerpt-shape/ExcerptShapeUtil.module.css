@@ -3,6 +3,7 @@
     height: fit-content;
     width: fit-content;
     position: relative;
+    cursor: pointer;
   }
   
   .excerptBox{

@@ -82,7 +82,7 @@ const createDriftShape = (editor, excerpt, existingShapes) => {
         }
     });
 
-    existingShapes.push({ x: randomX, y: randomY, width: shapeWidth, height: shapeHeight });
+    existingShapes.push({ id, x: randomX, y: randomY, width: shapeWidth, height: shapeHeight });
 
     return id;
 }
@@ -115,24 +115,41 @@ export function DriftPainter({ user }){
             const existingShapes = [];
 
             const createAndReplaceShape = (excerpt, index) => {
-                console.log("CREATING DRIFT")
-                const randomTimeout = Math.random() * 15000 + 5000; // Random time between 5s and 10s
+                console.log("CREATING DRIFT");
+                const randomTimeout = Math.random() * 15000 + 5000; // Random time between 5s and 20s
                 const shapeId = createDriftShape(editor, excerpt, existingShapes);
-                
+
                 const timeoutId = setTimeout(() => {
-                    // delete shape
-                    editor.updateShape({id: shapeId, type: "drift", props: {triggerDelete: true}});
- 
-                    // wait until delete animation has played
-                    const deleteTimeoutId = setTimeout(()=>{
+                    // Delete shape
+                    editor.updateShape({ id: shapeId, type: "drift", props: { triggerDelete: true } });
+
+                    // Remove shape from existingShapes
+                    const shapeIndex = existingShapes.findIndex(shape => shape.id === shapeId);
+                    if (shapeIndex !== -1) {
+                        existingShapes.splice(shapeIndex, 1);
+                    }
+
+                    // Remove timeoutId from timeouts.current
+                    const timeoutIndex = timeouts.current.indexOf(timeoutId);
+                    if (timeoutIndex !== -1) {
+                        timeouts.current.splice(timeoutIndex, 1);
+                    }
+
+                    // Wait until delete animation has played
+                    const deleteTimeoutId = setTimeout(() => {
+                        // Remove deleteTimeoutId from timeouts.current
+                        const deleteTimeoutIndex = timeouts.current.indexOf(deleteTimeoutId);
+                        if (deleteTimeoutIndex !== -1) {
+                            timeouts.current.splice(deleteTimeoutIndex, 1);
+                        }
+
                         const newExcerpt = excerpts[Math.floor(Math.random() * excerpts.length)];
                         createAndReplaceShape(newExcerpt, index);
                     }, 4100);
                     timeouts.current.push(deleteTimeoutId);
-                    
+
                 }, randomTimeout);
                 timeouts.current.push(timeoutId);
-        
             };
 
             selectedExcerpts.forEach((excerpt, index) => {
