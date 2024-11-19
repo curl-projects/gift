@@ -160,7 +160,7 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 
 			const handleMouseUp = (upEvent: MouseEvent) => {
 				if (!isDragging) {
-					setJournalMode({ active: true, variant: 'modern', page: 'technical-foundations', content: shape.props.media?.content || "", position: 'right' })
+					setJournalMode({ active: true, variant: 'modern', page: 'article', content: shape.props.media?.content || "", position: 'right' })
 				}
 				document.removeEventListener('mousemove', handleMouseMove);
 				document.removeEventListener('mouseup', handleMouseUp);

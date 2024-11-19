@@ -11,6 +11,34 @@ export function JournalPainter(){
         console.log("journalMode", journalMode)
     }, [journalMode])
 
+
+    useEffect(()=>{
+        const shapes = editor.getCurrentPageShapes().filter(shape => ['concept', 'name', "excerpt"].includes(shape.type))
+
+        if(journalMode.active){
+            if(journalMode.page === 'article'){
+                // everything except the article shape disappears
+                const activeMedia = shapes.find(shape => shape.props.media && shape.props.media?.content === journalMode.content)
+
+                // find the shape that has content matching the journalMode.content
+                const blurShapes = shapes.filter(shape => shape.id !== activeMedia?.id)
+                
+                editor.run(() => {
+                    editor.updateShapes(blurShapes.map(shape => ({...shape, opacity: 0.2})))
+                }, { ignoreShapeLock: true })
+            }
+            
+        }
+        else{
+            // restore shape opacity 
+            editor.run(() => {
+                shapes.forEach(shape => {
+                    editor.updateShape({...shape, opacity: 1})
+                })
+            }, { ignoreShapeLock: true })
+        }
+    }, [journalMode])
+
     
     useEffect(()=>{
         const journal = editor.getShape({type: 'journal', id: createShapeId('journal')})
