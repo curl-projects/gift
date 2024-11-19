@@ -193,98 +193,98 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
         }, [])
 
 
-        useEffect(()=>{
-            if(collection && data){
+        // useEffect(()=>{
+        //     if(collection && data){
 
-            if(shape.props.expanded){
-                setConceptList({active: false})
-                this.editor.zoomToBounds(this.editor.getShapePageBounds(shape), {
-                    animation: {
-                        duration: 300,
-                        ease: "easeInOut"
-                    },
-                    targetZoom: 1,
-                });
+        //     if(shape.props.expanded){
+        //         setConceptList({active: false})
+        //         this.editor.zoomToBounds(this.editor.getShapePageBounds(shape), {
+        //             animation: {
+        //                 duration: 300,
+        //                 ease: "easeInOut"
+        //             },
+        //             targetZoom: 1,
+        //         });
 
-                animate(".nameCircle", { scale: 0.8 }, { duration: 0.2, ease: 'easeInOut' })
-                .then(() => animate(".nameCircle", { scale: 1.2 }, { duration: 0.2, ease: 'easeInOut' }))
-                .then(() => {
-                    animate(".nameCircle", { scale: 1 }, { duration: 0.2, ease: 'easeInOut' });
-                    animate(`.ripple`, { scale: [0, 8], opacity: [1, 0], x: "-50%", y: "-50%" }, { duration: 1.5, ease: "easeOut", delay: 0 });
+        //         animate(".nameCircle", { scale: 0.8 }, { duration: 0.2, ease: 'easeInOut' })
+        //         .then(() => animate(".nameCircle", { scale: 1.2 }, { duration: 0.2, ease: 'easeInOut' }))
+        //         .then(() => {
+        //             animate(".nameCircle", { scale: 1 }, { duration: 0.2, ease: 'easeInOut' });
+        //             animate(`.ripple`, { scale: [0, 8], opacity: [1, 0], x: "-50%", y: "-50%" }, { duration: 1.5, ease: "easeOut", delay: 0 });
 
-                    if(!conceptsExist(this.editor, data.user.concepts)){
-                        console.log("GENERATING CONCEPTS")
-                        generateConcepts(this.editor, shape.id, data.user.concepts)
-                    }
-                }).then(() => {
-                    // collection.startSimulation();
-                    setTimeout(() => {
-                        // Do something else here after waiting for 0.5 seconds
-                        // generateConceptLinks(this.editor, data.user.concepts)
+        //             if(!conceptsExist(this.editor, data.user.concepts)){
+        //                 console.log("GENERATING CONCEPTS")
+        //                 generateConcepts(this.editor, shape.id, data.user.concepts)
+        //             }
+        //         }).then(() => {
+        //             // collection.startSimulation();
+        //             setTimeout(() => {
+        //                 // Do something else here after waiting for 0.5 seconds
+        //                 // generateConceptLinks(this.editor, data.user.concepts)
 
-                        setTimeout(()=>{
-                            expandConcepts?.onComplete && expandConcepts.onComplete()
-                        }, 2000)
-                        console.log("FINISHED CONCEPT ANIMATING", expandConcepts)
+        //                 setTimeout(()=>{
+        //                     expandConcepts?.onComplete && expandConcepts.onComplete()
+        //                 }, 2000)
+        //                 console.log("FINISHED CONCEPT ANIMATING", expandConcepts)
                         
 
-                    }, 3000);
-                })
-                setDrifting({active: false});
+        //             }, 3000);
+        //         })
+        //         setDrifting({active: false});
 
-            }
-            else{
-                // zoom the camera so that it's centred around the shape
-                this.editor.zoomToBounds(this.editor.getShapePageBounds(shape), {
-                    animation: {
-                        duration: 300,
-                        easing: (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2,
-                    },
-                    targetZoom: 1,
-                });
+        //     }
+        //     else{
+        //         // zoom the camera so that it's centred around the shape
+        //         this.editor.zoomToBounds(this.editor.getShapePageBounds(shape), {
+        //             animation: {
+        //                 duration: 300,
+        //                 easing: (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2,
+        //             },
+        //             targetZoom: 1,
+        //         });
 
 
-                for(let concept of data.user.concepts){
+        //         for(let concept of data.user.concepts){
 
-                const conceptShape = this.editor.getShape({id: createShapeId(concept.id), type: 'concept'})
-                let animTime = 300
-                if(conceptShape){
-                    // Start the ripple animation
-                    animate(`.ripple`, { scale: [8, 0], opacity: [1, 1], x: "-50%", y: "-50%" }, { duration: 0.5, ease: "easeOut", delay: 0 });
+        //         const conceptShape = this.editor.getShape({id: createShapeId(concept.id), type: 'concept'})
+        //         let animTime = 300
+        //         if(conceptShape){
+        //             // Start the ripple animation
+        //             animate(`.ripple`, { scale: [8, 0], opacity: [1, 1], x: "-50%", y: "-50%" }, { duration: 0.5, ease: "easeOut", delay: 0 });
 
-                    // Start the nameCircle animation simultaneously
+        //             // Start the nameCircle animation simultaneously
  
-                    animate(".nameCircle", { scale: 0.8 }, { duration: 0.2, ease: 'easeInOut', delay: 0.15 })
-                    .then(() => animate(".nameCircle", { scale: 1.2 }, { duration: 0.2, ease: 'easeInOut' }))
-                    .then(() => animate(".nameCircle", { scale: 1 }, { duration: 0.2, ease: 'easeInOut' }))
-                    // .then(() => {
-                    //     animate(".nameCircle", { scale: 1 }, { duration: 0.2, ease: 'easeInOut' });
-                    // });
+        //             animate(".nameCircle", { scale: 0.8 }, { duration: 0.2, ease: 'easeInOut', delay: 0.15 })
+        //             .then(() => animate(".nameCircle", { scale: 1.2 }, { duration: 0.2, ease: 'easeInOut' }))
+        //             .then(() => animate(".nameCircle", { scale: 1 }, { duration: 0.2, ease: 'easeInOut' }))
+        //             // .then(() => {
+        //             //     animate(".nameCircle", { scale: 1 }, { duration: 0.2, ease: 'easeInOut' });
+        //             // });
 
-                    setTimeout(()=>{
-                        setConceptList({active: true})
-                        setDrifting({active: true })
-                    }, 100)
+        //             setTimeout(()=>{
+        //                 setConceptList({active: true})
+        //                 setDrifting({active: true })
+        //             }, 100)
 
-                    // animateShapeProperties(this.editor, conceptShape.id, { x: shape.x, y: shape.y, opacity: 0 }, animTime, t => t * t).then(() => {
-                    //     deleteAssociatedThreads(this.editor, conceptShape.id)
-                    //     this.editor.deleteShape(conceptShape.id)
-                    //     // delete thread associated with concept
-                    // })   
-                }
+        //             // animateShapeProperties(this.editor, conceptShape.id, { x: shape.x, y: shape.y, opacity: 0 }, animTime, t => t * t).then(() => {
+        //             //     deleteAssociatedThreads(this.editor, conceptShape.id)
+        //             //     this.editor.deleteShape(conceptShape.id)
+        //             //     // delete thread associated with concept
+        //             // })   
+        //         }
                 
-            }
+        //     }
 
-            // collection.startSimulation();
+        //     // collection.startSimulation();
             
-            console.log("EXPAND CONSTELLATION NAME TRIGGER")
+        //     console.log("EXPAND CONSTELLATION NAME TRIGGER")
         
 
         
-        // needs to be in a time out because the canvas position doesn't update while all of these changes are happening
-        }
-        }
-        }, [shape.props.expanded])
+        // // needs to be in a time out because the canvas position doesn't update while all of these changes are happening
+        // }
+        // }
+        // }, [shape.props.expanded])
 
 
         useEffect(() => {
@@ -303,6 +303,31 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
                     });
             }
         }, [deleteStar]);
+
+        // initial animation
+        useEffect(()=>{
+            setTimeout(()=>{
+            this.editor.zoomToBounds(this.editor.getShapePageBounds(shape), {
+                animation: {
+                    duration: 300,
+                    ease: "easeInOut"
+                },
+                targetZoom: 1,
+            });
+
+            animate(".nameCircle", { scale: 0.8 }, { duration: 0.2, ease: 'easeInOut' })
+            .then(() => animate(".nameCircle", { scale: 1.2 }, { duration: 0.2, ease: 'easeInOut' }))
+            .then(() => {
+                animate(".nameCircle", { scale: 1 }, { duration: 0.2, ease: 'easeInOut' });
+                animate(`.ripple`, { scale: [0, 8], opacity: [1, 0], x: "-50%", y: "-50%" }, { duration: 1.5, ease: "easeOut", delay: 0 });
+
+                if(!conceptsExist(this.editor, data.user.concepts)){
+                    console.log("GENERATING CONCEPTS")
+                    generateConcepts(this.editor, shape.id, data.user.concepts)
+                }
+            })
+        }, 100)
+        }, [])
     
 
         return (
@@ -316,13 +341,53 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
                     style={{ cursor: 'pointer' }}
                     onMouseEnter={() => setIsHovered(true)}
                     onMouseLeave={() => setIsHovered(false)}
-                    onPointerDown={() => this.editor.updateShape({
-                        id: shape.id,
-                        type: shape.type,
-                        props: {
-                            expanded: !shape.props.expanded
+                    // onPointerDown={() => this.editor.updateShape({
+                    //     id: shape.id,
+                    //     type: shape.type,
+                    //     props: {
+                    //         expanded: !shape.props.expanded
+                    //     }
+                    // })}
+                    onPointerDown={(e) => {
+                        e.stopPropagation() // required so that the central shape isn't selected
+                        if(collection && data){
+                            // if the concepts are expanded, move them to list mode and start drifting
+
+                            this.editor.zoomToBounds(this.editor.getShapePageBounds(shape), {
+                                animation: {
+                                    duration: 300,
+                                    ease: "easeInOut"
+                                },
+                                targetZoom: 1,
+                            });
+
+                            animate(".nameCircle", { scale: 0.8 }, { duration: 0.2, ease: 'easeInOut' })
+                            .then(() => animate(".nameCircle", { scale: 1.2 }, { duration: 0.2, ease: 'easeInOut' }))
+                            .then(() => {
+                                animate(".nameCircle", { scale: 1 }, { duration: 0.2, ease: 'easeInOut' });
+                                animate(`.ripple`, { scale: [0, 8], opacity: [1, 0], x: "-50%", y: "-50%" }, { duration: 1.5, ease: "easeOut", delay: 0 });
+                            })
+            
+            
+                            if(!conceptList.active){
+                                setDrifting({active: true });
+                                setConceptList({active: true, focusedConcept: null})
+                            }
+
+                            // if the concepts are in list mode and none of them are active, revert back to the expanded state
+                            else if(conceptList.active && !conceptList.focusedConcept){
+                                setConceptList({active: false})
+                                setDrifting({active: false})
+
+                            }
+
+                            // if the concepts are in list mode and one of them is active, revert back to the expanded state
+                            else if(conceptList.active && conceptList.focusedConcept){
+                                setConceptList({active: false})
+                                setDrifting({active: false, focusedConcept: null})
+                            }
                         }
-                    })}
+                    }}
                 >
                     <div className={styles.circleContainer} ref={scope}>
                     {/* <AnimatePresence>

@@ -185,33 +185,7 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
                 style={{
                     transform: conceptList.active ? 'scale(var(--tl-scale))' : 'initial', 
                 }}	
-                onMouseDown={handleMouseDown}
-                // onPointerDown={(e)=>{
-                //     setPulseTrigger(prev => prev + 1)
-
-                //     if(!conceptList.active){
-                //         setConceptList({
-                //             active: true,
-                //         focusedConcept: shape.id
-                //     })
-
-                //     this.editor.updateShape({
-                //         id: shape.id,
-                //         type: shape.type,
-                //         props: {
-                //             expanded: true
-                //         }
-                //         })
-                //     }
-                //     else{
-                //         setConceptList(prevState => ({
-                //             ...prevState, 
-                //             focusedConcept: prevState.focusedConcept === shape.id ? null : shape.id
-                //         }))
-                //     }
-
-                // }}
-				>
+                onMouseDown={handleMouseDown} >
 					
 				{
 				isHovered && shape.props.description && (
@@ -258,13 +232,14 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
                             left: conceptList.active ? -16 : 0
                         }}
                         animate={{ 
-                            opacity: (conceptList.active && conceptList.focusedConcept !== shape.id) || !isHovered ? 0.5 : 1,
+                            opacity: conceptList.active && (conceptList.focusedConcept !== shape.id || !isHovered)  ? 0.5 : 0.8,
                         }} 
                         transition={{ 
                             delay: 2, 
                             duration: 1, 
                             ease: 'easeInOut', 
                             fontSize: { duration: 0.3, ease: 'easeInOut' },
+                            opacity: { duration: 0.3, ease: 'easeInOut' },
                         }}
                     >
                         {shape.props.plainText}
