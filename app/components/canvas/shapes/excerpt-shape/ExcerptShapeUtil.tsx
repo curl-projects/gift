@@ -14,7 +14,7 @@ import { Text } from '@tiptap/extension-text';
 import { Node } from "@tiptap/core";
 import Placeholder from '@tiptap/extension-placeholder'
 import styles from './ExcerptShapeUtil.module.css';
-import { motion, useAnimate } from 'framer-motion';
+import { motion, useAnimate, useAnimationControls } from 'framer-motion';
 import { TypeAnimation } from 'react-type-animation';
 import { useDataContext } from '~/components/synchronization/DataContext';
 import ExcerptMediaEditor from './ExcerptMediaEditor';
@@ -80,41 +80,75 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 		const selectedShapeIds = this.editor.getSelectedShapeIds();
 		const [scope, animate] = useAnimate(); // Use animation controls
 		const [scrollChange, setScrollChange] = useState(null)
+		const controls = useAnimationControls();
 
 		const excerpt = data.user.concepts.flatMap(concept => concept.excerpts).find(excerpt => excerpt.id === shape.props.databaseId) || null
 
-		useEffect(()=>{
-			console.log("EXCERPT:", excerpt)
-		}, [excerpt])
+		const rippleVariants = {
+			hidden: { opacity: 0, x: "-50%", y: "-50%" },
+			visible: { opacity: 0, x: "-50%", y: "-50%" } 
+		};
 
+		useEffect(() => {
+			controls.start("visible");
+			animate(`.ripple`, { scale: [1, 3], opacity: [0, 1, 0], x: "-50%", y: "-50%" }, { duration: 8, ease: "easeOut" });
+		}, []);
 
-   	const dashedRingVariants = {
-        hidden: { scale: 0, rotate: 0, x: "-50%", y: "-50%" },
-        visible: {
-            scale: 1.5, // Adjust scale as needed
-            rotate: 360,
-            x: "-50%",
-            y: "-50%",
-            transition: { duration: 1, ease: "easeOut" }
-        },
-        rotate: {
-            rotate: [0, 360],
-            transition: { repeat: Infinity, duration: 10, ease: "linear" }
-        },
-        exit: {
-            scale: 0,
-            rotate: 0,
-            x: "-50%",
-            y: "-50%",
-            transition: { duration: 1, ease: "easeIn" }
-				}
-			};
-		
+		const dashedRingVariants = {
+			hidden: { scale: 0, rotate: 0, x: "-50%", y: "-50%" },
+			visible: {
+				scale: 1.5, // Adjust scale as needed
+				rotate: 360,
+				x: "-50%",
+				y: "-50%",
+				transition: { duration: 1, ease: "easeOut" }
+			},
+			rotate: {
+				rotate: [0, 360],
+				transition: { repeat: Infinity, duration: 10, ease: "linear" }
+			},
+			exit: {
+				scale: 0,
+				rotate: 0,
+				x: "-50%",
+				y: "-50%",
+				transition: { duration: 1, ease: "easeIn" }
+			}
+		};
+
+		useEffect(() => {
+            const handleResize = () => {
+              if (shapeRef.current?.clientHeight) {
+                this.editor.updateShape({
+                  type: shape.type,
+                  id: shape.id,
+                  props: {
+                    w: shapeRef.current.clientWidth,
+                    h: shapeRef.current.clientHeight
+                  }
+                });
+              }
+            };
+        
+            const resizeObserver = new ResizeObserver(handleResize);
+            if (shapeRef.current) {
+              resizeObserver.observe(shapeRef.current);
+            }
+        
+            return () => {
+              if (shapeRef.current) {
+                resizeObserver.unobserve(shapeRef.current);
+              }
+              resizeObserver.disconnect();
+            };
+          }, [shapeRef.current, this.editor, shape]);
+
 
 		return (
-			<HTMLContainer
+			<div
 				id={shape.id}
 				className={styles.container}
+				ref={scope}
 				style={{
 					pointerEvents: 'all',
 				}}
@@ -122,11 +156,25 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 				<div 
 				className={styles.excerptBox}
 				ref={shapeRef}>
-					<p className={styles.excerptTitle}>{excerpt?.media?.title || "Untitled"}</p>
-					<p className={styles.excerptAuthor}>{excerpt?.media?.user?.name || "Unknown"} · {excerpt?.media?.date?.toLocaleDateString() || "No Date"}</p>
-					<p className={styles.excerptText} style={{
-						minWidth: '300px',
-						cursor: "pointer",
+					<motion.p 
+						className={styles.excerptTitle}
+						initial={{ opacity: 0 }}
+						animate={{ opacity: 1 }}
+						transition={{ duration: 1, delay: 0, ease: "easeInOut" }}
+					>{excerpt?.media?.title || "Untitled"}</motion.p>
+					<motion.p className={styles.excerptAuthor}
+						initial={{ opacity: 0}}
+						animate={{ opacity: 1 }}
+						transition={{ duration: 1, delay: 0, ease: "easeInOut" }}
+					>{excerpt?.media?.user?.name || "Unknown"} · {excerpt?.media?.date?.toLocaleDateString() || "No Date"}</motion.p>
+					<motion.p
+						className={styles.excerptText}
+						initial={{ opacity: 0 }}
+						animate={{ opacity: 1 }}
+						transition={{ duration: 0.5, delay: 0.3, ease: "easeInOut" }}
+						style={{
+							minWidth: '300px',
+							cursor: "pointer",
 					}}>
 						{/* <motion.span
 							className={styles.connectionPoint}
@@ -147,43 +195,20 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 						<span className='excerptTextContent'>
 							...{shape.props.content.charAt(0).toLowerCase() + shape.props.content.slice(1)}...
 						</span>
-					</p>
-					{/* <div
-						ref={scope}
-						className={styles.excerptMediaBox}
+					</motion.p>
+					<motion.div 
+						initial="hidden"
+						animate="hidden"
+						className={`${styles.ripple} ripple`}
 						style={{
-							height: "0px",
-							padding: shape.props.expanded ? "20px" : "0px"
+							height: shapeRef.current?.clientWidth,
+							width: shapeRef.current?.clientWidth
 						}}
-						onScrollCapture={(e) => {
-							console.log("E:", e)
-							setScrollChange(e.target.scrollTop)
-							console.log("SCROLL CAPTURE", e.target.scrollTop);
-
-							e.stopPropagation();
-						}}
-						onWheelCapture={(e) => {
-							e.stopPropagation();
-						}}
-						onDrag={(e) => {
-							e.stopPropagation();
-						}}
-						onPointerDown={(e) => {
-							e.stopPropagation();
-						}}
+						variants={rippleVariants}
 					>
-						{/* {(shape.props.expanded && scope.current) &&
-							<ExcerptMediaEditor
-								excerpt={shape}
-								tldrawEditor={this.editor}
-								annotations={data.user.concepts.flatMap(concept => concept.excerpts).find(excerpt => excerpt.id === shape.props.databaseId)?.media.annotations || []}
-								shapeRef={shapeRef}
-								scrollChange={scrollChange}
-							/>
-						}
-					</div> */}
+					</motion.div>
 				</div>
-			</HTMLContainer>
+			</div>
 		)
 	}
 

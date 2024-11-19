@@ -1,5 +1,5 @@
 .container {
-    pointer-events: none;
+    pointer-events: all;
     height: fit-content;
     width: fit-content;
     position: relative;

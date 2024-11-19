@@ -22,17 +22,20 @@ export function ConceptFocusPainter() {
             const concept = data.user.concepts.find(concept => conceptList.focusedConcept === createShapeId(concept.id));
             const nameShape = editor.getShape(createShapeId(data.user.uniqueName))
 
-            console.log("CONCEPT:", concept)
+            console.log("FOCUS PAINTER CONCEPT INNER:", concept)
             if(concept){
                 const points = generatePointsAroundCircle(nameShape.x, nameShape.y, 300, concept.excerpts.length, 20, 50, 20, 150);
+
 
                 // get all articles and concepts associated with the concept id
                 for (let i = 0; i < concept.excerpts.length; i++) {
                     const excerpt = concept.excerpts[i];
                     const excerptShape = editor.getShape(createShapeId(excerpt.id));
                     const { x, y } = points[i];
+                    console.log("GENERATING EXCERPT:", excerpt)
     
                     if (!excerptShape) {
+                        console.log("CREATING EXCERPT:", excerpt)
                         editor.createShape({
                             id: createShapeId(excerpt.id),
                             type: "excerpt",

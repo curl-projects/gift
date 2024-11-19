@@ -127,31 +127,31 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
     
         const selectedShapeIds = this.editor.getSelectedShapeIds();
         const memoizedSelectedShapeIds = useMemo(() => selectedShapeIds, [selectedShapeIds]);
+        
+		let isDragging = false;
 
-        useEffect(() => {
-            
-            // only do anything if the shape itself is selected
-            const concept = data.user.concepts.find(concept => shape.props.databaseId === concept.id);
-            const excerptIds = concept.excerpts.map(excerpt => createShapeId(excerpt.id));
+		const handleMouseDown = (e: React.MouseEvent) => {
+			isDragging = false;
+			const startX = e.clientX;
+			const startY = e.clientY;
 
-            // trigger if the concept or its excerpts are selected
-            if(memoizedSelectedShapeIds.length === 1 && 
-                !conceptList.active &&
-                (memoizedSelectedShapeIds.includes(shape.id) ||
-                 excerptIds.some(id => memoizedSelectedShapeIds.includes(id)) ||
-                this.editor.getShape(memoizedSelectedShapeIds[0])?.type === 'annotation'
-                )
-            ){
-                // if the concept is selected and its excerpts don't exist, create its excerpts
-                if(memoizedSelectedShapeIds.includes(shape.id)){
+			const handleMouseMove = (moveEvent: MouseEvent) => {
+				if (Math.abs(moveEvent.clientX - startX) > 5 || Math.abs(moveEvent.clientY - startY) > 5) {
+					isDragging = true;
+                    console.log("DRAGGING")
 
+                }
+			};
 
-                    // zoom to the concept
-                    this.editor.zoomToBounds(this.editor.getShapePageBounds(shape), {
-                        animation: {
-                            duration: 400
-                        },
-                        targetZoom: 1,
+			const handleMouseUp = (upEvent: MouseEvent) => {
+				if (!isDragging) {
+                    console.log("CLICKING!!!")
+                    setPulseTrigger(prev => prev + 1)
+
+                    if(!conceptList.active){
+                        setConceptList({
+                            active: true,
+                        focusedConcept: shape.id
                     })
 
                     this.editor.updateShape({
@@ -160,64 +160,23 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
                         props: {
                             expanded: true
                         }
-                    })
-                }
-                else if(excerptIds.some(id => memoizedSelectedShapeIds.includes(id))){
-                    // excerpt was clicked, shape handles its own logic
-                }
-                else if(this.editor.getShape(memoizedSelectedShapeIds[0])?.type === 'annotation'){
-                    // annotation was clicked, shape handles its own logic
-                }
-                else{
-                    console.warn("Something weird was selected", memoizedSelectedShapeIds)
-                }
-            }
-            else if(memoizedSelectedShapeIds.length === 1 && conceptList.active && memoizedSelectedShapeIds.includes(shape.id)){
-                // concept is focused, do nothing
-                conceptList.active && setConceptList(prevState => ({
-                    ...prevState, 
-                    focusedConcept: prevState.focusedConcept === shape.id ? null : shape.id
-                }))
-            }
-            else{
-
-                this.editor.updateShape({
-                    id: shape.id,
-                    type: shape.type,
-                    props: {
-                        expanded: false
+                        })
                     }
-                })         
-            }
-        }, [memoizedSelectedShapeIds]);
+                    else{
+                        setConceptList(prevState => ({
+                            ...prevState, 
+                            focusedConcept: prevState.focusedConcept === shape.id ? null : shape.id
+                        }))
+                    }
 
-        useEffect(()=>{
-            const concept = data.user.concepts.find(concept => shape.props.databaseId === concept.id);
-            const excerptIds = concept.excerpts.map(excerpt => createShapeId(excerpt.id));
-            
-            if(shape.props.expanded){
-                // Trigger ripple animation
-                setPulseTrigger(prev => prev + 1)
+				}
+				document.removeEventListener('mousemove', handleMouseMove);
+				document.removeEventListener('mouseup', handleMouseUp);
+			};
 
-                // Create excerpts if they don't exist
-                if(!excerptsExist(this.editor, concept)){
-                    // generateExcerpts(this.editor, concept);
-                    // applyProgressiveBlur(this.editor, shape, [...excerptIds, createShapeId(data.user.uniqueName)]);
-
-                    setTimeout(()=>{
-                        expandExcerpts?.onComplete && expandExcerpts.onComplete()
-                    }, 2000)
-                }
-                else{
-                    // do nothing, was clicked again
-                    console.log("Excerpts already exist")
-                }
-            }
-            else{
-                tearDownExcerpts(this.editor, concept)
-                removeProgressiveBlur(this.editor); // TODO: do this globally
-            }
-        }, [shape.props.expanded])
+			document.addEventListener('mousemove', handleMouseMove);
+			document.addEventListener('mouseup', handleMouseUp);
+		};
 
 		return (
 			<HTMLContainer 
@@ -226,6 +185,32 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
                 style={{
                     transform: conceptList.active ? 'scale(var(--tl-scale))' : 'initial', 
                 }}	
+                onMouseDown={handleMouseDown}
+                // onPointerDown={(e)=>{
+                //     setPulseTrigger(prev => prev + 1)
+
+                //     if(!conceptList.active){
+                //         setConceptList({
+                //             active: true,
+                //         focusedConcept: shape.id
+                //     })
+
+                //     this.editor.updateShape({
+                //         id: shape.id,
+                //         type: shape.type,
+                //         props: {
+                //             expanded: true
+                //         }
+                //         })
+                //     }
+                //     else{
+                //         setConceptList(prevState => ({
+                //             ...prevState, 
+                //             focusedConcept: prevState.focusedConcept === shape.id ? null : shape.id
+                //         }))
+                //     }
+
+                // }}
 				>
 					
 				{
@@ -258,6 +243,7 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
                         }}
                     onMouseEnter={() => setIsHovered(true)}
                     onMouseLeave={() => setIsHovered(false)}
+                    onMouseDown={handleMouseDown}
                     >
                 <ConceptStar 
                     selected={this.editor.getOnlySelectedShapeId() === shape.id}
@@ -272,8 +258,7 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
                             left: conceptList.active ? -16 : 0
                         }}
                         animate={{ 
-                            opacity: 1,
-                            // fontSize: conceptList.active && conceptList.focusedConcept !== shape.id ? "12px" : (conceptList.focusedConcept === shape.id ? "14px" : "14px"),
+                            opacity: (conceptList.active && conceptList.focusedConcept !== shape.id) || !isHovered ? 0.5 : 1,
                         }} 
                         transition={{ 
                             delay: 2, 
