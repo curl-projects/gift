@@ -3,6 +3,7 @@
     width: 56px; 
     position: relative;
     cursor: pointer;
+    z-index: 10000000000;
 }
 
 .ripple {

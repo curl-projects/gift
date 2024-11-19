@@ -5,7 +5,7 @@ import { useRef, useEffect, useState } from 'react';
 import { ConceptStar } from '~/components/canvas/shapes/concept-shape/ConceptStar';
 import { EntryArticle } from './EntryArticle';
 
-export function JournalEntry({ type, entry, shouldAnimate, opacity = 1, onMouseEnter, onMouseLeave, isHovered, isOtherHovered }) {
+export function JournalEntry({ childKey, type, entry, shouldAnimate, opacity = 1, onMouseEnter, onMouseLeave, isHovered, isOtherHovered }) {
     const specimenRef = useRef(null);
     const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
     const [pulseTrigger, setPulseTrigger] = useState(0);
@@ -21,7 +21,8 @@ export function JournalEntry({ type, entry, shouldAnimate, opacity = 1, onMouseE
         <>
             <motion.div 
                 className={styles.journalEntry}
-                initial={{ opacity: shouldAnimate ? 0 : opacity, x: shouldAnimate ? -100 : 0 }}
+                layout
+                initial={{ opacity: shouldAnimate ? 0 : opacity, x: shouldAnimate ? -25 : 0 }}
                 animate={{ opacity: opacity, x: 0 }}
                 transition={{
                     opacity: { duration: 0.3, ease: "easeInOut", delay: 0},
@@ -36,7 +37,10 @@ export function JournalEntry({ type, entry, shouldAnimate, opacity = 1, onMouseE
                             <ConceptStar
                                 selected={false}
                                 pulseTrigger={pulseTrigger}
-                                onClick={() => setPulseTrigger(pulseTrigger + 1)}
+                                onClick={() => {
+                                    console.log('clicked')
+                                    setPulseTrigger(pulseTrigger + 1)
+                                }}
                                 scale={1.2}
                                 animationDelay={0.55}
                             />

@@ -41,7 +41,6 @@ export async function action({ request }) {
 }
 
 export default function WorldModel(){
-    const { data } = useDataContext();
     const actionData = useActionData();
 
     useEffect(()=>{

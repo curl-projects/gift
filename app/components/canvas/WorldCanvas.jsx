@@ -1,7 +1,5 @@
 import { useState, useLayoutEffect, useEffect, useMemo } from 'react';
 import { useNavigation, useRouteError } from '@remix-run/react';
-import { useDataContext } from '~/components/synchronization/DataContext';
-
 import _ from 'lodash'
 import { Tldraw, createTLStore, defaultShapeUtils, defaultBindingUtils, DefaultSpinner, getSnapshot, loadSnapshot, useEditor, createShapeId, useValue } from 'tldraw';
 import { ClientOnly } from 'remix-utils/client-only';
@@ -21,6 +19,8 @@ import { JournalPainter } from "~/components/canvas/custom-ui/utilities/JournalP
 import { ResizePainter } from "~/components/canvas/custom-ui/utilities/ResizePainter"
 import { ImagePainter } from "~/components/canvas/custom-ui/utilities/ImagePainter.jsx"
 import { ToolsMenu } from "~/components/canvas/custom-ui/utilities/ToolsMenu"
+import { ConceptListPainter } from "~/components/canvas/custom-ui/utilities/ConceptListPainter"
+import { ConceptFocusPainter } from "~/components/canvas/custom-ui/utilities/ConceptFocusPainter"
 import { GoalPainter } from "~/components/canvas/custom-ui/utilities/GoalPainter"
 import { MinimapPainter } from '~/components/canvas/custom-ui/utilities/MinimapPainter';
 import MediaArticlePainter from "~/components/canvas/custom-ui/utilities/MediaArticlePainter"
@@ -62,13 +62,17 @@ import { AnnotationBindingUtil } from "~/components/canvas/bindings/annotation-b
 
 import { JournalShapeUtil } from "~/components/canvas/shapes/journal-shape/JournalShapeUtil"
 
+import { useDataContext } from '~/components/synchronization/DataContext';
+
+
 // HELPERS
 import { createBoundThread, hasExistingThread } from '~/components/canvas/helpers/thread-funcs';
 
 export default function WorldCanvas() {
     const [editor, setEditor] = useState(null)
-    const { data, isLoading, isSuccess } = useDataContext()
+    const { data, isLoading, isSuccess } = useDataContext() || {}
     const navigation = useNavigation();
+
     const error = useRouteError();
 
     useEffect(() => {
@@ -84,8 +88,8 @@ export default function WorldCanvas() {
     const components = {
         Toolbar: null,
         MainMenu: null,
-        // DebugMenu: null,
-        // DebugPanel: null,
+        DebugMenu: null,
+        DebugPanel: null,
         Minimap: null,
         PageMenu: null,
         ActionsMenu: null,
@@ -209,7 +213,7 @@ export default function WorldCanvas() {
                                 user={data.user}
                             />
                             <ConstellationPainter
-                                user={data.user}
+                                user={data?.user}
                                 isLoading={isLoading}
                                 isSuccess={isSuccess}
                             />
@@ -218,8 +222,10 @@ export default function WorldCanvas() {
                             <ImagePainter />
                             <JournalPainter />
                             {/* <MainMenuPainter /> */}
-                            <GoalPainter />
+                            {/* <GoalPainter /> */}
                             <MinimapPainter />
+                            <ConceptListPainter />
+                            <ConceptFocusPainter />
                             <FocusOnComponentPainter />
                             <MediaArticlePainter />
                             <ResizePainter />
@@ -227,13 +233,13 @@ export default function WorldCanvas() {
                             {/* <ConstellationFinder /> */}
                             {/* <CustomToolbar /> */}
                             <ConstellationLabelPainter 
-                                name={data.user ? data.user.name : ""}
+                                name={data?.user ? data.user.name : ""}
                             />
                             <ToolsMenu />
-                            <GraphTrigger />
+                            {/* <GraphTrigger /> */}
                             <CloudDarkeningPainter />
                             <SelectionListener 
-                                user={data.user}
+                                user={data?.user}
                             />
                             <ConstellationExpander />
                             <Stars />

@@ -17,6 +17,7 @@ export async function getWorldContent(uniqueName){
                             media: {
                                 include: {
                                     annotations: true,
+                                    user: true,
                                 }
                             }
                         }

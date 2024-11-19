@@ -83,14 +83,13 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
 		const {data } = useDataContext();
         const { expandExcerpts } = useConstellationMode();
         const [pulseTrigger, setPulseTrigger] = useState(0);
-        const { entries, setEntries, setJournalMode } = useStarFireSync()
+        const { entries, setEntries, setJournalMode, conceptList, setConceptList } = useStarFireSync()
 
 		const shapeRef = useRef<HTMLDivElement>(null);
 
         useEffect(()=>{
             console.log("CONCEPT POSITIONS:", shape)
-        }, [])
-
+        }, []);
 
         useEffect(() => {
             const handleResize = () => {
@@ -137,6 +136,7 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
 
             // trigger if the concept or its excerpts are selected
             if(memoizedSelectedShapeIds.length === 1 && 
+                !conceptList.active &&
                 (memoizedSelectedShapeIds.includes(shape.id) ||
                  excerptIds.some(id => memoizedSelectedShapeIds.includes(id)) ||
                 this.editor.getShape(memoizedSelectedShapeIds[0])?.type === 'annotation'
@@ -144,8 +144,6 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
             ){
                 // if the concept is selected and its excerpts don't exist, create its excerpts
                 if(memoizedSelectedShapeIds.includes(shape.id)){
-
-                    // move the concept to the top of the page
 
 
                     // zoom to the concept
@@ -173,6 +171,13 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
                 else{
                     console.warn("Something weird was selected", memoizedSelectedShapeIds)
                 }
+            }
+            else if(memoizedSelectedShapeIds.length === 1 && conceptList.active && memoizedSelectedShapeIds.includes(shape.id)){
+                // concept is focused, do nothing
+                conceptList.active && setConceptList(prevState => ({
+                    ...prevState, 
+                    focusedConcept: prevState.focusedConcept === shape.id ? null : shape.id
+                }))
             }
             else{
 
@@ -217,18 +222,26 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
 		return (
 			<HTMLContainer 
 				id={shape.id}
-				className={styles.container}				
+				className={styles.container}		
+                style={{
+                    transform: conceptList.active ? 'scale(var(--tl-scale))' : 'initial', 
+                }}	
 				>
 					
 				{
-				isHovered &&  shape.props.description && (
+				isHovered && shape.props.description && (
 					<motion.div 
 						className={styles.hoverDescription}
-						initial={{ opacity: 0, }}
+						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
 						exit={{ opacity: 0 }}
 						transition={{ duration: 0.3, ease: "linear" }}
-						style={{ transform: 'translateX(-50%)', overflow: 'hidden' }}
+						style={{ 
+							transform: conceptList.active ? 'translateX(0%)' : 'translateX(-50%)', 
+							overflow: 'hidden',
+							left: conceptList.active ? '100%' : '50%',
+							bottom: conceptList.active ? '50%' : '120%',
+						}}
 					>
 						<p>
 							{shape.props.description}
@@ -241,6 +254,7 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
                     ref={shapeRef} 
                     style={{
                         cursor: 'pointer',
+                        maxHeight: conceptList.active ? "30px" : "unset"
                         }}
                     onMouseEnter={() => setIsHovered(true)}
                     onMouseLeave={() => setIsHovered(false)}
@@ -248,12 +262,25 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
                 <ConceptStar 
                     selected={this.editor.getOnlySelectedShapeId() === shape.id}
                     pulseTrigger={pulseTrigger}
+                    collapsed={conceptList.active}
                 />
                     <motion.p 
                         className={styles.editorContent} 
                         initial={{ opacity: 0 }} 
-                        animate={{ opacity: 1 }} 
-                        transition={{ delay: 2, duration: 1, ease: 'easeInOut' }}
+                        style={{
+                            position: "relative",
+                            left: conceptList.active ? -16 : 0
+                        }}
+                        animate={{ 
+                            opacity: 1,
+                            // fontSize: conceptList.active && conceptList.focusedConcept !== shape.id ? "12px" : (conceptList.focusedConcept === shape.id ? "14px" : "14px"),
+                        }} 
+                        transition={{ 
+                            delay: 2, 
+                            duration: 1, 
+                            ease: 'easeInOut', 
+                            fontSize: { duration: 0.3, ease: 'easeInOut' },
+                        }}
                     >
                         {shape.props.plainText}
                     </motion.p>
@@ -262,15 +289,17 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
                         onPointerDown={(e)=>{
                             console.log("ENTRY CREATED")
                             setJournalMode({ active: true, variant: "modern", page: 'entries'})
-                            setEntries(prevState => [...prevState, {
-                                type: "concept",
-                                id: shape.id,
-                                title: shape.props.plainText,
-                                content: shape.props.description,
-                                author: data.user.uniqueName,
-                                date: new Date().toLocaleDateString(),
-                            }])
-
+                            setEntries(prevState => ({
+                                values: [...prevState.values, {
+                                    type: "concept",
+                                    id: shape.id,
+                                    title: shape.props.plainText,
+                                    content: shape.props.description,
+                                    author: data.user.uniqueName,
+                                    date: new Date().toLocaleDateString(),
+                                }],
+                                prevValues: prevState.values
+                            }))
                             e.stopPropagation()
                         }}
                     >

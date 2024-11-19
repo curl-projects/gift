@@ -8,11 +8,11 @@ export const useGoalContext = () => {
 
 export const GoalProvider = ({ children }) => {
     const [goals, setGoals] = useState([
-        {
-            title: "Make a new friend",
-            complete: false,
-            tooltip: "Get started by clicking on someone's star"
-        },
+        // {
+        //     title: "Make a new friend",
+        //     complete: false,
+        //     tooltip: "Get started by clicking on someone's star"
+        // },
         {
             title: "Explore the stars",
             complete: false,

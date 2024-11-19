@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import styles from './JournalThread.module.css'
 import { useEffect } from 'react';
 
-export function JournalThread({ d, duration = 1, delay = 0, strokeWidth = 4, pageContainer = false, onOpaque, persist = false, opacity = 1, shouldAnimate = false }) {
+export function JournalThread({ d, duration = 1, delay = 0, strokeWidth = 4, pageContainer = false, onOpaque, persist = false, opacity = 1, shouldAnimate = true }) {
     useEffect(() => {
         const timer = setTimeout(() => {
             if (onOpaque) {

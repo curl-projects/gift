@@ -9,7 +9,7 @@ export function SelectionListener({ user }){
     const selectedShapeIds = useValue('selectedShapeIds', () => editor.getSelectedShapeIds(), [editor])
     // const selectedShapes = editor.getSelectedShapes()
     useEffect(()=>{
-        console.log("SELECTED SHAPES:", selectedShapeIds)
+        selectedShapeIds && selectedShapeIds.length > 0 && console.log("SELECTED SHAPES:", editor.getShape(selectedShapeIds[0]))
         if(selectedShapeIds.length === 0){
             // zoom to the name 
             const name = editor.getShape(createShapeId(user.uniqueName))
@@ -28,8 +28,10 @@ export function SelectionListener({ user }){
         else{
             // tear down all excerpts
             
-        }
+        } 
     }, [selectedShapeIds])
+
+
     
     return null
 }

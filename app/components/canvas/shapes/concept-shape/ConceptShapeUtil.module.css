@@ -49,6 +49,7 @@
     line-height: 21px;
     font-size: 14px;
     white-space: nowrap;
+    font-family: "IBM Plex", monospace;
   }
 
   .entryButton {

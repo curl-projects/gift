@@ -296,3 +296,7 @@ input,textarea,div[contenteditable=true] {
 grammarly-extension {
   display: none;
 }
+
+.tl-selection__fg {
+  display: none;
+}

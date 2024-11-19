@@ -46,6 +46,22 @@ export function generatePointsAroundCircle(centerX, centerY, radius, numPoints, 
     return points;
 }
 
+export function generateGridPoints(editor, x, y, numRows, numCols, itemWidth, itemHeight, spacingX = 0, spacingY = 0) {
+    const { x: startX, y: startY } = editor.screenToPage({x, y})
+    
+    const points = [];
+
+    for (let row = 0; row < numRows; row++) {
+        for (let col = 0; col < numCols; col++) {
+            const x = startX + col * (itemWidth + spacingX);
+            const y = startY + row * (itemHeight + spacingY);
+            points.push({ x, y });
+        }
+    }
+
+    return points;
+}
+
 // apply a progressive blur
 export function applyProgressiveBlur(editor, centralShape, excludeIds = []){
     // get all shapes

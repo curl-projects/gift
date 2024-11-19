@@ -75,7 +75,7 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
         const { data } = useDataContext();
         const { collection, size } = useCollection('graph')
         const { triggerWarp, expandConcepts } = useConstellationMode();
-        const { drifting, setDrifting, triggerEffect, activeEffect, deleteStar, setDeleteStar } = useStarFireSync();
+        const { drifting, setDrifting, triggerEffect, activeEffect, deleteStar, setDeleteStar, conceptList, setConceptList } = useStarFireSync();
         
 
         // useEffect(()=>{
@@ -170,6 +170,7 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
             }
         }, [activeEffect])
 
+
         useEffect(() => {
             if (isOnlySelected) {
                 console.log("TRIGGERING RIPPLE ANIMATION")
@@ -184,9 +185,19 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
         }, [isOnlySelected, animate, shape]);
 
         useEffect(()=>{
+            setTimeout(()=>{
+                this.editor.updateShape({id: shape.id, type: shape.type, props: {
+                    expanded: true
+                }})
+            }, 1500)
+        }, [])
+
+
+        useEffect(()=>{
             if(collection && data){
 
             if(shape.props.expanded){
+                setConceptList({active: false})
                 this.editor.zoomToBounds(this.editor.getShapePageBounds(shape), {
                     animation: {
                         duration: 300,
@@ -232,15 +243,9 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
                     targetZoom: 1,
                 });
 
-                // turn physics off momentarily
-                collection.stopSimulation();
-                
-                // fade out and move concepts towards the center of the screen or the center of the shape
-                // const concepts = data.user.concepts.map(concept => this.editor.getShape({id: createShapeId(concept.id), type: 'concept'}))
 
-                
-            for(let concept of data.user.concepts){
-    
+                for(let concept of data.user.concepts){
+
                 const conceptShape = this.editor.getShape({id: createShapeId(concept.id), type: 'concept'})
                 let animTime = 300
                 if(conceptShape){
@@ -256,31 +261,31 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
                     //     animate(".nameCircle", { scale: 1 }, { duration: 0.2, ease: 'easeInOut' });
                     // });
 
-                    animateShapeProperties(this.editor, conceptShape.id, { x: shape.x, y: shape.y, opacity: 0 }, animTime, t => t * t).then(() => {
-                        deleteAssociatedThreads(this.editor, conceptShape.id)
-                        this.editor.deleteShape(conceptShape.id)
-                        // delete thread associated with concept
-                    })
+                    setTimeout(()=>{
+                        setConceptList({active: true})
+                        setDrifting({active: true })
+                    }, 100)
 
-
-               
+                    // animateShapeProperties(this.editor, conceptShape.id, { x: shape.x, y: shape.y, opacity: 0 }, animTime, t => t * t).then(() => {
+                    //     deleteAssociatedThreads(this.editor, conceptShape.id)
+                    //     this.editor.deleteShape(conceptShape.id)
+                    //     // delete thread associated with concept
+                    // })   
                 }
                 
             }
 
-            collection.startSimulation();
+            // collection.startSimulation();
             
             console.log("EXPAND CONSTELLATION NAME TRIGGER")
         
 
         
         // needs to be in a time out because the canvas position doesn't update while all of these changes are happening
-            // setTimeout(() => {
-            //     setDrifting(true);
-            // }, 600);
         }
         }
         }, [shape.props.expanded])
+
 
         useEffect(() => {
             console.log("DELETE STAR:", deleteStar)
@@ -298,8 +303,6 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
                     });
             }
         }, [deleteStar]);
-    
-                
     
 
         return (

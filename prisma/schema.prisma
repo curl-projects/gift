@@ -90,7 +90,9 @@ model Excerpt {
 model Media {
   id         String       @id @default(uuid())
   type       String
+  date       DateTime?   @default(now())
   url        String
+  title      String?      @default("Untitled")
   content    String?      @default("Media content")
   userId     String?
   annotations Annotation[]

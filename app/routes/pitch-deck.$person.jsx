@@ -73,7 +73,6 @@ export default function PitchDeck(){
         }
         else if(isBrowser || isTablet){
             return(
-                <>
                 <DataProvider value={{data, isLoading, isSuccess}}>
                     <GoalProvider>
                         <CovenantProvider>
@@ -107,8 +106,7 @@ export default function PitchDeck(){
                             </div>  
                         </CovenantProvider> 
                     </GoalProvider>
-                </DataProvider>     
-                </>
+                </DataProvider>
             )
         }
         else return null;

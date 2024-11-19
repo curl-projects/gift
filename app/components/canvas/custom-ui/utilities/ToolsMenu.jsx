@@ -14,9 +14,10 @@ export function ToolsMenu(){
             journalMode, setJournalMode, 
             minimapMode, setMinimapMode, 
             constellationLabel, setConstellationLabel,
-            campfireView, setCampfireView
+            campfireView, setCampfireView,
+            conceptList, setConceptList
         } = useStarFireSync();
-        
+
     const [tooltipVisible, setTooltipVisible] = useState(false);
     const [tooltipText, setTooltipText] = useState('');
 
@@ -33,7 +34,8 @@ export function ToolsMenu(){
 
     const handleAstrolabeClick = () => {
         // setDrifting({ active: !drifting.active });
-        setMinimapMode({ active: !minimapMode.active });
+        // setMinimapMode({ active: !minimapMode.active });
+        setConceptList({ active: !conceptList.active })
         console.log("astrolabe")
 
     };

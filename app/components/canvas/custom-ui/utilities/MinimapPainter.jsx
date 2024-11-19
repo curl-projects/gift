@@ -6,6 +6,7 @@ import { englishToLepchaMap } from "~/components/canvas/helpers/language-funcs.j
 import { useStarFireSync } from '~/components/synchronization/StarFireSync';
 import { useNavigate, useParams } from '@remix-run/react';
 import { createShapeId, useEditor } from 'tldraw';
+import { GoalPainter } from './GoalPainter';
 
 export function MinimapPainter() {
     const { data } = useDataContext();
@@ -51,14 +52,17 @@ export function MinimapPainter() {
         <div className={styles.minimap}>
             <AnimatePresence>
                 {minimapMode.active && (
-                    <motion.div
-                        className={styles.innerMinimap}
+                    <>
+                        <motion.div
+                            className={styles.innerMinimap}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 0.6 }}
                         exit={{ opacity: 0 }}
                         whileHover={{ opacity: 1, scale: 1.4, x: -100, y: -100 }}
                         transition={{ duration: 0.2, ease: "easeInOut" }}
                     >
+                        <GoalPainter />   
+
                         <motion.div
                             className={styles.clusterName}
                             initial={{ opacity: 0 }}
@@ -79,6 +83,7 @@ export function MinimapPainter() {
                             />
                         ))}
                     </motion.div>
+                </>
                 )}
             </AnimatePresence>
         </div>

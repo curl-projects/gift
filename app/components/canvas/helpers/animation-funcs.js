@@ -1,4 +1,4 @@
-export function animateShapeProperties(editor, shapeId, properties, duration, easing = t => t) {
+export function animateShapeProperties(editor, shapeId, properties, duration, easingFunction = (t) => t) {
     const shape = editor.getShape(shapeId);
     if (!shape) return Promise.reject(new Error('Shape not found'));
 
@@ -16,11 +16,9 @@ export function animateShapeProperties(editor, shapeId, properties, duration, ea
             const currentTime = performance.now();
             const elapsedTime = currentTime - startTime;
             const t = Math.min(elapsedTime / duration, 1); // Normalize time to [0, 1]
+            const easedT = easingFunction(t); // Use the easing function
 
-            // Apply easing function
-            const easedT = easing(t);
-
-            // Interpolate properties
+            // Interpolate properties using the eased time
             const newValues = {};
             for (const prop in properties) {
                 newValues[prop] = startValues[prop] + (endValues[prop] - startValues[prop]) * easedT;

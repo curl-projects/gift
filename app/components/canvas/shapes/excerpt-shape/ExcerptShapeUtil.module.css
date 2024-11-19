@@ -19,12 +19,32 @@
     /* align-items: center; */
   }
 
-  .excerptText{
-    font-size: 14px;
-    font-weight: bold;
+  .excerptAuthor {
+    font-size: 12px;
+    font-weight: 300;
+    text-transform: italic;
+    font-family: "IBM Plex Mono", monospace;
+    letter-spacing: -0.04em;
+    color: #EEEEFF;
+    font-style: italic;
+  }
+
+  .excerptTitle {
+    font-size: 16px;
+    font-weight: 600;
     font-family: "Inter";
     letter-spacing: -0.04em;
     color: #EEEEFF;
+  }
+
+  .excerptText{
+    font-size: 14px;
+  
+    font-family: "IBM Plex Mono", monospace;
+    letter-spacing: -0.04em;
+    color: #d7d7ee;
+    font-weight: 400;
+
   }
 
   .connectionPoint{

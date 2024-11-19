@@ -86,7 +86,7 @@ export function ConstellationLabelPainter({ name }){
                     onClick={handleNameClick}
                 />
             </motion.p>
-            <ConstellationCovenants animationCommenced={animationCommenced} constellationLabel={constellationLabel}/>
+            {/* <ConstellationCovenants animationCommenced={animationCommenced} constellationLabel={constellationLabel}/> */}
         </motion.div>
     )
 }

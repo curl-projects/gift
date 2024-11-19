@@ -81,137 +81,12 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 		const [scope, animate] = useAnimate(); // Use animation controls
 		const [scrollChange, setScrollChange] = useState(null)
 
-		// useEffect(()=>{
-		// 	if(selectedShapeIds.length === 1 && 
-		// 		(selectedShapeIds[0] === shape.id ||
-		// 		 this.editor.getShape(selectedShapeIds[0])?.type === 'annotation'
-		// 		)){
-		// 		this.editor.updateShape({
-		// 			id: shape.id,
-		// 			type: shape.type,
-		// 			props: {
-		// 				expanded: true
-		// 			}
-		// 		})
-		// 	}
-		// 	else{
-		// 		this.editor.updateShape({
-		// 			id: shape.id,
-		// 			type: shape.type,
-		// 			props: {
-		// 				expanded: false
-		// 			}
-		// 		})
-		// 	}
-		// }, [isOnlySelected])
+		const excerpt = data.user.concepts.flatMap(concept => concept.excerpts).find(excerpt => excerpt.id === shape.props.databaseId) || null
 
-		// useEffect(() => {
-        //     const handleResize = () => {
-        //       if (shapeRef.current?.clientHeight) {
-        //         this.editor.updateShape({
-        //           type: shape.type,
-        //           id: shape.id,
-        //           props: {
-        //             w: shapeRef.current.clientWidth,
-        //             h: shapeRef.current.clientHeight
-        //           }
-        //         });
-        //         // Update thread binding props
-        //         updateThreadBindingProps(this.editor, shape.id);
+		useEffect(()=>{
+			console.log("EXCERPT:", excerpt)
+		}, [excerpt])
 
-        //       }
-        //     };
-        
-        //     const resizeObserver = new ResizeObserver(handleResize);
-        //     if (shapeRef.current) {
-        //       resizeObserver.observe(shapeRef.current);
-        //     }
-        
-        //     return () => {
-        //       if (shapeRef.current) {
-        //         resizeObserver.unobserve(shapeRef.current);
-        //       }
-        //       resizeObserver.disconnect();
-        //     };
-        //   }, [shapeRef.current, this.editor, shape]);
-		  
- 
-		// // todo: fix this so it's cleaner
-		// useEffect(() => {
-		// 	const animateDimensions = async () => {
-		// 		if(scope.current && shapeRef.current){
-		// 		if (shape.props.expanded) {
-		// 			console.log("EXECUTING ANIMATION")
-		// 			this.editor.updateShape({
-		// 				id: shape.id,
-		// 				type: shape.type,
-		// 				props: {
-		// 					w: 600,
-		// 					h: 840
-		// 				}
-		// 			});
-
-		// 			this.editor.zoomToBounds(this.editor.getShapePageBounds(shape), {
-		// 				animation: {
-		// 					duration: 300
-		// 				},
-		// 				targetZoom: 3,
-		// 			});
-
-		// 			await animate(scope.current, {
-		// 				height: "800px",
-		// 				maxHeight: "800px",
-		// 				width: '600px',
-		// 				maxWidth: '600px',
-		// 				transition: { duration: 0.1, ease: "easeInOut" }
-		// 			});
-
-		// 			await animate(shapeRef.current, {
-		// 				width: "600px",
-		// 				maxWidth: "600px",
-		// 				transition: { duration: 0.1, ease: "easeInOut" }
-		// 			});
-
-		// 			this.editor.updateShape({
-		// 				id: shape.id,
-		// 				type: shape.type,
-		// 				props: {
-		// 					w: shapeRef.current.clientWidth,
-		// 					h: shapeRef.current.clientHeight
-		// 				}
-		// 			});
-		// 		} else {
-		// 			// Set initial width before starting the animation
-		// 			shapeRef.current.style.width = "300px";
-		// 			shapeRef.current.style.maxWidth = "300px";
-
-		// 			await animate(scope.current, {
-		// 				height: "0px",
-		// 				width: '300px',
-		// 				maxWidth: '300px',
-		// 				transition: { duration: 0.3, ease: "easeInOut" }
-		// 			});
-
-		// 			await animate(shapeRef.current, {
-		// 				width: "300px",
-		// 				maxWidth: "300px",
-		// 				transition: { duration: 0.3, ease: "easeInOut" }
-		// 			});
-
-		// 			this.editor.updateShape({
-		// 				id: shape.id,
-		// 				type: shape.type,
-		// 				props: {
-		// 					w: shapeRef.current.clientWidth,
-		// 					h: shapeRef.current.clientHeight
-		// 				}
-		// 			});
-		// 		}
-		// 	};
-		// }
-
-		// 	animateDimensions();
-		// }, [shape.props.expanded, scope]);
 
    	const dashedRingVariants = {
         hidden: { scale: 0, rotate: 0, x: "-50%", y: "-50%" },
@@ -245,13 +120,15 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 				}}
 			>
 				<div 
-					className={styles.excerptBox}
-					ref={shapeRef}>
+				className={styles.excerptBox}
+				ref={shapeRef}>
+					<p className={styles.excerptTitle}>{excerpt?.media?.title || "Untitled"}</p>
+					<p className={styles.excerptAuthor}>{excerpt?.media?.user?.name || "Unknown"} · {excerpt?.media?.date?.toLocaleDateString() || "No Date"}</p>
 					<p className={styles.excerptText} style={{
 						minWidth: '300px',
 						cursor: "pointer",
 					}}>
-						<motion.span
+						{/* <motion.span
 							className={styles.connectionPoint}
 							initial={{ scale: 0 }}
 							animate={{ scale: 1 }}
@@ -266,10 +143,12 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 									variants={dashedRingVariants}
 								/>
 		                    )}
-						</motion.span>
-						<span className='excerptTextContent'>{shape.props.content}</span>
+						</motion.span> */}
+						<span className='excerptTextContent'>
+							...{shape.props.content.charAt(0).toLowerCase() + shape.props.content.slice(1)}...
+						</span>
 					</p>
-					<div
+					{/* <div
 						ref={scope}
 						className={styles.excerptMediaBox}
 						style={{
@@ -301,8 +180,8 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 								shapeRef={shapeRef}
 								scrollChange={scrollChange}
 							/>
-						} */}
-					</div>
+						}
+					</div> */}
 				</div>
 			</HTMLContainer>
 		)

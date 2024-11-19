@@ -50,7 +50,9 @@ const StarFireSyncProvider = ({ children }) => {
 
     const [campfireDialogue, setCampfireDialogue] = useState({ active: false });
 
-    const [entries, setEntries] = useState([
+    const [conceptList, setConceptList] = useState({active: false, focusedConcept: null })
+
+    const [entries, setEntries] = useState({values: [
         {
             id: "1",
             type: 'concept',
@@ -76,50 +78,9 @@ const StarFireSyncProvider = ({ children }) => {
             author: "Andre Vacha",
             date: "2024-02-20"
         },
-        {
-            id: "4",
-            type: "article",
-            title: "Game Design in Software v2",
-            content: "...we must move beyond the current paradigm of software...",
-            author: "Finn Macken",
-            date: "2024-03-05",
-            html: "<h1>Hello</h1><p>My name is Finn"
-        },
-        {
-            id: "5",
-            type: 'concept',
-            title: "Immersive Storytelling",
-            content: "Software, to be transformative, must manifest the emotive tools of game design.",
-            author: "Andre Vacha",
-            date: "2024-02-20"
-        },
-        {
-            id: "6",
-            type: "article",
-            title: "Game Design in Software v2",
-            content: "...we must move beyond the current paradigm of software...",
-            author: "Finn Macken",
-            date: "2024-03-05",
-            html: "<h1>Hello</h1><p>My name is Finn"
-        }
-        ,{
-            id: "7",
-            type: 'concept',
-            title: "Immersive Storytelling",
-            content: "Software, to be transformative, must manifest the emotive tools of game design.",
-            author: "Andre Vacha",
-            date: "2024-02-20"
-        },
-        {
-            id: "8",
-            type: "article",
-            title: "Game Design in Software v2",
-            content: "...we must move beyond the current paradigm of software...",
-            author: "Finn Macken",
-            date: "2024-03-05",
-            html: "<h1>Hello</h1><p>My name is Finn"
-        }
-    ])
+    ],
+    prevValues: []
+})
 
     const useStateWithPromise = (setter) => (value) => {
         return new Promise((resolve) => {
@@ -160,6 +121,7 @@ const StarFireSyncProvider = ({ children }) => {
     const setToggleContact = useStateWithPromise(_setToggleContact);
     const setCloudDarkeningControls = useStateWithPromise(_setCloudDarkeningControls);
     const setPortfolioControls = useStateWithPromise(_setPortfolioControls);
+
 
     const triggerEffect = useCallback(({domain, selector, effect, callback}) => {
         console.log("HELLO")
@@ -217,6 +179,7 @@ const StarFireSyncProvider = ({ children }) => {
                 enableFire, setEnableFire,
                 campfireDialogue, setCampfireDialogue,
                 entries, setEntries,
+                conceptList, setConceptList,
             }}>
             {children}
         </StarFireSyncContext.Provider>

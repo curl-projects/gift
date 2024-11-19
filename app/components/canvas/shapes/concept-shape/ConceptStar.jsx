@@ -2,8 +2,7 @@ import styles from './ConceptStar.module.css'
 import { motion, useAnimate, AnimatePresence } from 'framer-motion';
 import { useEffect, useState } from 'react';
 
-
-export function ConceptStar({ selected, pulseTrigger, onClick, scale, animationDelay = 0 }){
+export function ConceptStar({ selected, pulseTrigger, onClick, scale, animationDelay = 0, collapsed = true }){
 
     const [scope, animate] = useAnimate();
 
@@ -25,7 +24,8 @@ export function ConceptStar({ selected, pulseTrigger, onClick, scale, animationD
             x: "-50%", 
             y: "-50%",
             transition: { duration: 0.5, ease: "easeOut", delay: delay + animationDelay }
-        })
+        }),
+        collapsed: { scale: 0, opacity: 0, transition: { duration: 0.5, ease: "easeIn" } }
     };    
 
     const dashedRingVariants = {
@@ -46,10 +46,21 @@ export function ConceptStar({ selected, pulseTrigger, onClick, scale, animationD
             x: "-50%",
             y: "-50%",
             transition: { duration: 0.3, ease: "easeIn", delay: animationDelay }
+        },
+        collapsed: {
+            scale: 0.5,
+            x: "-50%",
+            y: "-50%",
+            transition: { duration: 0.5, ease: "easeInOut" }
         }
     };
 
-    
+    const circleVariants = {
+        hidden: { scale: 0, x: "-50%", y: "-50%" },
+        visible: { scale: 1, x: "-50%", y: "-50%", transition: { duration: 0.5, ease: "easeOut" } },
+        collapsed: { scale: 0.75, x: "-50%", y: "-50%", transition: { duration: 0.5, ease: "easeIn" } }
+    };
+
     return(
         <div 
             className={styles.circleContainer} 
@@ -64,7 +75,7 @@ export function ConceptStar({ selected, pulseTrigger, onClick, scale, animationD
                         key='selectionRing'
                         className={styles.selectionRing}
                         initial="hidden"
-                        animate={["visible", "rotate"]}
+                        animate={collapsed ? "collapsed" : ["visible", "rotate"]}
                         exit="exit"
                         variants={dashedRingVariants}
                     />
@@ -74,37 +85,37 @@ export function ConceptStar({ selected, pulseTrigger, onClick, scale, animationD
         <motion.div
                 className={`${styles.outerRing} conceptCircle`}
                 initial="hidden"
-                animate="visible"
+                animate={collapsed ? "collapsed" : "visible"}
                 custom={animationDelay + 1.0} // Delay for outer ring
                 variants={ringVariants}
             />
             <motion.div
                 className={`${styles.innerRing} conceptCircle`}
                 initial="hidden"
-                animate="visible"
+                animate={collapsed ? "collapsed" : "visible"}
                 custom={animationDelay + 0.75} // Delay for inner ring
                 variants={ringVariants}
             />
             <motion.div
                 className={`${styles.glow} conceptCircle`}
                 initial="hidden"
-                animate="visible"
+                animate={collapsed ? "collapsed" : "visible"}
                 custom={animationDelay + 0.5} // Delay for glow
                 variants={ringVariants}
             />
             <motion.div
                 className={`${styles.innerGlow} conceptCircle`}
                 initial="hidden"
-                animate="visible"
+                animate={collapsed ? "collapsed" : "visible"}
                 custom={animationDelay + 0.25} // Delay for inner glow
-                variants={ringVariants}
+                variants={circleVariants}
             />
             <motion.div
                 className={`${styles.circle} conceptCircle`}
                 initial="hidden"
-                animate="visible"
+                animate={collapsed ? "collapsed" : "visible"}
                 custom={animationDelay} // No delay for circle
-                variants={ringVariants}
+                variants={circleVariants}
             />
             <motion.div
             initial="hidden"
