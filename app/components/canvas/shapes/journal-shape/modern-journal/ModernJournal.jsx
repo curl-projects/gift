@@ -127,24 +127,6 @@ export function ModernJournal({ shape, contentRef, tldrawEditor }) {
             }}>
             <BsArrowBarLeft />
           </div>
-          <div
-            className={styles.journalToolButton}
-            style={{
-            }}
-            onPointerDown={() => {
-              console.log("clicked")
-              setAnnotationsExpanded(!annotationsExpanded)
-            }}>
-            <FaExpand />
-          </div>
-          <div
-            className={styles.journalToolButton}
-            onPointerDown={() => {
-              console.log("clicked")
-              setJournalZooms(!journalZooms)
-            }}>
-            Z
-          </div>
         </div>
         <div className={styles.journalContentContainer}>
           <div className={styles.journalController}>

@@ -10,6 +10,11 @@ export class TextScramble {
     }
 
     setText(newText) {
+        if (!this.el) {
+            console.log("Element is not defined.");
+            const promise = new Promise((resolve) => (this.resolve = resolve));
+            return promise;
+        }
         const oldText = this.el.innerText;
         const length = Math.max(oldText.length, newText.length);
         const promise = new Promise((resolve) => (this.resolve = resolve));

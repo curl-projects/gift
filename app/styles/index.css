@@ -125,9 +125,9 @@ ol {
   font-family: "IBM Plex Mono", monospace;
   font-weight: 400;
   letter-spacing: -0.003em;
-  line-height: 22px;
-  font-size: 14px;
-  margin-bottom: 10px;
+  line-height: 2em;
+  font-size: 16px;
+  margin-bottom: 20px;
   animation: fadeIn 1s ease-in-out; /* Added animation */
 }
 
@@ -180,6 +180,8 @@ ol {
 
 .journal-tiptap ul li {
   color: #EB5757;
+  line-height: 2em;
+  font-size: 16px;
 }
 
 
