@@ -44,7 +44,7 @@ const StarFireSyncProvider = ({ children }) => {
 
     const [journalMode, _setJournalMode] = useState({ active: false, page: "article"});
 
-    const [minimapMode, _setMinimapMode] = useState({ active: true });
+    const [minimapMode, setMinimapMode] = useState({ active: true });
 
     const [enableFire, setEnableFire] = useState(true);
 
@@ -117,7 +117,6 @@ const StarFireSyncProvider = ({ children }) => {
     const setCommandEvent = useStateWithPromise(_setCommandEvent);
     const setAnimationEvent = useStateWithPromise(_setAnimationEvent);
     const setJournalMode = useStateWithPromise(_setJournalMode);
-    const setMinimapMode = useStateWithPromise(_setMinimapMode);
     const setDrifting = useStateWithPromise(_setDrifting);
     const setToggleContact = useStateWithPromise(_setToggleContact);
     const setCloudDarkeningControls = useStateWithPromise(_setCloudDarkeningControls);

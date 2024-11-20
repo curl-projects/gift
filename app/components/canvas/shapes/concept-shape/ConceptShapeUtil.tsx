@@ -154,7 +154,7 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
 
 						const shapeRect = shapeRef.current?.getBoundingClientRect();
 						if(
-							shapeRect && 
+							shapeRect &&
 							shapeRect.left < conceptIsDragging.minimapRect.right && 
 							shapeRect.right > conceptIsDragging.minimapRect.left &&
 							shapeRect.top < conceptIsDragging.minimapRect.bottom &&

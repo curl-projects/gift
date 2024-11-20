@@ -4,6 +4,8 @@
     width: fit-content;
     position: relative; */
     cursor: pointer;
+    pointer-events: all;
+    z-index: 1000000000;
   }
   
   .shapeContent {

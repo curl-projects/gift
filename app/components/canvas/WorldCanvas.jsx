@@ -22,7 +22,8 @@ import { ToolsMenu } from "~/components/canvas/custom-ui/utilities/ToolsMenu"
 import { ConceptListPainter } from "~/components/canvas/custom-ui/utilities/ConceptListPainter"
 import { ConceptFocusPainter } from "~/components/canvas/custom-ui/utilities/ConceptFocusPainter"
 import { GoalPainter } from "~/components/canvas/custom-ui/utilities/GoalPainter"
-import { MinimapPainter } from '~/components/canvas/custom-ui/utilities/MinimapPainter';
+import { MinimapPainter } from '~/components/canvas/custom-ui/utilities/minimap-components/MinimapPainter';
+import { OpacityPainter } from '~/components/canvas/custom-ui/utilities/OpacityPainter';
 import MediaArticlePainter from "~/components/canvas/custom-ui/utilities/MediaArticlePainter"
 import { NarrationPainter } from "~/components/canvas/custom-ui/game-ui/Narrator/NarrationPainter"
 import { GameController } from "~/components/canvas/custom-ui/game-ui/GameControls/GameController"
@@ -225,6 +226,7 @@ export default function WorldCanvas() {
                             {/* <GoalPainter /> */}
                             <MinimapPainter />
                             <ConceptListPainter />
+                            <OpacityPainter />
                             <ConceptFocusPainter />
                             <FocusOnComponentPainter />
                             <MediaArticlePainter />

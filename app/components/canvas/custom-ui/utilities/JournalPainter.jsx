@@ -2,6 +2,7 @@ import { useEditor, createShapeId } from "tldraw"
 import { useEffect } from "react"
 import { useStarFireSync } from "~/components/synchronization/StarFireSync"
 import { journalRightOffset, journalLeftOffset } from "~/components/canvas/shapes/journal-shape/JournalShapeUtil"
+import { animateShapeProperties } from "~/components/canvas/helpers/animation-funcs"
 
 export function JournalPainter(){
     const editor = useEditor()
@@ -9,39 +10,6 @@ export function JournalPainter(){
 
     useEffect(()=>{
         console.log("journalMode", journalMode)
-    }, [journalMode])
-
-
-    useEffect(()=>{
-        const shapes = editor.getCurrentPageShapes().filter(shape => ['concept', 'name', "excerpt"].includes(shape.type))
-        
-        if(journalMode.active){
-            if(journalMode.page === 'article'){
-                // everything except the article shape disappears
-                const activeMedia = shapes.find(shape => shape.props.media && shape.props.media?.content === journalMode.content)
-
-                // find the shape that has content matching the journalMode.content
-                const blurShapes = shapes.filter(shape => shape.id !== activeMedia?.id)
-                
-                editor.run(() => {
-                    editor.updateShapes(blurShapes.map(shape => ({...shape, opacity: 0.1})))
-                }, { ignoreShapeLock: true })
-            }
-            else if(journalMode.page === 'entries'){
-                editor.run(()=>{
-                    editor.updateShapes(shapes.map(shape => ({...shape, opacity: 0.1})))
-                }, { ignoreShapeLock: true })
-            }
-            
-        }
-        else{
-            // restore shape opacity 
-            editor.run(() => {
-                shapes.forEach(shape => {
-                    editor.updateShape({...shape, opacity: 1})
-                })
-            }, { ignoreShapeLock: true })
-        }
     }, [journalMode])
 
     

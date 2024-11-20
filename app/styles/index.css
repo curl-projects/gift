@@ -244,11 +244,6 @@ p.is-editor-empty:first-child::before {
   background-color: var(--concept-highlight-color-border);
 }
 
-.excerptTextContent {
-    animation: fadeIn 1s 1s ease-in-out forwards; /* Added animation */
-    opacity: 0;
-}
-
 
   @keyframes fadeIn {
     from {
