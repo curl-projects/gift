@@ -141,6 +141,7 @@ export function MinimapPainter() {
                                         ]
                                             // scale: conceptIsDragging.overlap ? 1.1 : [0.9, 1]
                                         }}
+                                        exit={{ opacity: 0, transition: { duration: 0.5, ease: "easeInOut" } }}
                                         transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
                                     >
                                     <motion.div 

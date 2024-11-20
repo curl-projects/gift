@@ -83,8 +83,8 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 		const [scope, animate] = useAnimate(); // Use animation controls
 		const [scrollChange, setScrollChange] = useState(null)
 		const controls = useAnimationControls();
-		const [isDragging, setIsDragging] = useState(false);
-		const { setJournalMode } = useStarFireSync();
+		const isDragging = useRef(false);
+		const { setJournalMode, setConceptIsDragging, conceptIsDragging, setEntries } = useStarFireSync();
 
 		const excerpt = data.user.concepts.flatMap(concept => concept.excerpts).find(excerpt => excerpt.id === shape.props.databaseId) || null
 
@@ -143,28 +143,158 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
           }, [shapeRef.current, this.editor, shape]);
 
 
-		  const handleMouseDown = (e: React.MouseEvent) => {
-			setIsDragging(false);
-			const startX = e.clientX;
-			const startY = e.clientY;
+		  const handleMouseDown = useCallback(
+			(e: React.MouseEvent) => {
+				isDragging.current = false;
+				const startX = e.clientX;
+				const startY = e.clientY;
 
-			const handleMouseMove = (moveEvent: MouseEvent) => {
-				if (Math.abs(moveEvent.clientX - startX) > 5 || Math.abs(moveEvent.clientY - startY) > 5) {
-					setIsDragging(true);
-				}
-			};
+				console.log('START COORDS', shape.x, shape.y);
 
-			const handleMouseUp = (upEvent: MouseEvent) => {
-				if (!isDragging) {
-					setJournalMode({ active: true, variant: 'modern', page: 'article', content: shape.props.media?.content || "", position: 'right' })
-				}
-				document.removeEventListener('mousemove', handleMouseMove);
-				document.removeEventListener('mouseup', handleMouseUp);
-			};
+				setConceptIsDragging(prevState => ({
+					...prevState,
+					startCoords: { x: shape.x, y: shape.y },
+				}));
 
-			document.addEventListener('mousemove', handleMouseMove);
-			document.addEventListener('mouseup', handleMouseUp);
-		};
+				const handleMouseMove = (moveEvent: MouseEvent) => {
+					if (
+						Math.abs(moveEvent.clientX - startX) > 5 ||
+						Math.abs(moveEvent.clientY - startY) > 5
+					) {
+						isDragging.current = true;
+
+						const shapeRect = shapeRef.current?.getBoundingClientRect();
+						if(
+							shapeRect && 
+							shapeRect.left < conceptIsDragging.minimapRect.right && 
+							shapeRect.right > conceptIsDragging.minimapRect.left &&
+							shapeRect.top < conceptIsDragging.minimapRect.bottom &&
+							shapeRect.bottom > conceptIsDragging.minimapRect.top
+						){
+							console.log("DRAGGED INSIDE MINIMAP")
+							setConceptIsDragging(prevState => ({
+								...prevState,
+								active: true,
+								id: shape.id,
+								overlap: true,
+							}))
+						}
+						else{
+
+							setConceptIsDragging(prevState => ({
+								...prevState,
+								active: true,
+								id: shape.id,
+								overlap: false,
+							}))
+						}
+					}
+				};
+
+				const handleMouseUp = (upEvent: MouseEvent) => {
+					console.log("MOUSE UP", isDragging.current)
+					if (!isDragging.current) {
+						// click functionality
+
+						setJournalMode({ active: true, variant: 'modern', page: 'article', content: shape.props.media?.content || "", position: 'right' })
+
+                        // Reset isDragging
+                        isDragging.current = false;
+                        setConceptIsDragging(prevState => ({
+                            ...prevState,
+                            active: false,
+                            id: null,
+                            overlap: false,
+                            dissolve: false,
+                        }))
+
+					}
+
+					else{
+						console.log("DRAG EVENT!", conceptIsDragging)
+						if(conceptIsDragging.minimapRect){
+							console.log("DRAGGING ON MINIMAP", conceptIsDragging.minimapRect)
+							const shapeRect = shapeRef.current?.getBoundingClientRect();
+							if(
+								shapeRect && 
+								shapeRect.left < conceptIsDragging.minimapRect.right && 
+								shapeRect.right > conceptIsDragging.minimapRect.left &&
+								shapeRect.top < conceptIsDragging.minimapRect.bottom &&
+								shapeRect.bottom > conceptIsDragging.minimapRect.top
+							){
+								console.log("DROPPED INSIDE MINIMAP", conceptIsDragging)
+
+                                setConceptIsDragging(prevState => ({
+                                    ...prevState,
+                                    dissolve: true,
+                                    id: shape.id,
+                                }))
+							}
+						}
+
+                        // dragging gets reset in the dissolve useEffect elsewhere
+				
+					}
+
+					// Clean up event listeners
+					document.removeEventListener('mousemove', handleMouseMove);
+					document.removeEventListener('mouseup', handleMouseUp);
+				};
+
+				document.addEventListener('mousemove', handleMouseMove);
+				document.addEventListener('mouseup', handleMouseUp);
+			},
+			[shape.id, setConceptIsDragging, isDragging]
+		);
+
+		useEffect(() => {
+			if (conceptIsDragging.dissolve && conceptIsDragging.id === shape.id) {
+				controls.start({
+					scale: 0.1,
+					transition: { duration: 0.5, ease: "easeInOut" }
+				}).then(() => {
+					// Reset shape size and move back to previous position
+					this.editor.updateShape({
+						id: shape.id,
+						type: shape.type,
+						x: conceptIsDragging.startCoords.x,
+						y: conceptIsDragging.startCoords.y,
+					});
+                    controls.start({
+                        scale: 1,
+                        transition: { type: "spring", stiffness: 300, damping: 20 }
+                    })
+
+                    // open the journal to the new entry
+                    setJournalMode({ active: true, variant: "modern", page: 'entries'})
+                    setEntries(prevState => ({
+                        values: [...prevState.values, {
+                            type: "article",
+                            id: shape.id,
+                            title: excerpt.media.title || "Untitled",
+                            content: (excerpt.content.charAt(0).toLowerCase() + excerpt.content.slice(1)) || "No content available",
+                            author: excerpt.media.user.name || "Unknown author",
+                            date: new Date().toLocaleDateString(),
+                        }],
+                        prevValues: prevState.values
+                    }))
+
+                    isDragging.current = false;
+					setConceptIsDragging(prevState => ({
+						...prevState,
+						active: false,
+						id: null,
+						overlap: false,
+                        dissolve: false,
+					}))
+				});
+			} else {
+				controls.start({
+					scale: 1,
+					transition: { duration: 0.5, ease: "easeInOut" }
+				});
+			}
+		}, [conceptIsDragging.dissolve, controls]);
 
 
 		return (
@@ -176,10 +306,12 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 					pointerEvents: 'all',
 				}}
 				onMouseDown={handleMouseDown}>
-				<ExcerptContent 
-					shapeRef={shapeRef}
-					excerpt={excerpt}
-				/>
+				<motion.div animate={controls}>
+					<ExcerptContent 
+						shapeRef={shapeRef}
+						excerpt={excerpt}
+					/>
+				</motion.div>
 			</div>
 		)
 	}

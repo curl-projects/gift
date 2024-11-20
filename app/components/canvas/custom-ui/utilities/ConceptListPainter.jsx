@@ -20,6 +20,8 @@ export const ConceptListPainter = track(() => {
     const yOffset = 135
 
     useEffect(() => {
+        console.log("CONCEPT LIST ACTIVE:", conceptList)
+
         const prevActive = prevActiveRef.current
 
         if (conceptList.active) {

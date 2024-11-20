@@ -186,6 +186,9 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
 					if (!isDragging.current) {
 						setPulseTrigger(prev => prev + 1)
 
+                        console.log("IS NOT DRAGGING", isDragging.current)
+
+
 						if(!conceptList.active){
 							setConceptList({
 								active: true,
@@ -228,7 +231,6 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
                         }))
 
 					}
-
 					else{
 						console.log("DRAG EVENT!", conceptIsDragging)
 						if(conceptIsDragging.minimapRect){
@@ -251,11 +253,23 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
                             
 
 							}
+                            else{
+                                isDragging.current = false;
+                                setConceptIsDragging(prevState => ({
+                                    ...prevState,
+                                    active: false,
+                                    id: null,
+                                    overlap: false,
+                                    dissolve: false,
+                                }))
+                            }
 						}
 
                         // dragging gets reset in the dissolve useEffect elsewhere
 				
 					}
+
+        
 
 					// Clean up event listeners
 					document.removeEventListener('mousemove', handleMouseMove);
@@ -265,7 +279,7 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
 				document.addEventListener('mousemove', handleMouseMove);
 				document.addEventListener('mouseup', handleMouseUp);
 			},
-			[shape.id, setConceptIsDragging, isDragging]
+			[shape.id, setConceptIsDragging]
 		);
 
 		const controls = useAnimation();
@@ -297,7 +311,7 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
                             id: shape.id,
                             title: shape.props.plainText,
                             content: shape.props.description,
-                            author: data.user.name,
+                            author: data.user.name, // todo: this will need to be updated when the data model's complete
                             date: new Date().toLocaleDateString(),
                         }],
                         prevValues: prevState.values
