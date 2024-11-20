@@ -20,6 +20,7 @@ import { useDataContext } from '~/components/synchronization/DataContext';
 import ExcerptMediaEditor from './ExcerptMediaEditor';
 import { updateThreadBindingProps } from '~/components/canvas/bindings/thread-binding/ThreadBindingUtil';
 import { useStarFireSync } from '~/components/synchronization/StarFireSync';
+import { ExcerptContent } from './ExcerptContent';
 
 const excerptShapeProps = {
 	w: T.number,
@@ -86,11 +87,6 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 		const { setJournalMode } = useStarFireSync();
 
 		const excerpt = data.user.concepts.flatMap(concept => concept.excerpts).find(excerpt => excerpt.id === shape.props.databaseId) || null
-
-		const rippleVariants = {
-			hidden: { opacity: 0, x: "-50%", y: "-50%" },
-			visible: { opacity: 0, x: "-50%", y: "-50%" } 
-		};
 
 		useEffect(() => {
 			controls.start("visible");
@@ -180,61 +176,10 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
 					pointerEvents: 'all',
 				}}
 				onMouseDown={handleMouseDown}>
-				<div 
-				className={styles.excerptBox}
-				ref={shapeRef}>
-					<motion.p 
-						className={styles.excerptTitle}
-						initial={{ opacity: 0 }}
-						animate={{ opacity: 1 }}
-						transition={{ duration: 1, delay: 0, ease: "easeInOut" }}
-					>{excerpt?.media?.title || "Untitled"}</motion.p>
-					<motion.p className={styles.excerptAuthor}
-						initial={{ opacity: 0}}
-						animate={{ opacity: 1 }}
-						transition={{ duration: 1, delay: 0, ease: "easeInOut" }}
-					>{excerpt?.media?.user?.name || "Unknown"} · {excerpt?.media?.date?.toLocaleDateString() || "No Date"}</motion.p>
-					<motion.p
-						className={styles.excerptText}
-						initial={{ opacity: 0 }}
-						animate={{ opacity: 1 }}
-						transition={{ duration: 1, delay: 0, ease: "easeInOut" }}
-						style={{
-							minWidth: '300px',
-							cursor: "pointer",
-					}}>
-						{/* <motion.span
-							className={styles.connectionPoint}
-							initial={{ scale: 0 }}
-							animate={{ scale: 1 }}
-							transition={{ delay: 1, duration: 0.2, ease: 'easeInOut' }}
-						>
-						   {this.editor.getOnlySelectedShapeId() === shape.id && (
-								<motion.span
-									className={styles.dashedRing}
-									initial="hidden"
-									animate={["visible", "rotate"]}
-									exit="exit"
-									variants={dashedRingVariants}
-								/>
-		                    )}
-						</motion.span> */}
-						<span className='excerptTextContent'>
-							...{shape.props.content.charAt(0).toLowerCase() + shape.props.content.slice(1)}...
-						</span>
-					</motion.p>
-					<motion.div 
-						initial="hidden"
-						animate="hidden"
-						className={`${styles.ripple} ripple`}
-						style={{
-							height: shapeRef.current?.clientWidth,
-							width: shapeRef.current?.clientWidth
-						}}
-						variants={rippleVariants}
-					>
-					</motion.div>
-				</div>
+				<ExcerptContent 
+					shapeRef={shapeRef}
+					excerpt={excerpt}
+				/>
 			</div>
 		)
 	}

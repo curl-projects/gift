@@ -27,6 +27,11 @@ export function JournalPainter(){
                     editor.updateShapes(blurShapes.map(shape => ({...shape, opacity: 0.1})))
                 }, { ignoreShapeLock: true })
             }
+            else if(journalMode.page === 'entries'){
+                editor.run(()=>{
+                    editor.updateShapes(shapes.map(shape => ({...shape, opacity: 0.1})))
+                }, { ignoreShapeLock: true })
+            }
             
         }
         else{

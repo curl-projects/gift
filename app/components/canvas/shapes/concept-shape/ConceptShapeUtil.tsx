@@ -289,6 +289,20 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
                         transition: { type: "spring", stiffness: 300, damping: 20 }
                     })
 
+                    // open the journal to the new entry
+                    setJournalMode({ active: true, variant: "modern", page: 'entries'})
+                    setEntries(prevState => ({
+                        values: [...prevState.values, {
+                            type: "concept",
+                            id: shape.id,
+                            title: shape.props.plainText,
+                            content: shape.props.description,
+                            author: data.user.name,
+                            date: new Date().toLocaleDateString(),
+                        }],
+                        prevValues: prevState.values
+                    }))
+
                     isDragging.current = false;
 					setConceptIsDragging(prevState => ({
 						...prevState,
@@ -374,27 +388,6 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
                         >
                             {shape.props.plainText}
                         </motion.p>
-                        <motion.div 
-                            className={styles.entryButton}
-                            onPointerDown={(e)=>{
-                                console.log("ENTRY CREATED")
-                                setJournalMode({ active: true, variant: "modern", page: 'entries'})
-                                setEntries(prevState => ({
-                                    values: [...prevState.values, {
-                                        type: "concept",
-                                        id: shape.id,
-                                        title: shape.props.plainText,
-                                        content: shape.props.description,
-                                        author: data.user.uniqueName,
-                                        date: new Date().toLocaleDateString(),
-                                    }],
-                                    prevValues: prevState.values
-                                }))
-                                e.stopPropagation()
-                            }}
-                        >
-                            +
-                        </motion.div>
 					</div>
 				</motion.div>
 			</HTMLContainer>
