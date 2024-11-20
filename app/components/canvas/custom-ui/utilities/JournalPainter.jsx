@@ -24,7 +24,7 @@ export function JournalPainter(){
                 const blurShapes = shapes.filter(shape => shape.id !== activeMedia?.id)
                 
                 editor.run(() => {
-                    editor.updateShapes(blurShapes.map(shape => ({...shape, opacity: 0.2})))
+                    editor.updateShapes(blurShapes.map(shape => ({...shape, opacity: 0.1})))
                 }, { ignoreShapeLock: true })
             }
             

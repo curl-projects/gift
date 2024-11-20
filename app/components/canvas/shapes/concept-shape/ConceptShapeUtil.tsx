@@ -83,7 +83,7 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
 		const {data } = useDataContext();
         const { expandExcerpts } = useConstellationMode();
         const [pulseTrigger, setPulseTrigger] = useState(0);
-        const { entries, setEntries, setJournalMode, conceptList, setConceptList, setDrifting } = useStarFireSync()
+        const { entries, setEntries, setJournalMode, conceptList, setConceptList, setDrifting, setConceptIsDragging } = useStarFireSync()
 
 		const shapeRef = useRef<HTMLDivElement>(null);
 
@@ -91,6 +91,7 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
             console.log("CONCEPT POSITIONS:", shape)
         }, []);
 
+    
         useEffect(() => {
             const handleResize = () => {
               if (shapeRef.current?.clientHeight) {
@@ -123,28 +124,33 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
 
 	
 		const [isHovered, setIsHovered] = useState(false)
-		const [isDragging, setIsDragging] = useState(false);
-
+		const isDragging = useRef(false);
     
         const selectedShapeIds = this.editor.getSelectedShapeIds();
         const memoizedSelectedShapeIds = useMemo(() => selectedShapeIds, [selectedShapeIds]);
-        
+
+
+        useEffect(()=>{
+            setConceptIsDragging({active: isDragging.current, id: shape.id})
+        }, [isDragging.current])
+
+
 
 		const handleMouseDown = (e: React.MouseEvent) => {
-			setIsDragging(false);
+			isDragging.current = false;
 			const startX = e.clientX;
 			const startY = e.clientY;
 
 			const handleMouseMove = (moveEvent: MouseEvent) => {
 				if (Math.abs(moveEvent.clientX - startX) > 5 || Math.abs(moveEvent.clientY - startY) > 5) {
-					setIsDragging(true);
-                    console.log("DRAGGING")
-
+					isDragging.current = true;
+                    console.log("DRAGGING", isDragging.current)
                 }
 			};
 
 			const handleMouseUp = (upEvent: MouseEvent) => {
-				if (!isDragging) {
+                console.log("MOUSE UP", isDragging.current)
+				if (!isDragging.current) {
                     console.log("CLICKING!!!")
                     setPulseTrigger(prev => prev + 1)
 
@@ -179,8 +185,13 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
                     }
 
 				}
-				document.removeEventListener('mousemove', handleMouseMove);
-				document.removeEventListener('mouseup', handleMouseUp);
+
+                // Clean up event listeners
+                document.removeEventListener('mousemove', handleMouseMove);
+                document.removeEventListener('mouseup', handleMouseUp);
+
+                // Reset isDragging
+                isDragging.current = false;
 			};
 
 			document.addEventListener('mousemove', handleMouseMove);

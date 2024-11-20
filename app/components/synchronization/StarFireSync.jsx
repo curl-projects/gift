@@ -51,6 +51,7 @@ const StarFireSyncProvider = ({ children }) => {
     const [campfireDialogue, setCampfireDialogue] = useState({ active: false });
 
     const [conceptList, setConceptList] = useState({active: false, focusedConcept: null })
+    const [conceptIsDragging, setConceptIsDragging] = useState({active: false, id: null})
 
     const [entries, setEntries] = useState({values: [
         {
@@ -180,6 +181,7 @@ const StarFireSyncProvider = ({ children }) => {
                 campfireDialogue, setCampfireDialogue,
                 entries, setEntries,
                 conceptList, setConceptList,
+                conceptIsDragging, setConceptIsDragging,
             }}>
             {children}
         </StarFireSyncContext.Provider>

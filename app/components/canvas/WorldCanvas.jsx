@@ -26,6 +26,7 @@ import { MinimapPainter } from '~/components/canvas/custom-ui/utilities/MinimapP
 import MediaArticlePainter from "~/components/canvas/custom-ui/utilities/MediaArticlePainter"
 import { NarrationPainter } from "~/components/canvas/custom-ui/game-ui/Narrator/NarrationPainter"
 import { GameController } from "~/components/canvas/custom-ui/game-ui/GameControls/GameController"
+import { DragPainter } from "~/components/canvas/custom-ui/utilities/DragPainter"
 import CustomToolbar from "~/components/canvas/custom-ui/custom-toolbar/CustomToolbar"
 import { CollectionProvider } from "~/components/canvas/custom-ui/collections";
 import { MainMenuPainter } from "~/components/canvas/custom-ui/utilities/MainMenuPainter";
@@ -219,6 +220,7 @@ export default function WorldCanvas() {
                             />
                             <GlyphPainter />
                             <TitlePainter />
+                            <DragPainter />
                             <ImagePainter />
                             <JournalPainter />
                             {/* <MainMenuPainter /> */}

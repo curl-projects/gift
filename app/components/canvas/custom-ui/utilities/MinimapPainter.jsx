@@ -10,7 +10,7 @@ import { GoalPainter } from './GoalPainter';
 
 export function MinimapPainter() {
     const { data } = useDataContext();
-    const { minimapMode, setMinimapMode, journalMode } = useStarFireSync();
+    const { minimapMode, setMinimapMode, journalMode, conceptIsDragging } = useStarFireSync();
     const { person } = useParams();
 
 
@@ -48,6 +48,12 @@ export function MinimapPainter() {
         return { ...position, person };
     });
 
+    useEffect(()=>{
+        if(conceptIsDragging.active){
+            setMinimapMode({ active: true })
+        }
+    }, [conceptIsDragging])
+
     return (
         <div className={styles.minimap}>
             <AnimatePresence>
@@ -63,17 +69,8 @@ export function MinimapPainter() {
                     >
                         <GoalPainter />   
 
-                        <motion.div
-                            className={styles.clusterName}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 0 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ duration: 0.5, ease: "linear" }}
-                        >
-                            Cluster {'ARET'.split('').map(letter => englishToLepchaMap[letter]).join('')}
-                        </motion.div>
                         {/* Render stars at consistent positions */}
-                        {stars.map((star, index) => (
+                        {!conceptIsDragging.active && stars.map((star, index) => (
                             <NewStar
                                 key={index}
                                 x={star.x}
@@ -82,6 +79,11 @@ export function MinimapPainter() {
                                 isActive={star.person.uniqueName === person}
                             />
                         ))}
+                        {conceptIsDragging.active && (
+                            <motion.div className={styles.draggingContainer}>
+                                <p>Dragging...</p>
+                            </motion.div>
+                        )}
                     </motion.div>
                 </>
                 )}
