@@ -149,9 +149,18 @@ export function ModernJournal({ shape, contentRef, tldrawEditor }) {
         <div className={styles.journalContentContainer}>
           <div className={styles.journalController}>
             {journalModePages.map((page, index) => (
-              <p key={index} className={styles.journalControllerButton} onClick={() => {
-                setJournalMode({...journalMode, page: page.name})
-              }}>{page.displayName}</p>
+              <span key={index} className={styles.journalControllerButtonContainer}>
+                <motion.p 
+                  className={styles.journalControllerButton} 
+                  onClick={() => {
+                    setJournalMode({...journalMode, page: page.name})
+                  }}
+                  whileHover={{ color: 'rgba(242, 242, 242, 1)' }}
+                >
+                  {page.displayName}
+                </motion.p>
+                {index < journalModePages.length - 1 && <span className={styles.dot}>•</span>}
+              </span>
             ))}
           </div>
             {

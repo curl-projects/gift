@@ -137,7 +137,7 @@ export const ConceptListPainter = track(() => {
 
     return (
         <div className={styles.conceptListPainter}>
-            <AnimatePresence>
+            <AnimatePresence mode="wait">
                 {conceptList.active && conceptList.focusedConcept &&
                     <motion.p
                         key={conceptList.focusedConcept}

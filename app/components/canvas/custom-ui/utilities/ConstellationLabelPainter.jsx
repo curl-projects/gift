@@ -18,8 +18,11 @@ import { useCovenantContext } from "~/components/synchronization/CovenantContext
 import * as BABYLON from '@babylonjs/core';
 
 
-{/* <div className={styles.metadataRow}>
-<div className={styles.constellationMetadataWrapper}>
+export function ConstellationMetadata({ constellationLabel, animationCommenced }){
+    const { data } = useDataContext();
+    return(
+        <div className={styles.metadataRow}>
+            <div className={styles.constellationMetadataWrapper}>
     <p className={styles.constellationMetadataLabel}>
         <LabelTranslate 
             constellationLabel={constellationLabel} 
@@ -55,9 +58,11 @@ import * as BABYLON from '@babylonjs/core';
             delay={600}
             blocked={true}
         />
-    </p>
-</div>
-</div> */}
+                </p>
+            </div>
+        </div>
+    )
+}
 
 
 export function ConstellationLabelPainter({ name }){

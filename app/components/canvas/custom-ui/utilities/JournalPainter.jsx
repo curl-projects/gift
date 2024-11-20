@@ -14,7 +14,7 @@ export function JournalPainter(){
 
     useEffect(()=>{
         const shapes = editor.getCurrentPageShapes().filter(shape => ['concept', 'name', "excerpt"].includes(shape.type))
-
+        
         if(journalMode.active){
             if(journalMode.page === 'article'){
                 // everything except the article shape disappears

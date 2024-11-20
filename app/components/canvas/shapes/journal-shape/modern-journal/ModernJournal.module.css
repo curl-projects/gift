@@ -46,11 +46,22 @@
     flex-direction: row;
     gap: 10px;
     pointer-events: all;
+    margin-bottom: 10px;
+}
+
+.journalControllerButtonContainer{
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.dot{
+    color: rgba(242, 242, 242, 0.5);
 }
 
 .journalControllerButton{
     cursor: pointer;
-    color: rgba(242, 242, 242, 1);
+    color: rgba(242, 242, 242, 0.7);
     font-family: "IBM Plex Mono", monospace;
     font-weight: 600;
     letter-spacing: -0.03em;

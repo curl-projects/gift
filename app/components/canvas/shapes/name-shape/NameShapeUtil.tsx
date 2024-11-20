@@ -17,6 +17,7 @@ import { animateShapeProperties } from "~/components/canvas/helpers/animation-fu
 import { deleteAssociatedThreads } from "~/components/canvas/helpers/thread-funcs"
 import { useConstellationMode } from '~/components/canvas/custom-ui/utilities/ConstellationModeContext';
 import { useStarFireSync } from '~/components/synchronization/StarFireSync';
+import { ConstellationMetadata } from '~/components/canvas/custom-ui/utilities/ConstellationLabelPainter';
 
 const nameShapeProps = {
 	w: T.number,
@@ -461,21 +462,20 @@ export class NameShapeUtil extends BaseBoxShapeUtil<NameShape> {
                     />
                     </div>  
                 </div>
-                {/* {
+                {
                 isHovered && shape.props.name && (
                     <motion.div 
                         className={styles.hoverDescription}
-                        initial={{ opacity: 0}}
+                        initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.3, ease: "easeInOut" }}
-                        style={{ transform: 'translateX(-50%)', overflow: 'hidden' }}
+                        style={{ overflow: 'hidden' }}
                     >
-                        <p>
-                            {shape.props.name}
-                        </p>
+                        <ConstellationMetadata constellationLabel={{visible: true}} animationCommenced={true} />
                     </motion.div>
-                )} */}
+                )
+            }
 			</HTMLContainer>
 		)
 	}

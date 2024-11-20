@@ -63,7 +63,7 @@ export function MinimapPainter() {
                 editor.updateShapes(blurShapes.map(shape => ({...shape, opacity: 0.3})))
             }, { ignoreShapeLock: true })
         }
-        else{
+        else if(!conceptIsDragging.active && !journalMode.active){
             editor.run(()=>{
                 editor.updateShapes(shapes.map(shape => ({...shape, opacity: 1})))
             }, { ignoreShapeLock: true })
