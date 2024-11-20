@@ -12,6 +12,7 @@ import { FaJournalWhills } from "react-icons/fa";
 
 export function MinimapPainter() {
     const { data } = useDataContext();
+    const editor = useEditor()
     const { minimapMode, setMinimapMode, journalMode, conceptIsDragging, setConceptIsDragging } = useStarFireSync();
     const { person } = useParams();
 
@@ -51,6 +52,26 @@ export function MinimapPainter() {
             window.removeEventListener('scroll', updateMinimapRect);
         };
     }, [minimapMode.active]);
+
+
+    useEffect(()=>{
+        const shapes = editor.getCurrentPageShapes().filter(shape => ['concept', 'name', "excerpt"].includes(shape.type))
+
+        if(conceptIsDragging.active){
+            const blurShapes = shapes.filter(shape => shape.id !== conceptIsDragging.id)
+            editor.run(()=>{
+                editor.updateShapes(blurShapes.map(shape => ({...shape, opacity: 0.3})))
+            }, { ignoreShapeLock: true })
+        }
+        else{
+            editor.run(()=>{
+                editor.updateShapes(shapes.map(shape => ({...shape, opacity: 1})))
+            }, { ignoreShapeLock: true })
+        }
+    }, [conceptIsDragging])
+
+
+
 
     const allPeople = [
         { name: "A Complete Stranger", uniqueName: "stranger" },

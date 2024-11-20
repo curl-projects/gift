@@ -230,6 +230,16 @@ export class ExcerptShapeUtil extends BaseBoxShapeUtil<ExcerptShape> {
                                     id: shape.id,
                                 }))
 							}
+							else{
+                                isDragging.current = false;
+                                setConceptIsDragging(prevState => ({
+                                    ...prevState,
+                                    active: false,
+                                    id: null,
+                                    overlap: false,
+                                    dissolve: false,
+                                }))
+                            }
 						}
 
                         // dragging gets reset in the dissolve useEffect elsewhere
