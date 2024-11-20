@@ -16,6 +16,8 @@ import { motion, useAnimate, AnimatePresence, useAnimationControls } from 'frame
 import { useConstellationMode } from '~/components/canvas/custom-ui/utilities/ConstellationModeContext';
 import { getChainToShape } from '~/components/canvas/helpers/thread-funcs';
 import { useStarFireSync } from '~/components/synchronization/StarFireSync';
+import { ExcerptContent } from '../excerpt-shape/ExcerptContent';
+
 const driftShapeProps = {
 	w: T.number,
 	h: T.number,
@@ -121,7 +123,7 @@ export class DriftShapeUtil extends BaseBoxShapeUtil<DriftShape> {
 		  const variants = {
 			hidden: { 
 				opacity: 0,
-				transition: { duration: 4, ease: "easeOut" } // Set duration for hidden variant
+				transition: { duration: 2, ease: "easeOut" } // Set duration for hidden variant
 			},
 			visible: { 
 				opacity: 1,
@@ -139,43 +141,27 @@ export class DriftShapeUtil extends BaseBoxShapeUtil<DriftShape> {
 			animate(`.ripple`, { scale: [1, 3], opacity: [0, 1, 0], x: "-50%", y: "-50%" }, { duration: 8, ease: "easeOut" });
 
 		}, [])
-	
 
+		const excerpt = data.user.concepts.flatMap(concept => concept.excerpts).find(excerpt => excerpt.id === shape.props.parentDatabaseId) || null
+
+	
 		return (
-			<div 
+			<motion.div 
 				id={shape.id}
 				className={styles.container}	
-				ref={scope}			
+				ref={scope}	
+				variants={variants}
+				initial="hidden"
+				animate={controls}
+				exit="hidden"
+				transition={{ delay: 0, duration: 2, ease: 'easeInOut' }}
+		
 				>
-				<div 
-                    className={styles.shapeContent} 
-                    ref={shapeRef} 
-                    style={{
-                        cursor: 'pointer',
-                        }}
-                    onMouseEnter={() => setIsHovered(true)}
-                    onMouseLeave={() => setIsHovered(false)}
-					onPointerDown={()=> { 
-
-						setDrifting({active: false})
-						console.log("BLAH:", getChainToShape(data.user, shape.props.parentDatabaseId).map(databaseId => createShapeId(databaseId)))
-						setExpandedShapeIds(
-							getChainToShape(data.user, shape.props.parentDatabaseId).map(databaseId => createShapeId(databaseId))
-						)
-					}}
-                    >
-					<motion.p
-					key={shape.id} // Use shape.id as a stable and unique key
-					className={styles.editorContent} 
-					variants={variants}
-					initial="hidden"
-					animate={controls}
-					exit="hidden"
-					transition={{ delay: 0, duration: 2, ease: 'easeInOut' }}
-					>
-						{shape.props.text}
-					</motion.p>
-					<motion.div 
+				<ExcerptContent 
+					shapeRef={shapeRef}
+					excerpt={excerpt}
+				/>
+				<motion.div 
 						initial="hidden"
 						animate="hidden"
 						className={`${styles.ripple} ripple`}
@@ -187,8 +173,7 @@ export class DriftShapeUtil extends BaseBoxShapeUtil<DriftShape> {
 						// transition={{ delay: 0}}
 					>
 					</motion.div>
-				</div>
-			</div>
+			</motion.div>
 		)
 	}
 
