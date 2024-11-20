@@ -24,6 +24,7 @@ import { updateThreadBindingProps } from '~/components/canvas/bindings/thread-bi
 import { useConstellationMode } from '~/components/canvas/custom-ui/utilities/ConstellationModeContext';
 import { ConceptStar } from './ConceptStar';
 import { useStarFireSync } from '~/components/synchronization/StarFireSync';
+import { animateShapeProperties } from "~/components/canvas/helpers/animation-funcs"
 
 const conceptShapeProps = {
 	w: T.number,
@@ -83,7 +84,7 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
 		const {data } = useDataContext();
         const { expandExcerpts } = useConstellationMode();
         const [pulseTrigger, setPulseTrigger] = useState(0);
-        const { entries, setEntries, setJournalMode, conceptList, setConceptList, setDrifting, setConceptIsDragging } = useStarFireSync()
+        const { entries, setEntries, setJournalMode, conceptList, setConceptList, setDrifting, conceptIsDragging, setConceptIsDragging } = useStarFireSync()
 
 		const shapeRef = useRef<HTMLDivElement>(null);
 
@@ -130,73 +131,133 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
         const memoizedSelectedShapeIds = useMemo(() => selectedShapeIds, [selectedShapeIds]);
 
 
-        useEffect(()=>{
-            setConceptIsDragging({active: isDragging.current, id: shape.id})
-        }, [isDragging.current])
 
+		const handleMouseDown = useCallback(
+			(e: React.MouseEvent) => {
+				isDragging.current = false;
+				const startX = e.clientX;
+				const startY = e.clientY;
 
+				console.log('START COORDS', shape.x, shape.y);
 
-		const handleMouseDown = (e: React.MouseEvent) => {
-			isDragging.current = false;
-			const startX = e.clientX;
-			const startY = e.clientY;
+				setConceptIsDragging(prevState => ({
+					...prevState,
+					startCoords: { x: shape.x, y: shape.y },
+				}));
 
-			const handleMouseMove = (moveEvent: MouseEvent) => {
-				if (Math.abs(moveEvent.clientX - startX) > 5 || Math.abs(moveEvent.clientY - startY) > 5) {
-					isDragging.current = true;
-                    console.log("DRAGGING", isDragging.current)
-                }
-			};
+				const handleMouseMove = (moveEvent: MouseEvent) => {
+					if (
+						Math.abs(moveEvent.clientX - startX) > 5 ||
+						Math.abs(moveEvent.clientY - startY) > 5
+					) {
+						isDragging.current = true;
 
-			const handleMouseUp = (upEvent: MouseEvent) => {
-                console.log("MOUSE UP", isDragging.current)
-				if (!isDragging.current) {
-                    console.log("CLICKING!!!")
-                    setPulseTrigger(prev => prev + 1)
+						const shapeRect = shapeRef.current?.getBoundingClientRect();
+						if(
+							shapeRect && 
+							shapeRect.left < conceptIsDragging.minimapRect.right && 
+							shapeRect.right > conceptIsDragging.minimapRect.left &&
+							shapeRect.top < conceptIsDragging.minimapRect.bottom &&
+							shapeRect.bottom > conceptIsDragging.minimapRect.top
+						){
+							console.log("DRAGGED INSIDE MINIMAP")
+							setConceptIsDragging(prevState => ({
+								...prevState,
+								active: true,
+								id: shape.id,
+								overlap: true,
+							}))
+						}
+						else{
 
-                    if(!conceptList.active){
-                        setConceptList({
-                            active: true,
-                        focusedConcept: shape.id
-                    })
+							setConceptIsDragging(prevState => ({
+								...prevState,
+								active: true,
+								id: shape.id,
+								overlap: false,
+							}))
+			
+						}
+					}
+				};
 
-                    this.editor.updateShape({
-                        id: shape.id,
-                        type: shape.type,
-                        props: {
-                            expanded: true
-                        }
-                        })
-                    }
-                    else if(conceptList.active && conceptList.focusedConcept !== shape.id){
-                        console.log("CHANGING FOCUSED CONCEPT", conceptList, shape.id)
-                        setConceptList(prevState => ({
-                            ...prevState, 
-                            focusedConcept: shape.id,
-                        }))
-                    }
-                    else if(conceptList.active && conceptList.focusedConcept === shape.id){
-                        console.log("CLOSING CONCEPT LIST")
-                        setConceptList(prevState => ({
-                            ...prevState, 
-                            focusedConcept: null
-                        }))
-                        setDrifting({active: true })
-                    }
+				const handleMouseUp = (upEvent: MouseEvent) => {
+					console.log("MOUSE UP", isDragging.current)
+					if (!isDragging.current) {
+						setPulseTrigger(prev => prev + 1)
 
-				}
+						if(!conceptList.active){
+							setConceptList({
+								active: true,
+							focusedConcept: shape.id
+						})
 
-                // Clean up event listeners
-                document.removeEventListener('mousemove', handleMouseMove);
-                document.removeEventListener('mouseup', handleMouseUp);
+						this.editor.updateShape({
+							id: shape.id,
+							type: shape.type,
+							props: {
+								expanded: true
+							}
+							})
+						}
+						else if(conceptList.active && conceptList.focusedConcept !== shape.id){
+							console.log("CHANGING FOCUSED CONCEPT", conceptList, shape.id)
+							setConceptList(prevState => ({
+								...prevState, 
+								focusedConcept: shape.id,
+							}))
+						}
+						else if(conceptList.active && conceptList.focusedConcept === shape.id){
+							console.log("CLOSING CONCEPT LIST")
+							setConceptList(prevState => ({
+								...prevState, 
+								focusedConcept: null
+							}))
+							setDrifting({active: true })
+						}
 
-                // Reset isDragging
-                isDragging.current = false;
-			};
+					}
 
-			document.addEventListener('mousemove', handleMouseMove);
-			document.addEventListener('mouseup', handleMouseUp);
-		};
+					else{
+						console.log("DRAG EVENT!", conceptIsDragging)
+						if(conceptIsDragging.minimapRect){
+							console.log("DRAGGING ON MINIMAP", conceptIsDragging.minimapRect)
+							const shapeRect = shapeRef.current?.getBoundingClientRect();
+							if(
+								shapeRect && 
+								shapeRect.left < conceptIsDragging.minimapRect.right && 
+								shapeRect.right > conceptIsDragging.minimapRect.left &&
+								shapeRect.top < conceptIsDragging.minimapRect.bottom &&
+								shapeRect.bottom > conceptIsDragging.minimapRect.top
+							){
+								console.log("DROPPED INSIDE MINIMAP", conceptIsDragging)
+
+								// if dropped inside minimap, return to start coords
+								this.editor.setSelectedShapes([shape.id])
+								animateShapeProperties(this.editor, shape.id, conceptIsDragging.startCoords, 300, (t) => t * t)
+							}
+						}
+					}
+
+					// Clean up event listeners
+					document.removeEventListener('mousemove', handleMouseMove);
+					document.removeEventListener('mouseup', handleMouseUp);
+
+					// Reset isDragging
+					isDragging.current = false;
+					setConceptIsDragging(prevState => ({
+						...prevState,
+						active: false,
+						id: null,
+						overlap: false,
+					}))
+				};
+
+				document.addEventListener('mousemove', handleMouseMove);
+				document.addEventListener('mouseup', handleMouseUp);
+			},
+			[shape, setConceptIsDragging, isDragging]
+		);
 
 		return (
 			<HTMLContainer 
