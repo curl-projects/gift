@@ -17,7 +17,7 @@ import { Text } from '@tiptap/extension-text';
 import { Node } from "@tiptap/core";
 import Placeholder from '@tiptap/extension-placeholder'
 import styles from './ConceptShapeUtil.module.css';
-import { motion, useAnimate, AnimatePresence } from 'framer-motion';
+import { motion, useAnimate, AnimatePresence, useAnimation } from 'framer-motion';
 import { generateExcerpts, tearDownExcerpts, excerptsExist } from "~/components/canvas/helpers/thread-funcs"
 import { applyProgressiveBlur, removeProgressiveBlur } from '~/components/canvas/helpers/distribution-funcs';
 import { updateThreadBindingProps } from '~/components/canvas/bindings/thread-binding/ThreadBindingUtil';
@@ -216,6 +216,17 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
 							setDrifting({active: true })
 						}
 
+
+                        // Reset isDragging
+                        isDragging.current = false;
+                        setConceptIsDragging(prevState => ({
+                            ...prevState,
+                            active: false,
+                            id: null,
+                            overlap: false,
+                            dissolve: false,
+                        }))
+
 					}
 
 					else{
@@ -232,32 +243,68 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
 							){
 								console.log("DROPPED INSIDE MINIMAP", conceptIsDragging)
 
-								// if dropped inside minimap, return to start coords
-								this.editor.setSelectedShapes([shape.id])
-								animateShapeProperties(this.editor, shape.id, conceptIsDragging.startCoords, 300, (t) => t * t)
+                                setConceptIsDragging(prevState => ({
+                                    ...prevState,
+                                    dissolve: true,
+                                    id: shape.id,
+                                }))
+                            
+
 							}
 						}
+
+                        // dragging gets reset in the dissolve useEffect elsewhere
+				
 					}
 
 					// Clean up event listeners
 					document.removeEventListener('mousemove', handleMouseMove);
 					document.removeEventListener('mouseup', handleMouseUp);
-
-					// Reset isDragging
-					isDragging.current = false;
-					setConceptIsDragging(prevState => ({
-						...prevState,
-						active: false,
-						id: null,
-						overlap: false,
-					}))
 				};
 
 				document.addEventListener('mousemove', handleMouseMove);
 				document.addEventListener('mouseup', handleMouseUp);
 			},
-			[shape, setConceptIsDragging, isDragging]
+			[shape.id, setConceptIsDragging, isDragging]
 		);
+
+		const controls = useAnimation();
+
+		useEffect(() => {
+            console.log("DISSOLVE", conceptIsDragging, shape.id)
+			if (conceptIsDragging.dissolve && conceptIsDragging.id === shape.id) {
+				controls.start({
+					scale: 0.1,
+					transition: { duration: 0.5, ease: "easeInOut" }
+				}).then(() => {
+					// Reset shape size and move back to previous position
+					this.editor.updateShape({
+						id: shape.id,
+						type: shape.type,
+						x: conceptIsDragging.startCoords.x,
+						y: conceptIsDragging.startCoords.y,
+					});
+                    controls.start({
+                        scale: 1,
+                        transition: { type: "spring", stiffness: 300, damping: 20 }
+                    })
+
+                    isDragging.current = false;
+					setConceptIsDragging(prevState => ({
+						...prevState,
+						active: false,
+						id: null,
+						overlap: false,
+                        dissolve: false,
+					}))
+				});
+			} else {
+				controls.start({
+					scale: 1,
+					transition: { duration: 0.5, ease: "easeInOut" }
+				});
+			}
+		}, [conceptIsDragging.dissolve, controls]);
 
 		return (
 			<HTMLContainer 
@@ -267,90 +314,89 @@ export class ConceptShapeUtil extends BaseBoxShapeUtil<ConceptShape> {
                     transform: conceptList.active ? 'scale(var(--tl-scale))' : 'initial', 
                 }}>
 					
-				{
-				isHovered && shape.props.description && (
-					<motion.div 
-						className={styles.hoverDescription}
-						initial={{ opacity: 0 }}
-						animate={{ opacity: 1 }}
-						exit={{ opacity: 0 }}
-						transition={{ duration: 0.3, ease: "linear" }}
-						style={{ 
-							transform: conceptList.active ? 'translateX(0%)' : 'translateX(-50%)', 
-							overflow: 'hidden',
-							left: conceptList.active ? '100%' : '50%',
-							bottom: conceptList.active ? '50%' : '120%',
-						}}
-					>
-						<p>
-							{shape.props.description}
-						</p>
-					</motion.div>
-				)}
+				<motion.div
+					animate={controls}
+				>
+					{
+					isHovered && shape.props.description && (
+						<motion.div 
+							className={styles.hoverDescription}
+							initial={{ opacity: 0 }}
+							animate={{ opacity: 1 }}
+							exit={{ opacity: 0 }}
+							transition={{ duration: 0.3, ease: "linear" }}
+							style={{ 
+								transform: conceptList.active ? 'translateX(0%)' : 'translateX(-50%)', 
+								overflow: 'hidden',
+								left: conceptList.active ? '100%' : '50%',
+								bottom: conceptList.active ? '50%' : '120%',
+							}}
+						>
+							<p>
+								{shape.props.description}
+							</p>
+						</motion.div>
+					)}
 
-				<div 
-                    className={styles.shapeContent} 
-                    ref={shapeRef} 
-                    style={{
-                        cursor: 'pointer',
-                        maxHeight: conceptList.active ? "30px" : "unset"
-                        }}
-                    onMouseEnter={() => setIsHovered(true)}
-                    onMouseLeave={() => setIsHovered(false)}
-                    onMouseDown={handleMouseDown}
-                    >
-                <ConceptStar 
-                    selected={(this.editor.getOnlySelectedShapeId() === shape.id) || (conceptList.focusedConcept === shape.id)}
-                    pulseTrigger={pulseTrigger}
-                    collapsed={conceptList.active}
-                />
-                    <motion.p 
-                        className={styles.editorContent} 
-                        initial={{ opacity: 0 }} 
+					<div 
+                        className={styles.shapeContent} 
+                        ref={shapeRef} 
                         style={{
-                            position: "relative",
-                            left: conceptList.active ? -16 : 0
-                        }}
-                        animate={{ 
-                            opacity: conceptList.active && (conceptList.focusedConcept !== shape.id && !isHovered)  ? 0.5 : 0.8,
-                        }} 
-                        transition={{ 
-                            delay: 2, 
-                            duration: 1, 
-                            ease: 'easeInOut', 
-                            fontSize: { duration: 0.3, ease: 'easeInOut' },
-                            opacity: { duration: 0.3, ease: 'easeInOut' },
-                        }}
-                    >
-                        {shape.props.plainText}
-                    </motion.p>
-                    <motion.div 
-                        className={styles.entryButton}
-                        onPointerDown={(e)=>{
-                            console.log("ENTRY CREATED")
-                            setJournalMode({ active: true, variant: "modern", page: 'entries'})
-                            setEntries(prevState => ({
-                                values: [...prevState.values, {
-                                    type: "concept",
-                                    id: shape.id,
-                                    title: shape.props.plainText,
-                                    content: shape.props.description,
-                                    author: data.user.uniqueName,
-                                    date: new Date().toLocaleDateString(),
-                                }],
-                                prevValues: prevState.values
-                            }))
-                            e.stopPropagation()
-                        }}
-                    >
-                        +
-                    </motion.div>
-					{/* <EditorContent 
-						editor={editor}
-						// onKeyDown={stopEventPropagation}
-						className={styles.editorContent}
-					/> */}
-				</div>
+                            cursor: 'pointer',
+                            maxHeight: conceptList.active ? "30px" : "unset"
+                            }}
+                        onMouseEnter={() => setIsHovered(true)}
+                        onMouseLeave={() => setIsHovered(false)}
+                        onMouseDown={handleMouseDown}
+                        >
+                    <ConceptStar 
+                        selected={(this.editor.getOnlySelectedShapeId() === shape.id) || (conceptList.focusedConcept === shape.id)}
+                        pulseTrigger={pulseTrigger}
+                        collapsed={conceptList.active}
+                    />
+                        <motion.p 
+                            className={styles.editorContent} 
+                            initial={{ opacity: 0 }} 
+                            style={{
+                                position: "relative",
+                                left: conceptList.active ? -16 : 0
+                            }}
+                            animate={{ 
+                                opacity: conceptList.active && (conceptList.focusedConcept !== shape.id && !isHovered)  ? 0.5 : 0.8,
+                            }} 
+                            transition={{ 
+                                delay: 2, 
+                                duration: 1, 
+                                ease: 'easeInOut', 
+                                fontSize: { duration: 0.3, ease: 'easeInOut' },
+                                opacity: { duration: 0.3, ease: 'easeInOut' },
+                            }}
+                        >
+                            {shape.props.plainText}
+                        </motion.p>
+                        <motion.div 
+                            className={styles.entryButton}
+                            onPointerDown={(e)=>{
+                                console.log("ENTRY CREATED")
+                                setJournalMode({ active: true, variant: "modern", page: 'entries'})
+                                setEntries(prevState => ({
+                                    values: [...prevState.values, {
+                                        type: "concept",
+                                        id: shape.id,
+                                        title: shape.props.plainText,
+                                        content: shape.props.description,
+                                        author: data.user.uniqueName,
+                                        date: new Date().toLocaleDateString(),
+                                    }],
+                                    prevValues: prevState.values
+                                }))
+                                e.stopPropagation()
+                            }}
+                        >
+                            +
+                        </motion.div>
+					</div>
+				</motion.div>
 			</HTMLContainer>
 		)
 	}
