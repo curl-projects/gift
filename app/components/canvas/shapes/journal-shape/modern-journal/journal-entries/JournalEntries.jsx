@@ -3,12 +3,29 @@ import { JournalEntry } from './JournalEntry'
 import { motion } from 'framer-motion'
 import React, { useEffect, useRef, useState} from 'react'
 import { useStarFireSync } from '~/components/synchronization/StarFireSync'
+import { useDataContext } from '~/components/synchronization/DataContext'
 
 export function JournalEntries(){
-    const { entries } = useStarFireSync()
+    const { entries, setEntries } = useStarFireSync()
+    const { userData, userDataLoading } = useDataContext()
+
     const [hoveredIndex, setHoveredIndex] = useState(null)
     const [isNewEntryAdded, setIsNewEntryAdded] = useState(false)
 
+    useEffect(()=>{
+        console.log("JOURNAL ENTRIES USER DATA:", userData)
+    }, [userData])
+
+    useEffect(()=>{
+        if(userData?.user?.entries){
+            setEntries(prevState => {
+                return {
+                    values: userData.user.entries,
+                    prevValues: prevState.values
+                }
+            })
+        }
+    }, [userData])
 
     useEffect(() => {
         if (entries.prevValues.length > 0 && (entries.values.length > entries.prevValues.length)){
@@ -36,7 +53,7 @@ export function JournalEntries(){
                     <React.Fragment key={entry.id}>
                         <JournalEntry 
                             key={entry.id}
-                            type={entry.type} 
+                            type={entry.conceptId ? 'concept' : 'article'} 
                             entry={entry} 
                             // shouldAnimate={
                             //     // isNewEntryAdded ? true : false

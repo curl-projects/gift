@@ -20,7 +20,6 @@ export async function loader() {
     return null;
   }
 
-
 // prevent remix based revalidation
 export function shouldRevalidate(){
     return false;
@@ -58,7 +57,7 @@ export default function PitchDeck(){
         queryFn: async () => {
             console.log("FETCHING USER DATA:", userInfo)
             if(!userInfo) return null;
-            const response = await fetch(`/data/${userInfo.uniqueName}`);
+            const response = await fetch(`/user/${userInfo.uniqueName}`);
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
@@ -74,6 +73,11 @@ export default function PitchDeck(){
             setData(newData);
         }
     }, [newData])
+
+
+    useEffect(() => {
+        console.log("USER DATA:", userData)
+    }, [userData])
 
     useEffect(()=>{
         console.log("IS LOADING:", isLoading)

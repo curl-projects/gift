@@ -17,29 +17,6 @@ export async function loader({ params }) {
   return json({ user });
 }
 
-export async function action({ request }) {
-  const formData = await request.formData();
-  const actionType = formData.get("actionType");
-
-  switch (actionType) {
-    case "saveAnnotation":
-      const mediaId = formData.get("mediaId");
-      const content = formData.get("content");
-      const fromPos = formData.get("fromPos");
-      const toPos = formData.get("toPos");
-
-      try {
-        const annotation = await saveAnnotation(mediaId, content, fromPos, toPos);
-        return json({ annotation });
-      } catch (error) {
-        console.error("ERROR:", error)
-        return json({ error: error.message }, { status: 500 });
-      }
-    default:
-      return json({ error: "Unknown action type" }, { status: 400 });
-  }
-}
-
 export default function WorldModel(){
     const actionData = useActionData();
 

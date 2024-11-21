@@ -21,6 +21,12 @@
     justify-content: center;
 }
 
+.entryArticleContainer{
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+
 .entryContent{
     flex: 1;
     display: flex;
@@ -49,6 +55,8 @@
     font-size: 16px;
     font-family: "IBM Plex Mono", monospace;
     color: rgba(242, 242, 242, 1);
+    max-height: 100%;
+    overflow: scroll;
 }
 
 .animatedContainer{

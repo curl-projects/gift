@@ -18,7 +18,58 @@ model User {
   endColor   String? @default("#101C3E")
   darkeningColors String[] @default(["#94DAF4", "#69A9E6", "#7F89D0"])
   covenants Covenant[]
+  entries Entry[]
 }
+
+model Entry {
+  id          String   @id @default(uuid())
+  content     String
+  userId      String
+  user        User     @relation(fields: [userId], references: [uniqueName])
+  conceptId   String?
+  concept     Concept? @relation(fields: [conceptId], references: [id])
+  excerptId   String?
+  excerpt     Excerpt? @relation(fields: [excerptId], references: [id])
+  date        DateTime @default(now())
+}
+
+model Concept {
+  id          String        @id @default(uuid())
+  title       String
+  description String?
+  userId      String
+  user        User          @relation(fields: [userId], references: [uniqueName])
+  linkedEnd   ConceptLink[] @relation("linkedEnd")
+  linkedStart ConceptLink[] @relation("linkedStart")
+  excerpts    Excerpt[]
+  entries     Entry[]
+}
+
+model Excerpt {
+  id        String  @id @default(uuid())
+  content   String
+  conceptId String
+  mediaId   String
+  entries     Entry[]
+  concept   Concept @relation(fields: [conceptId], references: [id])
+  media     Media  @relation(fields: [mediaId], references: [id])
+}
+
+model Media {
+  id         String       @id @default(uuid())
+  type       String
+  date       DateTime?   @default(now())
+  url        String
+  title      String?      @default("Untitled")
+  content    String?      @default("Media content")
+  userId     String?
+  annotations Annotation[]
+  excerpts    Excerpt[]
+  user       User?        @relation(fields: [userId], references: [uniqueName])
+}
+
+
+// OLD DATA MODELLING
 
 enum CovenantType {
   CONNECT_TO_OWN_WORK
@@ -57,17 +108,6 @@ model CovenantModifier {
   params Json?
 }
 
-model Concept {
-  id          String        @id @default(uuid())
-  title       String
-  description String?
-  userId      String
-  user        User          @relation(fields: [userId], references: [uniqueName])
-  linkedEnd   ConceptLink[] @relation("linkedEnd")
-  linkedStart ConceptLink[] @relation("linkedStart")
-  excerpts    Excerpt[]
-}
-
 model ConceptLink {
   linkedStartId String
   linkedEndId   String
@@ -76,28 +116,6 @@ model ConceptLink {
   linkedStart   Concept @relation("linkedStart", fields: [linkedStartId], references: [id])
 
   @@id([linkedStartId, linkedEndId])
-}
-
-model Excerpt {
-  id        String  @id @default(uuid())
-  content   String
-  conceptId String
-  mediaId   String
-  concept   Concept @relation(fields: [conceptId], references: [id])
-  media     Media  @relation(fields: [mediaId], references: [id])
-}
-
-model Media {
-  id         String       @id @default(uuid())
-  type       String
-  date       DateTime?   @default(now())
-  url        String
-  title      String?      @default("Untitled")
-  content    String?      @default("Media content")
-  userId     String?
-  annotations Annotation[]
-  excerpts    Excerpt[]
-  user       User?        @relation(fields: [userId], references: [uniqueName])
 }
 
 model Annotation {

@@ -4,11 +4,13 @@ import { motion } from 'framer-motion'
 import { useRef, useEffect, useState } from 'react';
 import { ConceptStar } from '~/components/canvas/shapes/concept-shape/ConceptStar';
 import { EntryArticle } from './EntryArticle';
+import { useEditor } from 'tldraw';
 
-export function JournalEntry({ childKey, type, entry, shouldAnimate, opacity = 1, onMouseEnter, onMouseLeave, isHovered, isOtherHovered }) {
+export function JournalEntry({ type, entry, shouldAnimate, opacity = 1, onMouseEnter, onMouseLeave, isHovered, isOtherHovered }) {
     const specimenRef = useRef(null);
     const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
     const [pulseTrigger, setPulseTrigger] = useState(0);
+    const editor = useEditor();
 
     useEffect(() => {
         if (specimenRef.current) {
@@ -17,11 +19,17 @@ export function JournalEntry({ childKey, type, entry, shouldAnimate, opacity = 1
         }
     }, []);
 
+
+    function handleEntryClick(){
+        
+    }
+
     return (
         <>
             <motion.div 
                 className={styles.journalEntry}
                 layout
+                onPointerDown={handleEntryClick}
                 initial={{ opacity: shouldAnimate ? 0 : opacity, x: shouldAnimate ? -25 : 0 }}
                 animate={{ opacity: opacity, x: 0 }}
                 transition={{
@@ -43,10 +51,13 @@ export function JournalEntry({ childKey, type, entry, shouldAnimate, opacity = 1
                                 }}
                                 scale={1.2}
                                 animationDelay={0.55}
+                                collapsed={false}
                             />
                         }
                         {type === 'article' &&
-                            <EntryArticle content={entry.html} />
+                            <div className={styles.entryArticleContainer}>
+                            <EntryArticle content={entry?.excerpt?.media?.content || 'No content'} />
+                            </div>
                         }
                         <motion.svg className={styles.animatedContainer}>
                             <JournalThread
@@ -71,21 +82,21 @@ export function JournalEntry({ childKey, type, entry, shouldAnimate, opacity = 1
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.5, ease: "easeInOut", delay: 0.5 }}
                     >
-                        {entry.title}
+                        {type === 'concept' ? entry?.concept?.title || 'No title' : entry?.excerpt?.media?.title || 'No title'}
                     </motion.div>
                     <motion.div className={styles.entryMetadata}
                         initial={{ opacity: shouldAnimate ? 0 : 1, x: shouldAnimate ? -100 : 0 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.5, ease: "easeInOut", delay: 0.8 }}
                     >
-                        {entry.author} • {entry.date}
+                        {type === 'concept' ? entry?.concept?.user?.name || 'Unknown user' : entry?.excerpt?.media?.user?.name || 'Unknown user'} • {entry?.date || 'Unknown date'}
                     </motion.div>
                     <motion.div className={styles.entryText}
                         initial={{ opacity: shouldAnimate ? 0 : 1, x: shouldAnimate ? -100 : 0 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.5, ease: "easeInOut", delay: 0.8 }}
                     >
-                        {entry.content}
+                        {type === 'concept' ? entry?.concept?.description || 'No description' : entry?.excerpt?.content || 'No content'}
                     </motion.div>
                 </motion.div>
             </motion.div>
