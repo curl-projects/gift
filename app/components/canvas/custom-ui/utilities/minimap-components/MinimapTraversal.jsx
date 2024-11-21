@@ -67,19 +67,20 @@ export function MinimapTraversal(){
         return { ...position, person };
     });
 
-
-
+    const activeScale = (minimapMode.expanded ? minimapMode.expandedScale :
+                        minimapMode.hovered ? minimapMode.hoveredScale :
+                        1
+                    )
 
     return(
         <div 
             className={`${styles.traversalContainer} minimap-canvas-container`}
-            // style={{
-            //     transform: `scale(${
-            //         minimapMode.expanded ? 1/minimapMode.expandedScale :
-            //         minimapMode.hovered ? 1/minimapMode.hoveredScale :
-            //         1
-            //     })`
-            // }}
+            style={{
+                transform: `scale(${1/activeScale})`, // counterscale to preserve canvas
+                border: "2px solid pink",
+                height: `${activeScale*100}%`,
+                minWidth: `${activeScale*100}%`,
+            }}
         >
 
         <Tldraw
