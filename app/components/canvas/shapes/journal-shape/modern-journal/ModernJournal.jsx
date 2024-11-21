@@ -9,6 +9,7 @@ import { journalRightOffset, journalLeftOffset } from '../JournalShapeUtil';
 import { JournalCovenants } from '../journal-covenants/JournalCovenants';
 import { JournalArticle } from './JournalArticle';
 import { JournalEntries } from './journal-entries/JournalEntries';
+import { JournalPortfolio } from './journal-portfolio/JournalPortfolio';
 import { useCovenantContext } from "~/components/synchronization/CovenantContext"
 
 
@@ -40,6 +41,10 @@ export function ModernJournal({ shape, contentRef, tldrawEditor }) {
     {
       name: 'entries',
       displayName: "Entries",
+    },
+    {
+      name: 'portfolio',
+      displayName: "Your Work",
     }
   ]
 
@@ -148,7 +153,8 @@ export function ModernJournal({ shape, contentRef, tldrawEditor }) {
             {
               {
                 'article': <JournalArticle />,
-                'entries': <JournalEntries />
+                'entries': <JournalEntries />,
+                'portfolio': <JournalPortfolio />
               }[journalMode.page] || <JournalEntries />
             }
         </div>

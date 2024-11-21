@@ -22,5 +22,23 @@ export function MinimapFocusPainter() {
         }, 300)
     }, [minimapMode.expanded])
 
+    useEffect(()=>{
+        if(!minimapMode.hovered){
+            setTimeout(()=>{
+                const shape = editor.getShape(createShapeId('minimapStar'));
+                console.log("MINIMAP STAR", shape);
+                if(shape){
+                    editor.zoomToBounds(editor.getShapePageBounds(shape), {
+                animation: {
+                    duration: 300,
+                    easing: t => t * t
+                    },
+                        targetZoom: 2,
+                    })
+                }
+            }, 300)
+        }
+    }, [minimapMode.hovered])
+
     return null;
 }

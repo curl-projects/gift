@@ -53,6 +53,10 @@ const StarFireSyncProvider = ({ children }) => {
     const [conceptList, setConceptList] = useState({active: false, focusedConcept: null })
     const [conceptIsDragging, setConceptIsDragging] = useState({active: false, id: null})
 
+    const [userInfo, setUserInfo] = useState({
+        uniqueName: 'andre-vacha',
+    })
+
     const [entries, setEntries] = useState({values: [
         {
             id: "1",
@@ -181,6 +185,7 @@ const StarFireSyncProvider = ({ children }) => {
                 entries, setEntries,
                 conceptList, setConceptList,
                 conceptIsDragging, setConceptIsDragging,
+                userInfo, setUserInfo,
             }}>
             {children}
         </StarFireSyncContext.Provider>

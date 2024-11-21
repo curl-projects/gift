@@ -1,0 +1,89 @@
+.journalPortfolio{
+    width: 100%;
+    height: 100%;
+    overflow: scroll;
+    border: 2px solid pink;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.journalPortfolioSection{
+    width: 100%;
+    height: fit-content;
+    border: 2px solid blue;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px;
+
+}
+
+.journalPortfolioSectionTitle{
+    font-size: 16px;
+    line-height: 19.5px;
+    font-weight: 550;
+    text-align: center;
+    color: white;
+    font-family: "Inter", sans-serif;
+    
+}
+
+.journalPortfolioSectionContents{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.conceptCard{
+    width: 150px;
+    height: 150px;
+    border: 2px solid rgba(255, 255, 255, 0.7);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 10px;
+    gap: 20px;
+}
+
+.conceptCardTitle{
+    font-size: 13px;
+    line-height: 19.5px;
+    font-weight: 550;
+    text-align: center;
+    color: white;
+    font-family: monospace;
+}
+
+.articleCard{
+    width: 150px;
+    height: 150px;
+    border: 2px solid rgba(255, 255, 255, 0.7);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 10px;
+    gap: 20px;
+}
+
+.articleCardIcon{
+    font-size: 48px;
+    color: rgba(255, 255, 255, 0.7);
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.7));
+
+}
+
+.articleCardTitle{
+    font-size: 13px;
+    line-height: 19.5px;
+    font-weight: 550;
+    text-align: center;
+    color: white;
+    font-family: monospace;
+}

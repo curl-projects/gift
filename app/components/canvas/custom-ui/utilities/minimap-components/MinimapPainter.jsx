@@ -68,7 +68,7 @@ export function MinimapPainter() {
                             exit={{ opacity: 0 }}
                             onMouseEnter={() => setMinimapMode(prevState => ({...prevState, hovered: true}))}
                             onMouseLeave={() => setMinimapMode(prevState => ({...prevState, hovered: false}))}
-                            onPointerDown={() => setMinimapMode(prevState => ({...prevState, expanded: !prevState.expanded}))}
+                            // onPointerDown={() => setMinimapMode(prevState => ({...prevState, expanded: !prevState.expanded}))}
                             transition={{ 
                                 duration: 0.2, 
                                 ease: "easeInOut", 

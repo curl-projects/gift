@@ -18,7 +18,7 @@ export function MinimapStar({ person, isActive, shapeRef }) {
             className={`${styles.newStar} ${isActive ? styles.activeStarContainer : ''}`}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            onClick={() => {
+            onPointerDown={() => {
                 navigate(`/pitch-deck/${person.uniqueName}`, { replace: false });
                 setTriggerWarp({
                     active: true,

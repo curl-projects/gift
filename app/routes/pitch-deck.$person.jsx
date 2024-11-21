@@ -28,7 +28,7 @@ export function shouldRevalidate(){
 
 export default function PitchDeck(){
 
-    const { campfireView, enableFire, setEnableFire } = useStarFireSync();
+    const { campfireView, enableFire, setEnableFire, userInfo, setUserInfo } = useStarFireSync();
 
     const { person } = useParams();
     const [data, setData] = useState(null);
@@ -48,6 +48,24 @@ export default function PitchDeck(){
         },
         enabled: !!person,
     });
+
+    useEffect(() => {
+        console.log("USER INFO:", userInfo)
+    }, [userInfo])
+
+    const { data: userData, isLoading: userDataLoading, isSuccess: userDataSuccess } = useQuery({
+        queryKey: ['userData', userInfo],
+        queryFn: async () => {
+            console.log("FETCHING USER DATA:", userInfo)
+            if(!userInfo) return null;
+            const response = await fetch(`/data/${userInfo.uniqueName}`);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        },
+        enabled: !!userInfo,
+    })
 
 
     useEffect(() => {
@@ -73,7 +91,7 @@ export default function PitchDeck(){
         }
         else if(isBrowser || isTablet){
             return(
-                <DataProvider value={{data, isLoading, isSuccess}}>
+                <DataProvider value={{data, isLoading, isSuccess, userData, userDataLoading, userDataSuccess}}>
                     <GoalProvider>
                         <CovenantProvider>
                             <DisclaimerPainter />

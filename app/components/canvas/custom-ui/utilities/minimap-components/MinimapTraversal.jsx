@@ -92,21 +92,26 @@ export function MinimapTraversal(){
             className="minimap-canvas"
             components={components}
             onMount={(editor) => {
-               const starId = createShapeId('minimapStar');
-               editor.createShape({
-                id: starId,
-                type: 'minimapStar',
-                x: 50,
-                y: 50,
-                    props: {
-                        person: {
-                            name: "A Complete Stranger",
-                            uniqueName: "stranger"
-                        },
-                        isActive: false
-                    }
-               })
-            }}
+
+
+            for(const star of stars){
+                const starId = createShapeId(star.person.uniqueName);
+                editor.createShape({
+                    id: starId,
+                    type: 'minimapStar',
+                    x: star.x,
+                    y: star.y,
+                        props: {
+                            person: {
+                                name: star.person.name,
+                                uniqueName: star.person.uniqueName
+                            },
+                            isActive: false
+                        }
+                   })
+                }}
+            }
+               
         >
             <MinimapFocusPainter />
         </Tldraw>
@@ -115,7 +120,7 @@ export function MinimapTraversal(){
           stars.map((star, index) => (
             <NewStar
                 key={index}
-                x={star.x}
+            x={star.x}
                 y={star.y}
                 person={star.person}
                 isActive={star.person.uniqueName === activePerson}
