@@ -5,7 +5,7 @@ import { useStarFireSync } from '~/components/synchronization/StarFireSync';
 import { useState } from 'react';
 import { englishToLepchaMap } from '~/components/canvas/helpers/language-funcs';
 
-export function NewStar({ person, isActive }) {
+export function MinimapStar({ person, isActive, shapeRef }) {
     const [isHovered, setIsHovered] = useState(false);
     const navigate = useNavigate();
     const { setTriggerWarp, setConstellationLabel, minimapMode } = useStarFireSync();
@@ -14,6 +14,7 @@ export function NewStar({ person, isActive }) {
 
     return (
         <div
+            ref={shapeRef}
             className={`${styles.newStar} ${isActive ? styles.activeStarContainer : ''}`}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
@@ -35,18 +36,7 @@ export function NewStar({ person, isActive }) {
                 });
             }}
         >
-            {expanded && (
-                <motion.div
-                    className={styles.hoverDescription}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.3, ease: "linear" }}
-                >
-                    <p>{person.name}</p>
-                </motion.div>
-            )}
-            <motion.p
+             <motion.p
                 className={styles.newStarText}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -55,6 +45,21 @@ export function NewStar({ person, isActive }) {
             >
                 {englishToLepchaMap[person.name[0]]}
             </motion.p>
+            {expanded && (
+                <div className={styles.hoverDescriptionContainer}>
+                    <motion.div
+                        className={styles.hoverDescription}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.3, ease: "linear" }}
+                    >
+                        <p>{person.name}</p>
+                    </motion.div>
+                </div>
+            )}
+            
         </div>
+       
     );
 }

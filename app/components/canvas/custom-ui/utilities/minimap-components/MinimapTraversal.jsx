@@ -7,6 +7,8 @@ import { englishToLepchaMap } from '~/components/canvas/helpers/language-funcs';
 import { Tldraw, createShapeId } from 'tldraw';
 import { MinimapStarShapeUtil } from './minimap-shapes/MinimapStarShapeUtil';
 
+import { MinimapFocusPainter } from './minimap-painters/MinimapFocusPainter';
+
 export function MinimapTraversal(){
 
     const components = {
@@ -77,7 +79,6 @@ export function MinimapTraversal(){
             className={`${styles.traversalContainer} minimap-canvas-container`}
             animate={{
                 transform: `scale(${1/activeScale})`, // counterscale to preserve canvas
-                border: "2px solid pink",
                 height: `${activeScale*100}%`,
                 minWidth: `${activeScale*100}%`,
             }}
@@ -95,6 +96,8 @@ export function MinimapTraversal(){
                editor.createShape({
                 id: starId,
                 type: 'minimapStar',
+                x: 50,
+                y: 50,
                     props: {
                         person: {
                             name: "A Complete Stranger",
@@ -104,7 +107,9 @@ export function MinimapTraversal(){
                     }
                })
             }}
-        />
+        >
+            <MinimapFocusPainter />
+        </Tldraw>
 
         {/* {
           stars.map((star, index) => (

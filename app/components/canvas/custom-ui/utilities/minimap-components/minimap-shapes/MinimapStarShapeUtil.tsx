@@ -6,12 +6,13 @@ import {
 	HTMLContainer,
 	stopEventPropagation,
 } from '@tldraw/editor'
+import { useEffect, useRef } from 'react';
 
 import { T } from 'tldraw';
 import { useDataContext } from '~/components/synchronization/DataContext';
 
 import { useStarFireSync } from '~/components/synchronization/StarFireSync';
-import { NewStar } from './MinimapStar';
+import { MinimapStar } from './MinimapStar';
 
 const minimapStarShapeProps = {
 	w: T.number,
@@ -58,10 +59,42 @@ export class MinimapStarShapeUtil extends BaseBoxShapeUtil<MinimapStarShape> {
 	}
 
 	component(shape: MinimapStarShape) {
+		const shapeRef = useRef<HTMLDivElement>(null);
+		useEffect(() => {
+            const handleResize = () => {
+              if (shapeRef.current?.clientHeight) {
+                this.editor.updateShape({
+                  type: shape.type,
+                  id: shape.id,
+                  props: {
+                    w: shapeRef.current.clientWidth,
+                    h: shapeRef.current.clientHeight
+                  }
+                });
+
+                // Update thread binding props
+                // updateThreadBindingProps(this.editor, shape.id);
+              }
+            };
+        
+            const resizeObserver = new ResizeObserver(handleResize);
+            if (shapeRef.current) {
+              resizeObserver.observe(shapeRef.current);
+            }
+        
+            return () => {
+              if (shapeRef.current) {
+                resizeObserver.unobserve(shapeRef.current);
+              }
+              resizeObserver.disconnect();
+            };
+          }, [shapeRef.current, this.editor, shape]);
+
 		return (
-			<NewStar
+			<MinimapStar
 				person={shape.props.person}
 				isActive={shape.props.isActive}
+				shapeRef={shapeRef}
 			/>
 		);
 	}

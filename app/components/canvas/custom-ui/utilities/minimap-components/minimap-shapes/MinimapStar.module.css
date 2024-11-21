@@ -1,11 +1,11 @@
+
 .newStar {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform-origin: center;
+    pointer-events: all;
+    cursor: pointer;
+    position: relative;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    align-items: flex-start;
+    justify-content: flex-end;
     height: fit-content;
     width: fit-content;
 }
@@ -33,10 +33,12 @@
     overflow: hidden;
 }
 
+.hoverDescriptionContainer {
+    position: relative;
+    padding-top: 5%;
+}
+
 .hoverDescription {
-    position: absolute;
-    bottom: -4px;
-    left: calc(100% + 2px);
     min-width: fit-content;
     max-width: 400px;
     display: flex;
