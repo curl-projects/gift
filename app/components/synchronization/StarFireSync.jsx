@@ -44,7 +44,7 @@ const StarFireSyncProvider = ({ children }) => {
 
     const [journalMode, _setJournalMode] = useState({ active: false, page: "article"});
 
-    const [minimapMode, setMinimapMode] = useState({ active: true });
+    const [minimapMode, setMinimapMode] = useState({ active: true, expandedScale: 3, hoveredScale: 2, dragScale: 1.4, expanded: false});
 
     const [enableFire, setEnableFire] = useState(true);
 

@@ -7,6 +7,8 @@ import { useEditor } from 'tldraw';
 import { GoalPainter } from '../GoalPainter';
 import { MinimapDrag } from './MinimapDrag';
 import { MinimapTraversal } from './MinimapTraversal';
+import { FaExpandAlt } from "react-icons/fa";
+
 export function MinimapPainter() {
     const { data } = useDataContext();
     const editor = useEditor()
@@ -58,19 +60,36 @@ export function MinimapPainter() {
                             className={styles.innerMinimap}
                             initial={{ opacity: 0 }}
                             animate={{
-                                opacity: minimapMode.hovered ? 1 : 0.6,
-                                scale: ((conceptIsDragging.active && conceptIsDragging.overlap) || minimapMode.hovered) ? 1.4 : 1,
+                                opacity: (minimapMode.hovered || minimapMode.expanded) ? 1 : 0.6,
+                                scale: (minimapMode.expanded) ? minimapMode.expandedScale :
+                                       (conceptIsDragging.active && conceptIsDragging.overlap) ? minimapMode.dragScale :
+                                       (!conceptIsDragging.active && !conceptIsDragging.overlap && minimapMode.hovered) ? minimapMode.hoveredScale : 1,
                             }}
                             exit={{ opacity: 0 }}
                             onMouseEnter={() => setMinimapMode(prevState => ({...prevState, hovered: true}))}
                             onMouseLeave={() => setMinimapMode(prevState => ({...prevState, hovered: false}))}
+                            onPointerDown={() => setMinimapMode(prevState => ({...prevState, expanded: !prevState.expanded}))}
                             transition={{ 
                                 duration: 0.2, 
                                 ease: "easeInOut", 
                                 scale: { type: "spring", stiffness: 300, damping: 20 } }}
                             style={{ transformOrigin: 'bottom right' }}
                         >
-                            <GoalPainter />   
+                          
+                            <GoalPainter />  
+                            <motion.div 
+                                className={styles.expandingButton}
+                                onClick={() => setMinimapMode(prevState => ({...prevState, expanded: !prevState.expanded || true }))}
+                                style={{
+                                    position: 'absolute',
+                                    top: "10px",
+                                    right: "10px",
+                                    cursor: 'pointer',
+                                    color: "rgba(0, 0, 0, 0.7)",
+                                }}
+                             >
+                                <FaExpandAlt />
+                            </motion.div>  
                             <AnimatePresence>
                                 {!conceptIsDragging.active && <MinimapTraversal />}
                                 {conceptIsDragging.active && (

@@ -37,9 +37,9 @@ export function OpacityPainter(){
         }
         else if(conceptIsDragging.active){
             const blurShapes = shapes.filter(shape => shape.id !== conceptIsDragging.id)
-            for(let shape of blurShapes){
-                animateShapeProperties(editor, shape.id, {opacity: 0.3}, 100, t => t * (2 - t))
-            }
+            editor.run(()=>{
+                editor.updateShapes(blurShapes.map(shape => ({...shape, opacity: 0.3})))
+            }, { ignoreShapeLock: true })
         }
         else if(minimapMode.hovered){
             for(let shape of shapes){

@@ -1,0 +1,57 @@
+.newStar {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform-origin: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: fit-content;
+    width: fit-content;
+}
+
+.newStarText {
+    font-family: "Mingzat", sans-serif;
+    color: white;
+    font-size: 10px;
+    position: relative;
+    top: -2px;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.8),
+                 0 0 10px rgba(255, 255, 255, 0.6),
+                 0 0 15px rgba(255, 255, 255, 0.4);
+}
+
+.activeStarContainer {
+    border: 1.8px solid rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    box-shadow: 0px 0px 10px 0px rgba(255, 255, 255, 0.7);
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.hoverDescription {
+    position: absolute;
+    bottom: -4px;
+    left: calc(100% + 2px);
+    min-width: fit-content;
+    max-width: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: rgb(242, 242, 242);
+    font-family: "IBM Plex Mono", monospace;
+    font-weight: 400;
+    /* background-color: rgba(0, 0, 0, 0.4); */
+    line-height: 1.3em;
+    font-size: 5px;
+    padding: 4px;
+    overflow: hidden;
+    /* box-shadow: 0px 36px 42px -4px rgba(77, 77, 77, 0.15); */
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
