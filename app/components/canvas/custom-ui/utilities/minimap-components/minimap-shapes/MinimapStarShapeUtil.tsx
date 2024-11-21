@@ -11,7 +11,7 @@ import { T } from 'tldraw';
 import { useDataContext } from '~/components/synchronization/DataContext';
 
 import { useStarFireSync } from '~/components/synchronization/StarFireSync';
-import { NewStar } from './Star';
+import { NewStar } from './MinimapStar';
 
 const minimapStarShapeProps = {
 	w: T.number,

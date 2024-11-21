@@ -1,4 +1,4 @@
-import styles from './Star.module.css';
+import styles from './MinimapStar.module.css';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useStarFireSync } from '~/components/synchronization/StarFireSync';

@@ -73,19 +73,20 @@ export function MinimapTraversal(){
                     )
 
     return(
-        <div 
+        <motion.div 
             className={`${styles.traversalContainer} minimap-canvas-container`}
-            style={{
+            animate={{
                 transform: `scale(${1/activeScale})`, // counterscale to preserve canvas
                 border: "2px solid pink",
                 height: `${activeScale*100}%`,
                 minWidth: `${activeScale*100}%`,
             }}
+            transition={{ duration: 0.3, ease: "easeInOut" }} // Adjust the duration as needed
         >
 
         <Tldraw
             autofocus={false}
-            readOnly={true}
+            readOnly={false}
             shapeUtils={shapeUtils}
             className="minimap-canvas"
             components={components}
@@ -116,6 +117,6 @@ export function MinimapTraversal(){
                 />  
         ))} */}
         
-        </div>
+        </motion.div>
     )
 }

@@ -72,7 +72,7 @@ export function MinimapPainter() {
                             transition={{ 
                                 duration: 0.2, 
                                 ease: "easeInOut", 
-                                scale: { type: "spring", stiffness: 300, damping: 20 } }}
+                                scale: { duration: 0.3, ease: "easeInOut" } }}
                             style={{ transformOrigin: 'bottom right' }}
                         >
                           
@@ -86,6 +86,7 @@ export function MinimapPainter() {
                                     right: "10px",
                                     cursor: 'pointer',
                                     color: "rgba(0, 0, 0, 0.7)",
+                                    zIndex: 100000000,
                                 }}
                              >
                                 <FaExpandAlt />
