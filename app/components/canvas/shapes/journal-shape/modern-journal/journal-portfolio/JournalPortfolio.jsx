@@ -54,7 +54,7 @@ export function ConceptCard({ concept }){
                 pulseTrigger={pulseTrigger}
                 onClick={() => setPulseTrigger(pulseTrigger + 1)}
                 scale={1}
-                animationDelay={0.55}
+                animationDelay={0}
                 collapsed={false}
             />
             <div className={styles.conceptCardTitle}>{concept.title}</div>
