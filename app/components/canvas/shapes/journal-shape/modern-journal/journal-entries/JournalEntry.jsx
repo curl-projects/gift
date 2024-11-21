@@ -55,9 +55,14 @@ export function JournalEntry({ type, entry, shouldAnimate, opacity = 1, onMouseE
                             />
                         }
                         {type === 'article' &&
-                            <div className={styles.entryArticleContainer}>
-                            <EntryArticle content={entry?.excerpt?.media?.content || 'No content'} />
-                            </div>
+                            <motion.div 
+                                className={styles.entryArticleContainer}
+                                initial={{ opacity: shouldAnimate ? 0 : 1}}
+                                animate={{ opacity: 1 }}
+                                transition={{ duration: 0.5, ease: "easeInOut", delay: 0.5 }}
+                            >
+                                <EntryArticle content={entry?.excerpt?.media?.content || 'No content'} />
+                            </motion.div>
                         }
                         <motion.svg className={styles.animatedContainer}>
                             <JournalThread
