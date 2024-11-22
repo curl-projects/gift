@@ -4,13 +4,124 @@ import { motion } from 'framer-motion'
 import { useRef, useEffect, useState } from 'react';
 import { ConceptStar } from '~/components/canvas/shapes/concept-shape/ConceptStar';
 import { EntryArticle } from './EntryArticle';
-import { useEditor } from 'tldraw';
+import { useEditor, createShapeId } from 'tldraw';
+// import { Utils } from "@tldraw/core";
+import { Vec } from "tldraw";
+
 
 export function JournalEntry({ type, entry, shouldAnimate, opacity = 1, onMouseEnter, onMouseLeave, isHovered, isOtherHovered }) {
     const specimenRef = useRef(null);
+    const entryRef = useRef(null);
     const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
     const [pulseTrigger, setPulseTrigger] = useState(0);
     const editor = useEditor();
+
+    const [interactionState, setInteractionState] = useState({
+        point: [0, 0],
+        state: "idle",
+        shapeId: "",
+    })
+
+    function handlePointerDown(e){
+        e.currentTarget.setPointerCapture(e.pointerId);
+        setInteractionState({
+            point: [e.clientX, e.clientY],
+            state: "pointing",
+            shapeId: "",
+        })
+    };
+
+    function handlePointerMove(e, type){
+
+        console.log("POINTER MOVE", e.clientX, e.clientY)
+
+        switch(interactionState.state){
+            case "pointing": {
+                const point = [e.clientX, e.clientY]
+                if(
+                    Math.abs(e.clientX - interactionState.point[0]) > 8 ||
+                    Math.abs(e.clientY - interactionState.point[1]) > 8
+				){
+                    const pagePoint = editor.screenToPage({x: point[0], y: point[1]});
+
+                    if(type === 'concept'){
+                        const concept = entry.concept;
+                        const shapeId = createShapeId(`drag-${concept.id}`)
+
+                        editor.createShape({
+                            type: 'concept',
+                            id: shapeId,
+                            x: pagePoint.x - 20,
+                            y: pagePoint.y - 20,
+                            props: {
+                                text: concept.title,
+                                plainText: concept.title,
+                                description: concept.description,
+                                databaseId: concept.id,
+                            }
+                        })    
+                        
+                        setInteractionState((interactionState) => ({
+                            ...interactionState,
+                            shapeId,
+                            state: "dragging"
+                          }));
+                    }
+                    else if(type === 'article'){
+                        const excerpt = entry.excerpt;
+                        const shapeId = createShapeId(`drag-${excerpt.id}`)
+                        console.log("EXCERPT", excerpt)
+                        editor.createShape({
+                            type: 'excerpt',
+                            id: shapeId,
+                            x: pagePoint.x - 20,
+                            y: pagePoint.y - 20,
+                            props: {
+                                content: excerpt.content,
+                                databaseId: excerpt.id,
+                                media: excerpt.media
+                            }
+                        })
+
+                        setInteractionState((interactionState) => ({
+                            ...interactionState,
+                            shapeId,
+                            state: "dragging"
+                          }));
+                    }
+
+                   
+                }
+                break;
+            }
+
+            case "dragging": {
+                const point = [e.clientX, e.clientY];
+                const pagePoint = editor.screenToPage({x: point[0], y: point[1]});
+                editor.updateShape({
+                        id: interactionState.shapeId,
+                        type: type,
+                        x: pagePoint.x - 20,
+                        y: pagePoint.y - 20,
+                    })
+                    
+                    
+                
+                break;
+            }
+        }
+    }
+
+    function handlePointerUp(e){
+        e.currentTarget.releasePointerCapture(e.pointerId);
+
+        setInteractionState((interactionState) => ({
+            ...interactionState,
+            state: "idle"
+          }));
+    }
+
+
 
     useEffect(() => {
         if (specimenRef.current) {
@@ -20,16 +131,70 @@ export function JournalEntry({ type, entry, shouldAnimate, opacity = 1, onMouseE
     }, []);
 
 
-    function handleEntryClick(){
-        
-    }
+    // function handleEntryClick(e){
+    //     // generate a shape at the click coordinates
+
+    //     // generate x and y
+    //     const { x, y } = editor.inputs.currentPagePoint
+
+    //     const clickX = e.clientX, clickY = e.clientY
+    //     const rect = entryRef.current.getBoundingClientRect();
+    //     const distanceX = clickX - rect.left, distanceY = clickY - rect.top
+
+    //     const { screenX, screenY } = editor.screenToPage(clickX, clickY)
+
+    //     if(type === 'concept'){
+    //         const concept = entry.concept;
+    //         const shapeId = createShapeId(`drag-${concept.id}`)
+    //         editor.run(()=>{
+    //         editor.createShape({
+    //             type: 'concept',
+    //             id: shapeId,
+    //             x: x - 20,
+    //             y: y - 20,
+    //             props: {
+    //                 text: concept.title,
+    //                 plainText: concept.title,
+    //                 description: concept.description,
+    //                 databaseId: concept.id,
+    //             }
+    //         })
+
+    //         editor.setCurrentTool('select.pointing_shape', { id: editor.getShape(shapeId)})
+    //         })
+    //     }
+    //     else if(type === 'article'){
+    //         console.log("ENTRY:", entry)
+    //         const excerpt = entry.excerpt;
+    //         const shapeId = createShapeId(`drag-${excerpt.id}`)
+    //         editor.createShape({
+    //             type: 'excerpt',
+    //             id: shapeId,
+    //             x: x - 20,
+    //             y: y - 20,
+    //             props: {
+    //                 content: excerpt.content,
+    //                 databaseId: excerpt.id,
+    //                 media: excerpt.media
+    //             }
+    //         })
+
+    //         editor.setCurrentTool('select.pointing_shape', { shape: editor.getShape(shapeId)})
+    //     }
+
+    // }
+
+
 
     return (
         <>
             <motion.div 
                 className={styles.journalEntry}
                 layout
-                onPointerDown={handleEntryClick}
+                ref={entryRef}
+                onPointerDown={handlePointerDown}
+                onPointerMove={(e) => handlePointerMove(e, type)}
+                onPointerUp={handlePointerUp}
                 initial={{ opacity: shouldAnimate ? 0 : opacity, x: shouldAnimate ? -25 : 0 }}
                 animate={{ opacity: opacity, x: 0 }}
                 transition={{

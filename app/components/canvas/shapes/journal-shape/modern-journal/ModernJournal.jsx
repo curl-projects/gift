@@ -10,6 +10,7 @@ import { JournalCovenants } from '../journal-covenants/JournalCovenants';
 import { JournalArticle } from './JournalArticle';
 import { JournalEntries } from './journal-entries/JournalEntries';
 import { JournalPortfolio } from './journal-portfolio/JournalPortfolio';
+import { JournalFriends } from './journal-friends/JournalFriends';
 import { useCovenantContext } from "~/components/synchronization/CovenantContext"
 
 
@@ -45,7 +46,11 @@ export function ModernJournal({ shape, contentRef, tldrawEditor }) {
     {
       name: 'portfolio',
       displayName: "Your Work",
-    }
+    },
+    {
+      name: 'friends',
+      displayName: "Friends",
+    },
   ]
 
   useEffect(()=>{
@@ -154,7 +159,8 @@ export function ModernJournal({ shape, contentRef, tldrawEditor }) {
               {
                 'article': <JournalArticle />,
                 'entries': <JournalEntries />,
-                'portfolio': <JournalPortfolio />
+                'portfolio': <JournalPortfolio />,
+                'friends': <JournalFriends />
               }[journalMode.page] || <JournalEntries />
             }
         </div>

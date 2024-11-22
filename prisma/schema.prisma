@@ -19,6 +19,28 @@ model User {
   darkeningColors String[] @default(["#94DAF4", "#69A9E6", "#7F89D0"])
   covenants Covenant[]
   entries Entry[]
+  friendshipsInitiated Friendship[] @relation("User1Friendship")
+  friendshipsReceived  Friendship[] @relation("User2Friendship")
+}
+
+enum FriendshipStatus {
+  UNINITIATED
+  ENTRY_CREATED
+  ENTRY_PLACED
+  CONVERSING
+}
+
+model Friendship {
+  user1Id String
+  user2Id String
+  user1   User   @relation("User1Friendship", fields: [user1Id], references: [uniqueName])
+  user2   User   @relation("User2Friendship", fields: [user2Id], references: [uniqueName])
+  createdAt DateTime @default(now())
+  user1Status FriendshipStatus
+  user2Status FriendshipStatus
+
+  @@id([user1Id, user2Id])
+  @@unique([user2Id, user1Id])
 }
 
 model Entry {

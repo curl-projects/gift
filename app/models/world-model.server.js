@@ -106,6 +106,7 @@ export async function getUser(uniqueName){
                                 media: {
                                     include: {
                                         user: true,
+                                        annotations: true,
                                     }
                                 }
                             }

@@ -1,5 +1,6 @@
 import styles from './ExcerptShapeUtil.module.css'
 import { motion } from 'framer-motion'
+import { useEffect } from 'react';
 
 export function ExcerptContent({ shapeRef, excerpt }){
 
@@ -8,6 +9,10 @@ export function ExcerptContent({ shapeRef, excerpt }){
         hidden: { opacity: 0, x: "-50%", y: "-50%" },
         visible: { opacity: 0, x: "-50%", y: "-50%" } 
     };
+
+    useEffect(()=>{
+       console.log("EXCERPT", excerpt)
+    }, [excerpt])
 
     return (
         <div 
@@ -23,7 +28,7 @@ export function ExcerptContent({ shapeRef, excerpt }){
                 initial={{ opacity: 0}}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 1, delay: 2, ease: "easeInOut" }}
-            >{excerpt?.media?.user?.name || "Unknown"} · {excerpt?.media?.date?.toLocaleDateString() || "No Date"}</motion.p>
+            >{excerpt?.media?.user?.name || "Unknown"} · {excerpt?.media?.date ? excerpt.media.date : "No Date"}</motion.p>
             <motion.p
                 className={styles.excerptText}
                 initial={{ opacity: 0 }}
@@ -34,7 +39,7 @@ export function ExcerptContent({ shapeRef, excerpt }){
                     cursor: "pointer",
             }}>
                 <span>
-                    ...{excerpt.content.charAt(0).toLowerCase() + excerpt.content.slice(1)}...
+                    ...{excerpt?.content ? excerpt.content.charAt(0).toLowerCase() + excerpt.content.slice(1) : ""}...
                 </span>
             </motion.p>
             <motion.div 
