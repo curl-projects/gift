@@ -17,6 +17,7 @@ export function JournalEntries(){
     }, [userData])
 
     useEffect(()=>{
+        console.log("USER DATA", userData)
         if(userData?.user?.entries){
             setEntries(prevState => {
                 return {
@@ -27,6 +28,8 @@ export function JournalEntries(){
         }
     }, [userData])
 
+
+
     useEffect(() => {
         if (entries.prevValues.length > 0 && (entries.values.length > entries.prevValues.length)){
             setIsNewEntryAdded(true)
@@ -36,6 +39,10 @@ export function JournalEntries(){
     useEffect(() => {
         console.log("IS NEW ENTRY ADDED", isNewEntryAdded)
     }, [isNewEntryAdded])
+
+    useEffect(()=>{
+        console.log("ENTRIES:", entries)
+    }, [entries])
 
     return (
         <div className={styles.journalEntries}>

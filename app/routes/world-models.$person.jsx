@@ -1,9 +1,9 @@
-import { useActionData } from "@remix-run/react";
+import { useActionData, useLoaderData } from "@remix-run/react";
 import { useDataContext } from '~/components/synchronization/DataContext';
 import { json } from "@remix-run/node";
 import { ClientOnly } from "remix-utils/client-only";
 import WorldCanvas from "~/components/canvas/WorldCanvas.jsx";
-import { getWorldContent, saveAnnotation } from "~/models/world-model.server";
+import { getWorldContent } from "~/models/world-model.server";
 import { useEffect } from "react";
 import { CampfireScene } from "~/components/environment/CampfireScene/CampfireScene";
 
@@ -48,8 +48,6 @@ export default function WorldModel(){
         }}>
           <CampfireScene/>
         </div>
-
-    
         </>
     )
 }

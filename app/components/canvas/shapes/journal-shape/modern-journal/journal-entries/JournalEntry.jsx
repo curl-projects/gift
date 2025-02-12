@@ -25,15 +25,13 @@ export function JournalEntry({ type, entry, shouldAnimate, opacity = 1, onMouseE
     function handlePointerDown(e){
         e.currentTarget.setPointerCapture(e.pointerId);
         setInteractionState({
-            point: [e.clientX, e.clientY],
+            point: [e.clientX, e.clientY], 
             state: "pointing",
             shapeId: "",
         })
     };
 
     function handlePointerMove(e, type){
-
-        console.log("POINTER MOVE", e.clientX, e.clientY)
 
         switch(interactionState.state){
             case "pointing": {
